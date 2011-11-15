@@ -1,0 +1,86 @@
+<Configuration>
+  <RecentFiles>
+    <RecentFiles>
+      <File id="9947E369-AFF9-4911-AB0A-99B918A8F3CF/d:Clarify/f:ClarifySession.cs" caret="652" fromTop="20" />
+      <File id="9947E369-AFF9-4911-AB0A-99B918A8F3CF/d:Clarify/f:ClarifySessionCache.cs" caret="303" fromTop="11" />
+      <File id="9947E369-AFF9-4911-AB0A-99B918A8F3CF/d:Clarify/f:IClarifySessionProvider.cs" caret="263" fromTop="11" />
+      <File id="9947E369-AFF9-4911-AB0A-99B918A8F3CF/f:ILogger.cs" caret="823" fromTop="23" />
+      <File id="9947E369-AFF9-4911-AB0A-99B918A8F3CF/d:Clarify/f:ICurrentSDKUser.cs" caret="333" fromTop="13" />
+      <File id="9947E369-AFF9-4911-AB0A-99B918A8F3CF/d:Clarify/f:ClairfyApplicationFactory.cs" caret="370" fromTop="13" />
+      <File id="9947E369-AFF9-4911-AB0A-99B918A8F3CF/f:BootstrapRegistry.cs" caret="1294" fromTop="24" />
+      <File id="81BEBC91-46D5-4118-84AF-F85C2BEAE32C/f:ConfigureFubuMVC.cs" caret="0" fromTop="0" />
+      <File id="81BEBC91-46D5-4118-84AF-F85C2BEAE32C/d:App_Start/f:FubuMVC.cs" caret="1456" fromTop="29" />
+      <File id="81BEBC91-46D5-4118-84AF-F85C2BEAE32C/f:WebRegistry.cs" caret="580" fromTop="15" />
+      <File id="81BEBC91-46D5-4118-84AF-F85C2BEAE32C/f:packages.config" caret="0" fromTop="0" />
+      <File id="81BEBC91-46D5-4118-84AF-F85C2BEAE32C/d:Handlers/d:api/d:lists/f:get_Name_handler.cs" caret="1386" fromTop="44" />
+    </RecentFiles>
+    <RecentEdits>
+      <File id="9947E369-AFF9-4911-AB0A-99B918A8F3CF/d:Clarify/f:ICurrentSDKUser.cs" caret="333" fromTop="13" />
+      <File id="9947E369-AFF9-4911-AB0A-99B918A8F3CF/d:Clarify/f:ClairfyApplicationFactory.cs" caret="194" fromTop="7" />
+      <File id="9947E369-AFF9-4911-AB0A-99B918A8F3CF/f:BootstrapRegistry.cs" caret="2342" fromTop="36" />
+      <File id="9947E369-AFF9-4911-AB0A-99B918A8F3CF/f:BootstrapRegistry.cs" caret="2385" fromTop="50" />
+      <File id="9947E369-AFF9-4911-AB0A-99B918A8F3CF/f:BootstrapRegistry.cs" caret="1868" fromTop="38" />
+      <File id="9947E369-AFF9-4911-AB0A-99B918A8F3CF/f:BootstrapRegistry.cs" caret="1354" fromTop="32" />
+      <File id="81BEBC91-46D5-4118-84AF-F85C2BEAE32C/d:App_Start/f:FubuMVC.cs" caret="355" fromTop="7" />
+      <File id="81BEBC91-46D5-4118-84AF-F85C2BEAE32C/d:App_Start/f:FubuMVC.cs" caret="1451" fromTop="29" />
+      <File id="81BEBC91-46D5-4118-84AF-F85C2BEAE32C/d:Handlers/d:api/d:lists/f:get_Name_handler.cs" caret="2812" fromTop="98" />
+    </RecentEdits>
+  </RecentFiles>
+  <CompletionStatisticsManager>
+    <ItemStatistics item="CSharpCodeCompletionContext">
+      <Item value="clarifyApplicationFactory" priority="27" />
+      <Item value="sessionCache" priority="27" />
+      <Item value="ICurrentUser`0" priority="31" />
+      <Item value="user" priority="27" />
+      <Item value="_sessionCache" priority="26" />
+      <Item value="CurrentSDKUser`0" priority="53" />
+      <Item value="ctx" priority="31" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Dovetail.SDK.Bootstrap.Clarify.IClarifyApplicationFactory">
+      <Item value="Create`0" priority="22" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Dovetail.SDK.Bootstrap.Clarify.IClarifySessionCache">
+      <Item value="GetAgentSession`0" priority="22" />
+      <Item value="GetContactSession`0" priority="22" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:StructureMap.Configuration.DSL.Expressions.CreatePluginFamilyExpression`1">
+      <Item value="HttpContextScoped`0" priority="22" />
+      <Item value="Use`0" priority="26" />
+      <Item value="HybridHttpOrThreadLocalScoped`0" priority="26" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Dovetail.SDK.Bootstrap.Clarify.ICurrentSDKUser">
+      <Item value="LoginName" priority="22" />
+      <Item value="IsContact" priority="22" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Bootstrap.HelloWorld.Handlers.api.lists.HgbstListRequest">
+      <Item value="Levels" priority="22" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:StructureMap.IContext">
+      <Item value="GetInstance`0" priority="27" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Dovetail.SDK.Bootstrap.Clarify.CurrentSDKUser">
+      <Item value="Username" priority="22" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:StructureMap.ConfigurationExpression">
+      <Item value="AddRegistry`1" priority="22" />
+    </ItemStatistics>
+  </CompletionStatisticsManager>
+  <NAntValidationSettings>
+    <NAntPath value="" />
+  </NAntValidationSettings>
+  <UnitTestRunner>
+    <Providers />
+  </UnitTestRunner>
+  <UnitTestRunnerNUnit>
+    <NUnitInstallDir IsNull="False">
+    </NUnitInstallDir>
+    <UseAddins>Never</UseAddins>
+  </UnitTestRunnerNUnit>
+  <SettingsComponent>
+    <string />
+    <integer />
+    <boolean>
+      <setting name="SolutionAnalysisEnabled">False</setting>
+    </boolean>
+  </SettingsComponent>
+</Configuration>

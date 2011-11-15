@@ -1,0 +1,14 @@
+﻿<use namespace="Bootstrap.Web.Handlers.api.gbst.show" />
+<viewdata model="Bootstrap.Web.Handlers.api.gbst.show.GbstShowModel" />
+<content:pagehead>
+<h1>${Model.Name} <small>global list</small></h1>
+</content:pagehead>
+
+<ul>
+  <li each='var element in Model.Elements'>
+    <div>${element.Title}
+    <span class="label" if='element.IsDefault'>Default</span>
+    <span class="label notice" if='!element.IsActive'>Inactive</span>
+    </div>
+  </li>  
+</ul>

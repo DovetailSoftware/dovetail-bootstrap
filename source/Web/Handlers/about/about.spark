@@ -1,0 +1,13 @@
+﻿<viewdata model="Bootstrap.Web.Handlers.about.AboutModel" />
+<content:pagehead>
+<h1>About Dovetail Bootstrap <small> version ${Model.Version}</small></h1>
+</content:pagehead>
+
+<div class="row">
+    <div class="span10">
+        <h2>What is this?</h2>
+        <p>Dovetail Bootstrap is an example web application built using Dovetail SDK with FubuMVC</p>
+        <h2>Where do I get the Source?</h2>
+        <p>Hopefully in the future we can give you a link to a Git repository with the source.</p>
+    </div>
+</div>
