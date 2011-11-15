@@ -3,6 +3,8 @@ using System.Configuration;
 using Dovetail.SDK.Bootstrap.Clarify;
 using FChoice.Foundation.Clarify;
 using FChoice.Foundation.Schema;
+using FubuCore.Configuration;
+using FubuMVC.StructureMap;
 using StructureMap.Configuration.DSL;
 
 namespace Dovetail.SDK.Bootstrap
@@ -16,32 +18,16 @@ namespace Dovetail.SDK.Bootstrap
                 s.TheCallingAssembly();
                 s.WithDefaultConventions();
 
-                //TODO uncomment when AppSettingsProvider is no longer broken
-                //s.Convention<SettingsScanner>();
+                s.Convention<SettingsScanner>();
             });
 
-            //TODO uncomment when AppSettingsProvider is no longer broken
-            //cfg.For<ISettingsProvider>().Use<AppSettingsProvider>(); 
+            For<ISettingsProvider>().Use<AppSettingsProvider>(); 
 
             For<IListCache>().Use(c => c.GetInstance<IClarifyApplicationFactory>().Create().ListCache);
             For<ISchemaCache>().Use(c => c.GetInstance<IClarifyApplicationFactory>().Create().SchemaCache);
             For<IStringCache>().Use(c => c.GetInstance<IClarifyApplicationFactory>().Create().StringCache);
             For<ILocaleCache>().Use(c => c.GetInstance<IClarifyApplicationFactory>().Create().LocaleCache);
             For<IListCache>().Use(c => c.GetInstance<IClarifyApplicationFactory>().Create().ListCache);
-
-            //TODO replace this with AppSettingsProvider
-            For<DovetailDatabaseSettings>().Use(() =>
-                                                    {
-                                                        var settings = ConfigurationManager.AppSettings;
-                                                        var timeout = settings["DovetailDatabaseSettings.SessionTimeoutInMinutes"];
-
-                                                        return new DovetailDatabaseSettings
-                                                                   {
-                                                                       ConnectionString = settings["DovetailDatabaseSettings.ConnectionString"],
-                                                                       Type = settings["DovetailDatabaseSettings.Type"],
-                                                                       SessionTimeoutInMinutes = Convert.ToInt32(timeout)
-                                                                   };
-                                                    });
 
             For<IClarifySession>()
                 .HybridHttpOrThreadLocalScoped()
