@@ -15,9 +15,11 @@ build
 # =========================
 _ReSharper.*
 *.ReSharper
+*.ReSharper.user
 *.resharper
 *.sln.docstates
 *.log*
 source/packages/**
 source/Web/fubu-content/*
 libs/DovetailSDK/*.dll
+!repositories.config
