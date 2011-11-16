@@ -1,7 +1,7 @@
 ﻿<viewdata model="Bootstrap.Web.Handlers.api.gbst.GbstListsModel" />
 <content:head>
 <style type="text/css">
-    li 
+    #global-lists li 
     {
         list-style-type: none;
         margin: 7px 2px;
@@ -12,7 +12,7 @@
 <h1>Global List <small>listing</small></h1>
 </content:pagehead>
 
-<ul>
+<ul id="global-lists">
   <li each='var list in Model.Lists'>
     <a href="${this.Urls.UrlFor(new Bootstrap.Web.Handlers.api.gbst.show.GbstShowRequest() {Name = list})}">${list}</a>
   </li>  

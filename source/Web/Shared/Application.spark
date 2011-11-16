@@ -70,7 +70,7 @@
     <div class="topbar">
         <div class="fill">
             <div class="container">
-                <a class="brand" href="${this.Urls.UrlFor(new Bootstrap.Web.Handlers.home.HomeRequest())}">Dovetail Bootstrap</a>
+                <a class="brand" href="/">Dovetail Bootstrap</a>
                 <ul class="nav">
                     <li class="active"><a href="${this.Urls.UrlFor(new Bootstrap.Web.Handlers.api.gbst.GbstListsRequest())}">
                         Lists</a></li>
