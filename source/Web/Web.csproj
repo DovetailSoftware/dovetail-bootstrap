@@ -36,6 +36,7 @@
     <Reference Include="Bottles, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Bottles.0.9.1.163\lib\Bottles.dll</HintPath>
     </Reference>
+    <Reference Include="FChoice.Common, Version=2.4.7.9609, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL" />
     <Reference Include="fcSDK, Version=3.1.0.21, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL" />
     <Reference Include="FubuCore">
       <HintPath>..\packages\FubuCore.0.9.3.98\lib\FubuCore.dll</HintPath>
@@ -106,9 +107,11 @@
     <Compile Include="Handlers\about\get_handler.cs" />
     <Compile Include="Handlers\api\gbst\get_handler.cs" />
     <Compile Include="Handlers\api\gbst\show\get_Name_handler.cs" />
+    <Compile Include="Handlers\home\get_handler.cs" />
     <Compile Include="Handlers\HandlerMarker.cs" />
     <Content Include="fubu-content\fubumvc-diagnostics.zip" />
     <Content Include="fubu-content\basic-getting-started.zip" />
+    <None Include="Handlers\home\home.spark" />
     <None Include="Handlers\about\about.spark" />
     <None Include="Shared\Application.spark" />
     <Compile Include="Properties\AssemblyInfo.cs" />

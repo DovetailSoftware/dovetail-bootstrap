@@ -1,4 +1,5 @@
 using System;
+using FChoice.Common.Data;
 using FChoice.Foundation.Clarify;
 using FChoice.Toolkits.Clarify.FieldOps;
 using FChoice.Toolkits.Clarify.Interfaces;
@@ -17,6 +18,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
         SupportToolkit CreateSupportToolkit();
         FieldOpsToolkit CreateFieldOpsToolkit();
         InterfacesToolkit CreateInterfacesToolkit();
+        SqlHelper CreateSqlHelper(string sql);
     }
 
     public class ClarifySessionWrapper : IClarifySession
@@ -76,6 +78,10 @@ namespace Dovetail.SDK.Bootstrap.Clarify
             return new InterfacesToolkit(ClarifySession);
         }
 
+        public SqlHelper CreateSqlHelper(string sql)
+        {
+            return new SqlHelper(sql);
+        }
     }
 
 }

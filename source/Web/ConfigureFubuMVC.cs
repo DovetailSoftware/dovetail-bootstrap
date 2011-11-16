@@ -1,4 +1,5 @@
 using Bootstrap.Web.Handlers;
+using Bootstrap.Web.Handlers.home;
 using FubuCore;
 using FubuMVC.Core;
 using FubuMVC.Spark;
@@ -17,6 +18,8 @@ namespace Bootstrap.Web
             //Output.ToJson.WhenCallMatches(a => a.OutputType().CanBeCastTo<IJsonResult>());
 
             this.UseSpark();
+
+            Routes.HomeIs<HomeRequest>();
 
             //// All public methods from concrete classes ending in "Controller"
             //// in this assembly are assumed to be action methods

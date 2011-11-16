@@ -9,5 +9,9 @@
         <p>Dovetail Bootstrap is an example web application built using Dovetail SDK with FubuMVC</p>
         <h2>Where do I get the Source?</h2>
         <p>Hopefully in the future we can give you a link to a Git repository with the source.</p>
+        <h2>Where did you get your CSS styles?</h2>
+        <p>
+        We didn't want to have to think too hard so we pulled in <a href="https://github.com/twitter/bootstrap">Twitter Bootstrap</a>
+        </p>
     </div>
 </div>
