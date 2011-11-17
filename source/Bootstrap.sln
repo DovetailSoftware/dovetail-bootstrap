@@ -10,6 +10,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "automation", "automation", 
 		..\rakefile.rb = ..\rakefile.rb
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{E66CD88A-C7DE-4F09-84D4-2894BD0CBC97}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dovetail.SDK.Bootstrap.Tests", "Dovetail.SDK.Bootstrap.Tests\Dovetail.SDK.Bootstrap.Tests.csproj", "{0EFB9B2A-CD04-4DED-A9EA-3F76DA349553}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,8 +28,15 @@ Global
 		{81BEBC91-46D5-4118-84AF-F85C2BEAE32C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{81BEBC91-46D5-4118-84AF-F85C2BEAE32C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{81BEBC91-46D5-4118-84AF-F85C2BEAE32C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0EFB9B2A-CD04-4DED-A9EA-3F76DA349553}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EFB9B2A-CD04-4DED-A9EA-3F76DA349553}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EFB9B2A-CD04-4DED-A9EA-3F76DA349553}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EFB9B2A-CD04-4DED-A9EA-3F76DA349553}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0EFB9B2A-CD04-4DED-A9EA-3F76DA349553} = {E66CD88A-C7DE-4F09-84D4-2894BD0CBC97}
 	EndGlobalSection
 EndGlobal

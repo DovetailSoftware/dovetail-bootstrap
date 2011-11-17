@@ -31,7 +31,7 @@ msbuild :msbuild, [:clean] do |msb,args|
 	msb.solution = args[:solution] || SLN_PATH
 end
 
-task :compile => [:restore_if_missing] do 
+task :compile => [:install_packages] do 
 	SLN_FILES.each do |f|
 		Rake::Task["msbuild"].execute(:solution => f)
 	end
