@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Dovetail.SDK.Bootstrap.Clarify;
+using Dovetail.SDK.Bootstrap.Clarify.Extensions;
 
 namespace Bootstrap.Web.Handlers.api.gbst
 {

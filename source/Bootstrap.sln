@@ -14,6 +14,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{E66CD88A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dovetail.SDK.Bootstrap.Tests", "Dovetail.SDK.Bootstrap.Tests\Dovetail.SDK.Bootstrap.Tests.csproj", "{0EFB9B2A-CD04-4DED-A9EA-3F76DA349553}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "schema", "schema", "{49557427-0DED-45A9-A446-26349E81FA97}"
+	ProjectSection(SolutionItems) = preProject
+		..\schema\token.schemascript.xml = ..\schema\token.schemascript.xml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

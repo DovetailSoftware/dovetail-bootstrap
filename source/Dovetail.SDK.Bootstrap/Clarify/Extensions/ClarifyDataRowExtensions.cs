@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FChoice.Foundation.Clarify;
 
-namespace Dovetail.SDK.Bootstrap.Clarify
+namespace Dovetail.SDK.Bootstrap.Clarify.Extensions
 {
     public static class ClarifyDataRowExtensions
     {

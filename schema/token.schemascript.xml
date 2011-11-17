@@ -1,7 +1,7 @@
 <schemaScript xmlns="http://www.dovetailsoftware.com/2006/10/SchemaScript.xsd">
   
-  <addColumn name="x_authtoken" dataType="String" table="web_user" >
-    <description>Authorization token used to authenticate web service calls on behalf of this web_user</description>
+  <addColumn name="x_authtoken" dataType="String" table="user" >
+    <description>Authorization token used to authenticate web service calls on behalf of this user</description>
     <length>128</length>
   </addColumn>
 

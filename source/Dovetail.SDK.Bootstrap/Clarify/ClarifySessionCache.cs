@@ -2,31 +2,30 @@ using System;
 using FChoice.Foundation.Clarify;
 using FubuCore;
 using FubuCore.Util;
-using StructureMap;
 
 namespace Dovetail.SDK.Bootstrap.Clarify
 {
     public interface IClarifySessionCache
     {
         IClarifySession GetUserSession(string username);
+        IClarifySession GetApplicationSession();
         IClarifySession GetContactSession(string username);
     }
 
     public class ClarifySessionCache : IClarifySessionCache
     {
         private readonly IClarifyApplicationFactory _clarifyApplicationFactory;
-        private readonly IContainer _container;
         private readonly ILogger _logger;
 
         //TODO configure StructureMap to do the Create() for us
         private ClarifyApplication _clarifyApplication;
         private readonly Cache<string, Guid> _agentSessionCacheByUsername = new Cache<string, Guid>();
         private readonly Cache<string, Guid> _contactSessionCacheByUsername = new Cache<string, Guid>();
+        private Guid _applicationSessionId;
 
-        public ClarifySessionCache(IClarifyApplicationFactory clarifyApplicationFactory, IContainer container, ILogger logger)
+        public ClarifySessionCache(IClarifyApplicationFactory clarifyApplicationFactory, ILogger logger)
         {
             _clarifyApplicationFactory = clarifyApplicationFactory;
-            _container = container;
             _logger = logger;
             _agentSessionCacheByUsername.OnMissing = onAgentMissing;
             _contactSessionCacheByUsername.OnMissing = onContactMissing;
@@ -72,6 +71,27 @@ namespace Dovetail.SDK.Bootstrap.Clarify
                 _logger.LogDebug("Could not retrieve agent session via id {0}. Likely it expired. Creating a new one. Error: {1}".ToFormat(sessionId, exception.Message));
                 _agentSessionCacheByUsername.Remove(username);
                 return GetUserSession(username);
+            }
+        }
+
+        public IClarifySession GetApplicationSession()
+        {
+            try
+            {
+                if (_applicationSessionId == Guid.Empty)
+                {
+                    var session = ClarifyApplication.CreateSession();
+                    _applicationSessionId = session.SessionID;
+                    return wrapSession(session);
+                }
+                
+                return wrapSession(ClarifyApplication.GetSession(_applicationSessionId));
+            }
+            catch (Exception exception)
+            {
+                _logger.LogDebug("Could not retrieve application session via id {0}. Likely it expired. Creating a new one. Error: {1}".ToFormat(_applicationSessionId, exception.Message));
+                _applicationSessionId = Guid.Empty;
+                return GetApplicationSession();
             }
         }
 

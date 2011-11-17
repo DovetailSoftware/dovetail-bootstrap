@@ -67,13 +67,18 @@
   <ItemGroup>
     <Compile Include="BootstrapRegistry.cs" />
     <Compile Include="Clarify\ClairfyApplicationFactory.cs" />
-    <Compile Include="Clarify\ClarifyDataRowExtensions.cs" />
     <Compile Include="Clarify\ClarifySession.cs" />
     <Compile Include="Clarify\ClarifySessionCache.cs" />
+    <Compile Include="Clarify\Extensions\ClarifyDataRowExtensions.cs" />
+    <Compile Include="Clarify\Extensions\ClarifyGenericExtensions.cs" />
     <Compile Include="Clarify\IClarifySessionProvider.cs" />
     <Compile Include="Clarify\ICurrentSDKUser.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="AuthToken\IAuthTokenRepository.cs" />
+    <Compile Include="AuthToken\IUserAuthenticator.cs" />
+    <Compile Include="AuthToken\TokenAuthenticationApi.cs" />
+    <Compile Include="AuthToken\TokenAuthenticationResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
