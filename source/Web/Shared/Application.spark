@@ -72,9 +72,10 @@
             <div class="container">
                 <a class="brand" href="/">Dovetail Bootstrap</a>
                 <ul class="nav">
-                    <li class="active"><a href="${this.Urls.UrlFor(new Bootstrap.Web.Handlers.api.gbst.GbstListsRequest())}">
+                    <li><a href="${this.Urls.UrlFor(new Bootstrap.Web.Handlers.api.gbst.GbstListsRequest())}">
                         Lists</a></li>
                     <li><a href="${this.Urls.UrlFor(new Bootstrap.Web.Handlers.about.AboutRequest())}">About</a></li>
+                    <li><a href="/_fubu">Diagnostics</a></li>
                 </ul>
             </div>
         </div>
