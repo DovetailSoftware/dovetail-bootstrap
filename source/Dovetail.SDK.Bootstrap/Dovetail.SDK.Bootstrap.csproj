@@ -41,7 +41,7 @@
       <HintPath>..\..\libs\DovetailSDK\fcSDK.dll</HintPath>
     </Reference>
     <Reference Include="FubuCore">
-      <HintPath>..\packages\FubuCore.0.9.3.98\lib\FubuCore.dll</HintPath>
+      <HintPath>..\packages\FubuCore.0.9.3.99\lib\FubuCore.dll</HintPath>
     </Reference>
     <Reference Include="FubuMVC.StructureMap">
       <HintPath>..\packages\FubuMVC.References.0.9.1.660\lib\net40\FubuMVC.StructureMap.dll</HintPath>
