@@ -36,8 +36,12 @@
     <Reference Include="Bottles, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Bottles.0.9.1.163\lib\Bottles.dll</HintPath>
     </Reference>
-    <Reference Include="FChoice.Common, Version=2.4.7.9609, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL" />
-    <Reference Include="fcSDK, Version=3.1.0.21, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL" />
+    <Reference Include="FChoice.Common">
+      <HintPath>..\..\libs\DovetailSDK\FChoice.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="fcSDK">
+      <HintPath>..\..\libs\DovetailSDK\fcSDK.dll</HintPath>
+    </Reference>
     <Reference Include="FubuCore">
       <HintPath>..\packages\FubuCore.0.9.3.98\lib\FubuCore.dll</HintPath>
     </Reference>
