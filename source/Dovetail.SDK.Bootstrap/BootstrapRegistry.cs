@@ -1,5 +1,3 @@
-using System;
-using System.Configuration;
 using Dovetail.SDK.Bootstrap.Clarify;
 using FChoice.Foundation.Clarify;
 using FChoice.Foundation.Schema;

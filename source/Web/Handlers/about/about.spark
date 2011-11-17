@@ -5,11 +5,11 @@
 
 <div class="row">
     <div class="span10">
-        <h2>What is this?</h2>
+        <h3>What is this?</h3>
         <p>Dovetail Bootstrap is an example web application built using Dovetail SDK with FubuMVC</p>
-        <h2>Where do I get the Source?</h2>
+        <h3>Where do I get the Source?</h3>
         <p>Hopefully in the future we can give you a link to a Git repository with the source.</p>
-        <h2>Where did you get your CSS styles?</h2>
+        <h3>Where did you get your CSS styles?</h3>
         <p>
         We didn't want to have to think too hard so we pulled in <a href="https://github.com/twitter/bootstrap">Twitter Bootstrap</a>
         </p>

@@ -11,7 +11,6 @@ COMPILE_TARGET = "Debug"
 
 DOVETAILSDK_PATH = "#{Rake::Win32::normalize(ENV['ProgramW6432'])}/Dovetail Software/fcSDK/bin"
 SCHEMAEDITOR_PATH = "#{Rake::Win32::normalize(ENV['PROGRAMFILES'])}/Dovetail Software/SchemaEditor/SchemaEditor.exe"
-NUNIT_PATH = "tools/NUnit/nunit-console.exe"
 
 props = {:archive => "build", :testing => "results", :database => ""}
 
@@ -47,8 +46,12 @@ output :test_assemblies => [:compile] do |out|
 end
 
 desc "Run NUnit Test for any dlls that contain the work test"
-nunit :unit_tests do |nunit|
-	nunit.command = NUNIT_PATH
+nunit :unit_tests do |nunit|	
+	nunitPackageDirectory = Dir.glob('source/packages/NUnit*').first
+
+	raise "NUnit package was not found under source/packages." if nunitPackageDirectory.nil?
+
+	nunit.command = File.join(nunitPackageDirectory, 'tools/nunit-console.exe')
 	nunit.assemblies = Dir.glob("results/assemblies/*{T,t}ests.dll").uniq
 	nunit.options '/xml=results/nunit-results.xml'
 end
