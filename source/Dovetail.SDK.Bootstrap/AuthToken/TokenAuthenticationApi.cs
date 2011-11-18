@@ -1,6 +1,20 @@
 namespace Dovetail.SDK.Bootstrap.AuthToken
 {
-    public class TokenAuthenticationApi
+    public class TokenAuthenticationResetResult : TokenAuthenticationResult { }
+    public class TokenAuthenticationResult : IApi
+    {
+        public string Username { get; set; }
+        public bool Success { get; set; }
+        public string Token { get; set; }
+    }
+
+    public interface ITokenAuthenticationApi
+    {
+        TokenAuthenticationResult GetToken(string username, string password);
+        TokenAuthenticationResetResult ResetToken(string username, string password);
+    }
+
+    public class TokenAuthenticationApi : ITokenAuthenticationApi
     {
         private readonly IAuthTokenRepository _repository;
         private readonly IUserAuthenticator _authenticator;
@@ -11,27 +25,27 @@ namespace Dovetail.SDK.Bootstrap.AuthToken
             _authenticator = authenticator;
         }
 
-        public TokenAuthenticationResult ResetToken(string username, string password)
+        public TokenAuthenticationResult GetToken(string username, string password)
         {
-            var result = new TokenAuthenticationResult {Success = false};
+            var result = new TokenAuthenticationResult { Success = false, Username = username };
 
-            if (_authenticator.Authenticate(username,password))
+            if (_authenticator.Authenticate(username, password))
             {
                 result.Success = true;
-                result.Token = _repository.Generate(username);
+                result.Token = _repository.Retrieve(username);
             }
 
             return result;
         }
 
-        public TokenAuthenticationResult GetToken(string username, string password)
+        public TokenAuthenticationResetResult ResetToken(string username, string password)
         {
-            var result = new TokenAuthenticationResult { Success = false };
+            var result = new TokenAuthenticationResetResult { Success = false, Username = username };
 
-            if (_authenticator.Authenticate(username, password))
+            if (_authenticator.Authenticate(username,password))
             {
                 result.Success = true;
-                result.Token = _repository.Get(username);
+                result.Token = _repository.Generate(username);
             }
 
             return result;

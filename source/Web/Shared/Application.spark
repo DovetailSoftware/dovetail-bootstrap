@@ -45,23 +45,6 @@
         padding: 20px 20px 10px;
         margin: -20px -20px 20px;
       }
-
-      /* Styles you shouldn't keep as they are for displaying this base example only */
-      .content .span10,
-      .content .span4 {
-        min-height: 500px;
-      }
-      /* Give a quick and non-cross-browser friendly divider */
-      .content .span4 {
-        margin-left: 0;
-        padding-left: 19px;
-        border-left: 1px solid #eee;
-      }
-
-      .topbar .btn {
-        border: 0;
-      }
-
     </style>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
     <use content="head"></use>
@@ -72,9 +55,8 @@
             <div class="container">
                 <a class="brand" href="/">Dovetail Bootstrap</a>
                 <ul class="nav">
-                    <li><a href="${this.Urls.UrlFor(new Bootstrap.Web.Handlers.api.gbst.GbstListsRequest())}">
-                        Lists</a></li>
-                    <li><a href="${this.Urls.UrlFor(new Bootstrap.Web.Handlers.about.AboutRequest())}">About</a></li>
+                    <li>!{this.LinkTo<Bootstrap.Web.Handlers.api.gbst.GbstListsRequest>().Text("Lists")} </li>
+                    <li>!{this.LinkTo<Bootstrap.Web.Handlers.about.AboutRequest>().Text("About")} </li>
                     <li><a href="/_fubu">Diagnostics</a></li>
                 </ul>
             </div>

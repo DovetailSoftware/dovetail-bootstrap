@@ -35,7 +35,7 @@ namespace Dovetail.SDK.Bootstrap.Tests.Token
         {
             const string token = "existingtoken";
             MockFor<IUserAuthenticator>().Stub(s => s.Authenticate(username, password)).Return(true);
-            MockFor<IAuthTokenRepository>().Stub(s => s.Get(username)).Return(token);
+            MockFor<IAuthTokenRepository>().Stub(s => s.Retrieve(username)).Return(token);
 
             var result = _cut.GetToken(username, password);
 

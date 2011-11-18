@@ -1,0 +1,21 @@
+.api-url {
+    _font-style: italic;
+    font-size: larger;
+    color: #333;
+    padding: 0 10px;
+}
+
+.api-http-method 
+{
+    background-color: #3261ac;
+    padding: 0 5px;
+    width: 30px;
+    font-size: 12px;
+    text-align: center;
+    margin: 0;
+    font-family: 'Inconsolata', 'Monaco', 'Consolas', 'Bitstream Vera Mono', monospace;
+    border-radius: 2px;
+    color: white;
+    line-height: 25px;
+    float: left;
+}

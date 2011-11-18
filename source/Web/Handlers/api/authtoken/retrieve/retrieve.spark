@@ -1,0 +1,8 @@
+﻿<viewdata model="Dovetail.SDK.Bootstrap.AuthToken.TokenAuthenticationResult" />
+
+<content:pagehead>
+<h1>Your Authentication Token <small>keep it secret. keep it safe.</small></h1>
+</content:pagehead>
+
+<h2 if="Model.Success">${Model.Username}'s token is ${Model.Token}</h2>
+<h2 if="!Model.Success">Getting your authentication token was not successful.</h2>

@@ -1,0 +1,73 @@
+﻿<viewdata model="Bootstrap.Web.Handlers.api.authtoken.AuthTokenModel" />
+<content:pagehead>
+<h1>Authentication Tokens</h1>
+        <p>
+            Web service API methods require an authentication token linked to a valid user account.
+            This token is per user and will not change. It is very important to secure access
+            to this token.
+        </p>
+</content:pagehead>
+
+
+<div class="row">
+    <div class="span4">
+        <p>
+            To retrieve an existing authentication token for a user call the Retrieve Token api.
+        </p>
+        <span class="api-http-method">POST</span>
+        <span class="api-url">${this.Urls.UrlFor(new Bootstrap.Web.Handlers.api.authtoken.retrieve.RetrieveAuthTokenRequest())}</span>
+    </div>
+    <div class="span6">
+        <form action="${this.Urls.UrlFor(new Bootstrap.Web.Handlers.api.authtoken.retrieve.RetrieveAuthTokenRequest())}" method="POST">
+        <fieldset>
+            <legend>Retrieve Token</legend>
+            <div class="clearfix">
+                <label for="Username">Username</label>
+                <div class="input">
+                    <input name="Username" size="30" type="text" />
+                </div>
+                <div class="clearfix">
+                </div>
+                <label for="Password">Password</label>
+                <div class="input">
+                    <input name="Password" size="30" type="password" />
+                </div>
+                <div class="actions">
+                    <button type="submit" class="btn primary">Go</button>
+                </div>
+        </fieldset>
+        </form>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="span4">
+        <p>
+            If the token is forgotten or compromised you may Reset the token.
+        </p>
+        <span class="api-http-method">POST</span>
+        <span class="api-url">${this.Urls.UrlFor(new Bootstrap.Web.Handlers.api.authtoken.reset.ResetAuthTokenRequest())}</span>
+    </div>
+    <div class="span6">
+        <form action="${this.Urls.UrlFor(new Bootstrap.Web.Handlers.api.authtoken.reset.ResetAuthTokenRequest())}" method="POST">
+        <fieldset>
+            <legend>Reset Token</legend>
+            <div class="clearfix">
+                <label for="Username">Username</label>
+                <div class="input">
+                    <input name="Username" size="30" type="text" />
+                </div>
+                <div class="clearfix">
+                </div>
+                <label for="Password">Password</label>
+                <div class="input">
+                    <input name="Password" size="30" type="password" />
+                </div>
+                <div class="actions">
+                    <button type="submit" class="btn primary">Go</button>
+                </div>
+        </fieldset>
+        </form>
+    </div>
+</div>
