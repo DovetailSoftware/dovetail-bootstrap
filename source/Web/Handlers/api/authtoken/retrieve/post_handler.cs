@@ -1,4 +1,5 @@
-﻿using Dovetail.SDK.Bootstrap.AuthToken;
+﻿using Dovetail.SDK.Bootstrap;
+using Dovetail.SDK.Bootstrap.AuthToken;
 
 namespace Bootstrap.Web.Handlers.api.authtoken.retrieve
 {
@@ -11,13 +12,26 @@ namespace Bootstrap.Web.Handlers.api.authtoken.retrieve
             _api = api;
         }
 
-        public TokenAuthenticationResult Execute(RetrieveAuthTokenRequest request)
+        public AuthenticationToken Execute(RetrieveAuthTokenRequest request)
         {
-            return _api.GetToken(request.Username, request.Password);
+            return AuthenticationTokenRequest.Create(_api.GetToken(request.Username, request.Password));
         }
     }
 
-    public class RetrieveAuthTokenRequest 
+    public class AuthenticationTokenRequest : AuthenticationToken
+    {
+        public static AuthenticationTokenRequest Create(IAuthenticationToken token)
+        {
+            return new AuthenticationTokenRequest
+            {
+                Username = token.Username,
+                Token = token.Token,
+            };
+        }
+    }
+
+
+    public class RetrieveAuthTokenRequest : IUnauthenticatedApi
     {
         public string Username { get; set; }
         public string Password { get; set; }

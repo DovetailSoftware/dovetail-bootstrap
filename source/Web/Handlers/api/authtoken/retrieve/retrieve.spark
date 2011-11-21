@@ -1,8 +1,13 @@
-﻿<viewdata model="Dovetail.SDK.Bootstrap.AuthToken.TokenAuthenticationResult" />
+﻿<use namespace="FubuCore" />
+<viewdata model="Dovetail.SDK.Bootstrap.AuthToken.AuthenticationToken" />
 
 <content:pagehead>
 <h1>Your Authentication Token <small>keep it secret. keep it safe.</small></h1>
 </content:pagehead>
 
-<h2 if="Model.Success">${Model.Username}'s token is ${Model.Token}</h2>
-<h2 if="!Model.Success">Getting your authentication token was not successful.</h2>
+<div if="Model.Token.IsNotEmpty()">
+    <h2>${Model.Username.Capitalize()}'s token</h2>
+    <p class="auth-token">${Model.Token}</p>
+</div>
+
+<h2 if="Model.Token.IsEmpty()">Getting your authentication token was not successful.</h2>

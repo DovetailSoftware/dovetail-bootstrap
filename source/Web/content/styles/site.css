@@ -5,8 +5,7 @@
     padding: 0 10px;
 }
 
-.api-http-method 
-{
+.api-http-method {
     background-color: #3261ac;
     padding: 0 5px;
     width: 30px;
@@ -18,4 +17,10 @@
     color: white;
     line-height: 25px;
     float: left;
+}
+
+.auth-token {
+    font-size: larger;
+    font-weight: bold;
+    padding: 5px;   
 }

@@ -4,5 +4,7 @@
     <description>Authorization token used to authenticate web service calls on behalf of this user</description>
     <length>128</length>
   </addColumn>
+  
+  <!-- TOOD should we add an index for x_authtoken as we will be looking up users by this value? -->
 
 </schemaScript>

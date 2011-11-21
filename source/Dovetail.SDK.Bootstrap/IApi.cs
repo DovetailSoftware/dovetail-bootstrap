@@ -1,6 +1,5 @@
 namespace Dovetail.SDK.Bootstrap
 {
-    public interface IApi
-    {
-    }
+    public interface IUnauthenticatedApi  { }
+    public interface IApi { }
 }

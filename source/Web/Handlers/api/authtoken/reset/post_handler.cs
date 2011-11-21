@@ -12,13 +12,25 @@ namespace Bootstrap.Web.Handlers.api.authtoken.reset
             _api = api;
         }
 
-        public TokenAuthenticationResetResult Execute(ResetAuthTokenRequest request)
+        public AuthenticationTokenReset Execute(ResetAuthTokenRequest request)
         {
-            return _api.ResetToken(request.Username, request.Password);
+            return AuthenticationTokenReset.Create(_api.ResetToken(request.Username, request.Password));
         }
     }
 
-    public class ResetAuthTokenRequest : IApi
+    public class AuthenticationTokenReset : AuthenticationToken
+    {
+        public static AuthenticationTokenReset Create(IAuthenticationToken token)
+        {
+            return new AuthenticationTokenReset
+            {
+                Username = token.Username,
+                Token = token.Token,
+            };
+        }
+    }
+    
+    public class ResetAuthTokenRequest : IUnauthenticatedApi
     {
         public string Username { get; set; }
         public string Password { get; set; }

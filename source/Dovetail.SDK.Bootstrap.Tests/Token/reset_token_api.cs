@@ -17,17 +17,7 @@ namespace Dovetail.SDK.Bootstrap.Tests.Token
 
             var result = _cut.ResetToken(username, password);
 
-            result.Success.ShouldBeFalse();
-        }
-
-        [Test]
-        public void reset_succeeds_when_authentication_succeeds()
-        {
-            MockFor<IUserAuthenticator>().Stub(s => s.Authenticate(username, password)).Return(true);
-
-            var result = _cut.ResetToken(username, password);
-
-            result.Success.ShouldBeTrue();
+            result.Token.ShouldBeNull();
         }
 
         [Test]
@@ -35,7 +25,7 @@ namespace Dovetail.SDK.Bootstrap.Tests.Token
         {
             const string token = "newtoken";
             MockFor<IUserAuthenticator>().Stub(s => s.Authenticate(username, password)).Return(true);
-            MockFor<IAuthTokenRepository>().Stub(s => s.Generate(username)).Return(token);
+            MockFor<IAuthenticationTokenRepository>().Stub(s => s.GenerateToken(username)).Return(new AuthenticationToken {Token = token});
 
             var result = _cut.ResetToken(username, password);
 

@@ -7,24 +7,25 @@ using FubuCore;
 
 namespace Dovetail.SDK.Bootstrap.AuthToken
 {
-    public interface IAuthTokenRepository
+    public interface IAuthenticationTokenRepository
     {
-        string Retrieve(string username);
-        string Generate(string username);
+        IAuthenticationToken RetrieveByToken(string token);
+        IAuthenticationToken RetrieveByUsername(string username);
+        IAuthenticationToken GenerateToken(string username);
     }
 
-    public class AuthTokenRepository : IAuthTokenRepository
+    public class AuthenticationTokenRepository : IAuthenticationTokenRepository
     {
         private readonly IClarifySessionCache _sessionCache;
         private readonly ILogger _logger;
 
-        public AuthTokenRepository(IClarifySessionCache sessionCache, ILogger logger)
+        public AuthenticationTokenRepository(IClarifySessionCache sessionCache, ILogger logger)
         {
             _sessionCache = sessionCache;
             _logger = logger;
         }
 
-        public string Retrieve(string username)
+        public IAuthenticationToken RetrieveByUsername(string username)
         {
             var userGeneric = getQueriedUserGeneric(username);
 
@@ -34,27 +35,49 @@ namespace Dovetail.SDK.Bootstrap.AuthToken
             {
                 _logger.LogDebug("Found token {0} for user {1}.".ToFormat(authToken, username));
 
-                return authToken;
+                return new AuthenticationToken { Token = authToken, Username = username };
             }
 
-            _logger.LogDebug("No existing token found for user {1} generating one.".ToFormat(authToken, username));
-            return Generate(username);
+            _logger.LogDebug("No existing token was found for user {1} generating one.".ToFormat(authToken, username));
+            return GenerateToken(username);
         }
 
-        public string Generate(string username)
+        public IAuthenticationToken RetrieveByToken(string token)
+        {
+            var session = _sessionCache.GetApplicationSession();
+
+            var dataSet = session.CreateDataSet();
+            var userGeneric = dataSet.CreateGeneric("user");
+            userGeneric.DataFields.Add("login_name");
+            userGeneric.Filter(f => f.Equals("x_authtoken", token));
+            userGeneric.Query();
+
+            if (userGeneric.Count < 1)
+            {
+                _logger.LogDebug("No user for token {0} was found.".ToFormat(token));
+                return null;
+            }
+            
+            var username = userGeneric.DataRows().First().AsString("login_name");
+            _logger.LogDebug("Found user {0} for token {1}.".ToFormat(username, token));
+
+            return new AuthenticationToken { Token = token, Username = username };
+        }
+
+        public IAuthenticationToken GenerateToken(string username)
         {
             var userGeneric = getQueriedUserGeneric(username);
 
             var userRow = userGeneric.DataRows().First();
 
-            var newToken = Guid.NewGuid().ToString();
+            var newToken = Guid.NewGuid().ToString().Replace("-","");
 
             _logger.LogInfo("New user authentication token {0} created for {1}.".ToFormat(newToken, username));
 
             userRow["x_authtoken"] = newToken ;
             userGeneric.UpdateAll();
 
-            return newToken;
+            return new AuthenticationToken {Token = newToken, Username = username};
         }
 
         private ClarifyGeneric getQueriedUserGeneric(string username)

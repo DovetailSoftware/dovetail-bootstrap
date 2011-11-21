@@ -17,17 +17,7 @@ namespace Dovetail.SDK.Bootstrap.Tests.Token
 
             var result = _cut.GetToken(username, password);
 
-            result.Success.ShouldBeFalse();
-        }
-
-        [Test]
-        public void get_succeeds_when_authentication_succeeds()
-        {
-            MockFor<IUserAuthenticator>().Stub(s => s.Authenticate(username, password)).Return(true);
-
-            var result = _cut.GetToken(username, password);
-
-            result.Success.ShouldBeTrue();
+            result.Token.ShouldBeNull();
         }
 
         [Test]
@@ -35,8 +25,8 @@ namespace Dovetail.SDK.Bootstrap.Tests.Token
         {
             const string token = "existingtoken";
             MockFor<IUserAuthenticator>().Stub(s => s.Authenticate(username, password)).Return(true);
-            MockFor<IAuthTokenRepository>().Stub(s => s.Retrieve(username)).Return(token);
-
+            MockFor<IAuthenticationTokenRepository>().Stub(s => s.RetrieveByUsername(username)).Return(new AuthenticationToken { Token = token });
+        
             var result = _cut.GetToken(username, password);
 
             result.Token.ShouldEqual(token);

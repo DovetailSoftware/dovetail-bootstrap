@@ -39,7 +39,7 @@ namespace Bootstrap.Web.Handlers.api.gbst.show
         }
     }
     
-    public class GbstShowRequest
+    public class GbstShowRequest 
     {
         public string Name { get; set; }
         public string[] Levels { get; set; }

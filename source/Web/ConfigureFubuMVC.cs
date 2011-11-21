@@ -1,6 +1,7 @@
 using Bootstrap.Web.Handlers;
 using Bootstrap.Web.Handlers.home;
 using Dovetail.SDK.Bootstrap;
+using Dovetail.SDK.Bootstrap.AuthToken;
 using FubuCore;
 using FubuMVC.Core;
 using FubuMVC.Spark;
@@ -21,7 +22,9 @@ namespace Bootstrap.Web
 
             Routes.HomeIs<HomeRequest>();
 
-            Media.ApplyContentNegotiationTo(x => x.ActionOutputType().CanBeCastTo<IApi>());
+            Media.ApplyContentNegotiationTo(x => x.InputType().CanBeCastTo<IApi>() || x.InputType().CanBeCastTo<IUnauthenticatedApi>());
+
+            ApplyConvention<AuthenticationTokenConvention>();
         }
     }
 }
