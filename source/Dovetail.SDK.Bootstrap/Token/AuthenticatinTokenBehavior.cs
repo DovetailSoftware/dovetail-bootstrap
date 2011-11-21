@@ -6,7 +6,7 @@ using FubuMVC.Core;
 using FubuMVC.Core.Behaviors;
 using FubuMVC.Core.Runtime;
 
-namespace Dovetail.SDK.Bootstrap.AuthToken
+namespace Dovetail.SDK.Bootstrap.Token
 {
     public class AuthenticationTokenBehavior : BasicBehavior
     {

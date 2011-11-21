@@ -4,7 +4,7 @@ using FubuCore;
 using FubuMVC.Core.Registration;
 using FubuMVC.Core.Registration.Nodes;
 
-namespace Dovetail.SDK.Bootstrap.AuthToken
+namespace Dovetail.SDK.Bootstrap.Token
 {
     public class AuthenticationTokenConvention : IConfigurationAction
     {

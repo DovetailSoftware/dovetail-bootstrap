@@ -5,7 +5,7 @@ using Dovetail.SDK.Bootstrap.Clarify.Extensions;
 using FChoice.Foundation.Clarify;
 using FubuCore;
 
-namespace Dovetail.SDK.Bootstrap.AuthToken
+namespace Dovetail.SDK.Bootstrap.Token
 {
     public interface IAuthenticationTokenRepository
     {

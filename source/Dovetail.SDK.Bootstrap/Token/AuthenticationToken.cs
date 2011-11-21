@@ -1,4 +1,4 @@
-namespace Dovetail.SDK.Bootstrap.AuthToken
+namespace Dovetail.SDK.Bootstrap.Token
 {
     public interface IAuthenticationToken
     {

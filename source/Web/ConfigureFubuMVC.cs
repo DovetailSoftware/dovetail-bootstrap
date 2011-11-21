@@ -1,7 +1,7 @@
 using Bootstrap.Web.Handlers;
 using Bootstrap.Web.Handlers.home;
 using Dovetail.SDK.Bootstrap;
-using Dovetail.SDK.Bootstrap.AuthToken;
+using Dovetail.SDK.Bootstrap.Token;
 using FubuCore;
 using FubuMVC.Core;
 using FubuMVC.Spark;

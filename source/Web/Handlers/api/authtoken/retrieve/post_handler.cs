@@ -1,5 +1,5 @@
 ﻿using Dovetail.SDK.Bootstrap;
-using Dovetail.SDK.Bootstrap.AuthToken;
+using Dovetail.SDK.Bootstrap.Token;
 
 namespace Bootstrap.Web.Handlers.api.authtoken.retrieve
 {
