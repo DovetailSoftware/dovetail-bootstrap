@@ -15,14 +15,18 @@ namespace Dovetail.SDK.Bootstrap.Token
         private readonly IOutputWriter _outputWriter;
         private readonly IAuthenticationTokenRepository _tokenRepository;
         private readonly AggregateDictionary _aggregateDictionary;
+        private readonly ICurrentSDKUser _currentSdkUser;
         private readonly ILogger _logger;
 
-        public AuthenticationTokenBehavior(IFubuRequest request, IOutputWriter outputWriter, IAuthenticationTokenRepository tokenRepository, AggregateDictionary aggregateDictionary, ILogger logger) : base(PartialBehavior.Executes)
+        public AuthenticationTokenBehavior(IFubuRequest request, IOutputWriter outputWriter, IAuthenticationTokenRepository tokenRepository,
+            AggregateDictionary aggregateDictionary, ICurrentSDKUser currentSdkUser, ILogger logger) 
+            : base(PartialBehavior.Executes)
         {
             _request = request;
             _outputWriter = outputWriter;
             _tokenRepository = tokenRepository;
             _aggregateDictionary = aggregateDictionary;
+            _currentSdkUser = currentSdkUser;
             _logger = logger;
         }
 
@@ -58,8 +62,7 @@ namespace Dovetail.SDK.Bootstrap.Token
             _logger.LogDebug("Authentication token {0} found in {1} validated for user {2}.", authenticationToken, source, authenticationToken);
             _request.Set(authenticationToken);
 
-        	var currentSdkUser = _request.Get<ICurrentSDKUser>();
-        	currentSdkUser.Username = authenticationToken.Username;
+        	_currentSdkUser.Username = authenticationToken.Username;
 
             return DoNext.Continue;    
         }
