@@ -80,6 +80,7 @@
     <Compile Include="History\HistoryBuilder.cs" />
     <Compile Include="History\HistoryMap.cs" />
     <Compile Include="History\HistoryViewModel.cs" />
+    <Compile Include="History\WorkflowObject.cs" />
     <Compile Include="Token\AuthenticatinTokenBehavior.cs" />
     <Compile Include="Token\AuthenticationToken.cs" />
     <Compile Include="Token\AuthenticationTokenConvention.cs" />

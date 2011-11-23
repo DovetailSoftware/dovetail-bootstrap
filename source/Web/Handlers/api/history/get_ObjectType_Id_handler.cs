@@ -15,14 +15,14 @@ namespace Bootstrap.Web.Handlers.api.history
 
         public HistoryViewModel Execute(HistoryRequest request)
         {
-			var workflowObject = WorkflowObject.Create(request.ObjectType); 
+			var workflowObject = WorkflowObject.Create(request.ObjectType, request.Id); 
 			
 			if (request.Since.HasValue)
             {
-            	return _historyBuilder.GetHistorySince(workflowObject, request.Id, request.Since.Value);
+            	return _historyBuilder.GetHistorySince(workflowObject, request.Since.Value);
             }
 
-        	return _historyBuilder.GetHistory(workflowObject, request.Id);
+        	return _historyBuilder.GetHistory(workflowObject);
         }
     }
 
@@ -33,5 +33,4 @@ namespace Bootstrap.Web.Handlers.api.history
 		public DateTime? Since { get; set; }
 		public string Timezone { get; set; }
     }
-
 }

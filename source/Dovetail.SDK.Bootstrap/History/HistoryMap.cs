@@ -10,7 +10,7 @@ namespace Dovetail.SDK.Bootstrap.History
 {
 	public interface IHistoryActEntryBuilder
 	{
-		IEnumerable<HistoryItem> Query(ClarifyGeneric actEntryGeneric);
+        IEnumerable<HistoryItem> Query(WorkflowObject workflowObject, ClarifyGeneric actEntryGeneric);
 	}
 
 	public class ActEntryTemplate
@@ -133,11 +133,9 @@ namespace Dovetail.SDK.Bootstrap.History
 			_currentActEntryTemplate.ActivityDTOEditor = action;
 		}
 
-		public IEnumerable<HistoryItem> Query(ClarifyGeneric actEntryGeneric)
+		public IEnumerable<HistoryItem> Query(WorkflowObject workflowObjectType, ClarifyGeneric actEntryGeneric)
 		{
 			ActEntryGeneric = actEntryGeneric;
-
-			var workflowObjectType = WorkflowObject.Create(actEntryGeneric.ParentGeneric.TableName);
 
 			DefineActEntries(workflowObjectType);
 

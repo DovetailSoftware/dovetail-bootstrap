@@ -80,10 +80,10 @@ namespace Dovetail.SDK.Bootstrap.History
 			ActEntry(4000).DisplayName("Unlinked");
 			ActEntry(9200).DisplayName("Initial Response");
 
-			if (workflowObject == WorkflowObject.Case)
+			if (workflowObject.Type == WorkflowObject.Case)
 				DefineCaseSpecificActEntries();
 
-			if (workflowObject == WorkflowObject.Subcase)
+            if (workflowObject.Type == WorkflowObject.Subcase)
 				DefineSubcaseSpecificActEntries();
 		}
 

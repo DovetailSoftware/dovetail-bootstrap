@@ -11,9 +11,9 @@ namespace Dovetail.SDK.Bootstrap.History
 {
 	public interface IHistoryBuilder
 	{
-		HistoryViewModel GetHistory(WorkflowObject workflowObject, string id);
-		HistoryViewModel GetHistoryTop(WorkflowObject workflowObject, string id, int numberOfMostRecentEntries);
-	    HistoryViewModel GetHistorySince(WorkflowObject workflowObject, string id, DateTime sinceDate);
+		HistoryViewModel GetHistory(WorkflowObject workflowObject);
+		HistoryViewModel GetHistoryTop(WorkflowObject workflowObject, int numberOfMostRecentEntries);
+	    HistoryViewModel GetHistorySince(WorkflowObject workflowObject, DateTime sinceDate);
 	}
 
 	public class HistoryBuilder : IHistoryBuilder
@@ -30,41 +30,41 @@ namespace Dovetail.SDK.Bootstrap.History
 			_schemaCache = schemaCache;
 		}
 
-		public HistoryViewModel GetHistory(WorkflowObject workflowObject, string id)
+		public HistoryViewModel GetHistory(WorkflowObject workflowObject)
 		{
-			_workflowObjectInfo = WorkflowObjectInfo.GetObjectInfo(workflowObject.ToString());
+			_workflowObjectInfo = WorkflowObjectInfo.GetObjectInfo(workflowObject.Type);
 
-			return getHistoryWithConstraint(id, null);
+            return getHistoryWithConstraint(workflowObject, null);
 		}
 
-        public HistoryViewModel GetHistorySince(WorkflowObject workflowObject, string id, DateTime sinceDate)
+        public HistoryViewModel GetHistorySince(WorkflowObject workflowObject, DateTime sinceDate)
         {
-            _workflowObjectInfo = WorkflowObjectInfo.GetObjectInfo(workflowObject.ToString());
+            _workflowObjectInfo = WorkflowObjectInfo.GetObjectInfo(workflowObject.Type);
 
             var filter = new FilterExpression().MoreThan("entry_time", sinceDate);
 
-            return getHistoryWithConstraint(id, filter);
+            return getHistoryWithConstraint(workflowObject, filter);
         }
 
-		public HistoryViewModel GetHistoryTop(WorkflowObject workflowObject, string id, int numberOfMostRecentEntries)
+		public HistoryViewModel GetHistoryTop(WorkflowObject workflowObject, int numberOfMostRecentEntries)
 		{
-			_workflowObjectInfo = WorkflowObjectInfo.GetObjectInfo(workflowObject.ToString());
+            _workflowObjectInfo = WorkflowObjectInfo.GetObjectInfo(workflowObject.Type);
 
-			return getHistoryForFirst(id, null ,numberOfMostRecentEntries);
+            return getHistoryForFirst(workflowObject, null, numberOfMostRecentEntries);
 		}
 
-		private HistoryViewModel getHistoryWithConstraint(string id, Filter actEntryFilter)
+		private HistoryViewModel getHistoryWithConstraint(WorkflowObject workflowObject, Filter actEntryFilter)
 		{
-		    var historyItems = getHistoryItems(id, actEntryFilter);
+            var historyItems = getHistoryItems(workflowObject, actEntryFilter);
 
-		    return new HistoryViewModel {Id = id, HistoryItems = historyItems};
+            return new HistoryViewModel { WorkflowObject= workflowObject, HistoryItems = historyItems };
 		}
 
-	    private IEnumerable<HistoryItem> getHistoryItems(string id, Filter actEntryFilter)
+	    private IEnumerable<HistoryItem> getHistoryItems(WorkflowObject workflowObject, Filter actEntryFilter)
 	    {
 	        var clarifyDataSet = _session.CreateDataSet();
 	        var workflowGeneric = clarifyDataSet.CreateGeneric(_workflowObjectInfo.ObjectName);
-	        workflowGeneric.AppendFilter(_workflowObjectInfo.IDFieldName, StringOps.Equals, id);
+            workflowGeneric.AppendFilter(_workflowObjectInfo.IDFieldName, StringOps.Equals, workflowObject.Id);
 	        workflowGeneric.DataFields.Add("title");
 
 	        var conditionGeneric = workflowGeneric.Traverse(_workflowObjectInfo.ConditionRelation);
@@ -80,16 +80,16 @@ namespace Dovetail.SDK.Bootstrap.History
 	            actEntryGeneric.Filter.AddFilter(actEntryFilter);
 	        }
 
-            var activityDTOS = _historyActEntryBuilder.Query(actEntryGeneric).OrderByDescending(a => a.When);
+            var activityDTOS = _historyActEntryBuilder.Query(workflowObject, actEntryGeneric).OrderByDescending(a => a.When);
 
             return activityDTOS;
 	    }
 
-	    private HistoryViewModel getHistoryForFirst(string id, Filter actEntryFilter, int numberOfEntries)
+        private HistoryViewModel getHistoryForFirst(WorkflowObject workflowObject, Filter actEntryFilter, int numberOfEntries)
 		{
-            var historyItems = getHistoryItems(id, actEntryFilter).Take(numberOfEntries);
+            var historyItems = getHistoryItems(workflowObject, actEntryFilter).Take(numberOfEntries);
 
-            return new HistoryViewModel { Id = id, HistoryItems = historyItems };
+            return new HistoryViewModel { WorkflowObject= workflowObject, HistoryItems = historyItems };
 		}
 	}
 }
