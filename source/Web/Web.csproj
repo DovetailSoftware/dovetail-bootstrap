@@ -94,6 +94,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="content\scripts\site.js" />
+    <Content Include="content\scripts\moment.min.js" />
     <Content Include="content\styles\bootstrap.min.css" />
     <Content Include="content\styles\site.css" />
     <Content Include="Web.config">
@@ -123,6 +125,7 @@
     <None Include="Handlers\api\authtoken\retrieve\retrieve.spark" />
     <None Include="Handlers\api\authtoken\authtoken.spark" />
     <None Include="Handlers\api\authtoken\reset\reset.spark" />
+    <None Include="Handlers\api\history\history.spark" />
     <None Include="Handlers\home\home.spark" />
     <None Include="Handlers\about\about.spark" />
     <None Include="Shared\Application.spark" />
