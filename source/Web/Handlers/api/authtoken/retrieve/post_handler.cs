@@ -12,7 +12,7 @@ namespace Bootstrap.Web.Handlers.api.authtoken.retrieve
             _api = api;
         }
 
-        public AuthenticationToken Execute(RetrieveAuthTokenRequest request)
+        public AuthenticationTokenRequest Execute(RetrieveAuthTokenRequest request)
         {
             return AuthenticationTokenRequest.Create(_api.GetToken(request.Username, request.Password));
         }

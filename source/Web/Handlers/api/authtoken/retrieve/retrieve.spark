@@ -1,5 +1,5 @@
 ﻿<use namespace="FubuCore" />
-<viewdata model="Dovetail.SDK.Bootstrap.AuthToken.AuthenticationToken" />
+<viewdata model="Bootstrap.Web.Handlers.api.authtoken.retrieve.AuthenticationTokenRequest" />
 
 <content:pagehead>
 <h1>Your Authentication Token <small>keep it secret. keep it safe.</small></h1>
