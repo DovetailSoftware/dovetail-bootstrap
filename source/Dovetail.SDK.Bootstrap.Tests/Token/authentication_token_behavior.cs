@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Net;
+using Dovetail.SDK.Bootstrap.Clarify;
 using Dovetail.SDK.Bootstrap.Token;
 using FubuCore.Binding;
 using FubuMVC.Core.Runtime;
@@ -8,7 +9,7 @@ using Rhino.Mocks;
 
 namespace Dovetail.SDK.Bootstrap.Tests.Token
 {
-    public class behavior : Context<AuthenticationTokenBehavior>
+    public class authentication_token_behavior : Context<AuthenticationTokenBehavior>
     {
         private AggregateDictionary _aggregateDictionary;
         private string _token;
@@ -21,6 +22,7 @@ namespace Dovetail.SDK.Bootstrap.Tests.Token
 
             _aggregateDictionary.AddDictionary("Other", _requestDictionary);
 
+			MockFor<IFubuRequest>().Stub(a => a.Get<ICurrentSDKUser>()).Return(MockFor<ICurrentSDKUser>());
         }
 
         public override void OverrideMocks()
@@ -67,6 +69,17 @@ namespace Dovetail.SDK.Bootstrap.Tests.Token
 
             MockFor<IFubuRequest>().AssertWasCalled(a => a.Set(authToken));
         }
+
+		[Test]
+		public void should_set_current_sdk_user_when_validated()
+		{
+			IAuthenticationToken authToken = new AuthenticationToken { Token = _token, Username = "annie"};
+			MockFor<IAuthenticationTokenRepository>().Stub(a => a.RetrieveByToken(_token)).Return(authToken);
+
+			_cut.Invoke();
+			
+			MockFor<ICurrentSDKUser>().AssertWasCalled(s=>s.Username = "annie");
+		}
 
     }
 }

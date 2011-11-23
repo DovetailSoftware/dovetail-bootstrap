@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using Dovetail.SDK.Bootstrap.Clarify;
 using FubuCore;
 using FubuCore.Binding;
 using FubuMVC.Core;
@@ -56,6 +57,10 @@ namespace Dovetail.SDK.Bootstrap.Token
 
             _logger.LogDebug("Authentication token {0} found in {1} validated for user {2}.", authenticationToken, source, authenticationToken);
             _request.Set(authenticationToken);
+
+        	var currentSdkUser = _request.Get<ICurrentSDKUser>();
+        	currentSdkUser.Username = authenticationToken.Username;
+
             return DoNext.Continue;    
         }
 

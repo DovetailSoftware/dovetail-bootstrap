@@ -1,6 +1,3 @@
-using System;
-using FubuCore;
-
 namespace Dovetail.SDK.Bootstrap.Clarify
 {
     public interface IClarifySessionProvider
@@ -12,21 +9,20 @@ namespace Dovetail.SDK.Bootstrap.Clarify
     {
         private readonly IClarifySessionCache _sessionCache;
         private readonly ICurrentSDKUser _user;
+		private readonly DovetailDatabaseSettings _settings;
 
-        public ClarifySessionProvider(IClarifySessionCache sessionCache, ICurrentSDKUser user)
+		public ClarifySessionProvider(IClarifySessionCache sessionCache, ICurrentSDKUser user, DovetailDatabaseSettings settings)
         {
             _sessionCache = sessionCache;
             _user = user;
+        	_settings = settings;
         }
 
         public IClarifySession GetHttpRequestSession()
         {
-            if(_user.Username.IsEmpty())
-            {
-                throw new ArgumentException("Clarify session provider needs to know who the current SDK user. It is the responsibility of calling code to set this value.");
-            }
+        	var username = _user.Username ?? _settings.ApplicationUsername;
 
-            return  (_user.IsContact) ? _sessionCache.GetContactSession(_user.Username) : _sessionCache.GetUserSession(_user.Username);
+            return  _sessionCache.GetUserSession(username);
         }
     }
 }

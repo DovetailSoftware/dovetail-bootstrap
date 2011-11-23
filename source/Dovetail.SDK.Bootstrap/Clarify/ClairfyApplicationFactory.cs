@@ -10,9 +10,15 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 {
     public class DovetailDatabaseSettings 
     {
-        public string Type { get; set; }
+    	public DovetailDatabaseSettings()
+    	{
+    		ApplicationUsername = "sa";
+    	}
+
+    	public string Type { get; set; }
         public string ConnectionString { get; set; }
         public int SessionTimeoutInMinutes { get; set; }
+    	public string ApplicationUsername { get; set; }
     }
     
     public interface IClarifyApplicationFactory
