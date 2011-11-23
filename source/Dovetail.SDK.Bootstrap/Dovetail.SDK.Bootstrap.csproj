@@ -75,6 +75,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="History\HistoryActEntryBuilder.cs" />
+    <Compile Include="History\HistoryBuilder.cs" />
+    <Compile Include="History\HistoryMap.cs" />
+    <Compile Include="History\HistoryViewModel.cs" />
     <Compile Include="Token\AuthenticatinTokenBehavior.cs" />
     <Compile Include="Token\AuthenticationToken.cs" />
     <Compile Include="Token\AuthenticationTokenConvention.cs" />
@@ -96,6 +101,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
