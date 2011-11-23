@@ -13,22 +13,34 @@
     <link rel="stylesheet" href="~/content/styles/site.css" type="text/css" media="screen" />
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
     <script src="~/content/scripts/moment.min.js"></script>
+    <script src="~/content/scripts/bootstrap-dropdown.js"></script>
     <script src="~/content/scripts/site.js"></script>
     <use content="head"></use>
 </head>
 <body>
-    <div class="topbar">
+    <div class="topbar" data-dropdown="dropdown">
         <div class="fill">
             <div class="container">
                 <a class="brand" href="/">Dovetail Bootstrap</a>
                 <ul class="nav">
-                    <li>!{this.LinkTo<Bootstrap.Web.Handlers.api.gbst.GbstListsRequest>().Text("Lists")} </li>
                     <li>!{this.LinkTo<Bootstrap.Web.Handlers.about.AboutRequest>().Text("About")} </li>
+                    <li>!{this.LinkTo<Bootstrap.Web.Handlers.api.gbst.GbstListsRequest>().Text("Lists")} </li>
+                    
+                    <li class="dropdown">
+                      <a href="#" class="dropdown-toggle">APIs</a>
+                      <ul class="dropdown-menu">
+                        <li><a href="${this.Urls.UrlFor(new Bootstrap.Web.Handlers.api.authtoken.AuthTokenRequest())}">Auth Tokens</a></li>
+                        <li class="divider"></li>
+                        <li><a href="${this.Urls.UrlFor(new Bootstrap.Web.Handlers.api.history.HistoryRequest { Type = "case", Id = "1" })}">History</a></li>
+                      </ul>
+                    </li>
+
                     <li><a href="/_fubu">Diagnostics</a></li>
                 </ul>
             </div>
         </div>
     </div>
+
     <div class="container">
 
       <div class="content">

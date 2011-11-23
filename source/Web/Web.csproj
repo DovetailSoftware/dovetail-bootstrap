@@ -117,7 +117,7 @@
     <Compile Include="Handlers\api\authtoken\reset\post_handler.cs" />
     <Compile Include="Handlers\api\gbst\get_handler.cs" />
     <Compile Include="Handlers\api\gbst\show\get_Name_handler.cs" />
-    <Compile Include="Handlers\api\history\get_ObjectType_Id_handler.cs" />
+    <Compile Include="Handlers\api\history\get_Type_Id_handler.cs" />
     <Compile Include="Handlers\home\get_handler.cs" />
     <Compile Include="Handlers\HandlerMarker.cs" />
     <Content Include="fubu-content\fubumvc-diagnostics.zip" />

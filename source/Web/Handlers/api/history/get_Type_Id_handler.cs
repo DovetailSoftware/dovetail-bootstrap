@@ -4,18 +4,18 @@ using Dovetail.SDK.Bootstrap.History;
 
 namespace Bootstrap.Web.Handlers.api.history
 {
-	public class get_ObjectType_Id_handler
+	public class get_Type_Id_handler
 	{
         private readonly IHistoryBuilder _historyBuilder;
 
-        public get_ObjectType_Id_handler(IHistoryBuilder historyBuilder) 
+        public get_Type_Id_handler(IHistoryBuilder historyBuilder) 
         {
             _historyBuilder = historyBuilder;
         }
 
         public HistoryViewModel Execute(HistoryRequest request)
         {
-			var workflowObject = WorkflowObject.Create(request.ObjectType, request.Id); 
+			var workflowObject = WorkflowObject.Create(request.Type, request.Id); 
 			
 			if (request.Since.HasValue)
             {
@@ -26,9 +26,9 @@ namespace Bootstrap.Web.Handlers.api.history
         }
     }
 
-	public class HistoryRequest : IUnauthenticatedApi 
+	public class HistoryRequest : IApi 
     {
-        public string ObjectType { get; set; }
+        public string Type { get; set; }
 		public string Id { get; set; }
 		public DateTime? Since { get; set; }
 		public string Timezone { get; set; }
