@@ -1,0 +1,5 @@
+﻿<viewdata model="Bootstrap.Web.Handlers.api.cases.create.CreateCaseResult" />
+<content:pagehead>
+<h1>Case Created</h1>
+</content:pagehead>
+<h2>Case ${Model.Id} was created</h2>

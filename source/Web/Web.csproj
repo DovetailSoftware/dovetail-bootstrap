@@ -39,6 +39,7 @@
     <Reference Include="FChoice.Common">
       <HintPath>..\..\libs\DovetailSDK\FChoice.Common.dll</HintPath>
     </Reference>
+    <Reference Include="FChoice.Toolkits.Clarify, Version=3.1.0.2, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL" />
     <Reference Include="fcSDK">
       <HintPath>..\..\libs\DovetailSDK\fcSDK.dll</HintPath>
     </Reference>
@@ -94,10 +95,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="content\scripts\bootstrap-dropdown.js" />
     <Content Include="content\scripts\site.js" />
     <Content Include="content\scripts\moment.min.js" />
     <Content Include="content\styles\bootstrap.min.css" />
     <Content Include="content\styles\site.css" />
+    <Content Include="Shared\bindings.xml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -115,6 +118,9 @@
     <Compile Include="Handlers\api\authtoken\retrieve\post_handler.cs" />
     <Compile Include="Handlers\api\authtoken\get_handler.cs" />
     <Compile Include="Handlers\api\authtoken\reset\post_handler.cs" />
+    <Compile Include="Handlers\api\cases\create\CreateCaseModel.cs" />
+    <Compile Include="Handlers\api\cases\create\get_handler.cs" />
+    <Compile Include="Handlers\api\cases\create\post_handler.cs" />
     <Compile Include="Handlers\api\gbst\get_handler.cs" />
     <Compile Include="Handlers\api\gbst\show\get_Name_handler.cs" />
     <Compile Include="Handlers\api\history\get_Type_Id_handler.cs" />
@@ -125,6 +131,8 @@
     <None Include="Handlers\api\authtoken\retrieve\retrieve.spark" />
     <None Include="Handlers\api\authtoken\authtoken.spark" />
     <None Include="Handlers\api\authtoken\reset\reset.spark" />
+    <None Include="Handlers\api\cases\create\post.spark" />
+    <None Include="Handlers\api\cases\create\get.spark" />
     <None Include="Handlers\api\history\history.spark" />
     <None Include="Handlers\home\home.spark" />
     <None Include="Handlers\about\about.spark" />

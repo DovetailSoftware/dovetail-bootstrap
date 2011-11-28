@@ -1,0 +1,102 @@
+﻿<viewdata model="Bootstrap.Web.Handlers.api.cases.create.CreateCaseModel" />
+<content:pagehead>
+<h1>Create Case</h1>
+</content:pagehead>
+<div class="row">
+    <div class="span4">
+        <p>
+            A most basic case creation - meant as an example for you to build upon.
+        </p>
+        <span class="api-http-method">POST</span> <span class="api-url">${this.Urls.UrlFor(new
+            Bootstrap.Web.Handlers.api.cases.create.CreateCaseInputModel())}</span>
+    </div>
+    <div class="span6">
+        <form action="${this.Urls.UrlFor(new Bootstrap.Web.Handlers.api.cases.create.CreateCaseInputModel())}"
+        method="POST">
+
+            <div class="clearfix">
+                <label for="authToken">Authorization Token</label>
+                <div class="input">
+                    <input name="authToken" size="30" type="text" />
+                </div>
+            </div>
+        
+        <fieldset>
+            <legend>Contact</legend>
+            <div class="clearfix">
+                <label for="ContactFirstName">First Name</label>
+                <div class="input">
+                    <input name="ContactFirstName" size="30" type="text" />
+                </div>
+            </div>
+            <div class="clearfix">
+                <label for="ContactLastName">Last Name</label>
+                <div class="input">
+                    <input name="ContactLastName" size="30" type="text" />
+                </div>
+            </div>
+            <div class="clearfix">
+                <label for="ContactPhone">Phone</label>
+                <div class="input">
+                    <input name="ContactPhone" size="30" type="text" />
+                </div>
+            </div>
+              <div class="clearfix">
+                <label for="SiteId">Site Id</label>
+                <div class="input">
+                    <input name="SiteId" size="10" type="text" />
+                </div>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>Case Details</legend>
+            <div class="clearfix">
+                <label for="Title">Title</label>
+                <div class="input">
+                    <input class="span6" name="Title" size="30" type="text" />
+                </div>
+            </div>
+            <div class="clearfix">
+                <label for="Description">Description</label>
+                <div class="input">
+                    <textarea class="span6" name="Description" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="clearfix">
+                <label for="Queue">Dispatch To Queue</label>
+                <div class="input">
+                    <input name="Queue" size="30" type="text" />
+                </div>
+            </div>
+
+            <div class="clearfix">
+                <label for="CaseType">Type</label>
+                <div class="input">
+                    ${this.InputFor(m=>m.CaseType)}
+                </div>
+            </div>
+            
+            <div class="clearfix">
+                <label for="Severity">Severity</label>
+                <div class="input">
+                    ${this.InputFor(m=>m.IssueSeverity)}
+                </div>
+            </div>
+
+            <div class="clearfix">
+                <label for="Priority">Priority</label>
+                <div class="input">
+                    ${this.InputFor(m=>m.Priority)}
+                </div>
+            </div>
+
+            <div class="clearfix">
+                <div class="actions">
+                    <button type="submit" class="btn primary">Go</button>
+                </div>
+            </div>
+
+        </fieldset>
+        </form>
+    </div>
+</div>

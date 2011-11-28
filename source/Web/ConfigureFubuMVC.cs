@@ -25,6 +25,8 @@ namespace Bootstrap.Web
             Media.ApplyContentNegotiationTo(x => x.InputType().CanBeCastTo<IApi>() || x.InputType().CanBeCastTo<IUnauthenticatedApi>());
 
             ApplyConvention<AuthenticationTokenConvention>();
+
+            HtmlConvention<BootstrapHtmlConvention>();
         }
     }
 }
