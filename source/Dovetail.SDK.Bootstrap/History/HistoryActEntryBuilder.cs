@@ -66,7 +66,7 @@ namespace Dovetail.SDK.Bootstrap.History
 			ActEntry(4100).DisplayName("Yanked");
 			ActEntry(4200).DisplayName("Subcase Reopened");
 			ActEntry(7200).DisplayName("Administrative Subcase Created");
-			ActEntry(8700).DisplayName("Time and Expense Editted");
+			ActEntry(8700).DisplayName("Time and Expense Edited");
 			
 			//TODO add policy for attachment adds for: Seeker attachment downloads, url rewriting, plain
 			ActEntry(8900).DisplayName("Attachment Added");
