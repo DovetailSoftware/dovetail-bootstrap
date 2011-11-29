@@ -1,4 +1,3 @@
-
 Dovetail Bootstrap
 ==================
 
@@ -43,7 +42,7 @@ Take it for a spin
 
 ### Open the Solution
 
-Double click on the 2010 Visual Studio solution: _/sources/Bootstrap.sln_
+Double click on the 2010 Visual Studio solution: _/source/Bootstrap.sln_
 
 ### Launch!
 
