@@ -39,7 +39,10 @@
     <Reference Include="FChoice.Common">
       <HintPath>..\..\libs\DovetailSDK\FChoice.Common.dll</HintPath>
     </Reference>
-    <Reference Include="FChoice.Toolkits.Clarify, Version=3.1.0.2, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL" />
+    <Reference Include="FChoice.Toolkits.Clarify, Version=3.1.0.26, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\libs\DovetailSDK\FChoice.Toolkits.Clarify.dll</HintPath>
+    </Reference>
     <Reference Include="fcSDK">
       <HintPath>..\..\libs\DovetailSDK\fcSDK.dll</HintPath>
     </Reference>
