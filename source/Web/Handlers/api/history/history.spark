@@ -1,5 +1,6 @@
 ﻿<viewdata model="Dovetail.SDK.Bootstrap.History.HistoryViewModel" />
 <use namespace="FubuCore" />
+<use master="Embedded" />
 <content:head>
 <style type="text/css">
     
