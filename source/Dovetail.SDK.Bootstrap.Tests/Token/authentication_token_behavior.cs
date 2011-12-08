@@ -73,12 +73,13 @@ namespace Dovetail.SDK.Bootstrap.Tests.Token
 		[Test]
 		public void should_set_current_sdk_user_when_validated()
 		{
-			IAuthenticationToken authToken = new AuthenticationToken { Token = _token, Username = "annie"};
+		    const string username = "annie";
+		    IAuthenticationToken authToken = new AuthenticationToken { Token = _token, Username = username};
 			MockFor<IAuthenticationTokenRepository>().Stub(a => a.RetrieveByToken(_token)).Return(authToken);
 
 			_cut.Invoke();
 			
-			MockFor<ICurrentSDKUser>().AssertWasCalled(s=>s.Username = "annie");
+			MockFor<ICurrentSDKUser>().AssertWasCalled(s=>s.SetUserName(username));
 		}
 
     }

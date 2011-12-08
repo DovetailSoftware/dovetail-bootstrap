@@ -28,8 +28,11 @@ namespace Dovetail.SDK.Bootstrap
             For<IListCache>().Use(c => c.GetInstance<IClarifyApplicationFactory>().Create().ListCache);
 
             For<IClarifySession>()
-                .HybridHttpOrThreadLocalScoped()
-                .Use(ctx => ctx.GetInstance<IClarifySessionProvider>().GetHttpRequestSession());
+                .Use(ctx =>
+                         {
+                             var user = ctx.GetInstance<ICurrentSDKUser>();
+                             return ctx.GetInstance<IClarifySessionCache>().GetUserSession(user);
+                         });
 
             For<ILogger>()
                 .AlwaysUnique()

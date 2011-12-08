@@ -16,5 +16,17 @@ namespace Dovetail.SDK.Bootstrap.Clarify.Extensions
 
             return generic;
         }
+
+        public static ClarifyGeneric TraverseWithFields(this ClarifyGeneric generic, string relationName, params string[] fields)
+        {
+            if (fields == null || fields.Length < 1)
+                fields = new[] {"objid"};
+
+            var childGeneric = generic.Traverse(relationName);
+
+            childGeneric.DataFields.AddRange(fields);
+
+            return childGeneric;
+        }
     }
 }

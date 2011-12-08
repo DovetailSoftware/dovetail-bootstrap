@@ -99,7 +99,6 @@
     <Compile Include="Clarify\ClarifySessionCache.cs" />
     <Compile Include="Clarify\Extensions\ClarifyDataRowExtensions.cs" />
     <Compile Include="Clarify\Extensions\ClarifyGenericExtensions.cs" />
-    <Compile Include="Clarify\IClarifySessionProvider.cs" />
     <Compile Include="Clarify\ICurrentSDKUser.cs" />
     <Compile Include="IApi.cs" />
     <Compile Include="ILogger.cs" />

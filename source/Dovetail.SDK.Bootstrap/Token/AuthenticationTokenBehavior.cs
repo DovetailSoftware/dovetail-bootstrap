@@ -62,7 +62,7 @@ namespace Dovetail.SDK.Bootstrap.Token
             _logger.LogDebug("Authentication token {0} found in {1} validated for user {2}.", authenticationToken, source, authenticationToken);
             _request.Set(authenticationToken);
 
-        	_currentSdkUser.Username = authenticationToken.Username;
+            _currentSdkUser.SetUserName(authenticationToken.Username);
 
             return DoNext.Continue;    
         }

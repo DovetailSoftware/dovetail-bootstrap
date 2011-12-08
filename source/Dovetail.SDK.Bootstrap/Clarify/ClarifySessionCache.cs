@@ -7,15 +7,15 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 {
     public interface IClarifySessionCache
     {
-        IClarifySession GetUserSession(string username);
+        IClarifySession GetUserSession(ICurrentSDKUser user);
         IClarifySession GetApplicationSession();
-        IClarifySession GetContactSession(string username);
     }
 
     public class ClarifySessionCache : IClarifySessionCache
     {
         private readonly IClarifyApplicationFactory _clarifyApplicationFactory;
         private readonly ILogger _logger;
+        private readonly ILocaleCache _localeCache;
 
         //TODO configure StructureMap to do the Create() for us
         private ClarifyApplication _clarifyApplication;
@@ -23,10 +23,11 @@ namespace Dovetail.SDK.Bootstrap.Clarify
         private readonly Cache<string, Guid> _contactSessionCacheByUsername = new Cache<string, Guid>();
         private Guid _applicationSessionId;
 
-        public ClarifySessionCache(IClarifyApplicationFactory clarifyApplicationFactory, ILogger logger)
+        public ClarifySessionCache(IClarifyApplicationFactory clarifyApplicationFactory, ILogger logger, ILocaleCache localeCache)
         {
             _clarifyApplicationFactory = clarifyApplicationFactory;
             _logger = logger;
+            _localeCache = localeCache;
             _agentSessionCacheByUsername.OnMissing = onAgentMissing;
             _contactSessionCacheByUsername.OnMissing = onContactMissing;
         }
@@ -58,19 +59,23 @@ namespace Dovetail.SDK.Bootstrap.Clarify
             return clarifySession.SessionID;
         }
 
-        public IClarifySession GetUserSession(string username)
+        public IClarifySession GetUserSession(ICurrentSDKUser user)
         {
+            var username = user.Username;
             var sessionId = _agentSessionCacheByUsername[username];
 
             try
             {
-                return wrapSession(ClarifyApplication.GetSession(sessionId));
+                var session = ClarifyApplication.GetSession(sessionId);
+                session.LocalTimeZone = user.Timezone;
+
+                return wrapSession(session);
             }
             catch (Exception exception)
             {
                 _logger.LogDebug("Could not retrieve agent session via id {0}. Likely it expired. Creating a new one. Error: {1}".ToFormat(sessionId, exception.Message));
                 _agentSessionCacheByUsername.Remove(username);
-                return GetUserSession(username);
+                return GetUserSession(user);
             }
         }
 
