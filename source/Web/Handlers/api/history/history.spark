@@ -13,18 +13,18 @@
 <div class="history-item" each="var item in Model.HistoryItems">
 <div class="history-item-header">
     <h3>
-    <span class="agent-name">${item.Kind}</span>
+    <span class="action-taken">${item.Kind}</span>
 	<span class="date-ago">${item.When}</span>
     </h3>
     <div class="history-item-description">
-    <span class="action-taken">By ${item.Who.Name}</span>
+    <span class="agent-name">By ${item.Who.Name}</span>
     <span class="time-ago">on ${item.When.ToString("MM/dd/yyyy")} at ${item.When.ToLongTimeString()}</span>
     </div>
     <div class="notes">
-    ${item.Detail}
+    !{item.Detail}
     </div>
     <div class="internal" if="item.Internal.IsNotEmpty()">
-        ${item.Internal}
+        !{item.Internal}
     </div>
 </div>
 </div>

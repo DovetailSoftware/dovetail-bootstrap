@@ -21,8 +21,8 @@ namespace Dovetail.SDK.Bootstrap.History
 		    HTMLizer = item =>
 		                   {
 		                       item.Kind = item.Kind;
-		                       item.Detail = item.Detail.ToHtml();
-		                       item.Internal = item.Internal.ToHtml();
+		                       item.Detail = item.Detail.HtmlEncode().ToHtml();
+                               item.Internal = item.Internal.HtmlEncode().ToHtml();
 		                       item.Who.Name = item.Who.Name;
                                item.Who.Login = item.Who.Login;
 		                   };

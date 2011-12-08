@@ -15,7 +15,7 @@ namespace Dovetail.SDK.Bootstrap.Extensions
 
 			var result = find2OrMoreLineBreaks.Replace(toHtml, Environment.NewLine);
 
-			result = findEndOfLine.Replace(result, "<br/><br/>");
+			result = findEndOfLine.Replace(result, "<br/>");
 
 			result = urlFinderRegEx.Replace(result, @"<a href=""${link}"">${link}</a>");
 
