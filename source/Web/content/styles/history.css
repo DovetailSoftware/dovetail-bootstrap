@@ -22,3 +22,33 @@ html, body
 {
     display: none;
 }
+
+h3
+{
+    line-height: 30px;
+    margin-top: 3px;
+    border-top : 1px grey dotted;
+}
+
+.notes {
+    margin-top: 3px; 
+}
+
+.history-item-description:before {
+    content: " - ";
+}
+.history-item-description {
+    font-style: italic;
+}
+
+.internal:before {
+    content: "Internal Note:";
+}
+.internal 
+{
+    margin: 13px;
+    padding: 13px;
+    background-color: #FFC;
+    
+    border: 1px grey dotted;
+}
