@@ -80,6 +80,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Clarify\ApplicationSessionCache.cs" />
     <Compile Include="Clarify\Lists\GbstListValueDropdownBuilder.cs" />
     <Compile Include="Clarify\Lists\GbstListValueAttribute.cs" />
     <Compile Include="Clarify\Lists\ListNames.cs" />

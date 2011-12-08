@@ -7,6 +7,8 @@ using FChoice.Toolkits.Clarify.Support;
 
 namespace Dovetail.SDK.Bootstrap.Clarify
 {
+    public interface IApplicationClarifySession : IClarifySession { }
+
     public interface IClarifySession
     {
         Guid Id { get; }
@@ -21,7 +23,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
         SqlHelper CreateSqlHelper(string sql);
     }
 
-    public class ClarifySessionWrapper : IClarifySession
+    public class ClarifySessionWrapper : IApplicationClarifySession
     {
         public ClarifySessionWrapper(ClarifySession clarifySession)
         {

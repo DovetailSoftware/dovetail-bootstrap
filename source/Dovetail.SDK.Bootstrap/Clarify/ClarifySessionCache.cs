@@ -7,15 +7,14 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 {
     public interface IClarifySessionCache
     {
-        IClarifySession GetUserSession(ICurrentSDKUser user);
-        IClarifySession GetApplicationSession();
+        IClarifySession GetUserSession();
     }
 
     public class ClarifySessionCache : IClarifySessionCache
     {
         private readonly IClarifyApplicationFactory _clarifyApplicationFactory;
         private readonly ILogger _logger;
-        private readonly ILocaleCache _localeCache;
+        private readonly ICurrentSDKUser _currentSdkUser;
 
         //TODO configure StructureMap to do the Create() for us
         private ClarifyApplication _clarifyApplication;
@@ -23,11 +22,11 @@ namespace Dovetail.SDK.Bootstrap.Clarify
         private readonly Cache<string, Guid> _contactSessionCacheByUsername = new Cache<string, Guid>();
         private Guid _applicationSessionId;
 
-        public ClarifySessionCache(IClarifyApplicationFactory clarifyApplicationFactory, ILogger logger, ILocaleCache localeCache)
+        public ClarifySessionCache(IClarifyApplicationFactory clarifyApplicationFactory, ILogger logger, ICurrentSDKUser currentSdkUser)
         {
             _clarifyApplicationFactory = clarifyApplicationFactory;
             _logger = logger;
-            _localeCache = localeCache;
+            _currentSdkUser = currentSdkUser;
             _agentSessionCacheByUsername.OnMissing = onAgentMissing;
             _contactSessionCacheByUsername.OnMissing = onContactMissing;
         }
@@ -59,15 +58,15 @@ namespace Dovetail.SDK.Bootstrap.Clarify
             return clarifySession.SessionID;
         }
 
-        public IClarifySession GetUserSession(ICurrentSDKUser user)
+        public IClarifySession GetUserSession()
         {
-            var username = user.Username;
+            var username = _currentSdkUser.Username;
             var sessionId = _agentSessionCacheByUsername[username];
 
             try
             {
                 var session = ClarifyApplication.GetSession(sessionId);
-                session.LocalTimeZone = user.Timezone;
+                session.LocalTimeZone = _currentSdkUser.Timezone;
 
                 return wrapSession(session);
             }
@@ -75,7 +74,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
             {
                 _logger.LogDebug("Could not retrieve agent session via id {0}. Likely it expired. Creating a new one. Error: {1}".ToFormat(sessionId, exception.Message));
                 _agentSessionCacheByUsername.Remove(username);
-                return GetUserSession(user);
+                return GetUserSession();
             }
         }
 

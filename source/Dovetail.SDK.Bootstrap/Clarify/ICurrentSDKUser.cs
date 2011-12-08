@@ -16,28 +16,27 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 
     public class CurrentSDKUser : ICurrentSDKUser
     {
-        private readonly IClarifySessionCache _sessionCache;
+        private readonly IApplicationClarifySession _session;
         private readonly ILogger _logger;
         private readonly ILocaleCache _localeCache;
 
         public string Username { get; set; }
         public ITimeZone Timezone { get; set; }
 
-        public CurrentSDKUser(IClarifySessionCache sessionCache, DovetailDatabaseSettings settings, ILocaleCache localeCache, ILogger logger)
+        public CurrentSDKUser(IApplicationClarifySession session, DovetailDatabaseSettings settings, ILocaleCache localeCache, ILogger logger)
         {
             //defaults to application user and the server timezone
             Username = settings.ApplicationUsername;
             Timezone = localeCache.ServerTimeZone;
 
-            _sessionCache = sessionCache;
+            _session = session;
             _logger = logger;
             _localeCache = localeCache;
         }
 
         public void SetUserName(string username)
         {
-            var session = _sessionCache.GetApplicationSession();
-            var dataSet = session.CreateDataSet();
+            var dataSet = _session.CreateDataSet();
             var userGeneric = dataSet.CreateGeneric("user");
             userGeneric.Filter(f => f.Equals("login_name", username));
             userGeneric.DataFields.Add("objid");

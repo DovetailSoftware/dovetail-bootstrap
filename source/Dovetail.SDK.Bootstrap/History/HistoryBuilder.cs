@@ -19,14 +19,14 @@ namespace Dovetail.SDK.Bootstrap.History
 	public class HistoryBuilder : IHistoryBuilder
 	{
 		private readonly IHistoryActEntryBuilder _historyActEntryBuilder;
-		private readonly IClarifySession _session;
+        private readonly IClarifySessionCache _sessionCache;
 		private readonly ISchemaCache _schemaCache;
 		private WorkflowObjectInfo _workflowObjectInfo;
 
-		public HistoryBuilder(IHistoryActEntryBuilder historyActEntryBuilder, IClarifySession session, ISchemaCache schemaCache)
+		public HistoryBuilder(IHistoryActEntryBuilder historyActEntryBuilder, IClarifySessionCache sessionCache, ISchemaCache schemaCache)
 		{
 			_historyActEntryBuilder = historyActEntryBuilder;
-			_session = session;
+			_sessionCache = sessionCache;
 			_schemaCache = schemaCache;
 		}
 
@@ -62,7 +62,7 @@ namespace Dovetail.SDK.Bootstrap.History
 
 	    private IEnumerable<HistoryItem> getHistoryItems(WorkflowObject workflowObject, Filter actEntryFilter)
 	    {
-	        var clarifyDataSet = _session.CreateDataSet();
+	        var clarifyDataSet = _sessionCache.GetUserSession().CreateDataSet();
 	        var workflowGeneric = clarifyDataSet.CreateGeneric(_workflowObjectInfo.ObjectName);
             workflowGeneric.AppendFilter(_workflowObjectInfo.IDFieldName, StringOps.Equals, workflowObject.Id);
 	        workflowGeneric.DataFields.Add("title");

@@ -5,16 +5,16 @@ namespace Bootstrap.Web.Handlers.home
 {
     public class get_handler
     {
-        private readonly IClarifySession _session;
+        private readonly IClarifySessionCache _sessionCache;
 
-        public get_handler(IClarifySession session)
+        public get_handler(IClarifySessionCache sessionCache)
         {
-            _session = session;
+            _sessionCache = sessionCache;
         }
 
         public HomeModel Execute(HomeRequest request)
         {
-            var sqlHelper = _session.CreateSqlHelper("SELECT count(*) from table_case");
+            var sqlHelper = _sessionCache.GetUserSession().CreateSqlHelper("SELECT count(*) from table_case");
             var caseCount = Convert.ToInt32(sqlHelper.ExecuteScalar());
             
             sqlHelper.CommandText = "SELECT count(*) from table_subcase";

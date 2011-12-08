@@ -16,12 +16,12 @@ namespace Dovetail.SDK.Bootstrap.Token
 
     public class AuthenticationTokenRepository : IAuthenticationTokenRepository
     {
-        private readonly IClarifySessionCache _sessionCache;
+        private readonly IApplicationClarifySession _session;
         private readonly ILogger _logger;
 
-        public AuthenticationTokenRepository(IClarifySessionCache sessionCache, ILogger logger)
+        public AuthenticationTokenRepository(IApplicationClarifySession session, ILogger logger)
         {
-            _sessionCache = sessionCache;
+            _session = session;
             _logger = logger;
         }
 
@@ -44,9 +44,7 @@ namespace Dovetail.SDK.Bootstrap.Token
 
         public IAuthenticationToken RetrieveByToken(string token)
         {
-            var session = _sessionCache.GetApplicationSession();
-
-            var dataSet = session.CreateDataSet();
+            var dataSet = _session.CreateDataSet();
             var userGeneric = dataSet.CreateGeneric("user");
             userGeneric.DataFields.Add("login_name");
             userGeneric.Filter(f => f.Equals("x_authtoken", token));
@@ -82,9 +80,7 @@ namespace Dovetail.SDK.Bootstrap.Token
 
         private ClarifyGeneric getQueriedUserGeneric(string username)
         {
-            var session = _sessionCache.GetApplicationSession();
-
-            var dataSet = session.CreateDataSet();
+            var dataSet = _session.CreateDataSet();
             var userGeneric = dataSet.CreateGeneric("user");
             userGeneric.DataFields.Add("x_authtoken");
             userGeneric.Filter(f => f.Equals("login_name", username));
