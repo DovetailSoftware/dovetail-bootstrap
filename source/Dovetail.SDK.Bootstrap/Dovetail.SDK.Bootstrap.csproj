@@ -85,10 +85,12 @@
     <Compile Include="Clarify\Lists\GbstListValueAttribute.cs" />
     <Compile Include="Clarify\Lists\ListNames.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="History\HistoryActEntryBuilder.cs" />
-    <Compile Include="History\HistoryBuilder.cs" />
-    <Compile Include="History\HistoryMap.cs" />
+    <Compile Include="History\DefaultEntityHistoryBuilder.cs" />
+    <Compile Include="History\ActEntryTemplateBuilder.cs" />
+    <Compile Include="History\HistoryAssembler.cs" />
+    <Compile Include="History\ActEntryTemplateExpression.cs" />
     <Compile Include="History\HistoryViewModel.cs" />
+    <Compile Include="History\HistoryItemAssembler.cs" />
     <Compile Include="History\WorkflowObject.cs" />
     <Compile Include="BootstrapHtmlConvention.cs" />
     <Compile Include="Token\AuthenticationTokenBehavior.cs" />

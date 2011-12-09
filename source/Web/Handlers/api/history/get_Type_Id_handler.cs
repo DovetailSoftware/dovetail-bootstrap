@@ -6,11 +6,11 @@ namespace Bootstrap.Web.Handlers.api.history
 {
 	public class get_Type_Id_handler
 	{
-        private readonly IHistoryBuilder _historyBuilder;
+        private readonly IHistoryAssembler _historyAssembler;
 
-        public get_Type_Id_handler(IHistoryBuilder historyBuilder) 
+        public get_Type_Id_handler(IHistoryAssembler historyAssembler) 
         {
-            _historyBuilder = historyBuilder;
+            _historyAssembler = historyAssembler;
         }
 
         public HistoryViewModel Execute(HistoryRequest request)
@@ -19,10 +19,10 @@ namespace Bootstrap.Web.Handlers.api.history
 			
 			if (request.Since.HasValue)
             {
-            	return _historyBuilder.GetHistorySince(workflowObject, request.Since.Value);
+            	return _historyAssembler.GetHistorySince(workflowObject, request.Since.Value);
             }
 
-        	return _historyBuilder.GetHistory(workflowObject);
+        	return _historyAssembler.GetHistory(workflowObject);
         }
     }
 
