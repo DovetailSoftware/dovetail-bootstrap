@@ -28,5 +28,16 @@ namespace Dovetail.SDK.Bootstrap.Clarify.Extensions
 
             return childGeneric;
         }
+
+        public static ClarifyGeneric CreateGenericWithFields(this ClarifyDataSet dataSet, string objectName,  params string[] fields)
+        {
+            if (fields == null || fields.Length < 1)
+                fields = new[] { "objid" };
+
+            var generic = dataSet.CreateGeneric(objectName);
+            generic.DataFields.AddRange(fields);
+
+            return generic;
+        }
     }
 }

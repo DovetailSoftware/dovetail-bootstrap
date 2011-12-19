@@ -28,6 +28,7 @@ namespace Dovetail.SDK.Bootstrap.History
 
 	public class ActEntry
 	{
+	    public string Type { get; set; }
 		public ClarifyDataRow ActEntryRecord { get; set; }
 		public ActEntryTemplate Template { get; set; }
 		public HistoryItemEmployee Who { get; set; }
@@ -76,7 +77,16 @@ namespace Dovetail.SDK.Bootstrap.History
 	        get { return _actEntryDefinitions; }
 	    }
 
-	    public abstract IDictionary<int, ActEntryTemplate> BuildTemplates(WorkflowObject workflowObject, ClarifyGeneric actEntryGeneric);
+	    protected abstract void DefineTemplate(WorkflowObject workflowObject);
+
+        public IDictionary<int, ActEntryTemplate> RenderTemplate(WorkflowObject workflowObject, ClarifyGeneric actEntryGeneric)
+        {
+            ActEntryGeneric = actEntryGeneric;
+
+            DefineTemplate(workflowObject);
+
+            return ActEntryDefinitions;
+        }
 
 		public IAfterActEntryCode ActEntry(int code)
 		{
@@ -140,38 +150,6 @@ namespace Dovetail.SDK.Bootstrap.History
 			
 			ActEntryDefinitions.Add(_currentActEntryTemplate.Code, _currentActEntryTemplate);
 			_currentActEntryTemplate = null;
-		}
-
-		protected static void emailLogUpdater(ClarifyDataRow record, HistoryItem historyItem)
-		{
-			var detail = "Send to: {1}{0}".ToFormat(Environment.NewLine, record["recipient"]);
-
-			var cclist = record["cc_list"].ToString();
-			if (cclist.IsNotEmpty())
-			{
-				detail += "CC: {1}{0}".ToFormat(Environment.NewLine, cclist);
-			}
-			detail += record["message"].ToString();
-
-			historyItem.Detail = detail;
-		}
-
-		protected static void timeAndExpensesUpdater(ClarifyDataRow record, HistoryItem historyItem)
-		{
-			var timeDescribed = TimeSpan.FromSeconds(Convert.ToInt32(record["total_time"]));
-			var expense = Convert.ToDecimal(record["total_exp"]);
-			var detail = "Time: {1}{0}Expense: {2}{0}{3}".ToFormat(Environment.NewLine, timeDescribed, expense.ToString("C"), record["notes"]);
-
-			historyItem.Detail = detail;
-		}
-
-		protected static void statusChangeUpdater(ClarifyDataRow record, HistoryItem historyItem)
-		{
-			var notes = record["notes"].ToString();
-			var notesHeader = (notes.Length > 0) ? Environment.NewLine + "Notes: " : string.Empty;
-			var detail = "Status changed {0}{1}{2}".ToFormat(historyItem.Detail, notesHeader, notes);
-
-			historyItem.Detail = detail;
 		}
 	}
 }

@@ -10,6 +10,7 @@ namespace Dovetail.SDK.Bootstrap.History
 
         public string Id { get; set; }
         public string Type { get { return _objectName; } }
+        public bool IsChild { get; set; }
 
         public static WorkflowObject Create(string objectName, string id)
         {

@@ -1,4 +1,5 @@
 using Dovetail.SDK.Bootstrap.Clarify;
+using Dovetail.SDK.Bootstrap.History;
 using FChoice.Foundation.Clarify;
 using FChoice.Foundation.Schema;
 using FubuCore.Configuration;
@@ -15,7 +16,7 @@ namespace Dovetail.SDK.Bootstrap
             {
                 s.TheCallingAssembly();
                 s.WithDefaultConventions();
-
+                s.AddAllTypesOf<IHistoryAssemblerPolicy>();
                 s.Convention<SettingsScanner>();
             });
 

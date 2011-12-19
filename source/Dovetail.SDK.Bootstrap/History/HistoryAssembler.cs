@@ -14,9 +14,9 @@ namespace Dovetail.SDK.Bootstrap.History
 
     public class HistoryAssembler : IHistoryAssembler
 	{
-	    private readonly IEnumerable<IWorkflowHistoryBuilder> _entityHistoryBuilders;
+	    private readonly IEnumerable<IHistoryAssemblerPolicy> _entityHistoryBuilders;
 
-	    public HistoryAssembler(IEnumerable<IWorkflowHistoryBuilder> entityHistoryBuilders)
+	    public HistoryAssembler(IEnumerable<IHistoryAssemblerPolicy> entityHistoryBuilders)
 		{
 		    _entityHistoryBuilders = entityHistoryBuilders;
 		}
@@ -47,14 +47,9 @@ namespace Dovetail.SDK.Bootstrap.History
 
 	    private IEnumerable<HistoryItem> getHistoryItems(WorkflowObject workflowObject, Filter actEntryFilter)
 	    {
-	        var historyItems = new List<HistoryItem>();
+	        var historyBuilderPolicy = _entityHistoryBuilders.First(policy => policy.Handles(workflowObject));
 
-	        foreach (var builder in _entityHistoryBuilders.Where(builder => builder.Handles(workflowObject)))
-	        {
-	            historyItems.AddRange(builder.BuildHistory(workflowObject, actEntryFilter));
-	        }
-
-	        return historyItems.OrderByDescending(h => h.When);
+            return historyBuilderPolicy.BuildHistory(workflowObject, actEntryFilter);
 	    }
 
         private HistoryViewModel getHistoryForFirst(WorkflowObject workflowObject, Filter actEntryFilter, int numberOfEntries)

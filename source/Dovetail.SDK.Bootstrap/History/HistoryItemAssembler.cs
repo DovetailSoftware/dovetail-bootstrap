@@ -22,11 +22,8 @@ namespace Dovetail.SDK.Bootstrap.History
             actEntryGeneric.DataFields.AddRange("act_code", "entry_time", "addnl_info");
             actEntryGeneric.AppendFilterInList("act_code", true, codes.ToArray());
 
-            var actEntryUserGeneric = actEntryGeneric.Traverse("act_entry2user");
-            actEntryUserGeneric.DataFields.AddRange("objid", "login_name");
-
-            var actEntryEmployeeGeneric = actEntryUserGeneric.Traverse("user2employee");
-            actEntryEmployeeGeneric.DataFields.AddRange("first_name", "last_name");
+            var actEntryUserGeneric = actEntryGeneric.TraverseWithFields("act_entry2user", "objid", "login_name");
+            var actEntryEmployeeGeneric = actEntryUserGeneric.TraverseWithFields("user2employee", "first_name", "last_name");
 
             actEntryGeneric.Query();
 			
@@ -56,6 +53,9 @@ namespace Dovetail.SDK.Bootstrap.History
 
         private static IEnumerable<ActEntry> assembleActEntryDTOs(ClarifyGeneric actEntryGeneric, IDictionary<int, ActEntryTemplate> actEntryTemplatesByCode, Func<ClarifyDataRow, HistoryItemEmployee> employeeAssembler)
         {
+            //HACK using the act entry parent table name to set the type of object (case, or subcase) for this entry 
+            var type = actEntryGeneric.ParentGeneric.TableName;
+
             foreach (ClarifyDataRow actEntryRecord in actEntryGeneric.Rows)
             {
                 var code = Convert.ToInt32(actEntryRecord["act_code"]);
@@ -65,7 +65,7 @@ namespace Dovetail.SDK.Bootstrap.History
                 var detail = actEntryRecord["addnl_info"].ToString();
                 var who = employeeAssembler(actEntryRecord);
 
-                yield return new ActEntry { Template = template, When = when, Who = who, AdditionalInfo = detail, ActEntryRecord = actEntryRecord };
+                yield return new ActEntry { Template = template, When = when, Who = who, AdditionalInfo = detail, ActEntryRecord = actEntryRecord, Type = type};
             }
         }
 
@@ -103,6 +103,7 @@ namespace Dovetail.SDK.Bootstrap.History
             return new HistoryItem
                        {
                            Id = actEntry.ActEntryRecord.DatabaseIdentifier(),
+                           Type = actEntry.Type,
                            Kind = actEntry.Template.DisplayName,
                            Who = actEntry.Who,
                            When = actEntry.When,
