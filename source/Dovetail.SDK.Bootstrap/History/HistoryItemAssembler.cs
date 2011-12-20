@@ -10,7 +10,6 @@ namespace Dovetail.SDK.Bootstrap.History
     public class HistoryItemAssembler
     {
         private readonly IDictionary<int, ActEntryTemplate> _templatesByCode;
-        private IDictionary<ActEntryTemplate, ClarifyGeneric> _templateRelatedGenerics;
 
         public HistoryItemAssembler(IDictionary<int, ActEntryTemplate> templatesByCode)
         {
@@ -26,9 +25,8 @@ namespace Dovetail.SDK.Bootstrap.History
             var actEntryUserGeneric = actEntryGeneric.TraverseWithFields("act_entry2user", "objid", "login_name");
             var actEntryEmployeeGeneric = actEntryUserGeneric.TraverseWithFields("user2employee", "first_name", "last_name");
 
-            //TODO cache these child generics so we don't have to do handsprings to retrieve them
             //adding related generics expected by any fancy act entry templates
-            _templateRelatedGenerics = TraverseRelatedGenerics(actEntryGeneric);
+            var templateRelatedGenerics = traverseRelatedGenerics(actEntryGeneric);
 
             actEntryGeneric.Query();
 			
@@ -53,15 +51,15 @@ namespace Dovetail.SDK.Bootstrap.History
 
             var actEntryDTOS = assembleActEntryDTOs(actEntryGeneric, _templatesByCode, employeeAssembler);
 
-            return actEntryDTOS.Select(createActivityDTOFromMapper).ToArray();
+            return actEntryDTOS.Select(dto => createActivityDTOFromMapper(dto, templateRelatedGenerics)).ToArray();
         }
 
-        private IDictionary<ActEntryTemplate, ClarifyGeneric> TraverseRelatedGenerics(ClarifyGeneric actEntryGeneric)
+        private IDictionary<ActEntryTemplate, ClarifyGeneric> traverseRelatedGenerics(ClarifyGeneric actEntryGeneric)
         {
             var relatedGenericByTemplate = new Dictionary<ActEntryTemplate, ClarifyGeneric>();
-            foreach (var actEntryTemplate in _templatesByCode.Values.Where(t => t.RelatedGenericRelation.IsNotEmpty()))
+            foreach (var actEntryTemplate in _templatesByCode.Values.Where(t => t.RelatedGenericRelationName.IsNotEmpty()))
             {
-                var relatedGeneric = actEntryGeneric.TraverseWithFields(actEntryTemplate.RelatedGenericRelation,
+                var relatedGeneric = actEntryGeneric.TraverseWithFields(actEntryTemplate.RelatedGenericRelationName,
                                                                         actEntryTemplate.RelatedGenericFields);
                 relatedGenericByTemplate.Add(actEntryTemplate, relatedGeneric);
             }
@@ -87,13 +85,13 @@ namespace Dovetail.SDK.Bootstrap.History
             }
         }
 
-        private HistoryItem createActivityDTOFromMapper(ActEntry actEntry)
+        private HistoryItem createActivityDTOFromMapper(ActEntry actEntry, IDictionary<ActEntryTemplate, ClarifyGeneric> templateRelatedGenerics)
         {
             var dto = defaultActivityDTOAssembler(actEntry);
 
             var actEntryTemplate = actEntry.Template;
 
-            updateActivityDto(actEntry, dto);
+            updateActivityDto(actEntry, dto, _templateRelatedGenerics);
 
             if (isActivityDTOEditorPresent(actEntry))
             {
@@ -105,17 +103,17 @@ namespace Dovetail.SDK.Bootstrap.History
             return dto;
         }
 
-        private void updateActivityDto(ActEntry actEntry, HistoryItem dto)
+        private void updateActivityDto(ActEntry actEntry, HistoryItem dto, IDictionary<ActEntryTemplate, ClarifyGeneric> templateRelatedGenerics)
         {
             if (!isActivityDTOUpdaterPresent(actEntry)) return;
 
             var actEntryTemplate = actEntry.Template;
             var relatedRow = actEntry.ActEntryRecord;
 
-            if (actEntryTemplate.RelatedGenericRelation.IsNotEmpty() &&
-                _templateRelatedGenerics.ContainsKey(actEntryTemplate))
+            if (actEntryTemplate.RelatedGenericRelationName.IsNotEmpty() &&
+                templateRelatedGenerics.ContainsKey(actEntryTemplate))
             {
-                var relatedRows = actEntry.ActEntryRecord.RelatedRows(_templateRelatedGenerics[actEntryTemplate]);
+                var relatedRows = actEntry.ActEntryRecord.RelatedRows(templateRelatedGenerics[actEntryTemplate]);
 
                 relatedRow = relatedRows.Length > 0 ? relatedRows[0] : null;
             }

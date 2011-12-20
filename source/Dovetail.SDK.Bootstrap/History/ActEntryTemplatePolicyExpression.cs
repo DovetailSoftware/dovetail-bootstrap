@@ -22,8 +22,7 @@ namespace Dovetail.SDK.Bootstrap.History
 		public string DisplayName { get; set; }
 		public Action<ClarifyDataRow, HistoryItem> ActivityDTOUpdater;
 		
-        //public ClarifyGeneric RelatedGeneric { get; set; }
-        public string RelatedGenericRelation { get; set; }
+        public string RelatedGenericRelationName { get; set; }
         public string[] RelatedGenericFields{ get; set; }
 
         public Action<HistoryItem> ActivityDTOEditor { get; set; }
@@ -115,8 +114,7 @@ namespace Dovetail.SDK.Bootstrap.History
 
 		public IHasRelatedRow GetRelatedRecord(string relationName)
 		{
-			//_currentActEntryTemplate.RelatedGeneric = ActEntryGeneric.Traverse(relationName);
-		    _currentActEntryTemplate.RelatedGenericRelation = relationName;
+		    _currentActEntryTemplate.RelatedGenericRelationName = relationName;
 
 			return this;
 		}
@@ -149,7 +147,7 @@ namespace Dovetail.SDK.Bootstrap.History
 
 		private void validateThereIsARelatedRecord()
 		{
-			if(_currentActEntryTemplate.RelatedGenericRelation.IsEmpty())
+			if(_currentActEntryTemplate.RelatedGenericRelationName.IsEmpty())
 				throw new Exception("Cannot add fields unless a record is related. First call GetRelatedRecord()");
 		}
 
