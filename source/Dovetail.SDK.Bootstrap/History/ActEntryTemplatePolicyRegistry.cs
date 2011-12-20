@@ -74,9 +74,9 @@ namespace Dovetail.SDK.Bootstrap.History
 
     public interface IActEntryTemplatePolicyConfiguration
 	{
-		//string FindFilter(Type type);
 		IEnumerable<ActEntryTemplatePolicyExpression> Policies { get; }
 		ActEntryTemplatePolicyExpression DefaultPolicy { get; }
+        IDictionary<int, ActEntryTemplate> RenderPolicies(WorkflowObject workflowObject);
 	}
 
     public class ActEntryTemplatePolicyConfiguration : IActEntryTemplatePolicyConfiguration
@@ -104,14 +104,17 @@ namespace Dovetail.SDK.Bootstrap.History
 
         //TODO add method which gets back all the templates. 
 
-        public IDictionary<int, ActEntryTemplate> Build(WorkflowObject workflowObject, ClarifyGeneric actEntryGeneric)
+        public IDictionary<int, ActEntryTemplate> RenderPolicies(WorkflowObject workflowObject)
         {
-            return null;
-            //DefaultPolicy.RenderTemplate()
+            var results = new Dictionary<int, ActEntryTemplate>();
 
-            //var searchPolicy = Policies.Each(p => p.RenderTemplate(workflowObject, actEntryGeneric));
+            DefaultPolicy.RenderTemplate(workflowObject, results);
 
-            //return searchPolicy.BuildSearchFilter(type);
+            Policies.Each(p => p.RenderTemplate(workflowObject, results));
+
+            //TODO think about caching the result by workflow object.Type
+
+            return results;
         }
     }
 }

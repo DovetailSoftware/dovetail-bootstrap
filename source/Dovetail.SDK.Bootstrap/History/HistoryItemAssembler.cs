@@ -91,7 +91,7 @@ namespace Dovetail.SDK.Bootstrap.History
 
             var actEntryTemplate = actEntry.Template;
 
-            updateActivityDto(actEntry, dto, _templateRelatedGenerics);
+            updateActivityDto(actEntry, dto, templateRelatedGenerics);
 
             if (isActivityDTOEditorPresent(actEntry))
             {

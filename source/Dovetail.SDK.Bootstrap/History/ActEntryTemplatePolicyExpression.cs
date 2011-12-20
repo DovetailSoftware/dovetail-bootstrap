@@ -71,30 +71,20 @@ namespace Dovetail.SDK.Bootstrap.History
 
 	public abstract class ActEntryTemplatePolicyExpression : IAfterActEntryCode, IAfterDisplayName, IHasRelatedRow, IAfterRelatedFields, IAfterHtmlizer
 	{
-		private readonly IDictionary<int, ActEntryTemplate> _actEntryDefinitions = new Dictionary<int, ActEntryTemplate>();
-		private ActEntryTemplate _currentActEntryTemplate;
-		
-	    public IDictionary<int, ActEntryTemplate> ActEntryDefinitions
-	    {
-	        get { return _actEntryDefinitions; }
-	    }
+	    private ActEntryTemplate _currentActEntryTemplate;
 
 	    protected abstract void DefineTemplate(WorkflowObject workflowObject);
 
-        public IDictionary<int, ActEntryTemplate> RenderTemplate(WorkflowObject workflowObject)
+        public IDictionary<int, ActEntryTemplate> ActEntryTemplatesByCode { get; private set; }
+
+        public void RenderTemplate(WorkflowObject workflowObject, IDictionary<int, ActEntryTemplate> actEntryTemplates)
         {
-            resetExpression();
+            ActEntryTemplatesByCode = actEntryTemplates;
+
+            _currentActEntryTemplate = null;
 
             DefineTemplate(workflowObject);
-
-            return ActEntryDefinitions;
         }
-
-	    private void resetExpression()
-	    {
-	        _actEntryDefinitions.Clear();
-	        _currentActEntryTemplate = null;
-	    }
 
 	    public IAfterActEntryCode ActEntry(int code)
 		{
@@ -156,7 +146,7 @@ namespace Dovetail.SDK.Bootstrap.History
 			if (_currentActEntryTemplate == null) 
 				return;
 			
-			ActEntryDefinitions.Add(_currentActEntryTemplate.Code, _currentActEntryTemplate);
+			ActEntryTemplatesByCode.Add(_currentActEntryTemplate.Code, _currentActEntryTemplate);
 			_currentActEntryTemplate = null;
 		}
 	}
