@@ -41,26 +41,64 @@ namespace Dovetail.SDK.Bootstrap.History
 
 	public interface IAfterActEntryCode
 	{
+        /// <summary>
+        /// Define the display name of the act entry 
+        /// </summary>
 		IAfterDisplayName DisplayName(string displayName);
+
+        /// <summary>
+        /// Remove this act entry code from the current set of act entry templates
+        /// </summary>
+        void Remove();
 	}
 
 	public interface IAfterDisplayName
 	{
 		IHasRelatedRow GetRelatedRecord(string relationName);
+        /// <summary>
+        /// If you wish to customize how the resulting contents of the activity entry get converted to HTML add your own Action here.
+        /// </summary>
 		IAfterHtmlizer HtmlizeWith(Action<HistoryItem> htmlizer);
+
+        /// <summary>
+        /// Define an action which will modify the history item generated with the given data record. 
+        /// The row given is the act_entry row if now related record is retrieved. When a related record is configured it will be the resulting row related to the act entry.  
+        /// </summary>
+        /// <param name="mapper">Action which will pull fields off the row related to the act entry and use them to modify the history item.</param>
 		void UpdateActivityDTOWith(Action<ClarifyDataRow, HistoryItem> mapper);
+
+        /// <summary>
+        /// Define an action which will modify the resulting history item.
+        /// </summary>
 		void EditActivityDTO(Action<HistoryItem> action);
 	}
 
 	public interface IAfterHtmlizer
 	{
+        /// <summary>
+        /// Have the history builder retrieve a record related to the act entry 
+        /// </summary>
+        /// <param name="relationName">This will be the Clarify schema name of the relation traversing from the act_entry table to the another of your choosing.</param>
 		IHasRelatedRow GetRelatedRecord(string relationName);
-		void UpdateActivityDTOWith(Action<ClarifyDataRow, HistoryItem> mapper);
-		void EditActivityDTO(Action<HistoryItem> action);
+
+        /// <summary>
+        /// Define an action which will modify the history item generated with the given data record. 
+        /// The row given is the act_entry row if now related record is retrieved. When a related record is configured it will be the resulting row related to the act entry.  
+        /// </summary>
+        /// <param name="mapper">Action which will pull fields off the row related to the act entry and use them to modify the history item.</param>
+        void UpdateActivityDTOWith(Action<ClarifyDataRow, HistoryItem> mapper);
+
+        /// <summary>
+        /// Define an action which will modify the resulting history item.
+        /// </summary>
+        void EditActivityDTO(Action<HistoryItem> action);
 	}
 
 	public interface IHasRelatedRow
 	{
+        /// <summary>
+        /// Define fields to retrieve for the record related to the act entry you are retrieving for this template
+        /// </summary>
 		IAfterRelatedFields WithFields(params string[] fieldNames);
 	}
 
@@ -86,6 +124,11 @@ namespace Dovetail.SDK.Bootstrap.History
             DefineTemplate(workflowObject);
         }
 
+        /// <summary>
+        /// Start the definition of act entry template for a given act_code. Each act_code cooresponds to a
+        /// type of event in the clarify system.
+        /// </summary>
+        /// <param name="code">The act_code of the activity entry you wish to include. </param>
 	    public IAfterActEntryCode ActEntry(int code)
 		{
 			addCurrentActEntryTemplate();
@@ -102,7 +145,16 @@ namespace Dovetail.SDK.Bootstrap.History
 			return this;
 		}
 
-		public IHasRelatedRow GetRelatedRecord(string relationName)
+	    public void Remove()
+	    {
+            if (ActEntryTemplatesByCode.ContainsKey(_currentActEntryTemplate.Code))
+            {
+                ActEntryTemplatesByCode.Remove(_currentActEntryTemplate.Code);
+            }
+	        _currentActEntryTemplate = null;
+	    }
+
+	    public IHasRelatedRow GetRelatedRecord(string relationName)
 		{
 		    _currentActEntryTemplate.RelatedGenericRelationName = relationName;
 
@@ -145,9 +197,16 @@ namespace Dovetail.SDK.Bootstrap.History
 		{
 			if (_currentActEntryTemplate == null) 
 				return;
-			
-			ActEntryTemplatesByCode.Add(_currentActEntryTemplate.Code, _currentActEntryTemplate);
-			_currentActEntryTemplate = null;
+
+            //replace existing template
+            if (ActEntryTemplatesByCode.ContainsKey(_currentActEntryTemplate.Code))
+            {
+                ActEntryTemplatesByCode.Remove(_currentActEntryTemplate.Code);    
+            }
+
+            ActEntryTemplatesByCode.Add(_currentActEntryTemplate.Code, _currentActEntryTemplate);
+
+            _currentActEntryTemplate = null;
 		}
 	}
 }

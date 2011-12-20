@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using FChoice.Foundation.Clarify;
 using StructureMap;
 using StructureMap.Configuration.DSL;
 
@@ -20,7 +19,7 @@ namespace Dovetail.SDK.Bootstrap.History
     {
         protected override void DefineTemplate(WorkflowObject workflowObject)
         {
-            //ActEntry(300)
+            ActEntry(3000).Remove();
         }
     }
 
