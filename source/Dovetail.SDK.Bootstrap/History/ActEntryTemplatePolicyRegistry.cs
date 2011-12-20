@@ -6,23 +6,6 @@ using StructureMap.Configuration.DSL;
 
 namespace Dovetail.SDK.Bootstrap.History
 {
-    public class DefaultActEntryTemplatePolicyRegistry : ActEntryTemplatePolicyRegistry
-    {
-        public DefaultActEntryTemplatePolicyRegistry()
-        {
-            Add<ExamplePolicy>();
-            DefaultIs<DefaultActEntryTemplatePolicy>();
-        }
-    }
-
-    public class ExamplePolicy : ActEntryTemplatePolicyExpression
-    {
-        protected override void DefineTemplate(WorkflowObject workflowObject)
-        {
-            ActEntry(3000).Remove();
-        }
-    }
-
     public static class ActEntryTemplatePolicyRegistryExtension
     {
         public static void ActEntryTemplatePolicies<TRegistry>(this Registry registry)

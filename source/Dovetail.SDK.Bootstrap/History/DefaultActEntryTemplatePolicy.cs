@@ -1,5 +1,24 @@
 namespace Dovetail.SDK.Bootstrap.History
 {
+    public class DefaultActEntryTemplatePolicyRegistry : ActEntryTemplatePolicyRegistry
+    {
+        public DefaultActEntryTemplatePolicyRegistry()
+        {
+            DefaultIs<DefaultActEntryTemplatePolicy>();
+            Add<ExamplePolicy>();
+        }
+    }
+    
+    public class ExamplePolicy : ActEntryTemplatePolicyExpression
+    {
+        protected override void DefineTemplate(WorkflowObject workflowObject)
+        {
+            ActEntry(3000).Remove();
+            ActEntry(900).DisplayName("Dyspatched")
+                .EditActivityDTO(dto => { dto.Detail = "Dyspatched to the deep six. " + dto.Detail; });
+        }
+    }
+
     public class DefaultActEntryTemplatePolicy : ActEntryTemplatePolicyExpression 
 	{
         protected override void DefineTemplate(WorkflowObject workflowObject)

@@ -122,6 +122,8 @@ namespace Dovetail.SDK.Bootstrap.History
             _currentActEntryTemplate = null;
 
             DefineTemplate(workflowObject);
+
+            addCurrentActEntryTemplate();
         }
 
         /// <summary>
