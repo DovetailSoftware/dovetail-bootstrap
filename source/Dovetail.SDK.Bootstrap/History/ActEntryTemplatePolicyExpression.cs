@@ -21,8 +21,12 @@ namespace Dovetail.SDK.Bootstrap.History
 		public int Code { get; set; }
 		public string DisplayName { get; set; }
 		public Action<ClarifyDataRow, HistoryItem> ActivityDTOUpdater;
-		public ClarifyGeneric RelatedGeneric { get; set; }
-		public Action<HistoryItem> ActivityDTOEditor { get; set; }
+		
+        //public ClarifyGeneric RelatedGeneric { get; set; }
+        public string RelatedGenericRelation { get; set; }
+        public string[] RelatedGenericFields{ get; set; }
+
+        public Action<HistoryItem> ActivityDTOEditor { get; set; }
 		public Action<HistoryItem> HTMLizer { get; set; }
 	}
 
@@ -66,12 +70,11 @@ namespace Dovetail.SDK.Bootstrap.History
 		void UpdateActivityDTOWith(Action<ClarifyDataRow, HistoryItem> mapper);
 	}
 
-	public abstract class ActEntryTemplateExpression : IAfterActEntryCode, IAfterDisplayName, IHasRelatedRow, IAfterRelatedFields, IAfterHtmlizer
+	public abstract class ActEntryTemplatePolicyExpression : IAfterActEntryCode, IAfterDisplayName, IHasRelatedRow, IAfterRelatedFields, IAfterHtmlizer
 	{
 		private readonly IDictionary<int, ActEntryTemplate> _actEntryDefinitions = new Dictionary<int, ActEntryTemplate>();
 		private ActEntryTemplate _currentActEntryTemplate;
-		public ClarifyGeneric ActEntryGeneric { get; set; }
-
+		
 	    public IDictionary<int, ActEntryTemplate> ActEntryDefinitions
 	    {
 	        get { return _actEntryDefinitions; }
@@ -79,16 +82,22 @@ namespace Dovetail.SDK.Bootstrap.History
 
 	    protected abstract void DefineTemplate(WorkflowObject workflowObject);
 
-        public IDictionary<int, ActEntryTemplate> RenderTemplate(WorkflowObject workflowObject, ClarifyGeneric actEntryGeneric)
+        public IDictionary<int, ActEntryTemplate> RenderTemplate(WorkflowObject workflowObject)
         {
-            ActEntryGeneric = actEntryGeneric;
+            resetExpression();
 
             DefineTemplate(workflowObject);
 
             return ActEntryDefinitions;
         }
 
-		public IAfterActEntryCode ActEntry(int code)
+	    private void resetExpression()
+	    {
+	        _actEntryDefinitions.Clear();
+	        _currentActEntryTemplate = null;
+	    }
+
+	    public IAfterActEntryCode ActEntry(int code)
 		{
 			addCurrentActEntryTemplate();
 
@@ -106,7 +115,8 @@ namespace Dovetail.SDK.Bootstrap.History
 
 		public IHasRelatedRow GetRelatedRecord(string relationName)
 		{
-			_currentActEntryTemplate.RelatedGeneric = ActEntryGeneric.Traverse(relationName);
+			//_currentActEntryTemplate.RelatedGeneric = ActEntryGeneric.Traverse(relationName);
+		    _currentActEntryTemplate.RelatedGenericRelation = relationName;
 
 			return this;
 		}
@@ -122,7 +132,7 @@ namespace Dovetail.SDK.Bootstrap.History
 		{
 			validateThereIsARelatedRecord();
 
-			_currentActEntryTemplate.RelatedGeneric.DataFields.AddRange(fieldNames);
+			_currentActEntryTemplate.RelatedGenericFields = fieldNames;
 
 			return this;
 		}
@@ -139,7 +149,7 @@ namespace Dovetail.SDK.Bootstrap.History
 
 		private void validateThereIsARelatedRecord()
 		{
-			if(_currentActEntryTemplate.RelatedGeneric == null)
+			if(_currentActEntryTemplate.RelatedGenericRelation.IsEmpty())
 				throw new Exception("Cannot add fields unless a record is related. First call GetRelatedRecord()");
 		}
 

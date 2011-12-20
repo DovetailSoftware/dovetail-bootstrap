@@ -36,7 +36,9 @@ namespace Dovetail.SDK.Bootstrap
 
 
             //It is the responsibility of the application using bootstrap to set the current sdk user's login 
-            For<ICurrentSDKUser>().HybridHttpOrThreadLocalScoped().Use<CurrentSDKUser>(); 
+            For<ICurrentSDKUser>().HybridHttpOrThreadLocalScoped().Use<CurrentSDKUser>();
+
+            this.ActEntryTemplatePolicies<DefaultActEntryTemplatePolicyRegistry>();
         }
     }
 }

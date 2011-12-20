@@ -12,12 +12,10 @@ namespace Dovetail.SDK.Bootstrap.History
     public class DefaultHistoryAssemblerPolicy : IHistoryAssemblerPolicy
     {   
         private readonly HistoryBuilder _historyBuilder;
-        private readonly DefaultActEntryTemplateBuilder _templateBuilder;
-
-        public DefaultHistoryAssemblerPolicy(HistoryBuilder historyBuilder, DefaultActEntryTemplateBuilder templateBuilder)
+        
+        public DefaultHistoryAssemblerPolicy(HistoryBuilder historyBuilder)
         {
             _historyBuilder = historyBuilder;
-            _templateBuilder = templateBuilder;
         }
 
         public bool Handles(WorkflowObject workflowObject)
@@ -27,7 +25,7 @@ namespace Dovetail.SDK.Bootstrap.History
 
         public IEnumerable<HistoryItem> BuildHistory(WorkflowObject workflowObject, Filter actEntryFilter)
         {
-            return _historyBuilder.Build(workflowObject, actEntryFilter, _templateBuilder);
+            return _historyBuilder.Build(workflowObject, actEntryFilter);
         }
     }
 }

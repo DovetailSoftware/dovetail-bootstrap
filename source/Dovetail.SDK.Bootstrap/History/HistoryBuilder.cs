@@ -12,14 +12,16 @@ namespace Dovetail.SDK.Bootstrap.History
     {
         private readonly IClarifySessionCache _sessionCache;
         private readonly ISchemaCache _schemaCache;
+        private readonly DefaultActEntryTemplatePolicy _templatePolicy;
 
-        public HistoryBuilder(IClarifySessionCache sessionCache, ISchemaCache schemaCache)
+        public HistoryBuilder(IClarifySessionCache sessionCache, ISchemaCache schemaCache, DefaultActEntryTemplatePolicy templatePolicy)
         {
             _sessionCache = sessionCache;
             _schemaCache = schemaCache;
+            _templatePolicy = templatePolicy;
         }
 
-        public IEnumerable<HistoryItem> Build(WorkflowObject workflowObject, Filter actEntryFilter, ActEntryTemplateExpression templateExpression)
+        public IEnumerable<HistoryItem> Build(WorkflowObject workflowObject, Filter actEntryFilter)
         {
             var clarifyDataSet = _sessionCache.GetUserSession().CreateDataSet();
 
@@ -41,7 +43,7 @@ namespace Dovetail.SDK.Bootstrap.History
             //TODO think about caching the resulting templateDictionary, generic hierarchy per workflow object.Type (would need to set the rootGeneric filter to the current object Id)
 
             //build act entry templates and simultaneously populate actEntryGeneric hierarchy with needed related generics
-            var templateDictionary = templateExpression.RenderTemplate(workflowObject, actEntryGeneric);
+            var templateDictionary = _templatePolicy.RenderTemplate(workflowObject);
 
             //query generic hierarchy and while using act entry templates transform the results into HistoryItems
             return new HistoryItemAssembler(templateDictionary).Assemble(actEntryGeneric);

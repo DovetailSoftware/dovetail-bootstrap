@@ -11,15 +11,11 @@ namespace Dovetail.SDK.Bootstrap.History
     {
         private readonly IClarifySessionCache _sessionCache;
         private readonly HistoryBuilder _historyBuilder;
-        private readonly DefaultActEntryTemplateBuilder _defaultTemplateBuilder;
-        private readonly ChildSubcaseActEntryTemplateBuilder _childSubcaseActEntryTemplateBuilder;
 
-        public CaseHistoryAssemblerPolicy(IClarifySessionCache sessionCache, HistoryBuilder historyBuilder, DefaultActEntryTemplateBuilder defaultTemplateBuilder, ChildSubcaseActEntryTemplateBuilder childSubcaseActEntryTemplateBuilder)
+        public CaseHistoryAssemblerPolicy(IClarifySessionCache sessionCache, HistoryBuilder historyBuilder)
         {
             _sessionCache = sessionCache;
             _historyBuilder = historyBuilder;
-            _defaultTemplateBuilder = defaultTemplateBuilder;
-            _childSubcaseActEntryTemplateBuilder = childSubcaseActEntryTemplateBuilder;
         }
 
         public bool Handles(WorkflowObject workflowObject)
@@ -31,9 +27,13 @@ namespace Dovetail.SDK.Bootstrap.History
         {
             var subcaseIds = GetSubcaseIds(workflowObject);
             
-            var caseHistory = _historyBuilder.Build(workflowObject, actEntryFilter, _defaultTemplateBuilder);
+            var caseHistory = _historyBuilder.Build(workflowObject, actEntryFilter);
 
-            var subcaseHistories = subcaseIds.Select(id => _historyBuilder.Build(new WorkflowObject("subcase") { Id = id, IsChild = true}, actEntryFilter, _childSubcaseActEntryTemplateBuilder));
+            var subcaseHistories = subcaseIds.Select(id =>
+                                                         {
+                                                             var subcaseWorkflowObject = new WorkflowObject(WorkflowObject.Subcase) { Id = id, IsChild = true};
+                                                             return _historyBuilder.Build(subcaseWorkflowObject, actEntryFilter);
+                                                         });
 
             var results = subcaseHistories.SelectMany(result => result).Concat(caseHistory);
 

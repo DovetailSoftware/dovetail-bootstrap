@@ -1,35 +1,25 @@
-using FChoice.Foundation.Clarify;
-
 namespace Dovetail.SDK.Bootstrap.History
 {
-    public class ChildSubcaseActEntryTemplateBuilder : ActEntryTemplateExpression 
-    {
-        protected override void DefineTemplate(WorkflowObject workflowObject)
-        {
-            this.TimeAndExpenseEdittedActEntry();
-            this.StatusChangedActEntry();
-            this.LogResearchActEntry();
-            this.PhoneLogActEntry();
-            this.NoteActEntry();
-            this.TimeAndExpenseLoggedActEntry();
-            this.EmailOutActEntry();
-            this.EmailInActEntry();
-        }
-    }
-
-    public class ARCActEntryTemplateBuilder : ActEntryTemplateExpression
-    {
-        protected override void DefineTemplate(WorkflowObject workflowObject)
-        {
-            ActEntry(10500).DisplayName("Foo")
-                .EditActivityDTO(dto => { dto.Detail = "Foo " + dto.Detail; });
-        }
-    }
-
-    public class DefaultActEntryTemplateBuilder : ActEntryTemplateExpression 
+    public class DefaultActEntryTemplatePolicy : ActEntryTemplatePolicyExpression 
 	{
         protected override void DefineTemplate(WorkflowObject workflowObject)
 		{
+            if(workflowObject.Type == WorkflowObject.Subcase && workflowObject.IsChild)
+            {
+                this.TimeAndExpenseEdittedActEntry();
+                this.StatusChangedActEntry();
+                this.LogResearchActEntry();
+                this.PhoneLogActEntry();
+                this.NoteActEntry();
+                this.TimeAndExpenseLoggedActEntry();
+                this.EmailOutActEntry();
+                this.EmailInActEntry();
+                
+                return;
+            }
+
+            //typical workflow object policies
+
 			ActEntry(10500).DisplayName("Assigned")
 				.EditActivityDTO(dto => { dto.Detail = "Assigned " + dto.Detail; });
 			ActEntry(100).DisplayName("Accepted")

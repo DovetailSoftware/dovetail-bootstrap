@@ -6,12 +6,12 @@ namespace Dovetail.SDK.Bootstrap.History
 {
     public static class CommonActEntryBuilderDSLExtensions
     {
-        public static void TimeAndExpenseEdittedActEntry(this ActEntryTemplateExpression dsl)
+        public static void TimeAndExpenseEdittedActEntry(this ActEntryTemplatePolicyExpression dsl)
         {
             dsl.ActEntry(8700).DisplayName("Time and Expense Edited");
         }
 
-        public static void StatusChangedActEntry(this ActEntryTemplateExpression dsl)
+        public static void StatusChangedActEntry(this ActEntryTemplatePolicyExpression dsl)
         {
             dsl.ActEntry(300).DisplayName("Status Changed")
                 .GetRelatedRecord("act_entry2status_chg")
@@ -28,7 +28,7 @@ namespace Dovetail.SDK.Bootstrap.History
             historyItem.Detail = detail;
         }
 
-        public static void LogResearchActEntry(this ActEntryTemplateExpression dsl)
+        public static void LogResearchActEntry(this ActEntryTemplatePolicyExpression dsl)
         {
             dsl.ActEntry(2500).DisplayName("Research Note")
                 .GetRelatedRecord("act_entry2resrch_log")
@@ -40,7 +40,7 @@ namespace Dovetail.SDK.Bootstrap.History
                                            });
         }
 
-        public static void PhoneLogActEntry(this ActEntryTemplateExpression dsl)
+        public static void PhoneLogActEntry(this ActEntryTemplatePolicyExpression dsl)
         {
             dsl.ActEntry(500).DisplayName("Phone Log")
                 .GetRelatedRecord("act_entry2phone_log")
@@ -52,7 +52,7 @@ namespace Dovetail.SDK.Bootstrap.History
                                            });
         }
 
-        public static void TimeAndExpenseLoggedActEntry(this ActEntryTemplateExpression dsl)
+        public static void TimeAndExpenseLoggedActEntry(this ActEntryTemplatePolicyExpression dsl)
         {
             dsl.ActEntry(1800).DisplayName("Time and Expense Logged")
                 .GetRelatedRecord("act_entry2onsite_log")
@@ -69,7 +69,7 @@ namespace Dovetail.SDK.Bootstrap.History
             historyItem.Detail = detail;
         }
 
-        public static void EmailInActEntry(this ActEntryTemplateExpression dsl)
+        public static void EmailInActEntry(this ActEntryTemplatePolicyExpression dsl)
         {
             dsl.ActEntry(3500).DisplayName("Email In")
                 .GetRelatedRecord("act_entry2email_log")
@@ -77,7 +77,7 @@ namespace Dovetail.SDK.Bootstrap.History
                 .UpdateActivityDTOWith(emailLogUpdater);
         }
 
-        public static void EmailOutActEntry(this ActEntryTemplateExpression dsl)
+        public static void EmailOutActEntry(this ActEntryTemplatePolicyExpression dsl)
         {
             dsl.ActEntry(3400).DisplayName("Email Out")
                 .GetRelatedRecord("act_entry2email_log")
@@ -99,7 +99,7 @@ namespace Dovetail.SDK.Bootstrap.History
             historyItem.Detail = detail;
         }
 
-        public static void NoteActEntry(this ActEntryTemplateExpression dsl)
+        public static void NoteActEntry(this ActEntryTemplatePolicyExpression dsl)
         {
             dsl.ActEntry(1700).DisplayName("Note")
                 .GetRelatedRecord("act_entry2notes_log").WithFields("description", "internal")

@@ -10,6 +10,7 @@ namespace Dovetail.SDK.Bootstrap.History
     public class HistoryItemAssembler
     {
         private readonly IDictionary<int, ActEntryTemplate> _templatesByCode;
+        private IDictionary<ActEntryTemplate, ClarifyGeneric> _templateRelatedGenerics;
 
         public HistoryItemAssembler(IDictionary<int, ActEntryTemplate> templatesByCode)
         {
@@ -24,6 +25,10 @@ namespace Dovetail.SDK.Bootstrap.History
 
             var actEntryUserGeneric = actEntryGeneric.TraverseWithFields("act_entry2user", "objid", "login_name");
             var actEntryEmployeeGeneric = actEntryUserGeneric.TraverseWithFields("user2employee", "first_name", "last_name");
+
+            //TODO cache these child generics so we don't have to do handsprings to retrieve them
+            //adding related generics expected by any fancy act entry templates
+            _templateRelatedGenerics = TraverseRelatedGenerics(actEntryGeneric);
 
             actEntryGeneric.Query();
 			
@@ -51,10 +56,23 @@ namespace Dovetail.SDK.Bootstrap.History
             return actEntryDTOS.Select(createActivityDTOFromMapper).ToArray();
         }
 
+        private IDictionary<ActEntryTemplate, ClarifyGeneric> TraverseRelatedGenerics(ClarifyGeneric actEntryGeneric)
+        {
+            var relatedGenericByTemplate = new Dictionary<ActEntryTemplate, ClarifyGeneric>();
+            foreach (var actEntryTemplate in _templatesByCode.Values.Where(t => t.RelatedGenericRelation.IsNotEmpty()))
+            {
+                var relatedGeneric = actEntryGeneric.TraverseWithFields(actEntryTemplate.RelatedGenericRelation,
+                                                                        actEntryTemplate.RelatedGenericFields);
+                relatedGenericByTemplate.Add(actEntryTemplate, relatedGeneric);
+            }
+
+            return relatedGenericByTemplate;
+        }
+
         private static IEnumerable<ActEntry> assembleActEntryDTOs(ClarifyGeneric actEntryGeneric, IDictionary<int, ActEntryTemplate> actEntryTemplatesByCode, Func<ClarifyDataRow, HistoryItemEmployee> employeeAssembler)
         {
             //HACK using the act entry parent table name to set the type of object (case, or subcase) for this entry 
-            var type = actEntryGeneric.ParentGeneric.TableName;
+            var objectType = actEntryGeneric.ParentGeneric.TableName;
 
             foreach (ClarifyDataRow actEntryRecord in actEntryGeneric.Rows)
             {
@@ -65,37 +83,45 @@ namespace Dovetail.SDK.Bootstrap.History
                 var detail = actEntryRecord["addnl_info"].ToString();
                 var who = employeeAssembler(actEntryRecord);
 
-                yield return new ActEntry { Template = template, When = when, Who = who, AdditionalInfo = detail, ActEntryRecord = actEntryRecord, Type = type};
+                yield return new ActEntry { Template = template, When = when, Who = who, AdditionalInfo = detail, ActEntryRecord = actEntryRecord, Type = objectType};
             }
         }
 
-        private static HistoryItem createActivityDTOFromMapper(ActEntry actEntry)
+        private HistoryItem createActivityDTOFromMapper(ActEntry actEntry)
         {
             var dto = defaultActivityDTOAssembler(actEntry);
 
-            if (isActivityDTOUpdaterPresent(actEntry))
-            {
-                var relatedRow = actEntry.ActEntryRecord;
+            var actEntryTemplate = actEntry.Template;
 
-                if (actEntry.Template.RelatedGeneric != null)
-                {
-                    var relatedRows = actEntry.ActEntryRecord.RelatedRows(actEntry.Template.RelatedGeneric);
-
-                    relatedRow = relatedRows.Length > 0 ? relatedRows[0] : null;
-                }
-
-                if (relatedRow != null)
-                    actEntry.Template.ActivityDTOUpdater(relatedRow, dto);
-            }
+            updateActivityDto(actEntry, dto);
 
             if (isActivityDTOEditorPresent(actEntry))
             {
-                actEntry.Template.ActivityDTOEditor(dto);
+                actEntryTemplate.ActivityDTOEditor(dto);
             }
 
-            actEntry.Template.HTMLizer(dto);
+            actEntryTemplate.HTMLizer(dto);
 
             return dto;
+        }
+
+        private void updateActivityDto(ActEntry actEntry, HistoryItem dto)
+        {
+            if (!isActivityDTOUpdaterPresent(actEntry)) return;
+
+            var actEntryTemplate = actEntry.Template;
+            var relatedRow = actEntry.ActEntryRecord;
+
+            if (actEntryTemplate.RelatedGenericRelation.IsNotEmpty() &&
+                _templateRelatedGenerics.ContainsKey(actEntryTemplate))
+            {
+                var relatedRows = actEntry.ActEntryRecord.RelatedRows(_templateRelatedGenerics[actEntryTemplate]);
+
+                relatedRow = relatedRows.Length > 0 ? relatedRows[0] : null;
+            }
+
+            if (relatedRow != null)
+                actEntryTemplate.ActivityDTOUpdater(relatedRow, dto);
         }
 
         private static HistoryItem defaultActivityDTOAssembler(ActEntry actEntry)
