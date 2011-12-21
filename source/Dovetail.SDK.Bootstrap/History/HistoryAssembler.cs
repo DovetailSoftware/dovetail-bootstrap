@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Dovetail.SDK.Bootstrap.History.AssemblerPolicies;
 using FChoice.Foundation.Filters;
 
 namespace Dovetail.SDK.Bootstrap.History

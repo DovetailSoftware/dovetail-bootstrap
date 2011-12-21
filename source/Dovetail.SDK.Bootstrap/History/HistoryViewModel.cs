@@ -5,8 +5,9 @@ namespace Dovetail.SDK.Bootstrap.History
 {
     public class HistoryItem
 	{
-		public int Id { get; set; }
+		public string Id { get; set; }
         public string Type { get; set; }
+
 		public DateTime When { get; set; }
 		public string Kind { get; set; }
 		public string Detail { get; set; }

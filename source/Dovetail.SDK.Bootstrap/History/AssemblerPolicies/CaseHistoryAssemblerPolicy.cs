@@ -2,20 +2,26 @@ using System.Collections.Generic;
 using System.Linq;
 using Dovetail.SDK.Bootstrap.Clarify;
 using Dovetail.SDK.Bootstrap.Clarify.Extensions;
+using Dovetail.SDK.Bootstrap.History.Configuration;
+using Dovetail.SDK.Bootstrap.History.TemplatePolicies;
 using FChoice.Foundation;
 using FChoice.Foundation.Filters;
 
-namespace Dovetail.SDK.Bootstrap.History
+namespace Dovetail.SDK.Bootstrap.History.AssemblerPolicies
 {
     public class CaseHistoryAssemblerPolicy : IHistoryAssemblerPolicy
     {
         private readonly IClarifySessionCache _sessionCache;
         private readonly HistoryBuilder _historyBuilder;
+        private readonly HistorySettings _historySettings;
 
-        public CaseHistoryAssemblerPolicy(IClarifySessionCache sessionCache, HistoryBuilder historyBuilder)
+        //TODO add settings object to allow getting subcases to be configurable - default (do not get subcase)
+
+        public CaseHistoryAssemblerPolicy(IClarifySessionCache sessionCache, HistoryBuilder historyBuilder, HistorySettings historySettings)
         {
             _sessionCache = sessionCache;
             _historyBuilder = historyBuilder;
+            _historySettings = historySettings;
         }
 
         public bool Handles(WorkflowObject workflowObject)
@@ -25,6 +31,11 @@ namespace Dovetail.SDK.Bootstrap.History
 
         public IEnumerable<HistoryItem> BuildHistory(WorkflowObject workflowObject, Filter actEntryFilter)
         {
+            if(!_historySettings.MergeCaseHistoryChildSubcases)
+            {
+                return _historyBuilder.Build(workflowObject, actEntryFilter);
+            }
+
             var subcaseIds = GetSubcaseIds(workflowObject);
             
             var caseHistory = _historyBuilder.Build(workflowObject, actEntryFilter);

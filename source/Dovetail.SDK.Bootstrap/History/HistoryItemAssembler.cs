@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Dovetail.SDK.Bootstrap.Clarify.Extensions;
+using Dovetail.SDK.Bootstrap.History.Configuration;
 using FChoice.Foundation.Clarify;
 using FubuCore;
 
@@ -10,10 +11,12 @@ namespace Dovetail.SDK.Bootstrap.History
     public class HistoryItemAssembler
     {
         private readonly IDictionary<int, ActEntryTemplate> _templatesByCode;
+        private readonly WorkflowObject _workflowObject;
 
-        public HistoryItemAssembler(IDictionary<int, ActEntryTemplate> templatesByCode)
+        public HistoryItemAssembler(IDictionary<int, ActEntryTemplate> templatesByCode, WorkflowObject workflowObject)
         {
             _templatesByCode = templatesByCode;
+            _workflowObject = workflowObject;
         }
 
         public IEnumerable<HistoryItem> Assemble(ClarifyGeneric actEntryGeneric)
@@ -67,11 +70,8 @@ namespace Dovetail.SDK.Bootstrap.History
             return relatedGenericByTemplate;
         }
 
-        private static IEnumerable<ActEntry> assembleActEntryDTOs(ClarifyGeneric actEntryGeneric, IDictionary<int, ActEntryTemplate> actEntryTemplatesByCode, Func<ClarifyDataRow, HistoryItemEmployee> employeeAssembler)
+        private IEnumerable<ActEntry> assembleActEntryDTOs(ClarifyGeneric actEntryGeneric, IDictionary<int, ActEntryTemplate> actEntryTemplatesByCode, Func<ClarifyDataRow, HistoryItemEmployee> employeeAssembler)
         {
-            //HACK using the act entry parent table name to set the type of object (case, or subcase) for this entry 
-            var objectType = actEntryGeneric.ParentGeneric.TableName;
-
             foreach (ClarifyDataRow actEntryRecord in actEntryGeneric.Rows)
             {
                 var code = Convert.ToInt32(actEntryRecord["act_code"]);
@@ -81,7 +81,7 @@ namespace Dovetail.SDK.Bootstrap.History
                 var detail = actEntryRecord["addnl_info"].ToString();
                 var who = employeeAssembler(actEntryRecord);
 
-                yield return new ActEntry { Template = template, When = when, Who = who, AdditionalInfo = detail, ActEntryRecord = actEntryRecord, Type = objectType};
+                yield return new ActEntry { Template = template, When = when, Who = who, AdditionalInfo = detail, ActEntryRecord = actEntryRecord, Type = _workflowObject.Type};
             }
         }
 
@@ -110,8 +110,7 @@ namespace Dovetail.SDK.Bootstrap.History
             var actEntryTemplate = actEntry.Template;
             var relatedRow = actEntry.ActEntryRecord;
 
-            if (actEntryTemplate.RelatedGenericRelationName.IsNotEmpty() &&
-                templateRelatedGenerics.ContainsKey(actEntryTemplate))
+            if (templateRelatedGenerics.ContainsKey(actEntryTemplate))
             {
                 var relatedRows = actEntry.ActEntryRecord.RelatedRows(templateRelatedGenerics[actEntryTemplate]);
 
@@ -122,11 +121,11 @@ namespace Dovetail.SDK.Bootstrap.History
                 actEntryTemplate.ActivityDTOUpdater(relatedRow, dto);
         }
 
-        private static HistoryItem defaultActivityDTOAssembler(ActEntry actEntry)
+        private HistoryItem defaultActivityDTOAssembler(ActEntry actEntry)
         {
             return new HistoryItem
                        {
-                           Id = actEntry.ActEntryRecord.DatabaseIdentifier(),
+                           Id = _workflowObject.Id,
                            Type = actEntry.Type,
                            Kind = actEntry.Template.DisplayName,
                            Who = actEntry.Who,

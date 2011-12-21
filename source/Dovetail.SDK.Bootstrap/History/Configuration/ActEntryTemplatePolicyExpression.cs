@@ -4,7 +4,7 @@ using Dovetail.SDK.Bootstrap.Extensions;
 using FChoice.Foundation.Clarify;
 using FubuCore;
 
-namespace Dovetail.SDK.Bootstrap.History
+namespace Dovetail.SDK.Bootstrap.History.Configuration
 {
     public class ActEntryTemplate
 	{

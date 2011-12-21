@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Dovetail.SDK.Bootstrap.Clarify;
 using Dovetail.SDK.Bootstrap.Clarify.Extensions;
+using Dovetail.SDK.Bootstrap.History.Configuration;
 using FChoice.Foundation;
 using FChoice.Foundation.Clarify;
 using FChoice.Foundation.Filters;
@@ -43,7 +44,7 @@ namespace Dovetail.SDK.Bootstrap.History
             var templateDictionary = _templatePolicyConfiguration.RenderPolicies(workflowObject);
             
             //query generic hierarchy and while using act entry templates transform the results into HistoryItems
-            return new HistoryItemAssembler(templateDictionary).Assemble(actEntryGeneric);
+            return new HistoryItemAssembler(templateDictionary, workflowObject).Assemble(actEntryGeneric);
         }
     }
 }

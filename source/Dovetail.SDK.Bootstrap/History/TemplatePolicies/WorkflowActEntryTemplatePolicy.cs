@@ -1,41 +1,13 @@
-namespace Dovetail.SDK.Bootstrap.History
-{
-    public class DefaultActEntryTemplatePolicyRegistry : ActEntryTemplatePolicyRegistry
-    {
-        public DefaultActEntryTemplatePolicyRegistry()
-        {
-            DefaultIs<DefaultActEntryTemplatePolicy>();
-            Add<ExamplePolicy>();
-        }
-    }
-    
-    public class ExamplePolicy : ActEntryTemplatePolicyExpression
-    {
-        protected override void DefineTemplate(WorkflowObject workflowObject)
-        {
-            ActEntry(3000).Remove();
-            ActEntry(900).DisplayName("Dyspatched")
-                .EditActivityDTO(dto => { dto.Detail = "Dyspatched to the deep six. " + dto.Detail; });
-        }
-    }
+using Dovetail.SDK.Bootstrap.History.Configuration;
 
-    public class DefaultActEntryTemplatePolicy : ActEntryTemplatePolicyExpression 
+namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
+{
+    public class WorkflowActEntryTemplatePolicy : ActEntryTemplatePolicyExpression 
 	{
         protected override void DefineTemplate(WorkflowObject workflowObject)
 		{
-            if(workflowObject.Type == WorkflowObject.Subcase && workflowObject.IsChild)
-            {
-                this.TimeAndExpenseEdittedActEntry();
-                this.StatusChangedActEntry();
-                this.LogResearchActEntry();
-                this.PhoneLogActEntry();
-                this.NoteActEntry();
-                this.TimeAndExpenseLoggedActEntry();
-                this.EmailOutActEntry();
-                this.EmailInActEntry();
-                
-                return;
-            }
+            //child object histories are not a concern of this policy
+            if (workflowObject.IsChild) return;
 
             //typical workflow object policies
 
@@ -72,6 +44,9 @@ namespace Dovetail.SDK.Bootstrap.History
             ActEntry(4000).DisplayName("Unlinked");
             ActEntry(9200).DisplayName("Initial Response");
 
+            ActEntry(3000).DisplayName("Subcase Created");
+            ActEntry(3100).DisplayName("Subcase Closed");
+                
             this.TimeAndExpenseEdittedActEntry();
             this.StatusChangedActEntry();
             this.LogResearchActEntry();
@@ -80,36 +55,6 @@ namespace Dovetail.SDK.Bootstrap.History
             this.TimeAndExpenseLoggedActEntry();
             this.EmailOutActEntry();
             this.EmailInActEntry();
-			
-			if (workflowObject.Type == WorkflowObject.Case)
-				DefineCaseSpecificActEntries();
-
-            if (workflowObject.Type == WorkflowObject.Subcase)
-				DefineSubcaseSpecificActEntries();
-		}
-
-        private void DefineCaseSpecificActEntries()
-		{
-			ActEntry(3000).DisplayName("Subcase Created");
-			ActEntry(3100).DisplayName("Subcase Closed");
-		}
-
-		private void DefineSubcaseSpecificActEntries()
-		{
-			ActEntry(3000).DisplayName("Subcase Created")
-				.GetRelatedRecord("act_entry2notes_log")
-				.WithFields("description")
-				.UpdateActivityDTOWith((record, dto) =>
-				{
-					dto.Detail = record["description"].ToString();
-				});
-			ActEntry(3100).DisplayName("Subcase Closed")
-				.GetRelatedRecord("act_entry2close_case")
-				.WithFields("summary")
-				.UpdateActivityDTOWith((row, dto) =>
-				{
-					dto.Detail = row["summary"].ToString();
-				});
 		}
 	}
 }

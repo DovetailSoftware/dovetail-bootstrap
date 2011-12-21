@@ -1,4 +1,5 @@
 using System;
+using Dovetail.SDK.Bootstrap.History.Configuration;
 using FChoice.Foundation.Clarify;
 using FubuCore;
 
