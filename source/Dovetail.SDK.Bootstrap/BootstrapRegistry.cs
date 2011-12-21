@@ -1,5 +1,4 @@
 using Dovetail.SDK.Bootstrap.Clarify;
-using Dovetail.SDK.Bootstrap.History;
 using Dovetail.SDK.Bootstrap.History.AssemblerPolicies;
 using Dovetail.SDK.Bootstrap.History.Configuration;
 using Dovetail.SDK.Bootstrap.History.TemplatePolicies;

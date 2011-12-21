@@ -44,8 +44,9 @@
     <Reference Include="fcSDK">
       <HintPath>..\..\libs\DovetailSDK\fcSDK.dll</HintPath>
     </Reference>
-    <Reference Include="FubuCore">
-      <HintPath>..\packages\FubuCore.0.9.3.101\lib\FubuCore.dll</HintPath>
+    <Reference Include="FubuCore, Version=0.9.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\FubuCore.0.9.4.105\lib\FubuCore.dll</HintPath>
     </Reference>
     <Reference Include="FubuLocalization">
       <HintPath>..\packages\FubuLocalization.0.9.3.101\lib\FubuLocalization.dll</HintPath>

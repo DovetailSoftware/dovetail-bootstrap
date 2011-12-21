@@ -60,3 +60,13 @@ h3 span.date-ago {
 .case-history .subcase-item {
     _background-color: #efefef;
 }
+
+.label.medium {
+  background-color: #46a546;
+}
+.label.high {
+  background-color: #f89406;
+}
+.label.urgent {
+  background-color: #c43c35;
+}

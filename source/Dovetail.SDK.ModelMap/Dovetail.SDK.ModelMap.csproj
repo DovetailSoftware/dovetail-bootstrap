@@ -1,0 +1,141 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A6E31218-5C11-4656-9A53-0815D9F10E61}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Dovetail.SDK.ModelMap</RootNamespace>
+    <AssemblyName>Dovetail.SDK.ModelMap</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Bottles">
+      <HintPath>..\packages\Bottles.0.9.1.171\lib\Bottles.dll</HintPath>
+    </Reference>
+    <Reference Include="fcSDK">
+      <HintPath>..\..\libs\DovetailSDK\fcSDK.dll</HintPath>
+    </Reference>
+    <Reference Include="FubuCore">
+      <HintPath>..\packages\FubuCore.0.9.4.105\lib\FubuCore.dll</HintPath>
+    </Reference>
+    <Reference Include="FubuLocalization">
+      <HintPath>..\packages\FubuLocalization.0.9.4.105\lib\FubuLocalization.dll</HintPath>
+    </Reference>
+    <Reference Include="FubuMVC.Core">
+      <HintPath>..\packages\FubuMVC.References.0.9.3.696\lib\net40\FubuMVC.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="FubuMVC.StructureMap">
+      <HintPath>..\packages\FubuMVC.References.0.9.3.696\lib\net40\FubuMVC.StructureMap.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlTags">
+      <HintPath>..\packages\HtmlTags.1.0.0.52\lib\4.0\HtmlTags.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation">
+      <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="StructureMap">
+      <HintPath>..\packages\structuremap.2.6.3\lib\StructureMap.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Clarify\ClarifyGlobalList.cs" />
+    <Compile Include="Clarify\ClarifyListCache.cs" />
+    <Compile Include="Clarify\ClarifyListElement.cs" />
+    <Compile Include="Clarify\ClarifyListExtensions.cs" />
+    <Compile Include="Clarify\IClarifyList.cs" />
+    <Compile Include="Clarify\IClarifyListCache.cs" />
+    <Compile Include="Clarify\IClarifyListElement.cs" />
+    <Compile Include="Clarify\UserDefinedList.cs" />
+    <Compile Include="Configuration\ModelMapperRegistry.cs" />
+    <Compile Include="DovetailGenericModelMapVisitor.cs" />
+    <Compile Include="DovetailMappingException.cs" />
+    <Compile Include="HttpAssemblerResultEncoder.cs" />
+    <Compile Include="IAssemblerResultEncoder.cs" />
+    <Compile Include="IMapEntryBuilder.cs" />
+    <Compile Include="IModelBuilder.cs" />
+    <Compile Include="IModelMapVisitor.cs" />
+    <Compile Include="Instructions\AddFilter.cs" />
+    <Compile Include="Instructions\BeginAdHocRelation.cs" />
+    <Compile Include="Instructions\BeginMapMany.cs" />
+    <Compile Include="Instructions\BeginModelMap.cs" />
+    <Compile Include="Instructions\BeginRelation.cs" />
+    <Compile Include="Instructions\BeginTable.cs" />
+    <Compile Include="Instructions\BeginView.cs" />
+    <Compile Include="Instructions\EndMapMany.cs" />
+    <Compile Include="Instructions\EndModelMap.cs" />
+    <Compile Include="Instructions\EndRelation.cs" />
+    <Compile Include="MapEntryBuilder.cs" />
+    <Compile Include="MappingExtensions.cs" />
+    <Compile Include="ModelBuilder.cs" />
+    <Compile Include="ModelInspectorVisitor.cs" />
+    <Compile Include="ModelMapSchemaValidationSource.cs" />
+    <Compile Include="ObjectModel\ClarifyGenericMapEntry.cs" />
+    <Compile Include="ObjectModel\FieldMap.cs" />
+    <Compile Include="ObjectModel\FieldSortMap.cs" />
+    <Compile Include="ObjectModel\Location.cs" />
+    <Compile Include="ObjectModel\ModelInformation.cs" />
+    <Compile Include="ObjectModel\SubRootInformation.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Registration\DSL\GlobalListConfigurationExpression.cs" />
+    <Compile Include="Registration\DSL\IMapExpressionFromRoot.cs" />
+    <Compile Include="Registration\DSL\IMapExpressionPostAssignBase.cs" />
+    <Compile Include="Registration\DSL\IMapExpressionPostAssignWithList.cs" />
+    <Compile Include="Registration\DSL\IMapExpressionPostBasedOnField.cs" />
+    <Compile Include="Registration\DSL\IMapExpressionPostBasedOnFields.cs" />
+    <Compile Include="Registration\DSL\IMapExpressionPostRoot.cs" />
+    <Compile Include="Registration\DSL\IMapExpressionPostView.cs" />
+    <Compile Include="Registration\DSL\IMapRelatedModelExpression.cs" />
+    <Compile Include="Registration\DSL\IMapRelatedModelExpressionPostTo.cs" />
+    <Compile Include="Registration\DSL\MapExpression.cs" />
+    <Compile Include="Registration\DSL\MapRelatedModelExpression.cs" />
+    <Compile Include="Registration\ModelMap.cs" />
+    <Compile Include="TemporalExtensions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Dovetail.SDK.Bootstrap\Dovetail.SDK.Bootstrap.csproj">
+      <Project>{9947E369-AFF9-4911-AB0A-99B918A8F3CF}</Project>
+      <Name>Dovetail.SDK.Bootstrap</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

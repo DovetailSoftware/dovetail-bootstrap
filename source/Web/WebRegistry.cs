@@ -1,4 +1,6 @@
 ﻿using Dovetail.SDK.Bootstrap;
+using Dovetail.SDK.ModelMap.Configuration;
+using Dovetail.SDK.ModelMap.Registration;
 using StructureMap.Configuration.DSL;
 
 namespace Bootstrap.Web
@@ -7,7 +9,14 @@ namespace Bootstrap.Web
     {
         public WebRegistry()
         {
+            Scan(scan=>
+                     {
+                         scan.TheCallingAssembly();
+                         scan.ConnectImplementationsToTypesClosing(typeof(ModelMap<>));
+                     });
+
             IncludeRegistry<BootstrapRegistry>();
+            IncludeRegistry<ModelMapperRegistry>();
         }
     }
 }

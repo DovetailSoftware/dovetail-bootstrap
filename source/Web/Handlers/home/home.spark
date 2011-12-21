@@ -19,6 +19,24 @@
 <content:pagehead>
 <h1>Welcome <small>to our example</small></h1>
 </content:pagehead>
+
+
+<div class="row">
+    <div class="span12">
+    <h4>Open cases which you own...</h4>
+    <dl>
+    <for each="var c in Model.Cases">
+    <dt>
+        <span class="label ${c.Severity.ToLowerInvariant().Replace(" ", "")}">${c.Id}</span> 
+        for ${c.ContactName} at ${c.SiteName}
+    </dt>
+    <dd>${c.Title}</dd>
+    </for>
+    </dl>
+    </div>
+</div>
+
+
 <div class="row">
     <div class="span12">
     <h4>A few details about objects in your database...</h4>
