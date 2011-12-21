@@ -34,7 +34,7 @@ h3
 .notes {
     margin: 5px;
     padding: 7px;    
-}
+}\
 
 .history-item-description {
     font-style: italic;
@@ -55,4 +55,8 @@ h3 span.date-ago {
     padding: 13px;
     background-color: #FFC;    
     border: 1px grey dotted;
+}
+
+.case-history .subcase-item {
+    _background-color: #efefef;
 }
