@@ -1,5 +1,3 @@
-using System.Reflection;
-using Dovetail.SDK.ModelMap.Registration;
 using FubuMVC.StructureMap;
 using StructureMap.Configuration.DSL;
 
@@ -11,10 +9,6 @@ namespace Dovetail.SDK.ModelMap.Configuration
 		{
 		    Scan(scan =>
 		             {
-						 //scan.AssembliesFromApplicationBaseDirectory(a => a.FullName.Contains("Dovetail.Agent."));
-		                 //assemblies.Each(scan.Assembly);
-
-		                 
                          scan.TheCallingAssembly();
                          scan.WithDefaultConventions();
 		                 scan.Convention<SettingsScanner>();
