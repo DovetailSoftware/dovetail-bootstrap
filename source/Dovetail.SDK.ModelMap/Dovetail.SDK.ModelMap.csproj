@@ -120,6 +120,9 @@
     <Compile Include="Registration\DSL\MapRelatedModelExpression.cs" />
     <Compile Include="Registration\ModelMap.cs" />
     <Compile Include="TemporalExtensions.cs" />
+	<Compile Include="..\CommonAssemblyInfo.cs">
+		<Link>Properties\CommonAssemblyInfo.cs</Link>
+	</Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

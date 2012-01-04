@@ -2,7 +2,7 @@ require 'albacore'
 include REXML
 include Rake::DSL
 
-BUILD_NUMBER_BASE = "1.0.0"
+BUILD_NUMBER_BASE = "0.1.0"
 PROJECT_NAME = "Bootstrap"
 SLN_PATH = "source/#{PROJECT_NAME}.sln"
 SLN_FILES = [SLN_PATH]
@@ -30,7 +30,7 @@ msbuild :msbuild, [:clean] do |msb,args|
 	msb.solution = args[:solution] || SLN_PATH
 end
 
-task :compile => [:install_packages] do 
+task :compile => [:install_packages, :version] do 
 	SLN_FILES.each do |f|
 		Rake::Task["msbuild"].execute(:solution => f)
 	end
@@ -64,13 +64,28 @@ task :install_packages => [:clean] do
 	}
 end
 
-desc "Run nuget udpate on all the projects"
+desc "Run nuget update on all the projects"
 task :update_packages => [:clean] do 
 	Dir.glob(File.join("**","packages.config")){ |file|
 		puts "Updating packages for #{file}"
 		sh "tools/nuget.exe update #{file} -RepositoryPath source/packages"
 	}
 end
+
+desc "Build nuget packages"
+task :build_packages => [:default] do 
+	FileUtils.mkdir_p("results/packages")
+	packagesDir = File.absolute_path("results/packages")
+	Dir.glob(File.join("**","*.nuspec")){ |file|
+		puts "Building nuget package for #{file}"
+		projectPath = File.dirname(file)
+		Dir.chdir(projectPath) do 
+			puts "in project path #{projectPath}"
+			sh "../../tools/nuget.exe pack -OutputDirectory #{packagesDir}"
+		end		
+	}
+end
+
 
 desc "Copy Doveatail SDK assemblies to this project's tool directory"
 task :copy_sdk_assemblies do 
@@ -80,32 +95,6 @@ task :copy_sdk_assemblies do
 	sdkAssemblies.each do |asm|
 		FileUtils.cp File.join(DOVETAILSDK_PATH, asm), projectSDK
 	end	
-end
-
-desc "Update the version information for the build"
-assemblyinfo :version do |asm|
-	asm_version = BUILD_NUMBER_BASE + ".0"
-
-	begin
-		gittag = `git describe --long`.chomp 	# looks something like v0.1.0-63-g92228f4
-		gitnumberpart = /-(\d+)-/.match(gittag)
-		gitnumber = gitnumberpart.nil? ? '0' : gitnumberpart[1]
-		commit = `git log -1 --pretty=format:%H`
-	rescue
-		commit = "git unavailable"
-		gitnumber = "0"
-	end
-	build_number = "#{BUILD_NUMBER_BASE}.#{gitnumber}"
-	tc_build_number = ENV["BUILD_NUMBER"]
-	puts "##teamcity[buildNumber '#{build_number}-#{tc_build_number}']" unless tc_build_number.nil?
-	asm.trademark = commit
-	asm.product_name = "#{PRODUCT} #{gittag}"
-	asm.description = build_number
-	asm.version = asm_version
-	asm.file_version = build_number
-	asm.custom_attributes :AssemblyInformationalVersion => asm_version
-	asm.copyright = COPYRIGHT
-	asm.output_file = COMMON_ASSEMBLY_INFO
 end
 
 desc "Prepares the working directory for a new build"
@@ -159,4 +148,28 @@ def apply_schema(database = DATABASE)
 	sh "type #{seReport}"
 	File.delete(seConfig)
 	File.delete seReport if File.exists? seReport
+end
+
+desc "Update the version information for the build"
+assemblyinfo :version do |asm|
+	asm_version = BUILD_NUMBER_BASE + ".0"
+
+	begin
+		gittag = `git describe --long`.chomp 	# looks something like v0.1.0-63-g92228f4
+		gitnumberpart = /-(\d+)-/.match(gittag)
+		gitnumber = gitnumberpart.nil? ? '0' : gitnumberpart[1]
+		commit = `git log -1 --pretty=format:%H`
+	rescue
+		commit = "git unavailable"
+		gitnumber = "0"
+	end
+	build_number = "#{BUILD_NUMBER_BASE}.#{gitnumber}"
+	asm.trademark = commit
+	#asm.product_name = "#{PROJECT_NAME}"
+	#asm.description = build_number
+	asm.version = asm_version
+	asm.file_version = asm_version
+	asm.custom_attributes :AssemblyInformationalVersion => asm_version
+	#asm.copyright = COPYRIGHT
+	asm.output_file = 'source/CommonAssemblyInfo.cs'
 end
