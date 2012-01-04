@@ -15,7 +15,7 @@ SCHEMAEDITOR_PATH = "#{Rake::Win32::normalize(ENV['PROGRAMFILES'])}/Dovetail Sof
 props = {:archive => "build", :testing => "results", :database => ""}
 
 desc "**Default**, compiles and runs unit tests"
-task :default => [:clean, :compile,:test_assemblies,:unit_tests]
+task :default => [:clean, :compile,:test_assemblies,:unit_tests,:build_packages]
 
 #task :ci => [:on_exit,:clean,:apply_schemascripts,:compile,:test_assemblies,:unit_tests]
 
@@ -73,7 +73,7 @@ task :update_packages => [:clean] do
 end
 
 desc "Build nuget packages"
-task :build_packages => [:default] do 
+task :build_packages => [:compile] do 
 	FileUtils.mkdir_p("results/packages")
 	packagesDir = File.absolute_path("results/packages")
 	Dir.glob(File.join("**","*.nuspec")){ |file|
