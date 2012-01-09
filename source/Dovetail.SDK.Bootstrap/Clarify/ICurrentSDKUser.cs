@@ -36,6 +36,8 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 
         public void SetUserName(string username)
         {
+            //verify user exists
+
             var dataSet = _session.CreateDataSet();
             var userGeneric = dataSet.CreateGeneric("user");
             userGeneric.Filter(f => f.Equals("login_name", username));
@@ -54,16 +56,18 @@ namespace Dovetail.SDK.Bootstrap.Clarify
             }
 
             Username = username;
+            
+            //get user timezone based on their site's primary address
 
             if(timeZoneGeneric.Count < 1)
             {
                 Timezone = _localeCache.ServerTimeZone;
-                _logger.LogWarn("Could not determine a default timezone for user {0}. Defaulting to server timezone {1}.", username, Timezone);
+                _logger.LogWarn("Could not determine a default timezone for user {0}. Defaulting to server timezone {1}.", username, Timezone.Name);
             }
 
             var timezoneName = timeZoneGeneric.Rows[0].AsString("name");
             Timezone = _localeCache.TimeZones[timezoneName, false];
-            _logger.LogDebug("Timezone for user {0} set to {1}.", username, Timezone);
+            _logger.LogDebug("Timezone for user {0} set to {1}.", username, Timezone.Name);
         }
     }
 }
