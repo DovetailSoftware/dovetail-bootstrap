@@ -21,7 +21,7 @@ We use rake for our build automation. If you do not have rake already installed.
 
 Once you have rake installed you will need to get the required Nuget packages installed. Luckily we've got that automated. 
 
-* ```rake install_packages```
+* ```rake nuget:install```
 
 
 ### Copying Dovetail SDK Assemblies
@@ -31,7 +31,7 @@ Dovetail Bootstrap does not include Dovetail SDK assemblies. Why? We currently r
 1. Install Dovetail SDK if you don't have it already. We recommend a recent version (3.0 or greater).
 
 2. Copy the required sdk assemblies using our handy rake target 
- * ```rake copy_sdk_assemblies```
+ * ```rake setup:copy_sdk_assemblies```
 
 ### Update web.config 
 

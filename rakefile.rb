@@ -12,17 +12,19 @@ COMPILE_TARGET = "Debug"
 DOVETAILSDK_PATH = "#{Rake::Win32::normalize(ENV['ProgramW6432'])}/Dovetail Software/fcSDK/bin"
 SCHEMAEDITOR_PATH = "#{Rake::Win32::normalize(ENV['PROGRAMFILES'])}/Dovetail Software/SchemaEditor/SchemaEditor.exe"
 
+puts "Loading scripts from build support directory..."
+buildsupportfiles = Dir["#{File.dirname(__FILE__)}/buildsupport/*.rb"]
+buildsupportfiles.each { |ext| 
+	puts "loading #{ext}" 
+	load ext 
+}
+
 props = {:archive => "build", :testing => "results", :database => ""}
 
 desc "**Default**, compiles and runs unit tests"
-task :default => [:clean,:version,:compile,:test_assemblies,:unit_tests,:build_packages]
+task :default => [:clean,:version,:compile,:test_assemblies,:unit_tests]
 
-#task :ci => [:on_exit,:clean,:apply_schemascripts,:compile,:test_assemblies,:unit_tests]
-
-desc "Rebuilds development database and populates it will data"
-task :setup_developer => [:clean,:apply_schemascripts, :install_packages]
-
-desc "Run a sample build using the MSBuildTask"
+#desc "Run a sample build using the MSBuildTask"
 msbuild :msbuild, [:clean] do |msb,args|
 	msb.properties :configuration => :Debug
 	msb.targets :Clean, :Build
@@ -36,7 +38,7 @@ task :compile => [:install_packages, :version] do
 	end
 end
 
-desc "Copy archives to test folder in order to run unit tests"
+#desc "Copy archives to test folder in order to run unit tests"
 output :test_assemblies => [:compile] do |out|
 	out.from "#{File.dirname(__FILE__)}"
 	out.to "#{props[:testing]}"
@@ -56,48 +58,92 @@ nunit :unit_tests do |nunit|
 	nunit.options '/xml=results/nunit-results.xml'
 end
 
-desc "Run nuget install on all the projects"
-task :install_packages => [:clean] do 
-	Dir.glob(File.join("**","packages.config")){ |file|
-		puts "Installing packages for #{file}"
-		sh "tools/nuget.exe install #{file} -OutputDirectory source/packages"
-	}
+namespace :nuget do
+
+	desc "Run nuget install on all the projects"
+	task :install => [:clean] do 
+		Dir.glob(File.join("**","packages.config")){ |file|
+			puts "Installing packages for #{file}"
+			sh "tools/nuget.exe install #{file} -OutputDirectory source/packages"
+		}
+	end
+
+	desc "Run nuget update on all the projects"
+	task :update => [:clean] do 
+		Dir.glob(File.join("**","packages.config")){ |file|
+			puts "Updating packages for #{file}"
+			sh "tools/nuget.exe update #{file} -RepositoryPath source/packages"
+		}
+	end
+
+	desc "Build nuget packages"
+	task :build => [:compile] do 
+		FileUtils.mkdir_p("results/packages")
+		packagesDir = File.absolute_path("results/packages")
+		Dir.glob(File.join("**","*.nuspec")){ |file|
+			puts "Building nuget package for #{file}"
+			projectPath = File.dirname(file)
+			Dir.chdir(projectPath) do 
+				puts "in project path #{projectPath}"
+				sh "../../tools/nuget.exe pack -OutputDirectory #{packagesDir}"
+			end		
+		}
+	end
+
+	desc "Deploy nuget packages. Expectes you to define your own 'deploy_nuget_packages' task in the buildsupport directory"
+	task :deploy => [:default,:build_packages,:deploy_nuget_packages]
+end 
+
+namespace :setup do 
+
+	#desc "Rebuilds development database and populates it with data"
+	task :developer => [:clean,:apply_schemascripts, :install]
+
+	desc "Copy Doveatail SDK assemblies to this project's tool directory"
+	task :copy_sdk_assemblies do 
+		projectSDK = 'libs/DovetailSDK'
+		sdkAssemblies = ['FChoice.Common.dll', 'FChoice.Foundation.Clarify.Compatibility.dll','FChoice.Foundation.Clarify.Compatibility.Toolkits.dll' , 'FChoice.Toolkits.Clarify.dll', 'fcSDK.dll', 'log4net.dll']
+		FileUtils.mkdir_p(projectSDK)
+		sdkAssemblies.each do |asm|
+			FileUtils.cp File.join(DOVETAILSDK_PATH, asm), projectSDK
+		end	
+	end
+
+	desc "Apply all schema scripts in the schema directory"
+	task :apply_schemascripts do
+		sh "\"#{SCHEMAEDITOR_PATH}\" -g"
+		apply_schema
+	end
+
+	def apply_schema(database = DATABASE)  
+
+		puts "Applying scripts to #{database} database"
+		seConfig = 'Default.SchemaEditor'           
+		seReport = 'SchemaDifferenceReport.txt'
+
+		Dir.glob(File.join('schema', "*schemascript.xml")) do |schema_script|  
+ 
+			File.open(seConfig) do |schema_editor_config_file|
+				doc = Document.new(schema_editor_config_file)
+				doc.root.elements['database/type'].text = 'MsSqlServer2005'
+				doc.root.elements['database/connectionString'].text = "Data Source=.; Initial Catalog=#{database};User Id=sa; Password=sa;"
+				doc.root.elements['inputFilePath'].text = schema_script.gsub('/','\\')
+				formatter = REXML::Formatters::Default.new
+				File.open(seConfig, 'w') do |result|
+					formatter.write(doc, result)
+				end
+			end
+
+			puts "\n\nApplying schemascript #{schema_script}"
+			sh "\"#{SCHEMAEDITOR_PATH}\" -a"
+		end
+		sh "type #{seReport}"
+		File.delete(seConfig)
+		File.delete seReport if File.exists? seReport
+	end
+
 end
-
-desc "Run nuget update on all the projects"
-task :update_packages => [:clean] do 
-	Dir.glob(File.join("**","packages.config")){ |file|
-		puts "Updating packages for #{file}"
-		sh "tools/nuget.exe update #{file} -RepositoryPath source/packages"
-	}
-end
-
-desc "Build nuget packages"
-task :build_packages => [:compile] do 
-	FileUtils.mkdir_p("results/packages")
-	packagesDir = File.absolute_path("results/packages")
-	Dir.glob(File.join("**","*.nuspec")){ |file|
-		puts "Building nuget package for #{file}"
-		projectPath = File.dirname(file)
-		Dir.chdir(projectPath) do 
-			puts "in project path #{projectPath}"
-			sh "../../tools/nuget.exe pack -OutputDirectory #{packagesDir}"
-		end		
-	}
-end
-
-
-desc "Copy Doveatail SDK assemblies to this project's tool directory"
-task :copy_sdk_assemblies do 
-	projectSDK = 'libs/DovetailSDK'
-	sdkAssemblies = ['FChoice.Common.dll', 'FChoice.Foundation.Clarify.Compatibility.dll','FChoice.Foundation.Clarify.Compatibility.Toolkits.dll' , 'FChoice.Toolkits.Clarify.dll', 'fcSDK.dll', 'log4net.dll']
-	FileUtils.mkdir_p(projectSDK)
-	sdkAssemblies.each do |asm|
-		FileUtils.cp File.join(DOVETAILSDK_PATH, asm), projectSDK
-	end	
-end
-
-desc "Prepares the working directory for a new build"
+#desc "Prepares the working directory for a new build"
 task :clean do	
 
 	props.each do |key,val|
@@ -117,40 +163,7 @@ task :clean do
 	end 
 end
 
-desc "Apply all schema scripts in the schema directory"
-task :apply_schemascripts do
-	sh "\"#{SCHEMAEDITOR_PATH}\" -g"
-	apply_schema
-end
-
-def apply_schema(database = DATABASE)  
-
-	puts "Applying scripts to #{database} database"
-	seConfig = 'Default.SchemaEditor'           
-	seReport = 'SchemaDifferenceReport.txt'
-
-	Dir.glob(File.join('schema', "*schemascript.xml")) do |schema_script|  
- 
-		File.open(seConfig) do |schema_editor_config_file|
-			doc = Document.new(schema_editor_config_file)
-			doc.root.elements['database/type'].text = 'MsSqlServer2005'
-			doc.root.elements['database/connectionString'].text = "Data Source=.; Initial Catalog=#{database};User Id=sa; Password=sa;"
-			doc.root.elements['inputFilePath'].text = schema_script.gsub('/','\\')
-			formatter = REXML::Formatters::Default.new
-			File.open(seConfig, 'w') do |result|
-				formatter.write(doc, result)
-			end
-		end
-
-		puts "\n\nApplying schemascript #{schema_script}"
-		sh "\"#{SCHEMAEDITOR_PATH}\" -a"
-	end
-	sh "type #{seReport}"
-	File.delete(seConfig)
-	File.delete seReport if File.exists? seReport
-end
-
-desc "Update the version information for the build"
+#desc "Update the version information for the build"
 assemblyinfo :version do |asm|
 	asm_version = BUILD_NUMBER_BASE + ".0"
 
