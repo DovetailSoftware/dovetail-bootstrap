@@ -32,7 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Bottles">
-      <HintPath>..\packages\Bottles.0.9.1.171\lib\Bottles.dll</HintPath>
+      <HintPath>..\packages\Bottles.0.9.1.176\lib\Bottles.dll</HintPath>
     </Reference>
     <Reference Include="FChoice.Common">
       <HintPath>..\..\libs\DovetailSDK\FChoice.Common.dll</HintPath>
@@ -44,18 +44,17 @@
     <Reference Include="fcSDK">
       <HintPath>..\..\libs\DovetailSDK\fcSDK.dll</HintPath>
     </Reference>
-    <Reference Include="FubuCore, Version=0.9.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\FubuCore.0.9.4.105\lib\FubuCore.dll</HintPath>
+    <Reference Include="FubuCore">
+      <HintPath>..\packages\FubuCore.0.9.4.107\lib\FubuCore.dll</HintPath>
     </Reference>
     <Reference Include="FubuLocalization">
-      <HintPath>..\packages\FubuLocalization.0.9.4.105\lib\FubuLocalization.dll</HintPath>
+      <HintPath>..\packages\FubuLocalization.0.9.4.107\lib\FubuLocalization.dll</HintPath>
     </Reference>
     <Reference Include="FubuMVC.Core">
-      <HintPath>..\packages\FubuMVC.References.0.9.3.696\lib\net40\FubuMVC.Core.dll</HintPath>
+      <HintPath>..\packages\FubuMVC.References.0.9.3.703\lib\net40\FubuMVC.Core.dll</HintPath>
     </Reference>
     <Reference Include="FubuMVC.StructureMap">
-      <HintPath>..\packages\FubuMVC.References.0.9.3.696\lib\net40\FubuMVC.StructureMap.dll</HintPath>
+      <HintPath>..\packages\FubuMVC.References.0.9.3.703\lib\net40\FubuMVC.StructureMap.dll</HintPath>
     </Reference>
     <Reference Include="HtmlTags">
       <HintPath>..\packages\HtmlTags.1.0.0.52\lib\4.0\HtmlTags.dll</HintPath>
@@ -119,9 +118,9 @@
     <Compile Include="Token\AuthenticationTokenRepository.cs" />
     <Compile Include="Token\UserAuthenticator.cs" />
     <Compile Include="Token\TokenAuthenticationApi.cs" />
-	<Compile Include="..\CommonAssemblyInfo.cs">
-		<Link>Properties\CommonAssemblyInfo.cs</Link>
-	</Compile>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
