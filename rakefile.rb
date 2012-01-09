@@ -32,7 +32,7 @@ msbuild :msbuild, [:clean] do |msb,args|
 	msb.solution = args[:solution] || SLN_PATH
 end
 
-task :compile => [:install_packages, :version] do 
+task :compile => ["nuget:install", :version] do 
 	SLN_FILES.each do |f|
 		Rake::Task["msbuild"].execute(:solution => f)
 	end
@@ -91,7 +91,7 @@ namespace :nuget do
 	end
 
 	desc "Deploy nuget packages. Expectes you to define your own 'deploy_nuget_packages' task in the buildsupport directory"
-	task :deploy => [:default,:build_packages,:deploy_nuget_packages]
+	task :deploy => [:default,"nuget:build",:deploy_nuget_packages]
 end 
 
 namespace :setup do 
