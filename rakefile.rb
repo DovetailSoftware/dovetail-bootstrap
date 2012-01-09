@@ -15,7 +15,7 @@ SCHEMAEDITOR_PATH = "#{Rake::Win32::normalize(ENV['PROGRAMFILES'])}/Dovetail Sof
 props = {:archive => "build", :testing => "results", :database => ""}
 
 desc "**Default**, compiles and runs unit tests"
-task :default => [:clean, :compile,:test_assemblies,:unit_tests,:build_packages]
+task :default => [:clean,:version,:compile,:test_assemblies,:unit_tests,:build_packages]
 
 #task :ci => [:on_exit,:clean,:apply_schemascripts,:compile,:test_assemblies,:unit_tests]
 
@@ -164,12 +164,10 @@ assemblyinfo :version do |asm|
 		gitnumber = "0"
 	end
 	build_number = "#{BUILD_NUMBER_BASE}.#{gitnumber}"
+	puts "Git based version is #{build_number}"
 	asm.trademark = commit
-	#asm.product_name = "#{PROJECT_NAME}"
-	#asm.description = build_number
-	asm.version = asm_version
-	asm.file_version = asm_version
-	asm.custom_attributes :AssemblyInformationalVersion => asm_version
-	#asm.copyright = COPYRIGHT
+	asm.version = build_number
+	asm.file_version = build_number
+	asm.custom_attributes :AssemblyInformationalVersion => build_number
 	asm.output_file = 'source/CommonAssemblyInfo.cs'
 end
