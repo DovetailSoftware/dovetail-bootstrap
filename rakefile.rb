@@ -32,7 +32,7 @@ msbuild :msbuild, [:clean] do |msb,args|
 	msb.solution = args[:solution] || SLN_PATH
 end
 
-task :compile => ["nuget:install", :version] do 
+task :compile => [:version] do 
 	SLN_FILES.each do |f|
 		Rake::Task["msbuild"].execute(:solution => f)
 	end
@@ -64,7 +64,7 @@ namespace :nuget do
 	task :install => [:clean] do 
 		Dir.glob(File.join("**","packages.config")){ |file|
 			puts "Installing packages for #{file}"
-			sh "tools/nuget.exe install #{file} -OutputDirectory source/packages"
+			sh "source/.nuget.exe install #{file} -OutputDirectory source/packages"
 		}
 	end
 
@@ -72,7 +72,7 @@ namespace :nuget do
 	task :update => [:clean] do 
 		Dir.glob(File.join("**","packages.config")){ |file|
 			puts "Updating packages for #{file}"
-			sh "tools/nuget.exe update #{file} -RepositoryPath source/packages"
+			sh "source/.nuget.exe update #{file} -RepositoryPath source/packages"
 		}
 	end
 
@@ -85,7 +85,7 @@ namespace :nuget do
 			projectPath = File.dirname(file)
 			Dir.chdir(projectPath) do 
 				puts "in project path #{projectPath}"
-				sh "../../tools/nuget.exe pack -OutputDirectory #{packagesDir}"
+				sh "../../source/.nuget.exe pack -OutputDirectory #{packagesDir}"
 			end		
 		}
 	end
