@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FChoice.Foundation;
 using FChoice.Foundation.Clarify;
 
 namespace Dovetail.SDK.Bootstrap.Clarify.Extensions
@@ -14,17 +15,17 @@ namespace Dovetail.SDK.Bootstrap.Clarify.Extensions
 
         public static string AsString(this ClarifyDataRow row, string fieldName)
         {
-            return row[fieldName].ToString();
+            return row[fieldName] == DBNull.Value ? null : row[fieldName].ToString();
         }
 
         public static int AsInt(this ClarifyDataRow row, string fieldName)
         {
-            return Convert.ToInt32(row[fieldName]);
+            return row[fieldName] == DBNull.Value ? 0 : Convert.ToInt32(row[fieldName]);
         }
 
         public static DateTime AsDateTime(this ClarifyDataRow row, string fieldName)
         {
-            return Convert.ToDateTime(row[fieldName].ToString());
+            return row[fieldName] == DBNull.Value ? FCGeneric.MIN_DATE : Convert.ToDateTime(row[fieldName].ToString());
         }
 
         public static IEnumerable<ClarifyDataRow> DataRows(this ClarifyGeneric generic)
