@@ -17,11 +17,8 @@ We use rake for our build automation. If you do not have rake already installed.
 3. Add required gems.
  * ```gem install albacore```
 
-### Installing Nuget Dependencies 
-
-Once you have rake installed you will need to get the required Nuget packages installed. Luckily we've got that automated. 
-
-* ```rake nuget:install```
+4. Run Rake.
+ * ```rake```
 
 
 ### Copying Dovetail SDK Assemblies
