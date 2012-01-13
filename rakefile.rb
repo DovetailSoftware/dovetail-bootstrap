@@ -11,6 +11,7 @@ COMPILE_TARGET = "Debug"
 
 DOVETAILSDK_PATH = "#{Rake::Win32::normalize(ENV['ProgramW6432'])}/Dovetail Software/fcSDK/bin"
 SCHEMAEDITOR_PATH = "#{Rake::Win32::normalize(ENV['PROGRAMFILES'])}/Dovetail Software/SchemaEditor/SchemaEditor.exe"
+NUGET_EXE = File.absolute_path("source/.nuget/nuget.exe")
 
 puts "Loading scripts from build support directory..."
 buildsupportfiles = Dir["#{File.dirname(__FILE__)}/buildsupport/*.rb"]
@@ -60,19 +61,11 @@ end
 
 namespace :nuget do
 
-	desc "Run nuget install on all the projects"
-	task :install => [:clean] do 
-		Dir.glob(File.join("**","packages.config")){ |file|
-			puts "Installing packages for #{file}"
-			sh "source/.nuget.exe install #{file} -OutputDirectory source/packages"
-		}
-	end
-
 	desc "Run nuget update on all the projects"
 	task :update => [:clean] do 
 		Dir.glob(File.join("**","packages.config")){ |file|
 			puts "Updating packages for #{file}"
-			sh "source/.nuget.exe update #{file} -RepositoryPath source/packages"
+			sh "#{NUGET_EXE} update #{file} -RepositoryPath source/packages"
 		}
 	end
 
@@ -85,7 +78,7 @@ namespace :nuget do
 			projectPath = File.dirname(file)
 			Dir.chdir(projectPath) do 
 				puts "in project path #{projectPath}"
-				sh "../../source/.nuget.exe pack -OutputDirectory #{packagesDir}"
+				sh "#{NUGET_EXE} pack -OutputDirectory #{packagesDir}"
 			end		
 		}
 	end
