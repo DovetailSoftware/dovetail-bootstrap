@@ -4,7 +4,6 @@ using Dovetail.SDK.Bootstrap.History.Configuration;
 using Dovetail.SDK.Bootstrap.History.TemplatePolicies;
 using FChoice.Foundation.Clarify;
 using FChoice.Foundation.Schema;
-using FubuCore.Configuration;
 using FubuMVC.StructureMap;
 using StructureMap.Configuration.DSL;
 
@@ -22,7 +21,7 @@ namespace Dovetail.SDK.Bootstrap
                 s.Convention<SettingsScanner>();
             });
 
-            For<ISettingsProvider>().Use<AppSettingsProvider>(); 
+            IncludeRegistry<AppSettingProviderRegistry>();
 
             For<IListCache>().Use(c => c.GetInstance<IClarifyApplicationFactory>().Create().ListCache);
             For<ISchemaCache>().Use(c => c.GetInstance<IClarifyApplicationFactory>().Create().SchemaCache);
