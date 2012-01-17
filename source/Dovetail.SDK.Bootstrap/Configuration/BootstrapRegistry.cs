@@ -17,7 +17,6 @@ namespace Dovetail.SDK.Bootstrap.Configuration
                 s.TheCallingAssembly();
                 s.WithDefaultConventions();
                 s.AddAllTypesOf<IHistoryAssemblerPolicy>();
-                s.Convention<SettingsScanner>();
             });
 
             IncludeRegistry<AppSettingProviderRegistry>();
