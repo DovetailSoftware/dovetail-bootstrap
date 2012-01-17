@@ -169,6 +169,10 @@
       <Project>{9947E369-AFF9-4911-AB0A-99B918A8F3CF}</Project>
       <Name>Dovetail.SDK.Bootstrap</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Dovetail.SDK.Fubu\Dovetail.SDK.Fubu.csproj">
+      <Project>{BDB6AD41-4C91-451F-B0EA-5858DFB5FB26}</Project>
+      <Name>Dovetail.SDK.Fubu</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Dovetail.SDK.ModelMap\Dovetail.SDK.ModelMap.csproj">
       <Project>{A6E31218-5C11-4656-9A53-0815D9F10E61}</Project>
       <Name>Dovetail.SDK.ModelMap</Name>

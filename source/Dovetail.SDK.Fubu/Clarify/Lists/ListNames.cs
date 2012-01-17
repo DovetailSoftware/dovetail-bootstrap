@@ -1,4 +1,4 @@
-namespace Dovetail.SDK.Bootstrap.Clarify.Lists
+namespace Dovetail.SDK.Fubu.Clarify.Lists
 {
     public static class ListNames
     {

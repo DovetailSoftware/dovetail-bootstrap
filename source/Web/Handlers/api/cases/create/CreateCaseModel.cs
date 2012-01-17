@@ -1,5 +1,5 @@
 using Dovetail.SDK.Bootstrap;
-using Dovetail.SDK.Bootstrap.Clarify.Lists;
+using Dovetail.SDK.Fubu.Clarify.Lists;
 
 namespace Bootstrap.Web.Handlers.api.cases.create
 {

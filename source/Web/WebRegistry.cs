@@ -1,4 +1,4 @@
-﻿using Dovetail.SDK.Bootstrap;
+﻿using Dovetail.SDK.Bootstrap.Configuration;
 using Dovetail.SDK.ModelMap.Configuration;
 using Dovetail.SDK.ModelMap.Registration;
 using StructureMap.Configuration.DSL;

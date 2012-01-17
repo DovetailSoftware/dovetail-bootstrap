@@ -33,9 +33,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Bottles">
-      <HintPath>..\packages\Bottles.0.9.1.176\lib\Bottles.dll</HintPath>
-    </Reference>
     <Reference Include="FChoice.Common, Version=2.4.7.9621, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Dovetail.SDK.3.2.0.8\lib\net40\FChoice.Common.dll</HintPath>
@@ -52,29 +49,17 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Dovetail.SDK.3.2.0.8\lib\net40\fcSDK.dll</HintPath>
     </Reference>
-    <Reference Include="FubuCore">
-      <HintPath>..\packages\FubuCore.0.9.4.107\lib\FubuCore.dll</HintPath>
-    </Reference>
-    <Reference Include="FubuLocalization">
-      <HintPath>..\packages\FubuLocalization.0.9.4.107\lib\FubuLocalization.dll</HintPath>
-    </Reference>
-    <Reference Include="FubuMVC.Core">
-      <HintPath>..\packages\FubuMVC.References.0.9.3.703\lib\net40\FubuMVC.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="FubuMVC.StructureMap">
-      <HintPath>..\packages\FubuMVC.References.0.9.3.703\lib\net40\FubuMVC.StructureMap.dll</HintPath>
-    </Reference>
-    <Reference Include="HtmlTags">
-      <HintPath>..\packages\HtmlTags.1.0.0.52\lib\4.0\HtmlTags.dll</HintPath>
+    <Reference Include="FubuCore, Version=0.9.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FubuCore.0.9.4.109\lib\FubuCore.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\log4net.1.2.11\lib\net40-full\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation">
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <Reference Include="StructureMap">
+    <Reference Include="StructureMap, Version=2.6.3.0, Culture=neutral, PublicKeyToken=e60ad81abae3c223, processorArchitecture=MSIL">
       <HintPath>..\packages\structuremap.2.6.3\lib\StructureMap.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -89,9 +74,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Clarify\ApplicationSessionCache.cs" />
-    <Compile Include="Clarify\Lists\GbstListValueDropdownBuilder.cs" />
-    <Compile Include="Clarify\Lists\GbstListValueAttribute.cs" />
-    <Compile Include="Clarify\Lists\ListNames.cs" />
+    <Compile Include="Configuration\AppSettingProviderRegistry.cs" />
+    <Compile Include="Configuration\BootstrapRegistry.cs" />
+    <Compile Include="Configuration\SettingsScanner.cs" />
+    <Compile Include="Configuration\StructureMapServiceLocator.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="History\AssemblerPolicies\IHistoryAssemblerPolicy.cs" />
     <Compile Include="History\Configuration\ActEntryTemplatePolicyConfiguration.cs" />
@@ -110,11 +96,7 @@
     <Compile Include="History\HistoryViewModel.cs" />
     <Compile Include="History\HistoryItemAssembler.cs" />
     <Compile Include="History\WorkflowObject.cs" />
-    <Compile Include="BootstrapHtmlConvention.cs" />
-    <Compile Include="Token\AuthenticationTokenBehavior.cs" />
     <Compile Include="Token\AuthenticationToken.cs" />
-    <Compile Include="Token\AuthenticationTokenConvention.cs" />
-    <Compile Include="BootstrapRegistry.cs" />
     <Compile Include="Clarify\ClairfyApplicationFactory.cs" />
     <Compile Include="Clarify\ClarifySession.cs" />
     <Compile Include="Clarify\ClarifySessionCache.cs" />

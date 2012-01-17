@@ -4,10 +4,9 @@ using Dovetail.SDK.Bootstrap.History.Configuration;
 using Dovetail.SDK.Bootstrap.History.TemplatePolicies;
 using FChoice.Foundation.Clarify;
 using FChoice.Foundation.Schema;
-using FubuMVC.StructureMap;
 using StructureMap.Configuration.DSL;
 
-namespace Dovetail.SDK.Bootstrap
+namespace Dovetail.SDK.Bootstrap.Configuration
 {
     public class BootstrapRegistry : Registry
     {

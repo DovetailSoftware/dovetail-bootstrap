@@ -11,7 +11,16 @@ namespace Dovetail.SDK.ModelMap
         DateTime Now { get; }
     }
 
-	public static class TemporalExtensions
+    public class SystemTime : ISystemTime
+    {
+        public DateTime Now
+        {
+            get { return DateTime.Now; }
+        }
+    }
+
+
+    public static class TemporalExtensions
 	{
 		private static IEnumerable<ElapsedTimeSlot> _timeFormats;
 

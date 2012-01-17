@@ -1,6 +1,6 @@
 using System;
 
-namespace Dovetail.SDK.Bootstrap.Clarify.Lists
+namespace Dovetail.SDK.Fubu.Clarify.Lists
 {
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
     public class GbstListValueAttribute : Attribute

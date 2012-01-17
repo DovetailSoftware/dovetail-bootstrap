@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Dovetail.SDK.Bootstrap;
 using FubuCore;
 using FubuMVC.Core.Registration;
 using FubuMVC.Core.Registration.Nodes;
 
-namespace Dovetail.SDK.Bootstrap.Token
+namespace Dovetail.SDK.Fubu.Token
 {
     public class AuthenticationTokenConvention : IConfigurationAction
     {

@@ -3,7 +3,6 @@ using System.Linq;
 using Dovetail.SDK.Bootstrap.Clarify;
 using Dovetail.SDK.Bootstrap.Clarify.Extensions;
 using Dovetail.SDK.Bootstrap.History.Configuration;
-using Dovetail.SDK.Bootstrap.History.TemplatePolicies;
 using FChoice.Foundation;
 using FChoice.Foundation.Filters;
 

@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Net;
+using Dovetail.SDK.Bootstrap;
 using Dovetail.SDK.Bootstrap.Clarify;
+using Dovetail.SDK.Bootstrap.Token;
 using FubuCore;
 using FubuCore.Binding;
 using FubuMVC.Core;
 using FubuMVC.Core.Behaviors;
 using FubuMVC.Core.Runtime;
 
-namespace Dovetail.SDK.Bootstrap.Token
+namespace Dovetail.SDK.Fubu.Token
 {
     public class AuthenticationTokenBehavior : BasicBehavior
     {

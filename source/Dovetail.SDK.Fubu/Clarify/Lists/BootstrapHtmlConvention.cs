@@ -1,7 +1,6 @@
-﻿using Dovetail.SDK.Bootstrap.Clarify.Lists;
-using FubuMVC.Core.UI;
+﻿using FubuMVC.Core.UI;
 
-namespace Dovetail.SDK.Bootstrap
+namespace Dovetail.SDK.Fubu.Clarify.Lists
 {
     public class BootstrapHtmlConvention : HtmlConventionRegistry
     {

@@ -27,6 +27,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{CAAA6C
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dovetail.SDK.Fubu", "Dovetail.SDK.Fubu\Dovetail.SDK.Fubu.csproj", "{BDB6AD41-4C91-451F-B0EA-5858DFB5FB26}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{A6E31218-5C11-4656-9A53-0815D9F10E61}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A6E31218-5C11-4656-9A53-0815D9F10E61}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A6E31218-5C11-4656-9A53-0815D9F10E61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDB6AD41-4C91-451F-B0EA-5858DFB5FB26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDB6AD41-4C91-451F-B0EA-5858DFB5FB26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDB6AD41-4C91-451F-B0EA-5858DFB5FB26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDB6AD41-4C91-451F-B0EA-5858DFB5FB26}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

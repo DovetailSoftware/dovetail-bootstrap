@@ -6,7 +6,7 @@ using FubuCore.Reflection;
 using FubuMVC.Core.UI.Configuration;
 using HtmlTags;
 
-namespace Dovetail.SDK.Bootstrap.Clarify.Lists
+namespace Dovetail.SDK.Fubu.Clarify.Lists
 {
     public class GbstListValueDropdownBuilder : ElementBuilder
     {
