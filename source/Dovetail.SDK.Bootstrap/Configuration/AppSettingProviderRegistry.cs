@@ -17,6 +17,7 @@ namespace Dovetail.SDK.Bootstrap.Configuration
                 s.Convention<SettingsScanner>();
             });
 
+            For<ISettingsProvider>().Use<SettingsProvider>();
             For<ISettingsSource>().Add<DovetailAppSettingsSource>();
 
             For<IObjectResolver>().Use<ObjectResolver>();
