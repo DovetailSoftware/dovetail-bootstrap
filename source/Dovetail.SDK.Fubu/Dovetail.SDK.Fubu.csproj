@@ -36,17 +36,23 @@
     <Reference Include="Bottles">
       <HintPath>..\packages\Bottles.0.9.1.179\lib\Bottles.dll</HintPath>
     </Reference>
-    <Reference Include="FChoice.Common">
-      <HintPath>..\packages\Dovetail.SDK.3.2.0.8\lib\net40\FChoice.Common.dll</HintPath>
+    <Reference Include="FChoice.Common, Version=2.4.7.9621, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dovetail.SDK.3.2.0.10\lib\net40\FChoice.Common.dll</HintPath>
     </Reference>
-    <Reference Include="FChoice.Foundation.Clarify.Compatibility">
-      <HintPath>..\packages\Dovetail.SDK.3.2.0.8\lib\net40\FChoice.Foundation.Clarify.Compatibility.dll</HintPath>
+    <Reference Include="FChoice.Foundation.Clarify.Compatibility, Version=3.2.0.10, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Dovetail.SDK.3.2.0.10\lib\net40\FChoice.Foundation.Clarify.Compatibility.dll</HintPath>
     </Reference>
-    <Reference Include="FChoice.Toolkits.Clarify">
-      <HintPath>..\packages\Dovetail.SDK.3.2.0.8\lib\net40\FChoice.Toolkits.Clarify.dll</HintPath>
+    <Reference Include="FChoice.Foundation.Clarify.Compatibility.Toolkits">
+      <HintPath>..\packages\Dovetail.SDK.3.2.0.10\lib\net40\FChoice.Foundation.Clarify.Compatibility.Toolkits.dll</HintPath>
     </Reference>
-    <Reference Include="fcSDK">
-      <HintPath>..\packages\Dovetail.SDK.3.2.0.8\lib\net40\fcSDK.dll</HintPath>
+    <Reference Include="FChoice.Toolkits.Clarify, Version=3.2.0.10, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Dovetail.SDK.3.2.0.10\lib\net40\FChoice.Toolkits.Clarify.dll</HintPath>
+    </Reference>
+    <Reference Include="fcSDK, Version=3.2.0.10, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Dovetail.SDK.3.2.0.10\lib\net40\fcSDK.dll</HintPath>
     </Reference>
     <Reference Include="FubuCore">
       <HintPath>..\packages\FubuCore.0.9.4.109\lib\FubuCore.dll</HintPath>
