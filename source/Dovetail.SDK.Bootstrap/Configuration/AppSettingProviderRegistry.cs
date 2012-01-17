@@ -10,7 +10,13 @@ namespace Dovetail.SDK.Bootstrap.Configuration
     {
         public AppSettingProviderRegistry()
         {
-            For<ISettingsProvider>().Use<SettingsProvider>();
+            Scan(s =>
+            {
+                s.TheCallingAssembly();
+                s.WithDefaultConventions();
+                s.Convention<SettingsScanner>();
+            });
+
             For<IObjectResolver>().Use<ObjectResolver>();
             For<IServiceLocator>().Use<StructureMapServiceLocator>();
             For<IValueConverterRegistry>().Use<ValueConverterRegistry>();
@@ -18,8 +24,8 @@ namespace Dovetail.SDK.Bootstrap.Configuration
             ForSingletonOf<IPropertyBinderCache>().Use<PropertyBinderCache>();
             ForSingletonOf<ICollectionTypeProvider>().Use<DefaultCollectionTypeProvider>();
             ForSingletonOf<IModelBinderCache>().Use<ModelBinderCache>();
-
             For<IModelBinder>().Use<StandardModelBinder>();
+            For<ISettingsSource>().Add<DovetailAppSettingsSource>();
         }
     }
 }

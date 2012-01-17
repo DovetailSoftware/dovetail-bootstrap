@@ -76,6 +76,7 @@
     <Compile Include="Clarify\ApplicationSessionCache.cs" />
     <Compile Include="Configuration\AppSettingProviderRegistry.cs" />
     <Compile Include="Configuration\BootstrapRegistry.cs" />
+    <Compile Include="Configuration\DovetailAppSettingsSource.cs" />
     <Compile Include="Configuration\SettingsScanner.cs" />
     <Compile Include="Configuration\StructureMapServiceLocator.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
