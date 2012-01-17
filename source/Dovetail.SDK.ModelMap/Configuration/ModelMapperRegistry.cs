@@ -1,4 +1,4 @@
-using FubuMVC.StructureMap;
+using Dovetail.SDK.Bootstrap.Configuration;
 using StructureMap.Configuration.DSL;
 
 namespace Dovetail.SDK.ModelMap.Configuration
@@ -11,7 +11,9 @@ namespace Dovetail.SDK.ModelMap.Configuration
 		             {
                          scan.TheCallingAssembly();
                          scan.WithDefaultConventions();
-		                 scan.Convention<SettingsScanner>();
+		                 
+                         //TODO move settings configuration into its own registry
+                         scan.Convention<SettingsScanner>();
 		             });
 
 			For(typeof(IModelBuilder<>)).Use(typeof(ModelBuilder<>));
