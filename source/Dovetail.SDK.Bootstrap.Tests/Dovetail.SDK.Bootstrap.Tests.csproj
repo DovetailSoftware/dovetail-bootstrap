@@ -36,6 +36,21 @@
     <Reference Include="Bottles">
       <HintPath>..\packages\Bottles.0.9.1.176\lib\Bottles.dll</HintPath>
     </Reference>
+    <Reference Include="FChoice.Common, Version=2.4.7.9621, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dovetail.SDK.3.2.0.10\lib\net40\FChoice.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="FChoice.Foundation.Clarify.Compatibility, Version=3.2.0.10, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dovetail.SDK.3.2.0.10\lib\net40\FChoice.Foundation.Clarify.Compatibility.dll</HintPath>
+    </Reference>
+    <Reference Include="FChoice.Foundation.Clarify.Compatibility.Toolkits, Version=3.2.0.10, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dovetail.SDK.3.2.0.10\lib\net40\FChoice.Foundation.Clarify.Compatibility.Toolkits.dll</HintPath>
+    </Reference>
+    <Reference Include="FChoice.Toolkits.Clarify, Version=3.2.0.10, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dovetail.SDK.3.2.0.10\lib\net40\FChoice.Toolkits.Clarify.dll</HintPath>
+    </Reference>
+    <Reference Include="fcSDK, Version=3.2.0.10, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dovetail.SDK.3.2.0.10\lib\net40\fcSDK.dll</HintPath>
+    </Reference>
     <Reference Include="FubuCore">
       <HintPath>..\packages\FubuCore.0.9.4.107\lib\FubuCore.dll</HintPath>
     </Reference>
@@ -50,6 +65,9 @@
     </Reference>
     <Reference Include="HtmlTags">
       <HintPath>..\packages\HtmlTags.1.0.0.52\lib\4.0\HtmlTags.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.1.2.11\lib\net40-full\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
@@ -75,6 +93,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="clarify_application_factory.cs" />
     <Compile Include="Token\authentication_token_behavior.cs" />
     <Compile Include="Context.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -82,6 +101,9 @@
     <Compile Include="Token\reset_token_api.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Dovetail.SDK.ModelMap.Integration\App.config">
+      <Link>App.config</Link>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
