@@ -17,9 +17,8 @@ We use rake for our build automation. If you do not have rake already installed.
 3. Add required gems.
  * ```gem install albacore```
 
-4. Run Rake.
+4. Run Rake to build and run unit tests.
  * ```rake```
-
 
 ### Copying Dovetail SDK Assemblies
 
@@ -30,9 +29,28 @@ Dovetail Bootstrap does not include Dovetail SDK assemblies. Why? We currently r
 2. Copy the required sdk assemblies using our handy rake target 
  * ```rake setup:copy_sdk_assemblies```
 
-### Update web.config 
+### Update Config Settings
 
-You'll need to update your web.config with your database connection settings for your development Clarify database instance. We may automate this step down the road driving it from the rakefile.rb.
+#### web.config 
+
+To take the web application for a spin you'll need to update your web.config with your database connection settings for your development Clarify database instance. 
+
+#### Integration tests
+
+The ```rakefile.rb``` should get updated with the correct database connection settings for your test database. 
+
+```rb
+### Edit these settings 
+DATABASE = "mobilecl125"
+DATABASE_TYPE = "mssql"
+DATABASE_CONNECTION = "Data Source=localhost;Initial Catalog=mobilecl125;User Id=sa;Password=sa"
+```
+
+To run the integration tests:
+
+```rake ci```
+
+**Important:** Integration test runs will create test data. **Do not put in your production connection details**
 
 Take it for a spin
 ------------------
