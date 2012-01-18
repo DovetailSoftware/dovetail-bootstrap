@@ -7,6 +7,7 @@ PROJECT_NAME = "Bootstrap"
 SLN_PATH = "source/#{PROJECT_NAME}.sln"
 SLN_FILES = [SLN_PATH]
 
+### Edit these settings 
 DATABASE = "mobilecl125"
 DATABASE_TYPE = "mssql"
 DATABASE_CONNECTION = "Data Source=localhost;Initial Catalog=mobilecl125;User Id=sa;Password=sa"
@@ -121,7 +122,7 @@ end
 namespace :setup do 
 
 	#desc "Rebuilds development database and populates it with data"
-	task :developer => [:clean,:apply_schemascripts, :install]
+	task :developer => [:clean,:apply_schemascripts]
 
 	desc "Copy Doveatail SDK assemblies to this project's tool directory"
 	task :copy_sdk_assemblies do 
@@ -145,12 +146,15 @@ namespace :setup do
 		seConfig = 'Default.SchemaEditor'           
 		seReport = 'SchemaDifferenceReport.txt'
 
+		#SchemaEditor has different (more verbose) database type configuration than Dovetail SDK
+		databaseType = (DATABASE_TYPE == 'mssql') ? 'MsSqlServer2005' : 'Oracle9'
+
 		Dir.glob(File.join('schema', "*schemascript.xml")) do |schema_script|  
  
 			File.open(seConfig) do |schema_editor_config_file|
 				doc = Document.new(schema_editor_config_file)
-				doc.root.elements['database/type'].text = 'MsSqlServer2005'
-				doc.root.elements['database/connectionString'].text = "Data Source=.; Initial Catalog=#{database};User Id=sa; Password=sa;"
+				doc.root.elements['database/type'].text = databaseType
+				doc.root.elements['database/connectionString'].text = DATABASE_CONNECTION
 				doc.root.elements['inputFilePath'].text = schema_script.gsub('/','\\')
 				formatter = REXML::Formatters::Default.new
 				File.open(seConfig, 'w') do |result|
