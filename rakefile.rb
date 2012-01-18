@@ -6,7 +6,11 @@ BUILD_NUMBER_BASE = "0.1.0"
 PROJECT_NAME = "Bootstrap"
 SLN_PATH = "source/#{PROJECT_NAME}.sln"
 SLN_FILES = [SLN_PATH]
+
 DATABASE = "mobilecl125"
+DATABASE_TYPE = "mssql"
+DATABASE_CONNECTION = "Data Source=localhost;Initial Catalog=mobilecl125;User Id=sa;Password=sa"
+
 COMPILE_TARGET = "Debug"
 
 DOVETAILSDK_PATH = "#{Rake::Win32::normalize(ENV['ProgramW6432'])}/Dovetail Software/fcSDK/bin"
@@ -25,7 +29,10 @@ props = {:archive => "build", :testing => "results", :database => ""}
 desc "**Default**, compiles and runs unit tests"
 task :default => [:clean,:version,:compile,:test_assemblies,:unit_tests]
 
-#desc "Run a sample build using the MSBuildTask"
+desc "Run unit and integration tests. **Requires Database**"
+task :ci => [:default,:integration_tests]
+
+desc "Run a sample build using the MSBuildTask"
 msbuild :msbuild, [:clean] do |msb,args|
 	msb.properties :configuration => :Debug
 	msb.targets :Clean, :Build
@@ -48,15 +55,39 @@ output :test_assemblies => [:compile] do |out|
 	}	
 end
 
-desc "Run NUnit Test for any dlls that contain the work test"
+desc "Run unit tests for any dlls that end with 'tests'"
 nunit :unit_tests do |nunit|	
-	nunitPackageDirectory = Dir.glob('source/packages/NUnit*').first
-
-	raise "NUnit package was not found under source/packages." if nunitPackageDirectory.nil?
-
-	nunit.command = File.join(nunitPackageDirectory, 'tools/nunit-console.exe')
+	nunit.command = findNunitConsoleExe()
 	nunit.assemblies = Dir.glob("results/assemblies/*{T,t}ests.dll").uniq
-	nunit.options '/xml=results/nunit-results.xml'
+	nunit.options '/xml=results/unit-test-results.xml'
+end
+
+desc "Run integration tests for any dlls that end with 'tests'"
+nunit :integration_tests do |nunit|	
+
+	#update test assembly config files to have database connection details.
+	Dir.glob("results/assemblies/*{I,i}ntegration.dll.config") { |appConfig|
+		File.open(appConfig) { |c|
+			doc = REXML::Document.new(c)
+			doc.root.elements["/configuration/appSettings/add[@key='DovetailDatabase.Type']"].attributes['value'] = DATABASE_TYPE
+			doc.root.elements["/configuration/appSettings/add[@key='DovetailDatabase.ConnectionString']"].attributes['value'] = DATABASE_CONNECTION
+			formatter = REXML::Formatters::Default.new
+			File.open(c, 'w') do |result|
+				formatter.write(doc, result)
+			end
+		}
+	}
+
+	nunit.command = findNunitConsoleExe()
+	nunit.assemblies = Dir.glob("results/assemblies/*{I,i}ntegration.dll").uniq
+	nunit.options '/xml=results/integration-test-results.xml'
+end
+
+def findNunitConsoleExe
+	nunitPackageDirectory = Dir.glob('source/packages/NUnit*').first
+	raise "NUnit package was not found under source/packages." if nunitPackageDirectory.nil?
+	
+	return File.join(nunitPackageDirectory, 'tools/nunit-console.exe')
 end
 
 namespace :nuget do

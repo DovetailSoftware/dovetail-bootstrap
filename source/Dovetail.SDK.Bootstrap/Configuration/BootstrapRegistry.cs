@@ -21,6 +21,7 @@ namespace Dovetail.SDK.Bootstrap.Configuration
 
             IncludeRegistry<AppSettingProviderRegistry>();
 
+            For<IClarifyApplicationFactory>().Singleton().Use<ClarifyApplicationFactory>();
             For<IListCache>().Use(c => c.GetInstance<IClarifyApplicationFactory>().Create().ListCache);
             For<ISchemaCache>().Use(c => c.GetInstance<IClarifyApplicationFactory>().Create().SchemaCache);
             For<IStringCache>().Use(c => c.GetInstance<IClarifyApplicationFactory>().Create().StringCache);
