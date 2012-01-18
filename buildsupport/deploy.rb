@@ -7,3 +7,10 @@ task :deploy_nuget_packages do
 		FileUtils.cp file, NUGET_FEED
 	}
 end
+
+task :dovetail_nuget_source do 
+	puts "Adding new nuget source: #{NUGET_FEED}"
+	sh "#{NUGET_EXE} sources Add -Name Dovetail -Source #{NUGET_FEED}" do |ok, res|
+		puts "Looks like it was already added." if !ok
+	end 	
+end 
