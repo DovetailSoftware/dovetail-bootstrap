@@ -14,7 +14,7 @@ DATABASE_CONNECTION = "Data Source=localhost;Initial Catalog=mobilecl125;User Id
 
 COMPILE_TARGET = "Debug"
 
-DOVETAILSDK_PATH = "#{Rake::Win32::normalize(ENV['ProgramW6432'])}/Dovetail Software/fcSDK/bin"
+DOVETAILSDK_PATH = "#{Rake::Win32::normalize(ENV['ProgramW6432'].nil? ? ENV['PROGRAMFILES']: ENV['ProgramW6432'])}/Dovetail Software/fcSDK/bin"
 SCHEMAEDITOR_PATH = "#{Rake::Win32::normalize(ENV['PROGRAMFILES'])}/Dovetail Software/SchemaEditor/SchemaEditor.exe"
 NUGET_EXE = File.absolute_path("source/.nuget/nuget.exe")
 
@@ -123,7 +123,7 @@ namespace :setup do
 
 	#desc "Rebuilds development database and populates it with data"
 	task :developer => [:clean,:apply_schemascripts]
-
+	
 	desc "Copy Doveatail SDK assemblies to this project's tool directory"
 	task :copy_sdk_assemblies do 
 		projectSDK = 'libs/DovetailSDK'
@@ -169,7 +169,6 @@ namespace :setup do
 		File.delete(seConfig)
 		File.delete seReport if File.exists? seReport
 	end
-
 end
 #desc "Prepares the working directory for a new build"
 task :clean do	
