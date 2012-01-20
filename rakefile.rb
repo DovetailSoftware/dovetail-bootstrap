@@ -124,16 +124,6 @@ namespace :setup do
 	#desc "Rebuilds development database and populates it with data"
 	task :developer => [:clean,:apply_schemascripts]
 	
-	desc "Copy Doveatail SDK assemblies to this project's tool directory"
-	task :copy_sdk_assemblies do 
-		projectSDK = 'libs/DovetailSDK'
-		sdkAssemblies = ['FChoice.Common.dll', 'FChoice.Foundation.Clarify.Compatibility.dll','FChoice.Foundation.Clarify.Compatibility.Toolkits.dll' , 'FChoice.Toolkits.Clarify.dll', 'fcSDK.dll', 'log4net.dll']
-		FileUtils.mkdir_p(projectSDK)
-		sdkAssemblies.each do |asm|
-			FileUtils.cp File.join(DOVETAILSDK_PATH, asm), projectSDK
-		end	
-	end
-
 	desc "Apply all schema scripts in the schema directory"
 	task :apply_schemascripts do
 		sh "\"#{SCHEMAEDITOR_PATH}\" -g"
