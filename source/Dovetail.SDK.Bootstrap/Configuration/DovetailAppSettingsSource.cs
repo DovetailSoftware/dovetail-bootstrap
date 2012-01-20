@@ -36,9 +36,11 @@ namespace Dovetail.SDK.Bootstrap.Configuration
             var dotIndex = key.IndexOf('.');
             if (dotIndex == -1) return key;
 
-            if (key.EndsWith("Settings")) return key;
+            var className = key.Substring(0, dotIndex);
+            if (className.EndsWith("Settings")) return key;
 
-            return key.Substring(0, dotIndex) + "Settings" + key.Substring(dotIndex);
+            //tack on a Settings to the end of the classname 
+            return className + "Settings" + key.Substring(dotIndex);
         }
     }
 }
