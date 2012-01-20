@@ -30,7 +30,8 @@
                       <a href="#" class="dropdown-toggle">APIs</a>
                       <ul class="dropdown-menu">
                         <li><a href="${this.Urls.UrlFor(new Bootstrap.Web.Handlers.api.authtoken.AuthTokenRequest())}">Auth Tokens</a></li>
-                        <li class="divider"></li>
+						<li class="divider"></li>
+                        <li><a href="${this.Urls.UrlFor(new Bootstrap.Web.Handlers.api.cases.create.CreateCaseRequest { })}">Create Case</a></li>
                         <li><a href="${this.Urls.UrlFor(new Bootstrap.Web.Handlers.api.history.HistoryRequest { Type = "case", Id = "1" })}">History</a></li>
                       </ul>
                     </li>
