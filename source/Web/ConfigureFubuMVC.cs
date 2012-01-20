@@ -13,6 +13,9 @@ namespace Bootstrap.Web
     {
         public ConfigureFubuMVC()
         {
+#if DEBUG
+            this.IncludeDiagnostics(true);
+#endif
             ApplyHandlerConventions<HandlerMarker>();
             
             this.UseSpark();
