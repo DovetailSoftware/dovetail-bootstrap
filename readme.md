@@ -6,6 +6,15 @@ This project aims to get you started writing web applications using Dovetail SDK
 Setup
 -----
 
+### Dovetail SDK 
+
+Bootstrap is dependant on the Dovetail SDK [nuget package](http://nuget.org) bundled with the Dovetail SDK starting with [version 3.2](http://support.dovetailsoftware.com/selfservice/products/show/Dovetail%20SDK) released January 19th 2012. 
+
+> To download the latest version of Dovetail SDK sign onto [Dovetail's Support Center](http://support.dovetailsoftware.com/selfservice/resources) and click on [My Products](
+http://support.dovetailsoftware.com/selfservice/products/owned). If you are entitled to Dovetail SDK you will see it in your list of products. If you do not have access to Dovetail SDK or wish to become a Dovetail customer please [contact us](mailto:support@dovetailsoftware.com)
+
+Out of the box Bootstrap is looking for the Dovetail SDK nuget package in ```c:\Program Files\Dovetail Software\fcSDK```. If you installed Dovetail SDK to another directory please edit [Nuget.Config](https://github.com/DovetailSoftware/dovetail-bootstrap/blob/master/source/.nuget/NuGet.Config) with the correct path.
+
 ### Rake
 
 We use rake for our build automation. If you do not have rake already installed. 
@@ -19,15 +28,6 @@ We use rake for our build automation. If you do not have rake already installed.
 
 4. Run Rake to build and run unit tests.
  * ```rake```
-
-### Copying Dovetail SDK Assemblies
-
-Dovetail Bootstrap does not include Dovetail SDK assemblies. Why? We currently require a licensing agreement with Dovetail Software before shipping our SDK to customers. 
- 
-1. Install Dovetail SDK if you don't have it already. We recommend a recent version (3.0 or greater).
-
-2. Copy the required sdk assemblies using our handy rake target 
- * ```rake setup:copy_sdk_assemblies```
 
 ### Update Config Settings
 
@@ -52,8 +52,17 @@ To run the integration tests:
 
 **Important:** Integration test runs will create test data. **Do not put in your production connection details**
 
-Take it for a spin
-------------------
+### Optional - Schema update
+
+The authentication token feature for bootstrap APIs require a schema change. Yes we have automation for that! If you have [Dovetail Schema Editor](http://www.dovetailsoftware.com/dovetail-schema-editor) installed all you have to do is:
+
+```rake apply_schemascripts```
+
+Cool thing about this automation is any schemascript files present in the schema directory will get applied. Have fun.
+
+If you want to do this with Amdoc's ddcomp tool... You should really try Schema Editor :heart: [Contact Us](mailto::support@dovetailsoftware.com)
+
+## Take it for a spin
 
 ### Open the Solution
 
@@ -64,3 +73,8 @@ Double click on the 2010 Visual Studio solution: _/source/Bootstrap.sln_
 Make sure Web is your startup project. If it is. The Web project will be bold in your Solution Explorer.
 
 Hit Ctrl+F5 to build and launch the site.
+
+## Nuget Automation
+
+```nuget:update``` - Update nuget dependencies for the entire project
+```nuget:build``` - Update nuget dependencies for the entire project
