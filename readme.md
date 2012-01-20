@@ -13,7 +13,7 @@ Bootstrap is dependant on the Dovetail SDK [nuget package](http://nuget.org) bun
 > To download the latest version of Dovetail SDK sign onto [Dovetail's Support Center](http://support.dovetailsoftware.com/selfservice/resources) and click on [My Products](
 http://support.dovetailsoftware.com/selfservice/products/owned). If you are entitled to Dovetail SDK you will see it in your list of products. If you do not have access to Dovetail SDK or wish to become a Dovetail customer please [contact us](mailto:support@dovetailsoftware.com)
 
-Out of the box Bootstrap is looking for the Dovetail SDK nuget package in ```c:\Program Files\Dovetail Software\fcSDK```. If you installed Dovetail SDK to another directory please edit [Nuget.Config](https://github.com/DovetailSoftware/dovetail-bootstrap/blob/master/source/.nuget/NuGet.Config) with the correct path.
+Out of the box Bootstrap is looking for the Dovetail SDK nuget package in ```c:\Program Files\Dovetail Software\fcSDK```. If you installed Dovetail SDK to another directory please edit [Nuget.targets](https://github.com/DovetailSoftware/dovetail-bootstrap/blob/master/source/.nuget/NuGet.targets) with the correct path.
 
 ### Rake
 
