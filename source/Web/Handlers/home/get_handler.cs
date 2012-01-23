@@ -7,12 +7,12 @@ namespace Bootstrap.Web.Handlers.home
 {
     public class get_handler
     {
-        private readonly IClarifySessionCache _sessionCache;
+        private readonly IClarifySession _userSession;
         private readonly IModelBuilder<UserOpenCaseListing> _listingBuilder;
 
-        public get_handler(IClarifySessionCache sessionCache, IModelBuilder<UserOpenCaseListing> listingBuilder)
+        public get_handler(IClarifySession userSession, IModelBuilder<UserOpenCaseListing> listingBuilder)
         {
-            _sessionCache = sessionCache;
+            _userSession = userSession;
             _listingBuilder = listingBuilder;
         }
 
@@ -20,7 +20,7 @@ namespace Bootstrap.Web.Handlers.home
         {
             var userCases = _listingBuilder.GetAll();
 
-            var sqlHelper = _sessionCache.GetUserSession().CreateSqlHelper("SELECT count(*) from table_case");
+            var sqlHelper = _userSession.CreateSqlHelper("SELECT count(*) from table_case");
             var caseCount = Convert.ToInt32(sqlHelper.ExecuteScalar());
             
             sqlHelper.CommandText = "SELECT count(*) from table_subcase";

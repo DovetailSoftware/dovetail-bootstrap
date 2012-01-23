@@ -1,4 +1,5 @@
-﻿using Dovetail.SDK.Bootstrap.Configuration;
+﻿using Dovetail.SDK.Bootstrap.Clarify;
+using Dovetail.SDK.Bootstrap.Configuration;
 using Dovetail.SDK.Fubu.Authentication;
 using Dovetail.SDK.ModelMap.Configuration;
 using Dovetail.SDK.ModelMap.Registration;
@@ -18,6 +19,8 @@ namespace Bootstrap.Web
                          scan.ConnectImplementationsToTypesClosing(typeof(ModelMap<>));
                          scan.WithDefaultConventions();
                      });
+
+            For<IClarifySession>().Use(ctx => ctx.GetInstance<IClarifySessionCache>().GetUserSession());
 
             IncludeRegistry<BootstrapRegistry>();
             IncludeRegistry<ModelMapperRegistry>();

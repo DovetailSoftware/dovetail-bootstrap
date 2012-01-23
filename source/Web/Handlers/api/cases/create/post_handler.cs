@@ -5,16 +5,16 @@ namespace Bootstrap.Web.Handlers.api.cases.create
 {
     public class post_handler
     {
-        private readonly IClarifySessionCache _sessionCache;
+        private readonly IClarifySession _userSession;
 
-        public post_handler(IClarifySessionCache sessionCache)
+        public post_handler(IClarifySession userSession)
         {
-            _sessionCache = sessionCache;
+            _userSession = userSession;
         }
 
         public CreateCaseResult Execute(CreateCaseInputModel model)
         {
-            var toolkit = _sessionCache.GetUserSession().CreateSupportToolkit();
+            var toolkit = _userSession.CreateSupportToolkit();
 
             var setup = new CreateCaseSetup(model.SiteId, model.ContactFirstName, model.ContactLastName, model.ContactPhone)
                             {
