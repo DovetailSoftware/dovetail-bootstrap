@@ -21,6 +21,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
         FieldOpsToolkit CreateFieldOpsToolkit();
         InterfacesToolkit CreateInterfacesToolkit();
         SqlHelper CreateSqlHelper(string sql);
+        void Close();
     }
 
     public class ClarifySessionWrapper : IApplicationClarifySession
@@ -83,6 +84,11 @@ namespace Dovetail.SDK.Bootstrap.Clarify
         public SqlHelper CreateSqlHelper(string sql)
         {
             return new SqlHelper(sql);
+        }
+
+        public void Close()
+        {
+            ClarifySession.CloseSession();
         }
     }
 

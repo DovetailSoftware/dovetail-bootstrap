@@ -8,6 +8,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
     public interface IClarifySessionCache
     {
         IClarifySession GetUserSession();
+        void CloseUserSession();
     }
 
     public class ClarifySessionCache : IClarifySessionCache
@@ -72,10 +73,35 @@ namespace Dovetail.SDK.Bootstrap.Clarify
             }
             catch (Exception exception)
             {
-                _logger.LogDebug("Could not retrieve agent session via id {0}. Likely it expired. Creating a new one. Error: {1}".ToFormat(sessionId, exception.Message));
+                _logger.LogDebug("Could not retrieve agent session for {0} via id {1}. Likely it expired. Creating a new one. Error: {2}".ToFormat(username, sessionId, exception.Message));
                 _agentSessionCacheByUsername.Remove(username);
                 return GetUserSession();
             }
+        }
+
+        public void CloseUserSession()
+        {
+            var username = _currentSdkUser.Username;
+
+            if(!_agentSessionCacheByUsername.Has(username))
+            {
+                _logger.LogDebug("Could not close cached session for {0} as there never was one.".ToFormat(username));
+                return;
+            }
+
+            var sessionId = _agentSessionCacheByUsername[username];
+
+            try
+            {
+                var session = ClarifyApplication.GetSession(sessionId);
+                session.CloseSession();
+            }
+            catch (Exception exception)
+            {
+                _logger.LogDebug("Could not close session for {0} via id {1}. Likely it was already expired. Error: {2}".ToFormat(username, sessionId, exception.Message));
+            }
+
+            _agentSessionCacheByUsername.Remove(username);
         }
 
         public IClarifySession GetApplicationSession()

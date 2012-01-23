@@ -144,6 +144,8 @@
     <None Include="Handlers\api\authtoken\reset\reset.spark" />
     <None Include="Handlers\api\cases\create\post.spark" />
     <None Include="Handlers\api\cases\create\get.spark" />
+    <None Include="Handlers\user\signin\signin.spark" />
+    <None Include="Handlers\user\status\status.spark" />
     <None Include="Shared\Embedded.spark" />
     <None Include="Handlers\api\history\history.spark" />
     <None Include="Handlers\home\home.spark" />
@@ -151,6 +153,9 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Shared\Application.spark" />
+    <Compile Include="Handlers\user\signin\handlers.cs" />
+    <Compile Include="Handlers\user\signout\handlers.cs" />
+    <Compile Include="Handlers\user\status\get_handler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebRegistry.cs" />
   </ItemGroup>

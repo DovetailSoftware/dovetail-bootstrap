@@ -1,0 +1,33 @@
+<viewdata model="Bootstrap.Web.Handlers.user.signin.SignInModel" />
+<content:pagehead>
+ <h1>Sign In</h1>
+</content:pagehead>
+<div class="row">
+    <div class="span12">
+    <form method="POST">
+
+      <fieldset>
+        <legend>Enter Your Credentials</legend>
+        <div class="clearfix">
+          <label for="UserName">User Name</label>
+          <div class="input">
+            <input name="UserName" size="20" type="text" />
+          </div>
+        </div>
+        <div class="clearfix">
+          <label for="Password">Password</label>
+          <div class="input">
+            <input name="Password" type="password" size="20" />
+          </div>
+        </div>
+
+         <div class="clearfix">
+          <div class="actions">
+            <button type="submit" class="btn primary">Go</button>
+          </div>
+        </div>
+
+      </fieldset>
+    </form>
+  </div>
+</div>

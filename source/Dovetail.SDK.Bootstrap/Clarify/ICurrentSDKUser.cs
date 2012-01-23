@@ -10,15 +10,19 @@ namespace Dovetail.SDK.Bootstrap.Clarify
     {
     	string Username { get; }
         ITimeZone Timezone { get; }
+        bool IsAuthenticated { get; }
 
         void SetUserName(string username);
+        void SignOut();
     }
 
     public class CurrentSDKUser : ICurrentSDKUser
     {
         private readonly IApplicationClarifySession _session;
+        private readonly DovetailDatabaseSettings _settings;
         private readonly ILogger _logger;
         private readonly ILocaleCache _localeCache;
+        public bool IsAuthenticated { get; private set; }
 
         public string Username { get; set; }
         public ITimeZone Timezone { get; set; }
@@ -26,12 +30,14 @@ namespace Dovetail.SDK.Bootstrap.Clarify
         public CurrentSDKUser(IApplicationClarifySession session, DovetailDatabaseSettings settings, ILocaleCache localeCache, ILogger logger)
         {
             //defaults to application user and the server timezone
-            Username = settings.ApplicationUsername;
             Timezone = localeCache.ServerTimeZone;
 
             _session = session;
+            _settings = settings;
             _logger = logger;
             _localeCache = localeCache;
+
+            SignOut();
         }
 
         public void SetUserName(string username)
@@ -56,7 +62,8 @@ namespace Dovetail.SDK.Bootstrap.Clarify
             }
 
             Username = username;
-            
+            IsAuthenticated = true;
+
             //get user timezone based on their site's primary address
 
             if(timeZoneGeneric.Count < 1)
@@ -68,6 +75,12 @@ namespace Dovetail.SDK.Bootstrap.Clarify
             var timezoneName = timeZoneGeneric.Rows[0].AsString("name");
             Timezone = _localeCache.TimeZones[timezoneName, false];
             _logger.LogDebug("Timezone for user {0} set to {1}.", username, Timezone.Name);
+        }
+
+        public void SignOut()
+        {
+            IsAuthenticated = false;
+            Username = _settings.ApplicationUsername;
         }
     }
 }

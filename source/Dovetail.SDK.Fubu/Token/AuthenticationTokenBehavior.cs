@@ -47,6 +47,11 @@ namespace Dovetail.SDK.Fubu.Token
 
             if(token.IsEmpty())
             {
+                if(_currentSdkUser.IsAuthenticated)
+                {
+                    _logger.LogDebug("No AuthToken was found in this request but a user is authenticated. Using the current user's credentials.");
+                    return DoNext.Continue;    
+                }
                 WriteUnauthorizedError("No valid authentication token was found in HTTP headers, querystring, or post parameters.");
                 return DoNext.Stop;
             }

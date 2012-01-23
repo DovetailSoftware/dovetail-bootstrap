@@ -88,6 +88,12 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Authentication\AuthenticationContextService.cs" />
+    <Compile Include="Authentication\AuthenticationService.cs" />
+    <Compile Include="Authentication\PrincipalFactory.cs" />
+    <Compile Include="Authentication\UserAuthenticator.cs" />
+    <Compile Include="Authentication\FormsAuthenticationService.cs" />
+    <Compile Include="Authentication\SecurityModule.cs" />
     <Compile Include="Clarify\Lists\BootstrapHtmlConvention.cs" />
     <Compile Include="Clarify\Lists\GbstListValueAttribute.cs" />
     <Compile Include="Clarify\Lists\GbstListValueDropdownBuilder.cs" />

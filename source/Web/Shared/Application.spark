@@ -35,9 +35,10 @@
                         <li><a href="${this.Urls.UrlFor(new Bootstrap.Web.Handlers.api.history.HistoryRequest { Type = "case", Id = "1" })}">History</a></li>
                       </ul>
                     </li>
-
                     <li><a href="/_fubu">Diagnostics</a></li>
                 </ul>
+
+				!{this.Partial<Bootstrap.Web.Handlers.user.status.UserStatusRequest>()}
             </div>
         </div>
     </div>
