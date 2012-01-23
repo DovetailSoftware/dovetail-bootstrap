@@ -5,6 +5,7 @@
 [Oo]bj/
 CommonAssemblyInfo.cs
 *.csproj.user
+*.user
 *.suo
 *.sln.cache
 results
