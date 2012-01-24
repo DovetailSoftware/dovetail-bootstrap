@@ -24,7 +24,7 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
             if (workflowObject.Type != WorkflowObject.Subcase) return;
             
             //make subcase creation and close more detailed.
-            ActEntry(3000).DisplayName("Subcase Created")
+            ActEntry(3000).DisplayName("Subcase created")
                 .GetRelatedRecord("act_entry2notes_log")
                 .WithFields("description")
                 .UpdateActivityDTOWith((record, dto) =>
@@ -32,7 +32,7 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
                                                dto.Detail = record["description"].ToString();
                                            });
             
-            ActEntry(3100).DisplayName("Subcase Closed")
+            ActEntry(3100).DisplayName("Subcase closed")
                 .GetRelatedRecord("act_entry2close_case")
                 .WithFields("summary")
                 .UpdateActivityDTOWith((row, dto) =>

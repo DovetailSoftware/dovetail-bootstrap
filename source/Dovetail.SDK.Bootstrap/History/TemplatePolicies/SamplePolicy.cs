@@ -10,8 +10,8 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
             ActEntry(3000).Remove();
 
             //you can redefine existing policies
-            ActEntry(900).DisplayName("Dyspatched")
-                .EditActivityDTO(dto => { dto.Detail = "Dyspatched to the deep six. " + dto.Detail; });
+            ActEntry(900).DisplayName("Dys-patched")
+                .EditActivityDTO(dto => { dto.Detail = "Dys-patched to the deep six. " + dto.Detail; });
         }
     }
 }

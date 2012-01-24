@@ -22,30 +22,30 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
 				{
 					dto.Detail = row["summary"].ToString();
 				});
-			ActEntry(400).DisplayName("Committment Created");
+			ActEntry(400).DisplayName("Committment created");
             ActEntry(600).DisplayName("Created");
 			ActEntry(900).DisplayName("Dispatched")
 				.EditActivityDTO(dto => { dto.Detail = "Dispatched " + dto.Detail; });
 			ActEntry(1100).DisplayName("Forwarded");
-			ActEntry(1600).DisplayName("Committment Modified");
+			ActEntry(1600).DisplayName("Committment modified");
             ActEntry(2400).DisplayName("Reopened")
 				.EditActivityDTO(dto => { dto.Detail = "Reopened " + dto.Detail; });
-			ActEntry(2600).DisplayName("Return To Sender");
+			ActEntry(2600).DisplayName("Returned to sender");
             ActEntry(4100).DisplayName("Yanked");
-			ActEntry(4200).DisplayName("Subcase Reopened");
-			ActEntry(7200).DisplayName("Administrative Subcase Created");
+			ActEntry(4200).DisplayName("Subcase reopened");
+			ActEntry(7200).DisplayName("Administrative subcase created");
 
             //TODO add policy for attachment adds for: Seeker attachment downloads, url rewriting, plain
-            ActEntry(8900).DisplayName("Attachment Added"); //.HtmlizeWith(item => { }).UpdateActivityDTOWith((row, item) => _attachmentPathHistoryItemUpdater.Update(row["addnl_info"].ToString(), item));
+            ActEntry(8900).DisplayName("Attachment added"); //.HtmlizeWith(item => { }).UpdateActivityDTOWith((row, item) => _attachmentPathHistoryItemUpdater.Update(row["addnl_info"].ToString(), item));
 
-            ActEntry(9100).DisplayName("Attachment Deleted");
-            ActEntry(9800).DisplayName("Contact Changed");
-            ActEntry(1400).DisplayName("Linked");
-            ActEntry(4000).DisplayName("Unlinked");
-            ActEntry(9200).DisplayName("Initial Response");
+            ActEntry(9100).DisplayName("Attachment deleted");
+            ActEntry(9800).DisplayName("Contact changed");
+            ActEntry(1400).DisplayName("Linked to a solution");
+            ActEntry(4000).DisplayName("Unlinked from the solution");
+            ActEntry(9200).DisplayName("Initial response");
 
-            ActEntry(3000).DisplayName("Subcase Created");
-            ActEntry(3100).DisplayName("Subcase Closed");
+            ActEntry(3000).DisplayName("Subcase created");
+            ActEntry(3100).DisplayName("Subcase closed");
                 
             this.TimeAndExpenseEdittedActEntry();
             this.StatusChangedActEntry();
