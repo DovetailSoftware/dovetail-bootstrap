@@ -1,11 +1,24 @@
 ﻿<viewdata model="Dovetail.SDK.Bootstrap.History.HistoryViewModel" />
 <use namespace="FubuCore" />
-<use master="Embedded" />
-<content:head>
+
+<!-- The embedded master layout removes the top bar-->
+<!--<use master="Embedded" />-->
+<!-- or add this head content -->
+<!-- <content:head>
 <style type="text/css">
-    
+  .topbar, .page-header
+  {
+  display : none;
+  }
+
+  body div.container
+  {
+  margin-top: -32px;
+  }
 </style>
 </content:head>
+-->
+
 <content:pagehead>
 <h1>${Model.WorkflowObject.ToString().Capitalize()} <small>History</small></h1>
 </content:pagehead>
