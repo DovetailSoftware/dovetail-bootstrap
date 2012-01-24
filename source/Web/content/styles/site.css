@@ -69,18 +69,6 @@ body
 }
 
 
-.label.low .label.norush {
-  background-color: #bfbfbf;
-}
-.label.medium {
-  background-color: #46a546;
-}
-.label.high {
-  background-color: #f89406;
-}
-.label.urgent {
-  background-color: #c43c35;
-}
 dl dd {
     margin: 7px 0px 13px 10px;
 }

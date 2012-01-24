@@ -1,18 +1,9 @@
 ﻿<viewdata model="Bootstrap.Web.Handlers.home.HomeModel" />
 <content:head>
 <style type="text/css">
-    h2 
-    {
-        _text-align:center;
-    }
-    .label 
-    {
-        font-size: larger;
-    }
-    h4 
-    {
-        margin-bottom: 10px; 
-    }
+h4 {
+  margin-bottom: 10px; 
+}
 </style>
 </content:head>
 
@@ -23,62 +14,15 @@
 
 <div class="row">
     <div class="span12">
-    <h4>Open cases which you own...</h4>
+    <h4>Your Open Cases</h4>
     <dl>
     <for each="var c in Model.Cases">
-    <dt>
-        <span class="label ${c.Severity.ToLowerInvariant().Replace(" ", "")}">${c.Id}</span> 
+      <dt>
+        <a class="btn" href="${this.Urls.UrlFor(new Bootstrap.Web.Handlers.api.history.HistoryRequest {Type = 'case', Id = c.Id})}">${c.Id}</a>
         for ${c.ContactName} at ${c.SiteName}
-    </dt>
+      </dt>
     <dd>${c.Title}</dd>
     </for>
     </dl>
-    </div>
-</div>
-
-
-<div class="row">
-    <div class="span12">
-    <h4>A few details about objects in your database...</h4>
-    </div>
-</div>
-<div class="row">
-    <div class="span3">
-        <h2>Cases</h2>
-    </div>
-    <div class="span2">
-        <span class="label">${Model.CaseCount}</span>
-    </div>
-</div>
-<div class="row">
-    <div class="span3">
-        <h2>Subcases</h2>
-    </div>
-    <div class="span2">
-        <span class="label">${Model.SubcaseCount}</span>
-    </div>
-</div>
-<div class="row">
-    <div class="span3">
-        <h2>Contacts</h2>
-    </div>
-    <div class="span2">
-        <span class="label">${Model.ContactCount}</span>
-    </div>
-</div>
-<div class="row">
-    <div class="span3">
-        <h2>Sites</h2>
-    </div>
-    <div class="span2">
-        <span class="label">${Model.SiteCount}</span>
-    </div>
-</div>
-<div class="row">
-    <div class="span3">
-        <h2>Solutions</h2>
-    </div>
-    <div class="span2">
-        <span class="label">${Model.SolutionCount}</span>
     </div>
 </div>

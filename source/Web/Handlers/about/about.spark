@@ -3,15 +3,54 @@
 <h1>About Dovetail Bootstrap <small> version ${Model.Version}</small></h1>
 </content:pagehead>
 
+<content:head>
+<style type="text/css">
+  h4 {
+  margin-bottom: 10px;
+  }
+  .label
+</style>
+</content:head>
+
 <div class="row">
     <div class="span10">
-        <h3>What is this?</h3>
-        <p>Dovetail Bootstrap is an example web application built using Dovetail SDK with FubuMVC</p>
-        <h3>Where do I get the Source?</h3>
-        <p>Hopefully in the future we can give you a link to a Git repository with the source.</p>
-        <h3>Where did you get your CSS styles?</h3>
-        <p>
-        We didn't want to have to think too hard so we pulled in <a href="https://github.com/twitter/bootstrap">Twitter Bootstrap</a>
-        </p>
+      
+      <h3>What is this?</h3>      
+      <p>Dovetail Bootstrap is an example web application built using Dovetail SDK with FubuMVC</p>
+
+      <h3>Where do I get the Source?</h3>
+      <p>The <a href="https://github.com/DovetailSoftware/dovetail-bootstrap">source</a> is up on GitHub.</p>      
+      
+      <h3>Where did you get your CSS styles?</h3>
+      <p>We didn't want to have to think too hard based it on <a href="https://github.com/twitter/bootstrap">Twitter Bootstrap</a></p>
     </div>
+</div>
+<hr/>
+<div class="row">
+  <div class="span10">
+    <h2>Objects <small>A count of important things in your database.</small>
+  </h2>
+  </div>
+</div>
+<div class="row">
+  <div class="span2">
+    <h3>Cases</h3>
+    <span class="btn disabled">${Model.CaseCount}</span>
+  </div>
+  <div class="span2">
+    <h3>Subcases</h3>
+    <span class="btn disabled">${Model.SubcaseCount}</span>
+  </div>  
+  <div class="span2">
+    <h3>Contacts</h3>
+    <span class="btn disabled">${Model.ContactCount}</span>
+  </div>
+  <div class="span2">
+    <h3>Sites</h3>
+    <span class="btn disabled">${Model.SiteCount}</span>
+  </div>
+  <div class="span2">
+    <h3>Solutions</h3>
+    <span class="btn disabled">${Model.SolutionCount}</span>
+  </div>
 </div>
