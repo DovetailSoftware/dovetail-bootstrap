@@ -2,7 +2,7 @@
 using System.Net;
 using Dovetail.SDK.Bootstrap.Clarify;
 using Dovetail.SDK.Bootstrap.Token;
-using Dovetail.SDK.Fubu.Token;
+using Dovetail.SDK.Fubu.Authentication.Token;
 using FubuCore.Binding;
 using FubuMVC.Core.Runtime;
 using NUnit.Framework;
