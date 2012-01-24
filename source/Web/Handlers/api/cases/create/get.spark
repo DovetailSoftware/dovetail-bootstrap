@@ -14,37 +14,40 @@
         <form action="${this.Urls.UrlFor(new Bootstrap.Web.Handlers.api.cases.create.CreateCaseInputModel())}"
         method="POST">
 
-            <div class="clearfix">
-                <label for="authToken">Authorization Token</label>
+          <fieldset if="!Model.UserIsAuthenticated">
+            <legend>Authentication</legend>
+            <div class="clearfix" >
+                <label for="authToken"><a href="${this.Urls.UrlFor(new Bootstrap.Web.Handlers.api.authtoken.AuthTokenRequest())}">Authorization Token</a></label>
                 <div class="input">
-                    <input name="authToken" size="30" type="text" />
+                    <input name="authToken" class="required" size="30" type="text" placeholder="&lt;-- get your authorization token"/>
                 </div>
             </div>
+        </fieldset>
         
         <fieldset>
             <legend>Contact</legend>
             <div class="clearfix">
                 <label for="ContactFirstName">First Name</label>
                 <div class="input">
-                    <input name="ContactFirstName" size="30" type="text" />
+                    <input class="required" name="ContactFirstName" size="30" type="text" placeholder="Mark" />
                 </div>
             </div>
             <div class="clearfix">
                 <label for="ContactLastName">Last Name</label>
                 <div class="input">
-                    <input name="ContactLastName" size="30" type="text" />
+                    <input class="required" name="ContactLastName" size="30" type="text" placeholder="Miller"/>
                 </div>
             </div>
             <div class="clearfix">
                 <label for="ContactPhone">Phone</label>
                 <div class="input">
-                    <input name="ContactPhone" size="30" type="text" />
+                    <input class="required" name="ContactPhone" size="30" type="text" placeholder="512-555-1212"/>
                 </div>
             </div>
               <div class="clearfix">
                 <label for="SiteId">Site Id</label>
                 <div class="input">
-                    <input name="SiteId" size="10" type="text" />
+                    <input class="required" name="SiteId" size="10" type="text" placeholder="3"/>
                 </div>
             </div>
         </fieldset>
@@ -53,19 +56,19 @@
             <div class="clearfix">
                 <label for="Title">Title</label>
                 <div class="input">
-                    <input class="span6" name="Title" size="30" type="text" />
+                    <input class="span6" name="Title" size="30" type="text" placeholder="Customer needs help doing this and that" />
                 </div>
             </div>
             <div class="clearfix">
                 <label for="Description">Description</label>
                 <div class="input">
-                    <textarea class="span6" name="Description" rows="3"></textarea>
+                    <textarea class="span6" name="Description" rows="3" placeholder="I'll be sure to enter a detailed summary of the customer's problem here."></textarea>
                 </div>
             </div>
             <div class="clearfix">
                 <label for="Queue">Dispatch To Queue</label>
                 <div class="input">
-                    <input name="Queue" size="30" type="text" />
+                    <input name="Queue" size="30" type="text" placeholder="When set. Case is dispatched here" />
                 </div>
             </div>
 

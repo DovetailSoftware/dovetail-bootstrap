@@ -5,6 +5,7 @@ namespace Bootstrap.Web.Handlers.api.cases.create
 {
     public class CreateCaseModel : IApi
     {
+        public bool UserIsAuthenticated { get; set; }
         public string ContactFirstName { get; set; }
         public string ContactLastName { get; set; }
         public string ContactPhone { get; set; }
