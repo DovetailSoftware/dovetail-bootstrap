@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyTitle("Dovetail Bootstrap + FubuMVC")]
 [assembly: AssemblyProduct("Dovetail.SDK.Fubu")]
-[assembly: AssemblyDescription("Collection of FubuMVC related infrastucture used by Dovetail Bootstrap based web applications: AuthToken support, Conventional Gbst list support.")]
+[assembly: AssemblyDescription("Collection of FubuMVC related infrastucture used by Dovetail Bootstrap based web applications: Authentication support (forms and authToken), Conventional list support.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCopyright("Copyright ©  2012")]
 [assembly: AssemblyCulture("")]
