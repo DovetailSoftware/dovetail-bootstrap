@@ -127,7 +127,7 @@ namespace Dovetail.SDK.Bootstrap.History
                        {
                            Id = _workflowObject.Id,
                            Type = actEntry.Type,
-                           Kind = actEntry.Template.DisplayName,
+                           Title = actEntry.Template.DisplayName,
                            Who = actEntry.Who,
                            When = actEntry.When,
                            Detail = actEntry.AdditionalInfo
