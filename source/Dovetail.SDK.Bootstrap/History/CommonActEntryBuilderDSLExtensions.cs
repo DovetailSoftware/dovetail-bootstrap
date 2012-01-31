@@ -70,6 +70,14 @@ namespace Dovetail.SDK.Bootstrap.History
             historyItem.Detail = detail;
         }
 
+        public static void TimeAndExpenseLoggedDeletedActEntry(this ActEntryTemplatePolicyExpression dsl)
+        {
+            dsl.ActEntry(10600).DisplayName("Time and expense log deleted")
+                .GetRelatedRecord("act_entry2onsite_log")
+                .WithFields("total_time", "total_exp", "notes", "internal_note")
+                .UpdateActivityDTOWith(timeAndExpensesUpdater);
+        }
+
         public static void EmailInActEntry(this ActEntryTemplatePolicyExpression dsl)
         {
             dsl.ActEntry(3500).DisplayName("Received email")

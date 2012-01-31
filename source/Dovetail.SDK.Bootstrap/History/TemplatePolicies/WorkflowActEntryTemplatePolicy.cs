@@ -53,6 +53,7 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
             this.PhoneLogActEntry();
             this.NoteActEntry();
             this.TimeAndExpenseLoggedActEntry();
+            this.TimeAndExpenseLoggedDeletedActEntry();
             this.EmailOutActEntry();
             this.EmailInActEntry();
 		}
