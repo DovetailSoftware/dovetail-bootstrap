@@ -41,7 +41,7 @@ msbuild :msbuild, [:clean] do |msb,args|
 	msb.solution = args[:solution] || SLN_PATH
 end
 
-task :compile => [:version] do 
+task :compile => [:version, "nuget:install"] do 
 	SLN_FILES.each do |f|
 		Rake::Task["msbuild"].execute(:solution => f)
 	end
@@ -98,6 +98,18 @@ namespace :nuget do
 		Dir.glob(File.join("**","packages.config")){ |file|
 			puts "Updating packages for #{file}"
 			sh "#{NUGET_EXE} update #{file} -RepositoryPath source/packages"
+		}
+	end
+			
+	desc "Run nuget install on all projects"
+	task :install => [:clean] do 
+		Dir.glob(File.join("**","packages.config")){ |file|
+			packagesDir = File.absolute_path("source/packages")
+			packagesConfig = File.absolute_path(file)
+			puts "Updating packages for #{packagesConfig}"
+			Dir.chdir('./source/.nuget/') do
+				sh "#{NUGET_EXE} install #{packagesConfig} -OutputDirectory #{packagesDir}"
+			end
 		}
 	end
 
@@ -169,15 +181,7 @@ task :clean do
 	end
 	# Clean up all bin folders in the source folder
 	FileUtils.rm_rf(Dir.glob("**/{obj,bin}"))
-	
-	fubucontent = 'source/Web/fubu-content/'
-	Dir.new(fubucontent).each do |file|
-		if !file.end_with?('zip') and file != '.' and file != '..'
-			path = File.join(fubucontent,file)
-			puts "removing exploded bottle " + path
-			FileUtils.rm_rf(path)
-		end
-	end 
+
 end
 
 #desc "Update the version information for the build"
