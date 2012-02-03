@@ -1,10 +1,11 @@
-NUGET_FEED = "\\\\marvin.fcs.local\\product\\nuget_feed"
+NUGET_FEED = "http://focus.dovetailsoftware.com/nuget/"
 
 #desc "Deploy nuget packages to local feed (share)"
 task :deploy_nuget_packages do 
-	Dir.glob(File.join("results//packages","*.nupkg")){ |file|
-		puts "Deploying #{file} to #{NUGET_FEED}"
-		FileUtils.cp file, NUGET_FEED
+	packagesDir = File.absolute_path("results/packages")
+	Dir.glob(File.join(packagesDir,"*.nupkg")){ |file|
+		puts "Deploying #{File.basename(file)} to #{NUGET_FEED}"
+		sh "#{NUGET_EXE} push #{file.gsub(/\//,"\\\\")} -s #{NUGET_FEED}"
 	}
 end
 
