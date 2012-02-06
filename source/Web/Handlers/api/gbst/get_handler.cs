@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Dovetail.SDK.Bootstrap;
 using Dovetail.SDK.Bootstrap.Clarify;
 using Dovetail.SDK.Bootstrap.Clarify.Extensions;
 
@@ -27,8 +28,8 @@ namespace Bootstrap.Web.Handlers.api.gbst
             return new GbstListsModel {Lists = lists};
         }
     }
-    
-    public class GbstListsRequest
+
+    public class GbstListsRequest : IApi 
     {
     }
 
