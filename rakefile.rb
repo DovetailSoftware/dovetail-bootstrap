@@ -16,7 +16,9 @@ COMPILE_TARGET = "Debug"
 
 DOVETAILSDK_PATH = "#{Rake::Win32::normalize(ENV['ProgramW6432'].nil? ? ENV['PROGRAMFILES']: ENV['ProgramW6432'])}/Dovetail Software/fcSDK/bin"
 SCHEMAEDITOR_PATH = "#{Rake::Win32::normalize(ENV['PROGRAMFILES'])}/Dovetail Software/SchemaEditor/SchemaEditor.exe"
+
 NUGET_EXE = File.absolute_path("source/.nuget/nuget.exe")
+NUGET_FEEDS = ["#{DOVETAILSDK_PATH}","https://go.microsoft.com/fwlink/?LinkID=230477"]
 
 puts "Loading scripts from build support directory..."
 buildsupportfiles = Dir["#{File.dirname(__FILE__)}/buildsupport/*.rb"]
@@ -107,9 +109,7 @@ namespace :nuget do
 			packagesDir = File.absolute_path("source/packages")
 			packagesConfig = File.absolute_path(file)
 			puts "Updating packages for #{packagesConfig}"
-			Dir.chdir('./source/.nuget/') do
-				sh "#{NUGET_EXE} install #{packagesConfig} -OutputDirectory #{packagesDir}"
-			end
+			sh "#{NUGET_EXE} install #{packagesConfig} -OutputDirectory #{packagesDir} -Source \"#{NUGET_FEEDS.join(";")}\""
 		}
 	end
 
