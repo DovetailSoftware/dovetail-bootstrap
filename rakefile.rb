@@ -14,7 +14,7 @@ DATABASE_CONNECTION = "Data Source=localhost;Initial Catalog=mobilecl125;User Id
 
 COMPILE_TARGET = "Debug"
 
-DOVETAILSDK_PATH = "#{Rake::Win32::normalize(ENV['ProgramW6432'].nil? ? ENV['PROGRAMFILES']: ENV['ProgramW6432'])}/Dovetail Software/fcSDK/bin"
+DOVETAILSDK_PATH = "#{Rake::Win32::normalize(ENV['ProgramW6432'].nil? ? ENV['PROGRAMFILES']: ENV['ProgramW6432'])}/Dovetail Software/fcSDK/bin".gsub('/','\\')
 SCHEMAEDITOR_PATH = "#{Rake::Win32::normalize(ENV['PROGRAMFILES'])}/Dovetail Software/SchemaEditor/SchemaEditor.exe"
 
 NUGET_EXE = File.absolute_path("source/.nuget/nuget.exe")
@@ -106,7 +106,7 @@ namespace :nuget do
 	desc "Run nuget install on all projects"
 	task :install => [:clean] do 
 		Dir.glob(File.join("**","packages.config")){ |file|
-			packagesDir = File.absolute_path("source/packages")
+			packagesDir = File.absolute_path("source/packages").gsub('/','\\')
 			packagesConfig = File.absolute_path(file)
 			puts "Updating packages for #{packagesConfig}"
 			sh "#{NUGET_EXE} install #{packagesConfig} -OutputDirectory #{packagesDir} -Source \"#{NUGET_FEEDS.join(";")}\""

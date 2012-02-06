@@ -1,6 +1,8 @@
+using Bootstrap.Web.Handlers.home;
 using Dovetail.SDK.Fubu.Authentication;
 using FubuCore;
 using FubuMVC.Core.Continuations;
+using FubuMVC.Core.Urls;
 
 namespace Bootstrap.Web.Handlers.user.signin
 {
@@ -15,24 +17,32 @@ namespace Bootstrap.Web.Handlers.user.signin
     public class post_handler
     {
         private readonly IAuthenticationService _authenticationService;
+        private readonly IUrlRegistry _urlRegistry;
 
-        public post_handler(IAuthenticationService authenticationService)
+        public post_handler(IAuthenticationService authenticationService, IUrlRegistry urlRegistry)
         {
             _authenticationService = authenticationService;
+            _urlRegistry = urlRegistry;
         }
 
         public FubuContinuation Execute(SignInModel model)
         {
             var loggedin = _authenticationService.SignIn(model.UserName, model.Password, true);
 
-            return loggedin ? FubuContinuation.RedirectTo(model.ReturnUrl.IsEmpty() ? "/" : model.ReturnUrl)
-                       : FubuContinuation.TransferTo(new SignInRequest { ReturnUrl = model.ReturnUrl, LoginFailed = true });
+            if (loggedin)
+            {
+                return FubuContinuation.RedirectTo(model.ReturnUrl.IsEmpty() ? _urlRegistry.UrlFor<HomeRequest>() : model.ReturnUrl);
+            }
+            
+            return FubuContinuation.TransferTo(new SignInRequest { ReturnUrl = model.ReturnUrl, LoginFailed = true });
         }
     }
 
     public class SignInRequest
     {
+        //[QueryString]
         public string ReturnUrl { get; set; }
+        //[QueryString]
         public bool LoginFailed { get; set; }
     } 
 
@@ -40,7 +50,7 @@ namespace Bootstrap.Web.Handlers.user.signin
     {
         public SignInModel()
         {
-            ReturnUrl = "/";
+            ReturnUrl = "";
         }
 
         public string UserName { get; set; }

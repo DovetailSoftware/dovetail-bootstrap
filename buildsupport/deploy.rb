@@ -1,5 +1,5 @@
 
-DOVETAIL_FEED = "http://focus.dovetailsoftware.com/nuget/nuget"
+DOVETAIL_FEED = "http://focus.dovetailsoftware.com/nuget"
 NUGET_FEEDS.push(DOVETAIL_FEED + "/nuget")
 
 #desc "Deploy nuget packages to local feed (share)"

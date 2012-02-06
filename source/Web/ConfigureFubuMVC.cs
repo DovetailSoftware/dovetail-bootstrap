@@ -1,10 +1,12 @@
 using Bootstrap.Web.Handlers;
 using Bootstrap.Web.Handlers.home;
+using Bootstrap.Web.Security;
 using Dovetail.SDK.Bootstrap;
 using Dovetail.SDK.Fubu.Authentication.Token;
 using Dovetail.SDK.Fubu.Clarify.Lists;
 using FubuCore;
 using FubuMVC.Core;
+using FubuMVC.Core.Security;
 using FubuMVC.Spark;
 
 namespace Bootstrap.Web
@@ -31,6 +33,8 @@ namespace Bootstrap.Web
             ApplyConvention<AuthenticationTokenConvention>();
 
             HtmlConvention<BootstrapHtmlConvention>();
+
+            Services(s=>s.ReplaceService<IAuthorizationFailureHandler, BootstrapAuthorizationFailureHandler>());
         }
     }
 }

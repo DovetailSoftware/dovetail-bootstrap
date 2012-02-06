@@ -91,6 +91,7 @@
     <Compile Include="Authentication\AuthenticationContextService.cs" />
     <Compile Include="Authentication\AuthenticationService.cs" />
     <Compile Include="Authentication\PrincipalFactory.cs" />
+    <Compile Include="Authentication\Token\AuthenticationTokenAuthorizationPolicy.cs" />
     <Compile Include="Authentication\UserAuthenticator.cs" />
     <Compile Include="Authentication\FormsAuthenticationService.cs" />
     <Compile Include="Authentication\SecurityModule.cs" />
