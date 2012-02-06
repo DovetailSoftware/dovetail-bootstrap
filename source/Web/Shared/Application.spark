@@ -21,7 +21,7 @@
     <div class="topbar" data-dropdown="dropdown">
         <div class="fill">
             <div class="container">
-                <a class="brand" href="/">Dovetail Bootstrap</a>
+				!{this.LinkTo<Bootstrap.Web.Handlers.home.HomeRequest>().Text("Dovetail Bootstrap").AddClass("brand")}
                 <ul class="nav">
                     <li>!{this.LinkTo<Bootstrap.Web.Handlers.about.AboutRequest>().Text("About")} </li>
                     <li>!{this.LinkTo<Bootstrap.Web.Handlers.api.gbst.GbstListsRequest>().Text("Lists")} </li>
