@@ -43,7 +43,7 @@ namespace Dovetail.SDK.Bootstrap.History
 		{
             var historyItems = getHistoryItems(workflowObject, actEntryFilter);
 
-            return new HistoryViewModel { WorkflowObject= workflowObject, HistoryItems = historyItems };
+            return new HistoryViewModel { WorkflowObject= workflowObject, HistoryItems = historyItems.ToArray() };
 		}
 
 	    private IEnumerable<HistoryItem> getHistoryItems(WorkflowObject workflowObject, Filter actEntryFilter)
@@ -57,7 +57,7 @@ namespace Dovetail.SDK.Bootstrap.History
 		{
             var historyItems = getHistoryItems(workflowObject, actEntryFilter).Take(numberOfEntries);
 
-            return new HistoryViewModel { WorkflowObject= workflowObject, HistoryItems = historyItems };
+            return new HistoryViewModel { WorkflowObject = workflowObject, HistoryItems = historyItems.ToArray() };
 		}
 	}
 }

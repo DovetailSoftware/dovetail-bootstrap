@@ -52,6 +52,6 @@ namespace Dovetail.SDK.Bootstrap.History
 	public class HistoryViewModel 
 	{
 	    public WorkflowObject WorkflowObject { get; set; }
-	    public IEnumerable<HistoryItem> HistoryItems { get; set; }
+	    public HistoryItem[] HistoryItems { get; set; }
 	}
 }
