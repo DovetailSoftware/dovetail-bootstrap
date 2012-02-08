@@ -41,7 +41,7 @@ namespace Dovetail.SDK.Bootstrap.History.AssemblerPolicies
 
             var subcaseHistories = subcaseIds.Select(id =>
                                                          {
-                                                             var subcaseWorkflowObject = new WorkflowObject(WorkflowObject.Subcase) { Id = id, IsChild = true};
+                                                             var subcaseWorkflowObject = new WorkflowObject { Type = WorkflowObject.Subcase, Id = id, IsChild = true };
                                                              return _historyBuilder.Build(subcaseWorkflowObject, actEntryFilter);
                                                          });
 
