@@ -94,7 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="clarify_application_factory.cs" />
-    <Compile Include="Token\authentication_token_behavior.cs" />
+    <Compile Include="Token\authenticate_token_authorization_policy.cs" />
     <Compile Include="Context.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Token\get_token_api.cs" />

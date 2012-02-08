@@ -17,16 +17,6 @@ namespace Dovetail.SDK.Fubu.Authentication.Token
                     .ParentChain()
                     .Authorization
                     .AddPolicy(typeof(AuthenticationTokenAuthorizationPolicy)));
-                //.Each(call =>
-                //{
-                //    var log = graph.Observer;
-                //    if (log.IsRecording)
-                //    {
-                //        log.RecordCallStatus(call, "{0} has an output model that requires an authentication token be present. Wrapping with AuthenticationTokenBehavior.".ToFormat(call));
-                //    }
-
-                //    call.AddBefore(new Wrapper(typeof(AuthenticationTokenBehavior)));
-                //});
         }
     }
 

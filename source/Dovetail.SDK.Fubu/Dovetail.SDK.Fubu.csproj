@@ -100,7 +100,6 @@
     <Compile Include="Clarify\Lists\GbstListValueDropdownBuilder.cs" />
     <Compile Include="Clarify\Lists\ListNames.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Authentication\Token\AuthenticationTokenBehavior.cs" />
     <Compile Include="Authentication\Token\AuthenticationTokenConvention.cs" />
   </ItemGroup>
   <ItemGroup>

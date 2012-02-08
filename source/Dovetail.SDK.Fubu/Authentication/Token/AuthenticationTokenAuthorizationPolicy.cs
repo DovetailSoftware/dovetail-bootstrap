@@ -64,6 +64,5 @@ namespace Dovetail.SDK.Fubu.Authentication.Token
 
             return AuthorizationRight.Allow;
         }
-
     }
 }
