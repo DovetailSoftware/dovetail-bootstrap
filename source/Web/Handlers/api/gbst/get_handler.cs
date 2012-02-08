@@ -23,7 +23,7 @@ namespace Bootstrap.Web.Handlers.api.gbst
             listGeneric.AppendSort("title", true);
             listGeneric.Query();
 
-            var lists = listGeneric.DataRows().Select(s => s.AsString("title"));
+            var lists = listGeneric.DataRows().Select(s => s.AsString("title")).ToArray();
 
             return new GbstListsModel {Lists = lists};
         }
@@ -35,6 +35,6 @@ namespace Bootstrap.Web.Handlers.api.gbst
 
     public class GbstListsModel 
     {
-        public IEnumerable<string> Lists { get; set; }
+        public string[] Lists { get; set; }
     }
 }

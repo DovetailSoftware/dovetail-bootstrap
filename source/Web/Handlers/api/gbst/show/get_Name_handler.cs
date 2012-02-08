@@ -34,7 +34,7 @@ namespace Bootstrap.Web.Handlers.api.gbst.show
                                      Rank = e.Rank,
                                      IsActive = e.State != 1,
                                      IsDefault = e.Title == defaultTitle
-                                 });
+                                 }).ToArray();
             
             return result;
         }
@@ -54,7 +54,7 @@ namespace Bootstrap.Web.Handlers.api.gbst.show
         }
 
         public string Name { get; set; }
-        public IEnumerable<ListElement> Elements { get; set; }
+        public ListElement[] Elements { get; set; }
     }
 
     public class ListElement

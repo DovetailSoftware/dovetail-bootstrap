@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Dovetail.SDK.ModelMap;
+﻿using Dovetail.SDK.ModelMap;
 
 namespace Bootstrap.Web.Handlers.home
 {
@@ -24,6 +23,6 @@ namespace Bootstrap.Web.Handlers.home
 
     public class HomeModel 
     {
-        public IEnumerable<UserOpenCaseListing> Cases { get; set; }
+        public UserOpenCaseListing[] Cases { get; set; }
     }
 }
