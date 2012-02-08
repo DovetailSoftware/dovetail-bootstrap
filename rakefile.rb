@@ -2,7 +2,7 @@ require 'albacore'
 include REXML
 include Rake::DSL
 
-BUILD_NUMBER_BASE = "0.1.0"
+BUILD_NUMBER_BASE = "0.2.0"
 PROJECT_NAME = "Bootstrap"
 SLN_PATH = "source/#{PROJECT_NAME}.sln"
 SLN_FILES = [SLN_PATH]
