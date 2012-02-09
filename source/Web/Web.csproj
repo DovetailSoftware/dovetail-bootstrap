@@ -119,7 +119,6 @@
     <Content Include="content\styles\bootstrap-responsive.min.css" />
     <Content Include="content\styles\bootstrap.css" />
     <Content Include="content\styles\bootstrap.min.css" />
-    <Content Include="content\styles\history.css" />
     <Content Include="content\styles\site.css" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

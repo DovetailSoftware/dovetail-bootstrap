@@ -31,6 +31,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dovetail.SDK.Fubu", "Doveta
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dovetail.SDK.ModelMap.Integration", "Dovetail.SDK.ModelMap.Integration\Dovetail.SDK.ModelMap.Integration.csproj", "{9C84DF08-AA19-4FA5-8795-A8CF9949463D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swagger.Net", "Swagger.Net\Swagger.Net.csproj", "{CA484F56-4C2A-43B6-B31D-5820E351A397}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swagger.Net.Tests", "Swagger.Net.Tests\Swagger.Net.Tests.csproj", "{59B1F0A9-3103-4CCD-A29A-56A4952D5C85}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +65,14 @@ Global
 		{9C84DF08-AA19-4FA5-8795-A8CF9949463D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C84DF08-AA19-4FA5-8795-A8CF9949463D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C84DF08-AA19-4FA5-8795-A8CF9949463D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA484F56-4C2A-43B6-B31D-5820E351A397}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA484F56-4C2A-43B6-B31D-5820E351A397}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA484F56-4C2A-43B6-B31D-5820E351A397}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA484F56-4C2A-43B6-B31D-5820E351A397}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59B1F0A9-3103-4CCD-A29A-56A4952D5C85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59B1F0A9-3103-4CCD-A29A-56A4952D5C85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59B1F0A9-3103-4CCD-A29A-56A4952D5C85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59B1F0A9-3103-4CCD-A29A-56A4952D5C85}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
