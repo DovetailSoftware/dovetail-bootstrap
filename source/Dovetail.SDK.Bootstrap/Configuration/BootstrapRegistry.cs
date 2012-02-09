@@ -28,7 +28,7 @@ namespace Dovetail.SDK.Bootstrap.Configuration
             For<ILocaleCache>().Use(c => c.GetInstance<IClarifyApplicationFactory>().Create().LocaleCache);
             For<IListCache>().Use(c => c.GetInstance<IClarifyApplicationFactory>().Create().ListCache);
 
-            For<IApplicationClarifySession>().Use(ctx => ctx.GetInstance<IApplicationSessionCache>().GetApplicationSession());
+            For<IApplicationClarifySession>().Singleton().Use(ctx => ctx.GetInstance<IApplicationSessionCache>().GetApplicationSession());
 
             For<ILogger>()
                 .AlwaysUnique()
