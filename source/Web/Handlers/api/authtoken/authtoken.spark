@@ -10,14 +10,16 @@
 
 
 <div class="row">
-    <div class="span4">
+    <div class="span6">
+      <div class="api-description">
         <p>
-            To retrieve an existing authentication token for a user call the Retrieve Token api.
+          To retrieve an existing authentication token for a user call the Retrieve Token api.
         </p>
         <span class="api-http-method">POST</span>
         <span class="api-url">${this.Urls.UrlFor(new Bootstrap.Web.Handlers.api.authtoken.retrieve.RetrieveAuthTokenRequest())}</span>
+      </div>
     </div>
-    <div class="span6">
+    <div class="span4">
         <form action="${this.Urls.UrlFor(new Bootstrap.Web.Handlers.api.authtoken.retrieve.RetrieveAuthTokenRequest())}" method="POST">
         <fieldset>
             <legend>Retrieve Token</legend>
@@ -42,14 +44,16 @@
 
 
 <div class="row">
-    <div class="span4">
+    <div class="span6">
+      <div class="api-description">
         <p>
-            If the token is forgotten or compromised you may Reset the token.
+          If the token is forgotten or compromised you may Reset the token.
         </p>
         <span class="api-http-method">POST</span>
         <span class="api-url">${this.Urls.UrlFor(new Bootstrap.Web.Handlers.api.authtoken.reset.ResetAuthTokenRequest())}</span>
+      </div>
     </div>
-    <div class="span6">
+    <div class="span4">
         <form action="${this.Urls.UrlFor(new Bootstrap.Web.Handlers.api.authtoken.reset.ResetAuthTokenRequest())}" method="POST">
         <fieldset>
             <legend>Reset Token</legend>

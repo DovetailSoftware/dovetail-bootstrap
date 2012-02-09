@@ -1,10 +1,14 @@
 ﻿<viewdata model="Bootstrap.Web.Handlers.user.status.UserStatusModel"/>
 <use namespace="FubuCore"/>
-<ul class="nav secondary-nav" if="Model.User.IsAuthenticated">
+<ul class="nav pull-right" if="Model.User.IsAuthenticated">
 	<li class="dropdown">
-	<a href="#" class="dropdown-toggle">${Model.User.Username.Capitalize()}</a>
-	<ul class="dropdown-menu">
-	<li><a href="${this.Urls.UrlFor(new Bootstrap.Web.Handlers.user.signout.SignOutRequest())}">Sign Out</a></li>
-	</ul>
+    <a href="#username" data-toggle="dropdown" class="dropdown-toggle">${Model.User.Username.Capitalize()} <i class="icon-user icon-white"></i></a>
+	  <ul class="dropdown-menu">
+	  <li><a href="${this.Urls.UrlFor(new Bootstrap.Web.Handlers.user.signout.SignOutRequest())}">Sign Out <i class="icon-remove-circle"></i></a></li>
+	  </ul>
 	</li>
 </ul>
+
+
+<!--
+-->

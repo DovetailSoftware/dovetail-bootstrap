@@ -8,8 +8,8 @@
 <ul>
   <li each='var element in Model.Elements'>
     <div>${element.Title}
-    <span class="label" if='element.IsDefault'>Default</span>
-    <span class="label notice" if='!element.IsActive'>Inactive</span>
+      <span class="label" if='element.IsDefault'>Default <i class="icon-flag icon-white"></i></span>
+      <span class="label notice" if='!element.IsActive'>Inactive <i class="icon-ban icon-white"></span>
     </div>
   </li>  
 </ul>

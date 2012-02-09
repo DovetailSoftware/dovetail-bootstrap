@@ -15,7 +15,7 @@ h4 {
 <div class="row">
     <div class="span12">
     <h4>Your Open Cases</h4>
-    <dl>
+    <dl class="listing">
     <for each="var c in Model.Cases">
       <dt>
         <a class="btn" href="${this.Urls.UrlFor(new Bootstrap.Web.Handlers.api.history.HistoryRequest {Type = 'case', Id = c.Id})}">${c.Id}</a>

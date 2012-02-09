@@ -3,14 +3,16 @@
 <h1>Create Case</h1>
 </content:pagehead>
 <div class="row">
-    <div class="span4">
+    <div class="span5">
+      <div class="api-description">
         <p>
             A most basic case creation - meant as an example for you to build upon.
         </p>
         <span class="api-http-method">POST</span> <span class="api-url">${this.Urls.UrlFor(new
             Bootstrap.Web.Handlers.api.cases.create.CreateCaseInputModel())}</span>
+      </div>   
     </div>
-    <div class="span6">
+    <div class="span5">
         <form action="${this.Urls.UrlFor(new Bootstrap.Web.Handlers.api.cases.create.CreateCaseInputModel())}"
         method="POST">
 

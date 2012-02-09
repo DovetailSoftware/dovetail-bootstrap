@@ -1,5 +1,8 @@
 $(document).ready(function () {
 
+    $('.dropdown-toggle').dropdown();
+    $(".collapse").collapse()
+
     $('.date-ago').each(function (index, value) {
         var el = $(value);
         var date = moment(el.html());

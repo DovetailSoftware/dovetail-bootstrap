@@ -107,9 +107,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="content\img\glyphicons-halflings-white.png" />
+    <Content Include="content\img\glyphicons-halflings.png" />
+    <Content Include="content\scripts\bootstrap-collapse.js" />
     <Content Include="content\scripts\bootstrap-dropdown.js" />
+    <Content Include="content\scripts\bootstrap.js" />
+    <Content Include="content\scripts\bootstrap.min.js" />
     <Content Include="content\scripts\site.js" />
     <Content Include="content\scripts\moment.min.js" />
+    <Content Include="content\styles\bootstrap-responsive.css" />
+    <Content Include="content\styles\bootstrap-responsive.min.css" />
+    <Content Include="content\styles\bootstrap.css" />
     <Content Include="content\styles\bootstrap.min.css" />
     <Content Include="content\styles\history.css" />
     <Content Include="content\styles\site.css" />
@@ -146,7 +154,6 @@
     <None Include="Handlers\api\cases\create\get.spark" />
     <None Include="Handlers\user\signin\signin.spark" />
     <None Include="Handlers\user\status\status.spark" />
-    <None Include="Shared\Embedded.spark" />
     <None Include="Handlers\api\history\history.spark" />
     <None Include="Handlers\home\home.spark" />
     <None Include="Handlers\about\about.spark">
