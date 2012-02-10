@@ -5,6 +5,7 @@
 [Oo]bj/
 CommonAssemblyInfo.cs
 *.csproj.user
+source/Bootstrap.sln.DotSettings.user
 *.user
 *.suo
 *.sln.cache
@@ -20,7 +21,7 @@ _ReSharper.*
 *.resharper
 *.sln.docstates
 *.log
-source/packages/**
+source/packages
 source/Web/fubu-content/*
 libs/DovetailSDK/*.dll
 !repositories.config
