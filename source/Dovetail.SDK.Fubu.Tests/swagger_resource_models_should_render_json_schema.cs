@@ -4,9 +4,11 @@ using System.IO;
 using NUnit.Framework;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Schema;
+using Swagger.Net;
 
-namespace Swagger.Net.Tests
+namespace Dovetail.SDK.Fubu.Tests
 {
+    [JsonObjectAttribute("1")]
     public class TestOutputModel 
     {
         public string id { get; set; }
@@ -14,15 +16,24 @@ namespace Swagger.Net.Tests
         public DateTime when { get; set; }
     }
 
+    [JsonObjectAttribute("2")]
     public class TestOutputModel2
     {
         public string id { get; set; }
     }
 
+    [JsonObject("3")]
     public class TestOutputModel3
     {
         public string id { get; set; }
         public TestOutputModel2[] Output2Models { get; set; }
+    }
+
+    public class HasNested
+    {
+        public string nested { get; set; }
+        public TestOutputModel2 Output2Model { get; set; }
+        public TestOutputModel3[] Output3Models { get; set; }
     }
     
     [TestFixture]
@@ -82,6 +93,19 @@ namespace Swagger.Net.Tests
             StringAssert.Contains(type2JsonSchema, json);
         }
 
+        [Test]
+        [Explicit("According to the swagger spec. This test should fail as nested schemas should not be populated.")]
+        public void nested()
+        {
+            var type = typeof(HasNested);
+            _resource.models = new[] {type};
+            var jsonSchema = getJsonSchema(type);
+
+            var json = serializeToJson(_resource);
+
+            StringAssert.Contains(jsonSchema, json);
+        }
+        
         private static string serializeToJson(Resource resource)
         {
             var json = JsonConvert.SerializeObject(resource, Formatting.None);
@@ -98,7 +122,7 @@ namespace Swagger.Net.Tests
 
             jSchema.WriteTo(jtw);
 
-            Trace.Write(sw);
+            //Trace.Write(sw);
 
             return sw.ToString();
         }

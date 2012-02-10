@@ -1,4 +1,5 @@
 using System;
+using Dovetail.SDK.Fubu.Swagger;
 using Newtonsoft.Json;
 
 namespace Swagger.Net
@@ -24,6 +25,8 @@ namespace Swagger.Net
         public string swaggerVersion { get; set; }
         public string apiVersion { get; set; }
         public API[] apis { get; set; }
+
+
         [JsonConverter(typeof(ToJsonSchemaConverter))]
         public Type[] models { get; set; }
     }

@@ -3,12 +3,12 @@ using FubuCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Schema;
 
-namespace Swagger.Net
+namespace Dovetail.SDK.Fubu.Swagger
 {
     public class ToJsonSchemaConverter : JsonConverter
     {
         private readonly JsonSchemaGenerator _schemaGenerator;
-        
+
         public ToJsonSchemaConverter()
         {
             _schemaGenerator = new JsonSchemaGenerator();
@@ -16,7 +16,7 @@ namespace Swagger.Net
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            var types = (Type[]) value;
+            var types = (Type[])value;
             writer.WriteStartObject();
 
             foreach (var type in types)
@@ -26,7 +26,7 @@ namespace Swagger.Net
                 jsonSchema.Id = type.Name;
                 jsonSchema.WriteTo(writer);
             }
-            
+
             writer.WriteEndObject();
         }
 

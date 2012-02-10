@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Swagger.Net.Tests")]
+[assembly: AssemblyTitle("Dovetail.SDK.Fubu.Tests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Swagger.Net.Tests")]
+[assembly: AssemblyProduct("Dovetail.SDK.Fubu.Tests")]
 [assembly: AssemblyCopyright("Copyright ©  2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("98ace99f-dc4f-4f5b-93ad-ce29862fc77d")]
+[assembly: Guid("e0ec31eb-77fb-4ba3-8615-59712f186e5e")]
 
 // Version information for an assembly consists of the following four values:
 //

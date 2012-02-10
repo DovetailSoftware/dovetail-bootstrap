@@ -17,7 +17,7 @@ COMPILE_TARGET = "Debug"
 DOVETAILSDK_PATH = "#{Rake::Win32::normalize(ENV['ProgramW6432'].nil? ? ENV['PROGRAMFILES']: ENV['ProgramW6432'])}/Dovetail Software/fcSDK/bin".gsub('/','\\')
 SCHEMAEDITOR_PATH = "#{Rake::Win32::normalize(ENV['PROGRAMFILES'])}/Dovetail Software/SchemaEditor/SchemaEditor.exe"
 
-NUGET_EXE = File.absolute_path("source/.nuget/nuget.exe")
+NUGET_EXE = File.absolute_path("nuget.exe")
 NUGET_FEEDS = ["#{DOVETAILSDK_PATH}","https://go.microsoft.com/fwlink/?LinkID=230477"]
 
 puts "Loading scripts from build support directory..."

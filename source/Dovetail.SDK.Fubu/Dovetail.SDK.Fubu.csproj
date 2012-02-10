@@ -72,6 +72,9 @@
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.4.0.7\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="StructureMap">
       <HintPath>..\packages\structuremap.2.6.3\lib\StructureMap.dll</HintPath>
     </Reference>
@@ -101,7 +104,9 @@
     <Compile Include="Clarify\Lists\ListNames.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Authentication\Token\AuthenticationTokenConvention.cs" />
-    <Compile Include="Swagger\ExampleHtmlWriter.cs" />
+    <Compile Include="Swagger\Models.cs" />
+    <Compile Include="Swagger\SwaggerConvention.cs" />
+    <Compile Include="Swagger\ToJsonSchemaConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Dovetail.SDK.Bootstrap\Dovetail.SDK.Bootstrap.csproj">

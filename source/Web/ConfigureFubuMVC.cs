@@ -1,3 +1,4 @@
+using System.Linq;
 using Bootstrap.Web.Handlers;
 using Bootstrap.Web.Handlers.home;
 using Bootstrap.Web.Security;
@@ -6,7 +7,9 @@ using Dovetail.SDK.Fubu.Authentication.Token;
 using Dovetail.SDK.Fubu.Clarify.Lists;
 using FubuCore;
 using FubuMVC.Core;
+using FubuMVC.Core.Registration;
 using FubuMVC.Core.Security;
+using FubuMVC.Core.UI;
 using FubuMVC.Spark;
 
 namespace Bootstrap.Web
@@ -33,6 +36,8 @@ namespace Bootstrap.Web
             ApplyConvention<AuthenticationTokenConvention>();
 
             HtmlConvention<BootstrapHtmlConvention>();
+
+            //Policies.Add<SwaggerDocsPolicy>();
 
             Services(s=>s.ReplaceService<IAuthorizationFailureHandler, BootstrapAuthorizationFailureHandler>());
         }
