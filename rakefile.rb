@@ -205,3 +205,11 @@ assemblyinfo :version do |asm|
 	asm.custom_attributes :AssemblyInformationalVersion => build_number
 	asm.output_file = 'source/CommonAssemblyInfo.cs'
 end
+
+desc "Build and host the web application in iisexpress on port 7070"
+task :start_web => [:compile] do
+	puts "\n\n\n*** Launching iis express for this web application on port 7070 ***\n\n\n"
+
+	IISEXPRESS_EXE = "#{ENV['PROGRAMFILES']}/IIS Express/iisexpress.exe".gsub('/','\\')
+	sh "\"#{IISEXPRESS_EXE}\" /path:#{File.absolute_path("source/Web").gsub('/','\\')} /port:7070 /clr:v4.0"
+end
