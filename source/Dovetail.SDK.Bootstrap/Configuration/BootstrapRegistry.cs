@@ -22,13 +22,20 @@ namespace Dovetail.SDK.Bootstrap.Configuration
             IncludeRegistry<AppSettingProviderRegistry>();
 
             For<IClarifyApplicationFactory>().Singleton().Use<ClarifyApplicationFactory>();
+
+            //configure the container to use the session cache as a factory for the current user's session
+            //any web class that takes a dependency on IClarifySession will get a session for the current 
+            //authenticated user. 
+            For<IClarifySessionCache>().Singleton().Use<ClarifySessionCache>();
+            For<IClarifySession>().Use(ctx => ctx.GetInstance<IClarifySessionCache>().GetUserSession());
+            For<IApplicationClarifySession>().Singleton().Use(ctx => ctx.GetInstance<IApplicationSessionCache>().GetApplicationSession());
+
             For<IListCache>().Use(c => c.GetInstance<IClarifyApplicationFactory>().Create().ListCache);
             For<ISchemaCache>().Use(c => c.GetInstance<IClarifyApplicationFactory>().Create().SchemaCache);
             For<IStringCache>().Use(c => c.GetInstance<IClarifyApplicationFactory>().Create().StringCache);
             For<ILocaleCache>().Use(c => c.GetInstance<IClarifyApplicationFactory>().Create().LocaleCache);
             For<IListCache>().Use(c => c.GetInstance<IClarifyApplicationFactory>().Create().ListCache);
 
-            For<IApplicationClarifySession>().Singleton().Use(ctx => ctx.GetInstance<IApplicationSessionCache>().GetApplicationSession());
 
             For<ILogger>()
                 .AlwaysUnique()
