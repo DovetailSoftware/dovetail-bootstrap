@@ -1,15 +1,11 @@
-using System.Linq;
 using Bootstrap.Web.Handlers;
 using Bootstrap.Web.Handlers.home;
 using Bootstrap.Web.Security;
-using Dovetail.SDK.Bootstrap;
 using Dovetail.SDK.Fubu.Authentication.Token;
 using Dovetail.SDK.Fubu.Clarify.Lists;
-using FubuCore;
+using Dovetail.SDK.Fubu.Swagger;
 using FubuMVC.Core;
-using FubuMVC.Core.Registration;
 using FubuMVC.Core.Security;
-using FubuMVC.Core.UI;
 using FubuMVC.Spark;
 
 namespace Bootstrap.Web
@@ -31,13 +27,11 @@ namespace Bootstrap.Web
 
             Routes.HomeIs<HomeRequest>();
 
-            Media.ApplyContentNegotiationTo(x => x.InputType().CanBeCastTo<IApi>() || x.InputType().CanBeCastTo<IUnauthenticatedApi>());
-
             ApplyConvention<AuthenticationTokenConvention>();
 
             HtmlConvention<BootstrapHtmlConvention>();
 
-            //Policies.Add<SwaggerDocsPolicy>();
+            Policies.Add<SwaggerConvention>();
 
             Services(s=>s.ReplaceService<IAuthorizationFailureHandler, BootstrapAuthorizationFailureHandler>());
         }

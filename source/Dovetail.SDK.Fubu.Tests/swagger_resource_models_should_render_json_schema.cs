@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using Dovetail.SDK.Fubu.Swagger;
 using NUnit.Framework;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Schema;
-using Swagger.Net;
 
 namespace Dovetail.SDK.Fubu.Tests
 {

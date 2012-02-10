@@ -1,10 +1,9 @@
 using System;
-using Dovetail.SDK.Fubu.Swagger;
 using Newtonsoft.Json;
 
-namespace Swagger.Net
+namespace Dovetail.SDK.Fubu.Swagger
 {
-    public class Resources
+    public class ResourceDiscovery
     {
         public string basePath { get; set; }
         public string swaggerVersion { get; set; }
