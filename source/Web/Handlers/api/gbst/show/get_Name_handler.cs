@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using Dovetail.SDK.Bootstrap;
 using FChoice.Foundation.Clarify;
 
@@ -41,6 +42,7 @@ namespace Bootstrap.Web.Handlers.api.gbst.show
 
     public class GbstShowRequest : IApi 
     {
+        [Required]
         public string Name { get; set; }
     }
 
