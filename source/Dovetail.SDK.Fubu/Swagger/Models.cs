@@ -8,7 +8,7 @@ namespace Dovetail.SDK.Fubu.Swagger
         public string basePath { get; set; }
         public string swaggerVersion { get; set; }
         public string apiVersion { get; set; }
-        public ResourceDiscoveryAPI[] DiscoveryApis { get; set; }
+        public ResourceDiscoveryAPI[] apis { get; set; }
     }
 
     public class ResourceDiscoveryAPI
@@ -50,12 +50,13 @@ namespace Dovetail.SDK.Fubu.Swagger
     public class Parameter
     {
         public string name { get; set; }
-        public string defaultValue { get; set; }
+        //public string defaultValue { get; set; }
         public string description { get; set; }
         public string dataType { get; set; }
-        public AllowableValues[] allowableValues { get; set; }
+        //public AllowableValues[] allowableValues { get; set; }
+        public bool required { get; set; }
         public bool allowMultiple { get; set; }
-        public string parameterType { get; set; }
+        public string paramType { get; set; }
     }
 
     public class AllowableValues

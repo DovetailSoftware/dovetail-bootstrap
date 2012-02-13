@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using FubuCore.Reflection;
 using FubuMVC.Core.Registration.Nodes;
@@ -36,8 +37,11 @@ namespace Dovetail.SDK.Fubu.Swagger
                                     {
                                         parameters = parameters.ToArray(),
                                         httpMethod = verb,
-                                        responseTypeInternal = outputType.AssemblyQualifiedName,
+                                        responseTypeInternal = outputType.FullName,
                                         responseClass = outputType.Name,
+                                        nickname = call.InputType().Name,
+                                        notes = "notes",
+                                        errorResponses = new ErrorResponses[0],
                                         //TODO get notes, nickname, summary from metadata?
                                     };
                 operations.Add(operation);
@@ -60,17 +64,19 @@ namespace Dovetail.SDK.Fubu.Swagger
                                     {
                                         name = propertyInfo.Name,
                                         dataType = propertyInfo.PropertyType.Name,
-                                        parameterType = "post",
+                                        paramType = "post",
                                         allowMultiple = false,
+                                        required = propertyInfo.HasAttribute<RequiredAttribute>(),
+                                        description = "parameter description"
                                         //TODO get defaultValue, description, allowableValues from metadata?
                                         
                                     };
 
                 if(route.Input.RouteParameters.Any(r=>r.Name == propertyInfo.Name))
-                    parameter.parameterType = "path";
+                    parameter.paramType = "path";
 
                 if (route.Input.QueryParameters.Any(r => r.Name == propertyInfo.Name))
-                    parameter.parameterType = "query";
+                    parameter.paramType = "query";
 
                 parameters.Add(parameter);
             }

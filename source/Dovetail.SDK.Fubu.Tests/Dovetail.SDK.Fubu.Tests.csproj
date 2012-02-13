@@ -56,8 +56,13 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="swagger_resource_models_should_render_json_schema.cs" />
+    <Compile Include="relative_url.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Dovetail.SDK.Bootstrap.Tests\Dovetail.SDK.Bootstrap.Tests.csproj">
+      <Project>{0EFB9B2A-CD04-4DED-A9EA-3F76DA349553}</Project>
+      <Name>Dovetail.SDK.Bootstrap.Tests</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Dovetail.SDK.Fubu\Dovetail.SDK.Fubu.csproj">
       <Project>{BDB6AD41-4C91-451F-B0EA-5858DFB5FB26}</Project>
       <Name>Dovetail.SDK.Fubu</Name>

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using Dovetail.SDK.Fubu.Swagger;
 using NUnit.Framework;
@@ -35,7 +34,7 @@ namespace Dovetail.SDK.Fubu.Tests
         public TestOutputModel2 Output2Model { get; set; }
         public TestOutputModel3[] Output3Models { get; set; }
     }
-    
+
     [TestFixture]
     public class swagger_resource_models_should_render_json_schema
     {

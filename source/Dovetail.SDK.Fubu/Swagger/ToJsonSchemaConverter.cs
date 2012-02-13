@@ -11,7 +11,10 @@ namespace Dovetail.SDK.Fubu.Swagger
 
         public ToJsonSchemaConverter()
         {
-            _schemaGenerator = new JsonSchemaGenerator();
+            _schemaGenerator = new JsonSchemaGenerator
+                                   {
+                                       UndefinedSchemaIdHandling = UndefinedSchemaIdHandling.UseTypeName
+                                   };
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)

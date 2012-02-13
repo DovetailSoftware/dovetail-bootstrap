@@ -5,6 +5,7 @@ using Dovetail.SDK.Fubu.Authentication.Token;
 using Dovetail.SDK.Fubu.Clarify.Lists;
 using Dovetail.SDK.Fubu.Swagger;
 using FubuMVC.Core;
+using FubuMVC.Core.Runtime;
 using FubuMVC.Core.Security;
 using FubuMVC.Spark;
 
@@ -15,7 +16,7 @@ namespace Bootstrap.Web
         public ConfigureFubuMVC()
         {
 #if DEBUG
-            this.IncludeDiagnostics(true);
+            IncludeDiagnostics(true);
 #endif
             ApplyHandlerConventions<HandlerMarker>();
             
@@ -33,7 +34,11 @@ namespace Bootstrap.Web
 
             Policies.Add<SwaggerConvention>();
 
-            Services(s=>s.ReplaceService<IAuthorizationFailureHandler, BootstrapAuthorizationFailureHandler>());
+            Services(s=>
+                         {
+                             s.ReplaceService<IAuthorizationFailureHandler, BootstrapAuthorizationFailureHandler>();
+                             s.ReplaceService<IJsonWriter, NewtonsoftJsonWriter>();
+                         });
         }
     }
 }

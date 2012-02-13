@@ -79,6 +79,7 @@
       <HintPath>..\packages\structuremap.2.6.3\lib\StructureMap.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
@@ -106,10 +107,11 @@
     <Compile Include="Authentication\Token\AuthenticationTokenConvention.cs" />
     <Compile Include="Swagger\ApiFinder.cs" />
     <Compile Include="Swagger\Models.cs" />
+    <Compile Include="Swagger\NewtonsoftJsonWriter.cs" />
+    <Compile Include="Swagger\StringExtensions.cs" />
     <Compile Include="Swagger\SwaggerMapper.cs" />
     <Compile Include="Swagger\SwaggerResourceDiscoveryAPIAction.cs" />
     <Compile Include="Swagger\SwaggerConvention.cs" />
-    <Compile Include="Swagger\SwaggerHelperKillItWithFire.cs" />
     <Compile Include="Swagger\SwaggerResourceDiscoveryAction.cs" />
     <Compile Include="Swagger\ToJsonSchemaConverter.cs" />
   </ItemGroup>

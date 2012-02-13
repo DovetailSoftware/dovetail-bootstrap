@@ -1,5 +1,9 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using FubuMVC.Core;
+using FubuMVC.Core.Http;
+using FubuMVC.Core.Urls;
 
 namespace Dovetail.SDK.Fubu.Swagger
 {
@@ -13,44 +17,58 @@ namespace Dovetail.SDK.Fubu.Swagger
     {
         private readonly ApiFinder _apiActionFinder;
         private readonly ISwaggerMapper _swaggerMapper;
+        private readonly IUrlRegistry _urlRegistry;
+        private readonly ICurrentHttpRequest _currentHttpRequest;
 
-        public SwaggerResourceDiscoveryAPIAction(ApiFinder apiActionFinder, ISwaggerMapper swaggerMapper)
+        public SwaggerResourceDiscoveryAPIAction(ApiFinder apiActionFinder, ISwaggerMapper swaggerMapper, IUrlRegistry urlRegistry, ICurrentHttpRequest currentHttpRequest)
         {
             _apiActionFinder = apiActionFinder;
             _swaggerMapper = swaggerMapper;
+            _urlRegistry = urlRegistry;
+            _currentHttpRequest = currentHttpRequest;
         }
 
         //[AsymmetricJson]
         public Resource Execute(SwaggerResourceDiscoveryAPIRequest request)
         {
-            //find all IApi resulting calls
-            //group all actions by pattern first part past api : /api/{group}/
+            var baseUrl = _urlRegistry.UrlFor(request);
+            var absoluteBaseUrl = _currentHttpRequest.ToFullUrl(baseUrl);
 
+            var groupActions = _apiActionFinder.ActionsForGroup(request.GroupKey).ToArray();
 
-            var apis = _apiActionFinder
-                .ActionsForGroup(request.GroupKey)
-                .Select(s =>
+            var apis = groupActions
+                .Select(a =>
                             {
-                                var pattern = s.ParentChain().Route.Pattern;
+                                //UGH we need to make relative URLs for swagger to be happy. 
+                                var pattern = a.ParentChain().Route.Pattern;
+                                var resourceUrl = baseUrl.UrlRelativeTo(pattern);
 
                                 //TODO make this detail come from attribute?
                                 var description = "Something pithy about this resource api.";
 
                                 return new API
                                            {
-                                               path = pattern,
+                                               path = resourceUrl,
                                                description = description,
-                                               operations = _swaggerMapper.OperationsFrom(s).ToArray()
+                                               operations = _swaggerMapper.OperationsFrom(a).ToArray()
                                            };
                             }).ToArray();
 
+            var typeSet = new HashSet<Type>();
+            groupActions.Each(a =>
+                            {
+                                if(a.HasInput) typeSet.Add(a.InputType());
+                                if (a.HasOutput) typeSet.Add(a.OutputType());
+                            });
+
             return new Resource
                        {
-                           //TODO make this an absolute URL
-                           basePath = SwaggerHelperKillItWithFire.GetAPIResourcePattern().Replace("{GroupKey}", request.GroupKey),
+                           basePath = absoluteBaseUrl,
+                           resourcePath = "/" + request.GroupKey, //HACK
                            apiVersion = "0.2",
                            swaggerVersion = "1.0",
-                           apis = apis
+                           apis = apis,
+                           models = typeSet.ToArray()
                        };
         }
     }
