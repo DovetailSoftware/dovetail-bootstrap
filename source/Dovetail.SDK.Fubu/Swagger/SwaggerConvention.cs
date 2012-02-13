@@ -9,10 +9,10 @@ namespace Dovetail.SDK.Fubu.Swagger
         {
             //TODO should this route '/api' be configurable?
             //add resource discovery action and force it to return JSON
-            graph.AddActionFor(SwaggerHelperKillItWithFire.GetBasePathPattern(), typeof (SwaggerResourceAction)).MakeAsymmetricJson();
+            graph.AddActionFor(SwaggerHelperKillItWithFire.GetBasePathPattern(), typeof (SwaggerResourceDiscoveryAction)).MakeAsymmetricJson();
 
             //add resource action and force it to return JSON
-            graph.AddActionFor(SwaggerHelperKillItWithFire.GetAPIResourcePattern(), typeof(SwaggerAPIAction)).MakeAsymmetricJson();
+            graph.AddActionFor(SwaggerHelperKillItWithFire.GetAPIResourcePattern(), typeof(SwaggerResourceDiscoveryAPIAction)).MakeAsymmetricJson();
         }
     }
 }

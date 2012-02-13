@@ -2,11 +2,11 @@ using System.Linq;
 
 namespace Dovetail.SDK.Fubu.Swagger
 {
-    public class SwaggerResourceAction
+    public class SwaggerResourceDiscoveryAction
     {
         private readonly ApiFinder _apiFinder;
 
-        public SwaggerResourceAction(ApiFinder apiFinder)
+        public SwaggerResourceDiscoveryAction(ApiFinder apiFinder)
         {
             _apiFinder = apiFinder;
         }
@@ -19,7 +19,7 @@ namespace Dovetail.SDK.Fubu.Swagger
                 .Select(s =>
                             {
                                 var description = "Find detail about api group somewhere";
-                                return new ResourceAPI
+                                return new ResourceDiscoveryAPI
                                            {
                                                path = SwaggerHelperKillItWithFire.GetAPIResourcePattern().Replace("{GroupKey}", s.Key),
                                                description = description
@@ -31,7 +31,7 @@ namespace Dovetail.SDK.Fubu.Swagger
                            basePath = SwaggerHelperKillItWithFire.GetBasePathPattern(),
                            apiVersion = "0.2",
                            swaggerVersion = "1.0",
-                           apis = apis.ToArray()
+                           DiscoveryApis = apis.ToArray()
                        };
         }
     }

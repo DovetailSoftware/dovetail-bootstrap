@@ -106,10 +106,11 @@
     <Compile Include="Authentication\Token\AuthenticationTokenConvention.cs" />
     <Compile Include="Swagger\ApiFinder.cs" />
     <Compile Include="Swagger\Models.cs" />
-    <Compile Include="Swagger\SwaggerAPIAction.cs" />
+    <Compile Include="Swagger\SwaggerMapper.cs" />
+    <Compile Include="Swagger\SwaggerResourceDiscoveryAPIAction.cs" />
     <Compile Include="Swagger\SwaggerConvention.cs" />
     <Compile Include="Swagger\SwaggerHelperKillItWithFire.cs" />
-    <Compile Include="Swagger\SwaggerResourceAction.cs" />
+    <Compile Include="Swagger\SwaggerResourceDiscoveryAction.cs" />
     <Compile Include="Swagger\ToJsonSchemaConverter.cs" />
   </ItemGroup>
   <ItemGroup>

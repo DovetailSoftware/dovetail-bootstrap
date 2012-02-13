@@ -3,23 +3,25 @@ using FubuMVC.Core;
 
 namespace Dovetail.SDK.Fubu.Swagger
 {
-    public class SwaggerAPIActionRequest
+    public class SwaggerResourceDiscoveryAPIRequest
     {
         [RouteInput]
         public string GroupKey { get; set; }
     }
 
-    public class SwaggerAPIAction
+    public class SwaggerResourceDiscoveryAPIAction
     {
         private readonly ApiFinder _apiActionFinder;
+        private readonly ISwaggerMapper _swaggerMapper;
 
-        public SwaggerAPIAction(ApiFinder apiActionFinder)
+        public SwaggerResourceDiscoveryAPIAction(ApiFinder apiActionFinder, ISwaggerMapper swaggerMapper)
         {
             _apiActionFinder = apiActionFinder;
+            _swaggerMapper = swaggerMapper;
         }
 
         //[AsymmetricJson]
-        public Resource Execute(SwaggerAPIActionRequest request)
+        public Resource Execute(SwaggerResourceDiscoveryAPIRequest request)
         {
             //find all IApi resulting calls
             //group all actions by pattern first part past api : /api/{group}/
@@ -34,7 +36,12 @@ namespace Dovetail.SDK.Fubu.Swagger
                                 //TODO make this detail come from attribute?
                                 var description = "Something pithy about this resource api.";
 
-                                return new API { path = pattern, description = description };
+                                return new API
+                                           {
+                                               path = pattern,
+                                               description = description,
+                                               operations = _swaggerMapper.OperationsFrom(s).ToArray()
+                                           };
                             }).ToArray();
 
             return new Resource
