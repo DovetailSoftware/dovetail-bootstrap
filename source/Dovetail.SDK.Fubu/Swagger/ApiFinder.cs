@@ -50,7 +50,9 @@ namespace Dovetail.SDK.Fubu.Swagger
 
         public IEnumerable<ActionCall> ActionsForGroup(string name)
         {
-            return ActionsByGroup().First(g => g.Key.ToLowerInvariant() == name);
+            var group = ActionsByGroup().FirstOrDefault(g => g.Key.ToLowerInvariant() == name);
+
+            return @group ?? (IEnumerable<ActionCall>) new ActionCall[0];
         }
     }
 }
