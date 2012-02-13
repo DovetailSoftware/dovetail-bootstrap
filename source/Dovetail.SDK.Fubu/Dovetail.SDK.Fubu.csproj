@@ -104,8 +104,12 @@
     <Compile Include="Clarify\Lists\ListNames.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Authentication\Token\AuthenticationTokenConvention.cs" />
+    <Compile Include="Swagger\ApiFinder.cs" />
     <Compile Include="Swagger\Models.cs" />
+    <Compile Include="Swagger\SwaggerAPIAction.cs" />
     <Compile Include="Swagger\SwaggerConvention.cs" />
+    <Compile Include="Swagger\SwaggerHelperKillItWithFire.cs" />
+    <Compile Include="Swagger\SwaggerResourceAction.cs" />
     <Compile Include="Swagger\ToJsonSchemaConverter.cs" />
   </ItemGroup>
   <ItemGroup>
