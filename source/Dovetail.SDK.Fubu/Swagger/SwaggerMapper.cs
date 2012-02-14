@@ -1,8 +1,12 @@
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection;
 using FubuCore.Reflection;
 using FubuMVC.Core.Registration.Nodes;
+using FubuMVC.Core.Registration.Routes;
 
 namespace Dovetail.SDK.Fubu.Swagger
 {
@@ -54,33 +58,43 @@ namespace Dovetail.SDK.Fubu.Swagger
             if (!call.HasInput) return new Parameter[0];
 
             var inputType = call.InputType();
-            var properties = _typeCache.GetPropertiesFor(inputType).Values;
+            IEnumerable<PropertyInfo> properties = _typeCache.GetPropertiesFor(inputType).Values;
             var route = call.ParentChain().Route;
 
-            var parameters = new List<Parameter>();
-            foreach (var propertyInfo in properties)
-            {
-                var parameter = new Parameter
-                                    {
-                                        name = propertyInfo.Name,
-                                        dataType = propertyInfo.PropertyType.Name,
-                                        paramType = "post",
-                                        allowMultiple = false,
-                                        required = propertyInfo.HasAttribute<RequiredAttribute>(),
-                                        description = "parameter description"
-                                        //TODO get defaultValue, description, allowableValues from metadata?
-                                        
-                                    };
+            return properties.Select(propertyInfo => createParameterFromProperty(propertyInfo, route));
+        }
 
-                if(route.Input.RouteParameters.Any(r=>r.Name == propertyInfo.Name))
-                    parameter.paramType = "path";
+        private static Parameter createParameterFromProperty(PropertyInfo propertyInfo, IRouteDefinition route)
+        {
+            var parameter = new Parameter
+                                {
+                                    name = propertyInfo.Name,
+                                    dataType = propertyInfo.PropertyType.Name,
+                                    paramType = "post",
+                                    allowMultiple = false,
+                                    required = propertyInfo.HasAttribute<RequiredAttribute>(),
+                                    description = propertyInfo.GetAttribute<DescriptionAttribute>(a => a.Description),
+                                    defaultValue = propertyInfo.GetAttribute<DefaultValueAttribute>(a => a.Value.ToString()),
+                                    allowableValues = getAllowableValues(propertyInfo)
+                                };
 
-                if (route.Input.QueryParameters.Any(r => r.Name == propertyInfo.Name))
-                    parameter.paramType = "query";
+            if (route.Input.RouteParameters.Any(r => r.Name == propertyInfo.Name))
+                parameter.paramType = "path";
 
-                parameters.Add(parameter);
-            }
-            return parameters;
+            if (route.Input.QueryParameters.Any(r => r.Name == propertyInfo.Name))
+                parameter.paramType = "query";
+
+            return parameter;
+        }
+
+        private static AllowableValues getAllowableValues(ICustomAttributeProvider propertyInfo)
+        {
+            var allowableValues = propertyInfo.GetAttribute<AllowableValuesAttribute>();
+
+            if(allowableValues == null)
+                return null;
+
+            return new AllowableValues {valueType = "LIST", values = allowableValues.AllowableValues};
         }
     }
 }

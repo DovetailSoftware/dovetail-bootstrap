@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
+using FubuCore.Reflection;
 using FubuMVC.Core;
 using FubuMVC.Core.Http;
 using FubuMVC.Core.Urls;
@@ -42,14 +45,11 @@ namespace Dovetail.SDK.Fubu.Swagger
                                 //UGH we need to make relative URLs for swagger to be happy. 
                                 var pattern = a.ParentChain().Route.Pattern;
                                 var resourceUrl = baseUrl.UrlRelativeTo(pattern);
-
-                                //TODO make this detail come from attribute?
-                                var description = "Something pithy about this resource api.";
-
+                                
                                 return new API
                                            {
                                                path = resourceUrl,
-                                               description = description,
+                                               description = a.InputType().GetAttribute<DescriptionAttribute>(d=>d.Description),
                                                operations = _swaggerMapper.OperationsFrom(a).ToArray()
                                            };
                             }).ToArray();
@@ -65,7 +65,7 @@ namespace Dovetail.SDK.Fubu.Swagger
                        {
                            basePath = absoluteBaseUrl,
                            resourcePath = "/" + request.GroupKey, //HACK
-                           apiVersion = "0.2",
+                           apiVersion = Assembly.GetExecutingAssembly().GetVersion(),
                            swaggerVersion = "1.0",
                            apis = apis,
                            models = typeSet.ToArray()

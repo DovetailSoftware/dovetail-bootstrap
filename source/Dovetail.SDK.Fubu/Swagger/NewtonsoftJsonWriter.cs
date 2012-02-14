@@ -19,7 +19,8 @@ namespace Dovetail.SDK.Fubu.Swagger
 
         public void Write(object output, string mimeType)
         {
-            var json = JsonConvert.SerializeObject(output, Formatting.None);
+            var serializerSettings = new JsonSerializerSettings() {NullValueHandling = NullValueHandling.Ignore, ReferenceLoopHandling = ReferenceLoopHandling.Ignore};
+            var json = JsonConvert.SerializeObject(output, Formatting.None, serializerSettings);
             _outputWriter.Write(mimeType, json);
         }
     }

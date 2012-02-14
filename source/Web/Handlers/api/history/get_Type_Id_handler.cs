@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using Dovetail.SDK.Bootstrap;
 using Dovetail.SDK.Bootstrap.History;
+using Dovetail.SDK.Fubu.Swagger;
 using Dovetail.SDK.ModelMap;
 
 namespace Bootstrap.Web.Handlers.api.history
@@ -34,9 +35,10 @@ namespace Bootstrap.Web.Handlers.api.history
 	public class HistoryRequest : IApi 
     {
         [Required]
+        [AllowableValues("case", "subcase", "solution", "<any workflow object name>")]
         public string Type { get; set; }
         [Required]
-		public string Id { get; set; }
+        public string Id { get; set; }
 
 		public int DaysOfHistory { get; set; }
     }

@@ -32,7 +32,7 @@ namespace Bootstrap.Web
 
             HtmlConvention<BootstrapHtmlConvention>();
 
-            Policies.Add<SwaggerConvention>();
+            ApplyConvention<SwaggerConvention>();
 
             Services(s=>
                          {

@@ -50,10 +50,10 @@ namespace Dovetail.SDK.Fubu.Swagger
     public class Parameter
     {
         public string name { get; set; }
-        //public string defaultValue { get; set; }
+        public string defaultValue { get; set; }
         public string description { get; set; }
         public string dataType { get; set; }
-        //public AllowableValues[] allowableValues { get; set; }
+        public AllowableValues allowableValues { get; set; }
         public bool required { get; set; }
         public bool allowMultiple { get; set; }
         public string paramType { get; set; }
@@ -61,8 +61,6 @@ namespace Dovetail.SDK.Fubu.Swagger
 
     public class AllowableValues
     {
-        public string max { get; set; }
-        public string min { get; set; }
         public string[] values { get; set; }
         public string valueType { get; set; }
     }
@@ -85,7 +83,7 @@ namespace Dovetail.SDK.Fubu.Swagger
         public string defaultValue { get; set; }
         public string description { get; set; }
         public string dataType { get; set; }
-        public AllowableValues[] allowableValues { get; set; }
+        public string[] allowableValues { get; set; }
         public string allowMultiple { get; set; }
         public string parameterType { get; set; }
     }

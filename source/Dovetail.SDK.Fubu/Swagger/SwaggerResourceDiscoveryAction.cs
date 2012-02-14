@@ -1,11 +1,37 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using FubuCore;
+using FubuCore.Reflection;
 using FubuMVC.Core.Http;
 using FubuMVC.Core.Urls;
 
 namespace Dovetail.SDK.Fubu.Swagger
 {
+    public static class SwaggerExtensions
+    {
+        public static string GetVersion(this Assembly assembly)
+        {
+            var fileVersion = FileVersionInfo.GetVersionInfo(assembly.Location);
+            return fileVersion.ProductVersion;
+        }
+
+        public static string GetAttribute<T>(this PropertyInfo property, Func<T, string> func) where T : Attribute
+        {
+            var attribute = property.GetAttribute<T>();
+            
+            return attribute == null ? String.Empty : func(attribute);
+        }
+
+        public static string GetAttribute<T>(this Type type, Func<T, string> func) where T : Attribute
+        {
+            var attribute = type.GetAttribute<T>();
+
+            return attribute == null ? String.Empty : func(attribute);
+        }
+    }
+
     public class SwaggerResourceDiscoveryAction
     {
         private readonly ApiFinder _apiFinder;
@@ -29,9 +55,9 @@ namespace Dovetail.SDK.Fubu.Swagger
                 .ActionsByGroup()
                 .Select(s =>
                             {
-                                var description = "API for {0}".ToFormat(s.Key);
+                                var description = "APIs for {0}".ToFormat(s.Key);
 
-                                //UGH we need to make relative URLs for swagger to be happy. 
+                                //UGH we need to make api urls relative for swagger to be happy. 
                                 var resourceAPIRequestUrl = _urlRegistry.UrlFor(new SwaggerResourceDiscoveryAPIRequest {GroupKey = s.Key});
                                 var resourceUrl = baseUrl.UrlRelativeTo(resourceAPIRequestUrl);
 
@@ -46,7 +72,7 @@ namespace Dovetail.SDK.Fubu.Swagger
             return new ResourceDiscovery
                        {
                            basePath = absoluteBaseUrl,
-                           apiVersion = "0.2",
+                           apiVersion = Assembly.GetExecutingAssembly().GetVersion(),
                            swaggerVersion = "1.0",
                            apis = apis.ToArray()
                        };
