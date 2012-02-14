@@ -31,7 +31,6 @@ namespace Bootstrap.Web
 
             IncludeRegistry<BootstrapRegistry>();
             IncludeRegistry<ModelMapperRegistry>();
-            IncludeRegistry<SwaggerRegistry>();
         }
     }
 }

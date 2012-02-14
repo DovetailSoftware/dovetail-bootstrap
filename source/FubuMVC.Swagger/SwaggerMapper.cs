@@ -6,15 +6,12 @@ using System.Reflection;
 using FubuCore.Reflection;
 using FubuMVC.Core.Registration.Nodes;
 using FubuMVC.Core.Registration.Routes;
+using FubuMVC.Swagger.Actions;
+using FubuMVC.Swagger.Specification;
 
 namespace FubuMVC.Swagger
 {
-    public interface IActionCallMapper
-    {
-        IEnumerable<Operation> GetSwaggerOperations(ActionCall call);
-    }
-
-    public class ActionCallMapper : IActionCallMapper
+    public class ActionCallMapper 
     {
         private readonly ITypeDescriptorCache _typeCache;
 

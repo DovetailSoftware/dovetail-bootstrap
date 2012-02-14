@@ -1,44 +1,19 @@
-using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using FubuCore;
-using FubuCore.Reflection;
 using FubuMVC.Core.Http;
 using FubuMVC.Core.Urls;
+using FubuMVC.Swagger.Specification;
 
-namespace FubuMVC.Swagger
+namespace FubuMVC.Swagger.Actions
 {
-    public static class SwaggerExtensions
+    public class ResourceDiscoveryAction
     {
-        public static string GetVersion(this Assembly assembly)
-        {
-            var fileVersion = FileVersionInfo.GetVersionInfo(assembly.Location);
-            return fileVersion.ProductVersion;
-        }
-
-        public static string GetAttribute<T>(this PropertyInfo property, Func<T, string> func) where T : Attribute
-        {
-            var attribute = property.GetAttribute<T>();
-            
-            return attribute == null ? String.Empty : func(attribute);
-        }
-
-        public static string GetAttribute<T>(this Type type, Func<T, string> func) where T : Attribute
-        {
-            var attribute = type.GetAttribute<T>();
-
-            return attribute == null ? String.Empty : func(attribute);
-        }
-    }
-
-    public class SwaggerResourceDiscoveryAction<T>
-    {
-        private readonly ApiFinder<T> _apiFinder;
+        private readonly ApiFinder _apiFinder;
         private readonly IUrlRegistry _urlRegistry;
         private readonly ICurrentHttpRequest _currentHttpRequest;
 
-        public SwaggerResourceDiscoveryAction(ApiFinder<T> apiFinder, IUrlRegistry urlRegistry, ICurrentHttpRequest currentHttpRequest)
+        public ResourceDiscoveryAction(ApiFinder apiFinder, IUrlRegistry urlRegistry, ICurrentHttpRequest currentHttpRequest)
         {
             _apiFinder = apiFinder;
             _urlRegistry = urlRegistry;
@@ -48,17 +23,18 @@ namespace FubuMVC.Swagger
         //[AsymmetricJson]
         public ResourceDiscovery Execute()
         {
-            var baseUrl = _urlRegistry.UrlFor<SwaggerResourceDiscoveryAction<T>>(m => m.Execute());
+            var baseUrl = _urlRegistry.UrlFor<ResourceDiscoveryAction>(m => m.Execute());
             var absoluteBaseUrl = _currentHttpRequest.ToFullUrl(baseUrl);
 
             var apis = _apiFinder
                 .ActionsByGroup()
+                .Where(a=>a.Any(b=>b.HasOutput && b.OutputType() == typeof(ResourceDiscovery)) == false) //HACK filter out this action
                 .Select(s =>
                             {
                                 var description = "APIs for {0}".ToFormat(s.Key);
 
                                 //UGH we need to make api urls relative for swagger to be happy. 
-                                var resourceAPIRequestUrl = _urlRegistry.UrlFor(new SwaggerResourceDiscoveryAPIRequest {GroupKey = s.Key});
+                                var resourceAPIRequestUrl = _urlRegistry.UrlFor(new ResourceDiscoveryAPIRequest {GroupKey = s.Key});
                                 var resourceUrl = baseUrl.UrlRelativeTo(resourceAPIRequestUrl);
 
                                 return new ResourceDiscoveryAPI

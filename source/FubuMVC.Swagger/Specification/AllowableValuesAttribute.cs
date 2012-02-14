@@ -1,6 +1,6 @@
 using System;
 
-namespace FubuMVC.Swagger
+namespace FubuMVC.Swagger.Specification
 {
     public class AllowableValuesAttribute : Attribute
     {

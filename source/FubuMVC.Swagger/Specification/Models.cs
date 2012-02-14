@@ -1,4 +1,4 @@
-namespace FubuMVC.Swagger
+namespace FubuMVC.Swagger.Specification
 {
     public class ResourceDiscovery
     {

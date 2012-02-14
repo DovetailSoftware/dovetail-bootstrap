@@ -4,10 +4,11 @@ using System.Text.RegularExpressions;
 using FubuCore;
 using FubuMVC.Core.Registration;
 using FubuMVC.Core.Registration.Nodes;
+using FubuMVC.Core.Resources.Conneg;
 
 namespace FubuMVC.Swagger
 {
-    public class ApiFinder<T>
+    public class ApiFinder
     {
         private readonly BehaviorGraph _graph;
         
@@ -18,9 +19,10 @@ namespace FubuMVC.Swagger
 
         public IEnumerable<ActionCall> Actions()
         {
-            return _graph.Actions().Where(a => a.InputType().CanBeCastTo<T>()); 
+            var actions = _graph.Actions().Where(a => a.ParentChain().HasConnegOutput()).ToArray();
+            return actions;
         }
-        
+
         public IEnumerable<IGrouping<string, ActionCall>> ActionsByGroup()
         {
             var partGroupExpression = new Regex(@"^/?api/(?<group>[a-zA-Z0-9_\-\.\+]+)/?");
@@ -35,7 +37,7 @@ namespace FubuMVC.Swagger
                                  return match.Success ? match.Groups["group"].Value : null;
                              });
             
-            return groups.ToArray();
+            return groups.Where(g=>g.Key.IsNotEmpty()).ToArray();
         }
 
         public IEnumerable<ActionCall> ActionsForGroup(string name)
