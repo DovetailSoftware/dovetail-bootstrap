@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Dovetail.SDK.Bootstrap;
 using FChoice.Foundation.Clarify;
@@ -41,9 +42,10 @@ namespace Bootstrap.Web.Handlers.api.gbst.show
         }
     }
 
+    [Description("Display all elements of a given gbst list.")]
     public class GbstShowRequest : IApi 
     {
-        [Required]
+        [Required, Description("Get gbst list by name")]
         public string Name { get; set; }
     }
 

@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Dovetail.SDK.Bootstrap;
 using Dovetail.SDK.Bootstrap.History;
@@ -32,14 +33,16 @@ namespace Bootstrap.Web.Handlers.api.history
         }
     }
 
+    [Description("Workflow object history")]
 	public class HistoryRequest : IApi 
     {
-        [Required]
+        [Required, Description("Type of workflow object. Typically this is 'case'.")]
         [AllowableValues("case", "subcase", "solution", "<any workflow object name>")]
         public string Type { get; set; }
-        [Required]
+        [Required, Description("Id of the workflow object.")]
         public string Id { get; set; }
 
+        [Description("Limit the amout of history returned the given number of days. When this parameter is not specified. All history items will be returned.")]
 		public int DaysOfHistory { get; set; }
     }
 }

@@ -38,6 +38,7 @@ namespace FubuMVC.Swagger
         public ErrorResponses[] errorResponses { get; set; }
         public string httpMethod { get; set; }
         public string notes { get; set; }
+        public string summary { get; set; }
         public string responseTypeInternal { get; set; }
         public string responseClass { get; set; }
         public string nickname { get; set; }

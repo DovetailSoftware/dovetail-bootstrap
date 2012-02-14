@@ -5,7 +5,7 @@ using FubuMVC.Swagger;
 
 namespace Bootstrap.Web.Handlers.api.cases.create
 {
-    [Description("Basic create case. Specifying a queue will automatically dispatch the case to that queue.")]
+    [Description("Basic create case")]
     public class CreateCaseModel : IApi
     {
         public bool UserIsAuthenticated { get; set; }

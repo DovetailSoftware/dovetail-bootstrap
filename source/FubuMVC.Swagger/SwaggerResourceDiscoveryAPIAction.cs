@@ -18,14 +18,14 @@ namespace FubuMVC.Swagger
     public class SwaggerResourceDiscoveryAPIAction
     {
         private readonly ApiFinder _apiActionFinder;
-        private readonly ISwaggerMapper _swaggerMapper;
+        private readonly IActionCallMapper _actionCallMapper;
         private readonly IUrlRegistry _urlRegistry;
         private readonly ICurrentHttpRequest _currentHttpRequest;
 
-        public SwaggerResourceDiscoveryAPIAction(ApiFinder apiActionFinder, ISwaggerMapper swaggerMapper, IUrlRegistry urlRegistry, ICurrentHttpRequest currentHttpRequest)
+        public SwaggerResourceDiscoveryAPIAction(ApiFinder apiActionFinder, IActionCallMapper actionCallMapper, IUrlRegistry urlRegistry, ICurrentHttpRequest currentHttpRequest)
         {
             _apiActionFinder = apiActionFinder;
-            _swaggerMapper = swaggerMapper;
+            _actionCallMapper = actionCallMapper;
             _urlRegistry = urlRegistry;
             _currentHttpRequest = currentHttpRequest;
         }
@@ -44,12 +44,13 @@ namespace FubuMVC.Swagger
                                 //UGH we need to make relative URLs for swagger to be happy. 
                                 var pattern = a.ParentChain().Route.Pattern;
                                 var resourceUrl = baseUrl.UrlRelativeTo(pattern);
-                                
+                                var description = a.InputType().GetAttribute<DescriptionAttribute>(d => d.Description);
+
                                 return new API
                                            {
                                                path = resourceUrl,
-                                               description = a.InputType().GetAttribute<DescriptionAttribute>(d=>d.Description),
-                                               operations = _swaggerMapper.OperationsFrom(a).ToArray()
+                                               description= description,
+                                               operations = _actionCallMapper.GetSwaggerOperations(a).ToArray()
                                            };
                             }).ToArray();
 

@@ -1,4 +1,5 @@
-﻿using Dovetail.SDK.Bootstrap.Clarify;
+﻿using System.ComponentModel;
+using Dovetail.SDK.Bootstrap.Clarify;
 using FChoice.Toolkits.Clarify.Support;
 
 namespace Bootstrap.Web.Handlers.api.cases.create

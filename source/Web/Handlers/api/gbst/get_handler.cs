@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using Dovetail.SDK.Bootstrap;
 using Dovetail.SDK.Bootstrap.Clarify;
@@ -30,6 +31,7 @@ namespace Bootstrap.Web.Handlers.api.gbst
         }
     }
 
+    [Description("A listing of gbst lists")]
     public class GbstListsRequest : IApi 
     {
     }

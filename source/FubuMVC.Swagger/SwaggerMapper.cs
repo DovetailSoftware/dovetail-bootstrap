@@ -9,21 +9,21 @@ using FubuMVC.Core.Registration.Routes;
 
 namespace FubuMVC.Swagger
 {
-    public interface ISwaggerMapper
+    public interface IActionCallMapper
     {
-        IEnumerable<Operation> OperationsFrom(ActionCall call);
+        IEnumerable<Operation> GetSwaggerOperations(ActionCall call);
     }
 
-    public class SwaggerMapper : ISwaggerMapper
+    public class ActionCallMapper : IActionCallMapper
     {
         private readonly ITypeDescriptorCache _typeCache;
 
-        public SwaggerMapper(ITypeDescriptorCache typeCache)
+        public ActionCallMapper(ITypeDescriptorCache typeCache)
         {
             _typeCache = typeCache;
         }
 
-        public IEnumerable<Operation> OperationsFrom(ActionCall call)
+        public IEnumerable<Operation> GetSwaggerOperations(ActionCall call)
         {
             var route = call.ParentChain().Route;
             var httpMethods = route.AllowedHttpMethods;
@@ -35,6 +35,8 @@ namespace FubuMVC.Swagger
             var operations = new List<Operation>();
             foreach (var verb in httpMethods)
             {
+                var summary = call.InputType().GetAttribute<DescriptionAttribute>(d => d.Description);
+
                 var operation = new Operation
                                     {
                                         parameters = parameters.ToArray(),
@@ -42,8 +44,11 @@ namespace FubuMVC.Swagger
                                         responseTypeInternal = outputType.FullName,
                                         responseClass = outputType.Name,
                                         nickname = call.InputType().Name,
-                                        notes = "notes",
+                                        summary = summary,
+                                        
+                                        //TODO not sure how we'd support error responses
                                         errorResponses = new ErrorResponses[0],
+                                        
                                         //TODO get notes, nickname, summary from metadata?
                                     };
                 operations.Add(operation);
