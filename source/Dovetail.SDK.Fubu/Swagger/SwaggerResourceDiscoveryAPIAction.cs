@@ -68,7 +68,7 @@ namespace Dovetail.SDK.Fubu.Swagger
                            apiVersion = Assembly.GetExecutingAssembly().GetVersion(),
                            swaggerVersion = "1.0",
                            apis = apis,
-                           models = typeSet.ToArray()
+                           //models = typeSet.ToArray()
                        };
         }
     }

@@ -5,15 +5,14 @@ using NUnit.Framework;
 namespace Dovetail.SDK.Fubu.Tests
 {
     [TestFixture]
-    public class relative_url
+    public class base_url_relative_to_target
     {
-
         [Test]
         public void resource_relativity()
         {
             var result = "/api/resource.json".UrlRelativeTo("/api/foo/resource.json");
 
-            result.ShouldEqual("foo/resource.json");
+            result.ShouldEqual("/foo/resource.json");
         }
         
         [Test]
@@ -21,7 +20,7 @@ namespace Dovetail.SDK.Fubu.Tests
         {
             var result = "/api/resource.json".UrlRelativeTo("api/foo/resource.json");
 
-            result.ShouldEqual("foo/resource.json");
+            result.ShouldEqual("/foo/resource.json");
         }
 
         [Test]
@@ -29,7 +28,7 @@ namespace Dovetail.SDK.Fubu.Tests
         {
             var result = "api/resource.json".UrlRelativeTo("/api/foo/resource.json");
 
-            result.ShouldEqual("foo/resource.json");
+            result.ShouldEqual("/foo/resource.json");
         }
 
         [Test]
@@ -37,7 +36,7 @@ namespace Dovetail.SDK.Fubu.Tests
         {
             var result = "api/resource.json".UrlRelativeTo("api/foo/resource.json");
 
-            result.ShouldEqual("foo/resource.json");
+            result.ShouldEqual("/foo/resource.json");
         }
     }
 }

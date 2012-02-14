@@ -1,6 +1,3 @@
-using System;
-using Newtonsoft.Json;
-
 namespace Dovetail.SDK.Fubu.Swagger
 {
     public class ResourceDiscovery
@@ -25,8 +22,7 @@ namespace Dovetail.SDK.Fubu.Swagger
         public string apiVersion { get; set; }
         public API[] apis { get; set; }
         
-        [JsonConverter(typeof(ToJsonSchemaConverter))]
-        public Type[] models { get; set; }
+        //public Type[] models { get; set; }
     }
 
     public class API
