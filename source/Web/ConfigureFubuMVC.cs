@@ -31,7 +31,7 @@ namespace Bootstrap.Web
 
             HtmlConvention<BootstrapHtmlConvention>();
 
-            ApplyConvention<SwaggerConvention>();
+            ApplyConvention<SwaggerConvention<IApi>>();
 
             Services(s=> s.ReplaceService<IAuthorizationFailureHandler, BootstrapAuthorizationFailureHandler>());
         }

@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Linq;
-using Dovetail.SDK.Bootstrap;
 using Dovetail.SDK.Bootstrap.Clarify;
 using Dovetail.SDK.Bootstrap.Clarify.Extensions;
-using FubuMVC.Swagger;
+using Dovetail.SDK.Fubu.Authentication.Token;
 
 namespace Bootstrap.Web.Handlers.api.gbst
 {

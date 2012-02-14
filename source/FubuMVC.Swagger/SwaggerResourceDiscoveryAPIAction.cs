@@ -15,14 +15,14 @@ namespace FubuMVC.Swagger
         public string GroupKey { get; set; }
     }
 
-    public class SwaggerResourceDiscoveryAPIAction
+    public class SwaggerResourceDiscoveryAPIAction<T>
     {
-        private readonly ApiFinder _apiActionFinder;
+        private readonly ApiFinder<T> _apiActionFinder;
         private readonly IActionCallMapper _actionCallMapper;
         private readonly IUrlRegistry _urlRegistry;
         private readonly ICurrentHttpRequest _currentHttpRequest;
 
-        public SwaggerResourceDiscoveryAPIAction(ApiFinder apiActionFinder, IActionCallMapper actionCallMapper, IUrlRegistry urlRegistry, ICurrentHttpRequest currentHttpRequest)
+        public SwaggerResourceDiscoveryAPIAction(ApiFinder<T> apiActionFinder, IActionCallMapper actionCallMapper, IUrlRegistry urlRegistry, ICurrentHttpRequest currentHttpRequest)
         {
             _apiActionFinder = apiActionFinder;
             _actionCallMapper = actionCallMapper;

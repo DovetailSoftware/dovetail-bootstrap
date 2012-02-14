@@ -32,13 +32,13 @@ namespace FubuMVC.Swagger
         }
     }
 
-    public class SwaggerResourceDiscoveryAction
+    public class SwaggerResourceDiscoveryAction<T>
     {
-        private readonly IApiFinder _apiFinder;
+        private readonly ApiFinder<T> _apiFinder;
         private readonly IUrlRegistry _urlRegistry;
         private readonly ICurrentHttpRequest _currentHttpRequest;
 
-        public SwaggerResourceDiscoveryAction(IApiFinder apiFinder, IUrlRegistry urlRegistry, ICurrentHttpRequest currentHttpRequest)
+        public SwaggerResourceDiscoveryAction(ApiFinder<T> apiFinder, IUrlRegistry urlRegistry, ICurrentHttpRequest currentHttpRequest)
         {
             _apiFinder = apiFinder;
             _urlRegistry = urlRegistry;
@@ -48,7 +48,7 @@ namespace FubuMVC.Swagger
         //[AsymmetricJson]
         public ResourceDiscovery Execute()
         {
-            var baseUrl = _urlRegistry.UrlFor<SwaggerResourceDiscoveryAction>(m => m.Execute());
+            var baseUrl = _urlRegistry.UrlFor<SwaggerResourceDiscoveryAction<T>>(m => m.Execute());
             var absoluteBaseUrl = _currentHttpRequest.ToFullUrl(baseUrl);
 
             var apis = _apiFinder

@@ -4,10 +4,11 @@ using Dovetail.SDK.Bootstrap;
 using FubuCore;
 using FubuMVC.Core.Registration;
 using FubuMVC.Core.Resources.Conneg;
-using FubuMVC.Swagger;
 
 namespace Dovetail.SDK.Fubu.Authentication.Token
 {
+    public interface IApi { }
+
     public class AuthenticationTokenConvention : IConfigurationAction
     {
         public void Configure(BehaviorGraph graph)

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -8,20 +7,10 @@ using FubuMVC.Core.Registration.Nodes;
 
 namespace FubuMVC.Swagger
 {
-    public interface IApi {  }
-
-    public interface IApiFinder
-    {
-        IEnumerable<ActionCall> Actions();
-        IEnumerable<ActionCall> ActionsForGroup(string name);
-        IEnumerable<IGrouping<string, ActionCall>> ActionsByGroup();
-    }
-
-    public class ApiFinder : IApiFinder
+    public class ApiFinder<T>
     {
         private readonly BehaviorGraph _graph;
-        private readonly Type _apiMakerType = typeof (IApi);
-
+        
         public ApiFinder(BehaviorGraph graph)
         {
             _graph = graph;
@@ -29,9 +18,9 @@ namespace FubuMVC.Swagger
 
         public IEnumerable<ActionCall> Actions()
         {
-            return _graph.Actions().Where(a => a.InputType().CanBeCastTo(_apiMakerType)); 
+            return _graph.Actions().Where(a => a.InputType().CanBeCastTo<T>()); 
         }
-
+        
         public IEnumerable<IGrouping<string, ActionCall>> ActionsByGroup()
         {
             var partGroupExpression = new Regex(@"^/?api/(?<group>[a-zA-Z0-9_\-\.\+]+)/?");
