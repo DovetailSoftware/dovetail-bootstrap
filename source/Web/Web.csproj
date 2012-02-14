@@ -147,6 +147,7 @@
     <Compile Include="Handlers\home\UserOpenCaseListingMap.cs" />
     <Compile Include="Handlers\home\get_handler.cs" />
     <Compile Include="Handlers\HandlerMarker.cs" />
+    <None Include="bootstrap.log4net" />
     <None Include="Handlers\api\authtoken\retrieve\retrieve.spark" />
     <None Include="Handlers\api\authtoken\authtoken.spark" />
     <None Include="Handlers\api\authtoken\reset\reset.spark" />

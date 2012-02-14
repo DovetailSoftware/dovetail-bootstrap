@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using Bottles;
 using FubuMVC.Core;
 using FubuMVC.StructureMap;
@@ -12,6 +14,8 @@ namespace Bootstrap.Web.App_Start
     {
         public static void Start()
         {
+            setupLoggingConfigurationWatchFile();
+
             // FubuApplication "guides" the bootstrapping of the FubuMVC
             // application
             FubuApplication.For<ConfigureFubuMVC>() // ConfigureFubuMVC is the main FubuRegistry
@@ -35,6 +39,17 @@ namespace Bootstrap.Web.App_Start
 
 			// Ensure that no errors occurred during bootstrapping
 			PackageRegistry.AssertNoFailures();
+        }
+
+        private static void setupLoggingConfigurationWatchFile()
+        {
+            const string loggingConfigFileName = "bootstrap.log4net";
+            var loggingConfig = new FileInfo(loggingConfigFileName);
+            if (!loggingConfig.Exists)
+            {
+                loggingConfig = new FileInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, loggingConfigFileName));
+            }
+            log4net.Config.XmlConfigurator.ConfigureAndWatch(loggingConfig);
         }
     }
 }
