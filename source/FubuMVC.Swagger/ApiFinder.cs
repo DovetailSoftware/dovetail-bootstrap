@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Dovetail.SDK.Bootstrap;
 using FubuCore;
 using FubuMVC.Core.Registration;
 using FubuMVC.Core.Registration.Nodes;
 
-namespace Dovetail.SDK.Fubu.Swagger
+namespace FubuMVC.Swagger
 {
+    public interface IApi {  }
+
     public interface IApiFinder
     {
         IEnumerable<ActionCall> Actions();

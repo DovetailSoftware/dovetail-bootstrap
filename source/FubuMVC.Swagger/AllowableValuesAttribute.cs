@@ -1,6 +1,6 @@
 using System;
 
-namespace Dovetail.SDK.Fubu.Swagger
+namespace FubuMVC.Swagger
 {
     public class AllowableValuesAttribute : Attribute
     {

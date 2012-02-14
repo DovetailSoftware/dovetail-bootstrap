@@ -7,7 +7,7 @@ using FubuCore.Reflection;
 using FubuMVC.Core.Http;
 using FubuMVC.Core.Urls;
 
-namespace Dovetail.SDK.Fubu.Swagger
+namespace FubuMVC.Swagger
 {
     public static class SwaggerExtensions
     {
@@ -34,11 +34,11 @@ namespace Dovetail.SDK.Fubu.Swagger
 
     public class SwaggerResourceDiscoveryAction
     {
-        private readonly ApiFinder _apiFinder;
+        private readonly IApiFinder _apiFinder;
         private readonly IUrlRegistry _urlRegistry;
         private readonly ICurrentHttpRequest _currentHttpRequest;
 
-        public SwaggerResourceDiscoveryAction(ApiFinder apiFinder, IUrlRegistry urlRegistry, ICurrentHttpRequest currentHttpRequest)
+        public SwaggerResourceDiscoveryAction(IApiFinder apiFinder, IUrlRegistry urlRegistry, ICurrentHttpRequest currentHttpRequest)
         {
             _apiFinder = apiFinder;
             _urlRegistry = urlRegistry;

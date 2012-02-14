@@ -3,10 +3,10 @@ using Bootstrap.Web.Handlers.home;
 using Bootstrap.Web.Security;
 using Dovetail.SDK.Fubu.Authentication.Token;
 using Dovetail.SDK.Fubu.Clarify.Lists;
-using Dovetail.SDK.Fubu.Swagger;
 using FubuMVC.Core;
 using FubuMVC.Core.Security;
 using FubuMVC.Spark;
+using FubuMVC.Swagger;
 
 namespace Bootstrap.Web
 {

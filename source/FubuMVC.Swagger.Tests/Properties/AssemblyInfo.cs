@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("FubuMVC.Swagger")]
+[assembly: AssemblyTitle("FubuMVC.Swagger.Tests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("FubuMVC.Swagger")]
+[assembly: AssemblyProduct("FubuMVC.Swagger.Tests")]
 [assembly: AssemblyCopyright("Copyright ©  2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("dd46b77d-fb5a-42fc-bdd5-9c57d2de9835")]
+[assembly: Guid("6978481b-59ff-4a71-a8ca-f645fdf4119c")]
 
 // Version information for an assembly consists of the following four values:
 //

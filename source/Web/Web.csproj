@@ -193,6 +193,10 @@
       <Project>{A6E31218-5C11-4656-9A53-0815D9F10E61}</Project>
       <Name>Dovetail.SDK.ModelMap</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FubuMVC.Swagger\FubuMVC.Swagger.csproj">
+      <Project>{A951ABAE-5AC0-4D10-9C8B-0911DEB75BD4}</Project>
+      <Name>FubuMVC.Swagger</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="fubu-content\" />

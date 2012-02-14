@@ -2,6 +2,7 @@
 using System.Linq;
 using Dovetail.SDK.Bootstrap;
 using FChoice.Foundation.Clarify;
+using FubuMVC.Swagger;
 
 namespace Bootstrap.Web.Handlers.api.gbst.show
 {

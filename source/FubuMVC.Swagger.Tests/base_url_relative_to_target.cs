@@ -1,8 +1,7 @@
 using Dovetail.SDK.Bootstrap.Tests;
-using Dovetail.SDK.Fubu.Swagger;
 using NUnit.Framework;
 
-namespace Dovetail.SDK.Fubu.Tests
+namespace FubuMVC.Swagger.Tests
 {
     [TestFixture]
     public class base_url_relative_to_target

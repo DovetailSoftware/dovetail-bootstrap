@@ -1,4 +1,4 @@
-namespace Dovetail.SDK.Fubu.Swagger
+namespace FubuMVC.Swagger
 {
     public class ResourceDiscovery
     {

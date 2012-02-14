@@ -5,15 +5,13 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{717130EC-AB9A-44DC-BB53-7ADB895583E1}</ProjectGuid>
+    <ProjectGuid>{41F1236E-8E1E-4314-831E-3335E491DCE6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Dovetail.SDK.Fubu.Tests</RootNamespace>
-    <AssemblyName>Dovetail.SDK.Fubu.Tests</AssemblyName>
+    <RootNamespace>FubuMVC.Swagger.Tests</RootNamespace>
+    <AssemblyName>FubuMVC.Swagger.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\source\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -51,24 +49,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="base_url_relative_to_target.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Dovetail.SDK.Bootstrap.Tests\Dovetail.SDK.Bootstrap.Tests.csproj">
       <Project>{0EFB9B2A-CD04-4DED-A9EA-3F76DA349553}</Project>
       <Name>Dovetail.SDK.Bootstrap.Tests</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Dovetail.SDK.Fubu\Dovetail.SDK.Fubu.csproj">
-      <Project>{BDB6AD41-4C91-451F-B0EA-5858DFB5FB26}</Project>
-      <Name>Dovetail.SDK.Fubu</Name>
-    </ProjectReference>
     <ProjectReference Include="..\FubuMVC.Swagger\FubuMVC.Swagger.csproj">
       <Project>{A951ABAE-5AC0-4D10-9C8B-0911DEB75BD4}</Project>
       <Name>FubuMVC.Swagger</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

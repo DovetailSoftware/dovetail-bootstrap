@@ -2,8 +2,8 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using Dovetail.SDK.Bootstrap;
 using Dovetail.SDK.Bootstrap.History;
-using Dovetail.SDK.Fubu.Swagger;
 using Dovetail.SDK.ModelMap;
+using FubuMVC.Swagger;
 
 namespace Bootstrap.Web.Handlers.api.history
 {

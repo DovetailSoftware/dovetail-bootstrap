@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using Dovetail.SDK.Bootstrap;
 using Dovetail.SDK.Fubu.Clarify.Lists;
+using FubuMVC.Swagger;
 
 namespace Bootstrap.Web.Handlers.api.cases.create
 {

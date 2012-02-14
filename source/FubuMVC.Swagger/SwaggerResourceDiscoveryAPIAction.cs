@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using FubuCore.Reflection;
 using FubuMVC.Core;
 using FubuMVC.Core.Http;
 using FubuMVC.Core.Urls;
 
-namespace Dovetail.SDK.Fubu.Swagger
+namespace FubuMVC.Swagger
 {
     public class SwaggerResourceDiscoveryAPIRequest
     {

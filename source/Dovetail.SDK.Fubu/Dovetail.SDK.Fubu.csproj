@@ -102,24 +102,23 @@
     <Compile Include="Clarify\Lists\ListNames.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Authentication\Token\AuthenticationTokenConvention.cs" />
-    <Compile Include="Swagger\AllowableValuesAttribute.cs" />
-    <Compile Include="Swagger\ApiFinder.cs" />
-    <Compile Include="Swagger\Models.cs" />
-    <Compile Include="Swagger\StringExtensions.cs" />
-    <Compile Include="Swagger\SwaggerMapper.cs" />
-    <Compile Include="Swagger\SwaggerResourceDiscoveryAPIAction.cs" />
-    <Compile Include="Swagger\SwaggerConvention.cs" />
-    <Compile Include="Swagger\SwaggerResourceDiscoveryAction.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Dovetail.SDK.Bootstrap\Dovetail.SDK.Bootstrap.csproj">
       <Project>{9947E369-AFF9-4911-AB0A-99B918A8F3CF}</Project>
       <Name>Dovetail.SDK.Bootstrap</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FubuMVC.Swagger\FubuMVC.Swagger.csproj">
+      <Project>{A951ABAE-5AC0-4D10-9C8B-0911DEB75BD4}</Project>
+      <Name>FubuMVC.Swagger</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Dovetail.SDK.Fubu.nuspec" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Swagger\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

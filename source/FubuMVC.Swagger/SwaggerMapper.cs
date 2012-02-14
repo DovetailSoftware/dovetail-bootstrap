@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -8,7 +7,7 @@ using FubuCore.Reflection;
 using FubuMVC.Core.Registration.Nodes;
 using FubuMVC.Core.Registration.Routes;
 
-namespace Dovetail.SDK.Fubu.Swagger
+namespace FubuMVC.Swagger
 {
     public interface ISwaggerMapper
     {
@@ -26,7 +25,6 @@ namespace Dovetail.SDK.Fubu.Swagger
 
         public IEnumerable<Operation> OperationsFrom(ActionCall call)
         {
-            //HACK assuming that there is one verb allowed per action - big assumption :(
             var route = call.ParentChain().Route;
             var httpMethods = route.AllowedHttpMethods;
             

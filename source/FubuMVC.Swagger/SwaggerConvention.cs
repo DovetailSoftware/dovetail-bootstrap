@@ -1,7 +1,7 @@
 ﻿using FubuMVC.Core.Registration;
 using FubuMVC.Core.Resources.Conneg;
 
-namespace Dovetail.SDK.Fubu.Swagger
+namespace FubuMVC.Swagger
 {
     public class SwaggerConvention : IConfigurationAction
     {

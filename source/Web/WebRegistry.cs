@@ -2,6 +2,7 @@
 using Dovetail.SDK.Fubu.Authentication;
 using Dovetail.SDK.ModelMap.Configuration;
 using Dovetail.SDK.ModelMap.Registration;
+using FubuMVC.Swagger;
 using StructureMap.Configuration.DSL;
 
 namespace Bootstrap.Web
@@ -30,6 +31,7 @@ namespace Bootstrap.Web
 
             IncludeRegistry<BootstrapRegistry>();
             IncludeRegistry<ModelMapperRegistry>();
+            IncludeRegistry<SwaggerRegistry>();
         }
     }
 }
