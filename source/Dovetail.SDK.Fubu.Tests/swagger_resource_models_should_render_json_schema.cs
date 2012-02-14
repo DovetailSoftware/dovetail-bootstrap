@@ -111,17 +111,13 @@ namespace Dovetail.SDK.Fubu.Tests
             return json;
         }
 
-
         private static string getJsonSchema(Type type)
         {
             var sw = new StringWriter();
             var jtw = new JsonTextWriter(sw) {Formatting = Formatting.None};
-            var jSchema = new JsonSchemaGenerator().Generate(type);
+            var jSchema = new JsonSchemaGenerator {UndefinedSchemaIdHandling = UndefinedSchemaIdHandling.UseTypeName}.Generate(type) ;
             jSchema.Id = type.Name;
-
             jSchema.WriteTo(jtw);
-
-            //Trace.Write(sw);
 
             return sw.ToString();
         }

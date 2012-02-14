@@ -13,7 +13,7 @@ namespace Dovetail.SDK.Fubu.Swagger
         {
             _schemaGenerator = new JsonSchemaGenerator
                                    {
-                                       UndefinedSchemaIdHandling = UndefinedSchemaIdHandling.UseTypeName
+                                       UndefinedSchemaIdHandling = UndefinedSchemaIdHandling.UseAssemblyQualifiedName
                                    };
         }
 

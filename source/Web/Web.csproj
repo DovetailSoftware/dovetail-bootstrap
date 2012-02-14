@@ -123,19 +123,8 @@
     <Content Include="content\styles\site.css" />
     <Content Include="docs\index.html" />
     <Content Include="docs\javascripts\app.js" />
-    <Content Include="docs\javascripts\chosen.jquery.js" />
-    <Content Include="docs\javascripts\doc.js" />
-    <Content Include="docs\javascripts\jquery-1.6.2.min.js" />
-    <Content Include="docs\javascripts\jquery-ui-1.8.14.custom.min.js" />
-    <Content Include="docs\javascripts\jquery.ba-bbq.min.js" />
-    <Content Include="docs\javascripts\jquery.slideto.min.js" />
-    <Content Include="docs\javascripts\jquery.tmpl.js" />
-    <Content Include="docs\javascripts\jquery.wiggle.min.js" />
-    <Content Include="docs\javascripts\spine.js" />
-    <Content Include="docs\javascripts\swagger-service-sample.js" />
     <Content Include="docs\javascripts\swagger-service.js" />
     <Content Include="docs\javascripts\swagger-ui.js" />
-    <Content Include="docs\javascripts\underscore-min.js" />
     <Content Include="docs\stylesheets\screen.css" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
