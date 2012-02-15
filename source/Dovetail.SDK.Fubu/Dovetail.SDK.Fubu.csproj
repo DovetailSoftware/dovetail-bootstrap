@@ -108,10 +108,6 @@
       <Project>{9947E369-AFF9-4911-AB0A-99B918A8F3CF}</Project>
       <Name>Dovetail.SDK.Bootstrap</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FubuMVC.Swagger\FubuMVC.Swagger.csproj">
-      <Project>{A951ABAE-5AC0-4D10-9C8B-0911DEB75BD4}</Project>
-      <Name>FubuMVC.Swagger</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Dovetail.SDK.Fubu.nuspec" />

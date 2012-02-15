@@ -31,9 +31,16 @@ namespace Bootstrap.Web
 
             HtmlConvention<BootstrapHtmlConvention>();
 
+            //TODO replace this with Swagger Bottle
             ApplyConvention<SwaggerConvention>();
 
-            Services(s=> s.ReplaceService<IAuthorizationFailureHandler, BootstrapAuthorizationFailureHandler>());
+            Services(s=>
+                         {
+                             s.ReplaceService<IAuthorizationFailureHandler, BootstrapAuthorizationFailureHandler>();
+
+                             //TODO replace this with Swagger Bottle
+                             s.AddService<IActionGrouper, APIRouteGrouper>();
+                         });
         }
     }
 }

@@ -62,10 +62,6 @@
       <Project>{BDB6AD41-4C91-451F-B0EA-5858DFB5FB26}</Project>
       <Name>Dovetail.SDK.Fubu</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FubuMVC.Swagger\FubuMVC.Swagger.csproj">
-      <Project>{A951ABAE-5AC0-4D10-9C8B-0911DEB75BD4}</Project>
-      <Name>FubuMVC.Swagger</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

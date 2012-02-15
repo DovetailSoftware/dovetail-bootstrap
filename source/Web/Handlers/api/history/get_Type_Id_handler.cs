@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using Dovetail.SDK.Bootstrap.History;
 using Dovetail.SDK.Fubu.Authentication.Token;
 using Dovetail.SDK.ModelMap;
-using FubuMVC.Swagger;
 using FubuMVC.Swagger.Specification;
 
 namespace Bootstrap.Web.Handlers.api.history

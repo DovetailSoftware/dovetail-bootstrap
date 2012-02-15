@@ -29,6 +29,7 @@ namespace Bootstrap.Web
                          scan.WithDefaultConventions();
                      });
 
+
             IncludeRegistry<BootstrapRegistry>();
             IncludeRegistry<ModelMapperRegistry>();
         }
