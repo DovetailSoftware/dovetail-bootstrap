@@ -34,19 +34,33 @@ task :default => [:clean,:version,:compile,:test_assemblies,:unit_tests]
 
 desc "Run unit and integration tests. **Requires Database**"
 task :ci => [:default,:integration_tests]
+task :nuget => [:default,:integration_tests]
 
-desc "Run a sample build using the MSBuildTask"
-msbuild :msbuild, [:clean] do |msb,args|
-	msb.properties :configuration => :Debug
-	msb.targets :Clean, :Build
-	msb.verbosity = "minimal"
-	msb.solution = args[:solution] || SLN_PATH
+desc "Build release version of web site"
+task :build_release do 
+	Rake::Task["compile"].execute(:target => :RELEASE)
+
+	#releaseDir = "#{props[:testing]}/release"
+	#puts "\nBuilt and copied release to: \n\n #{File.absolute_path(releaseDir)}\n"
+	#FileUtils::cp_r 'source/Web/.', releaseDir 
+	#FileUtils::rm_rf "#{releaseDir}/obj" 
 end
 
-task :compile => [:version, "nuget:install"] do 
+desc "build solution"
+task :compile => [:version, "nuget:install"] do |t, args|
+	target = args[:target] || :DEBUG
+ 
+	puts "Doing #{target} build" 
+
 	SLN_FILES.each do |f|
-		Rake::Task["msbuild"].execute(:solution => f)
+		msb = MSBuild.new
+		msb.properties :configuration => target
+		msb.targets :Clean, :Build
+		msb.verbosity = "minimal"
+		msb.solution = f
+		msb.execute
 	end
+
 end
 
 #desc "Copy archives to test folder in order to run unit tests"
@@ -114,7 +128,7 @@ namespace :nuget do
 	end
 
 	desc "Build nuget packages"
-	task :build => [:compile] do 
+	task :build => [:build_release] do 
 		FileUtils.mkdir_p("results/packages")
 		packagesDir = File.absolute_path("results/packages")
 		Dir.glob(File.join("**","*.nuspec")){ |file|
@@ -122,7 +136,7 @@ namespace :nuget do
 			projectPath = File.dirname(file)
 			Dir.chdir(projectPath) do 
 				puts "in project path #{projectPath}"
-				sh "#{NUGET_EXE} pack -OutputDirectory #{packagesDir}"
+				sh "#{NUGET_EXE} pack -OutputDirectory #{packagesDir} -Prop Configuration=Release"
 			end		
 		}
 	end
