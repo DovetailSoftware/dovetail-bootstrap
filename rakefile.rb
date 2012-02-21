@@ -34,7 +34,6 @@ task :default => [:clean,:version,:compile,:test_assemblies,:unit_tests]
 
 desc "Run unit and integration tests. **Requires Database**"
 task :ci => [:default,:integration_tests]
-task :nuget => [:default,:integration_tests]
 
 desc "Build release version of web site"
 task :build_release do 
@@ -60,7 +59,6 @@ task :compile => [:version, "nuget:install"] do |t, args|
 		msb.solution = f
 		msb.execute
 	end
-
 end
 
 #desc "Copy archives to test folder in order to run unit tests"

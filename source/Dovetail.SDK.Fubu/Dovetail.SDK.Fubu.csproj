@@ -34,40 +34,40 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Bottles">
-      <HintPath>..\packages\Bottles.0.9.1.191\lib\Bottles.dll</HintPath>
+      <HintPath>..\packages\Bottles.0.9.1.195\lib\Bottles.dll</HintPath>
     </Reference>
     <Reference Include="FChoice.Common">
-      <HintPath>..\packages\Dovetail.SDK.3.2.1.21\lib\net20\FChoice.Common.dll</HintPath>
+      <HintPath>..\packages\Dovetail.SDK.3.2.1.30\lib\net20\FChoice.Common.dll</HintPath>
     </Reference>
     <Reference Include="FChoice.Foundation.Clarify.Compatibility">
-      <HintPath>..\packages\Dovetail.SDK.3.2.1.21\lib\net20\FChoice.Foundation.Clarify.Compatibility.dll</HintPath>
+      <HintPath>..\packages\Dovetail.SDK.3.2.1.30\lib\net20\FChoice.Foundation.Clarify.Compatibility.dll</HintPath>
     </Reference>
     <Reference Include="FChoice.Foundation.Clarify.Compatibility.Toolkits">
-      <HintPath>..\packages\Dovetail.SDK.3.2.1.21\lib\net20\FChoice.Foundation.Clarify.Compatibility.Toolkits.dll</HintPath>
+      <HintPath>..\packages\Dovetail.SDK.3.2.1.30\lib\net20\FChoice.Foundation.Clarify.Compatibility.Toolkits.dll</HintPath>
     </Reference>
     <Reference Include="FChoice.Toolkits.Clarify">
-      <HintPath>..\packages\Dovetail.SDK.3.2.1.21\lib\net20\FChoice.Toolkits.Clarify.dll</HintPath>
+      <HintPath>..\packages\Dovetail.SDK.3.2.1.30\lib\net20\FChoice.Toolkits.Clarify.dll</HintPath>
     </Reference>
     <Reference Include="fcSDK">
-      <HintPath>..\packages\Dovetail.SDK.3.2.1.21\lib\net20\fcSDK.dll</HintPath>
+      <HintPath>..\packages\Dovetail.SDK.3.2.1.30\lib\net20\fcSDK.dll</HintPath>
     </Reference>
     <Reference Include="FubuCore">
-      <HintPath>..\packages\FubuCore.0.9.4.112\lib\FubuCore.dll</HintPath>
+      <HintPath>..\packages\FubuCore.0.9.4.113\lib\FubuCore.dll</HintPath>
     </Reference>
     <Reference Include="FubuLocalization">
-      <HintPath>..\packages\FubuLocalization.0.9.4.112\lib\FubuLocalization.dll</HintPath>
+      <HintPath>..\packages\FubuLocalization.0.9.4.113\lib\FubuLocalization.dll</HintPath>
     </Reference>
     <Reference Include="FubuMVC.Core">
-      <HintPath>..\packages\FubuMVC.References.0.9.3.730\lib\net40\FubuMVC.Core.dll</HintPath>
+      <HintPath>..\packages\FubuMVC.References.0.9.3.738\lib\net40\FubuMVC.Core.dll</HintPath>
     </Reference>
     <Reference Include="FubuMVC.StructureMap">
-      <HintPath>..\packages\FubuMVC.References.0.9.3.730\lib\net40\FubuMVC.StructureMap.dll</HintPath>
+      <HintPath>..\packages\FubuMVC.References.0.9.3.738\lib\net40\FubuMVC.StructureMap.dll</HintPath>
     </Reference>
     <Reference Include="HtmlTags">
-      <HintPath>..\packages\HtmlTags.1.0.0.54\lib\4.0\HtmlTags.dll</HintPath>
+      <HintPath>..\packages\HtmlTags.1.0.0.55\lib\4.0\HtmlTags.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
-      <HintPath>..\packages\log4net.1.2.11\lib\net40-full\log4net.dll</HintPath>
+      <HintPath>..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
