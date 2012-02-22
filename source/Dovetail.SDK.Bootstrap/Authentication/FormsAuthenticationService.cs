@@ -1,6 +1,6 @@
 using System.Web.Security;
 
-namespace Dovetail.SDK.Fubu.Authentication
+namespace Dovetail.SDK.Bootstrap.Authentication
 {
     public interface IFormsAuthenticationService
     {

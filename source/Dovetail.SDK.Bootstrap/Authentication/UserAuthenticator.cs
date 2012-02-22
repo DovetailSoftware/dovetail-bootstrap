@@ -1,9 +1,8 @@
-using Dovetail.SDK.Bootstrap;
 using Dovetail.SDK.Bootstrap.Clarify;
 using FChoice.Foundation.Clarify;
 using FubuCore;
 
-namespace Dovetail.SDK.Fubu.Authentication
+namespace Dovetail.SDK.Bootstrap.Authentication
 {
     public interface IUserAuthenticator
     {

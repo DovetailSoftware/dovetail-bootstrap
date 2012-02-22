@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Dovetail.SDK.Bootstrap.Clarify;
 using Dovetail.SDK.Bootstrap.Token;
-using Dovetail.SDK.Fubu.Authentication.Token;
+using Dovetail.SDK.Fubu.TokenAuthentication.Token;
 using FubuCore.Binding;
 using FubuMVC.Core.Runtime;
 using FubuMVC.Core.Security;

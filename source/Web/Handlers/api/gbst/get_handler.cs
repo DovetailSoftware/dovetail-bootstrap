@@ -2,7 +2,7 @@
 using System.Linq;
 using Dovetail.SDK.Bootstrap.Clarify;
 using Dovetail.SDK.Bootstrap.Clarify.Extensions;
-using Dovetail.SDK.Fubu.Authentication.Token;
+using Dovetail.SDK.Fubu.TokenAuthentication.Token;
 
 namespace Bootstrap.Web.Handlers.api.gbst
 {

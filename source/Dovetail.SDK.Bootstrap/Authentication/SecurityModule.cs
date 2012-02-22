@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web;
-using Dovetail.SDK.Bootstrap;
 using StructureMap;
 using FubuCore;
 
-namespace Dovetail.SDK.Fubu.Authentication
+namespace Dovetail.SDK.Bootstrap.Authentication
 {
     public class WebsiteSettings
     {

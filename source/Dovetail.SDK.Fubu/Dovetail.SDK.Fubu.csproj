@@ -89,19 +89,13 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Authentication\AuthenticationContextService.cs" />
-    <Compile Include="Authentication\AuthenticationService.cs" />
-    <Compile Include="Authentication\PrincipalFactory.cs" />
-    <Compile Include="Authentication\Token\AuthenticationTokenAuthorizationPolicy.cs" />
-    <Compile Include="Authentication\UserAuthenticator.cs" />
-    <Compile Include="Authentication\FormsAuthenticationService.cs" />
-    <Compile Include="Authentication\SecurityModule.cs" />
     <Compile Include="Clarify\Lists\BootstrapHtmlConvention.cs" />
     <Compile Include="Clarify\Lists\GbstListValueAttribute.cs" />
     <Compile Include="Clarify\Lists\GbstListValueDropdownBuilder.cs" />
     <Compile Include="Clarify\Lists\ListNames.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Authentication\Token\AuthenticationTokenConvention.cs" />
+    <Compile Include="TokenAuthentication\Token\AuthenticationTokenAuthorizationPolicy.cs" />
+    <Compile Include="TokenAuthentication\Token\AuthenticationTokenConvention.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Dovetail.SDK.Bootstrap\Dovetail.SDK.Bootstrap.csproj">

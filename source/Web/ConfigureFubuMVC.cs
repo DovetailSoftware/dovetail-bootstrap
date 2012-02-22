@@ -1,8 +1,8 @@
 using Bootstrap.Web.Handlers;
 using Bootstrap.Web.Handlers.home;
 using Bootstrap.Web.Security;
-using Dovetail.SDK.Fubu.Authentication.Token;
 using Dovetail.SDK.Fubu.Clarify.Lists;
+using Dovetail.SDK.Fubu.TokenAuthentication.Token;
 using FubuMVC.Core;
 using FubuMVC.Core.Security;
 using FubuMVC.Spark;

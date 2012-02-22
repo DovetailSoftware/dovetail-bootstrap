@@ -1,6 +1,6 @@
 ﻿using Dovetail.SDK.Bootstrap.Clarify;
 
-namespace Dovetail.SDK.Fubu.Authentication
+namespace Dovetail.SDK.Bootstrap.Authentication
 {
     public interface IAuthenticationService
     {

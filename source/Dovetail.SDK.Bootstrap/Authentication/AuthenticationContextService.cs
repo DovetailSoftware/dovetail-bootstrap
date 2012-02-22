@@ -1,7 +1,6 @@
 using Dovetail.SDK.Bootstrap.Clarify;
-using FubuMVC.Core.Security;
 
-namespace Dovetail.SDK.Fubu.Authentication
+namespace Dovetail.SDK.Bootstrap.Authentication
 {
     public interface IAuthenticationContextService
     {

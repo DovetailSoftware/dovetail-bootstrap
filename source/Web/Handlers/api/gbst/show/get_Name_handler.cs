@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Dovetail.SDK.Bootstrap;
-using Dovetail.SDK.Fubu.Authentication.Token;
+using Dovetail.SDK.Fubu.TokenAuthentication.Token;
 using FChoice.Foundation.Clarify;
 using FubuMVC.Swagger;
 

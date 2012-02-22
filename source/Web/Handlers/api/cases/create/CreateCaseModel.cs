@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using Dovetail.SDK.Fubu.Authentication.Token;
 using Dovetail.SDK.Fubu.Clarify.Lists;
+using Dovetail.SDK.Fubu.TokenAuthentication.Token;
 
 namespace Bootstrap.Web.Handlers.api.cases.create
 {

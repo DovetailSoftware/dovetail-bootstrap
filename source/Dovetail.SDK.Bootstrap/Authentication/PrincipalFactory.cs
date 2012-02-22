@@ -1,8 +1,12 @@
 ﻿using System.Security.Principal;
-using FubuMVC.Core.Security;
 
-namespace Dovetail.SDK.Fubu.Authentication
+namespace Dovetail.SDK.Bootstrap.Authentication
 {
+    public interface IPrincipalFactory
+    {
+        IPrincipal CreatePrincipal(IIdentity identity);
+    }
+
     public class PrincipalFactory : IPrincipalFactory
     {
         public IPrincipal CreatePrincipal(IIdentity identity)

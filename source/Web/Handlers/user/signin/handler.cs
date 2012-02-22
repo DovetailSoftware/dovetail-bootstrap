@@ -1,5 +1,5 @@
 using Bootstrap.Web.Handlers.home;
-using Dovetail.SDK.Fubu.Authentication;
+using Dovetail.SDK.Bootstrap.Authentication;
 using FubuCore;
 using FubuMVC.Core.Continuations;
 using FubuMVC.Core.Urls;

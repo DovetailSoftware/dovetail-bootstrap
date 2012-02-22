@@ -7,7 +7,7 @@ using FubuCore.Binding;
 using FubuMVC.Core.Runtime;
 using FubuMVC.Core.Security;
 
-namespace Dovetail.SDK.Fubu.Authentication.Token
+namespace Dovetail.SDK.Fubu.TokenAuthentication.Token
 {
     public class AuthenticationTokenAuthorizationPolicy : IAuthorizationPolicy
     {
