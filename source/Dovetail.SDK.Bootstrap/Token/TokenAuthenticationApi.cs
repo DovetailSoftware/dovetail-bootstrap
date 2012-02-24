@@ -1,3 +1,5 @@
+using Dovetail.SDK.Bootstrap.Authentication;
+
 namespace Dovetail.SDK.Bootstrap.Token
 {
     public interface ITokenAuthenticationApi

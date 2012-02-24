@@ -1,3 +1,4 @@
+using Dovetail.SDK.Bootstrap.Authentication;
 using Dovetail.SDK.Bootstrap.Token;
 using NUnit.Framework;
 using Rhino.Mocks;

@@ -113,7 +113,6 @@
     <Compile Include="ILogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Token\AuthenticationTokenRepository.cs" />
-    <Compile Include="Token\UserAuthenticator.cs" />
     <Compile Include="Token\TokenAuthenticationApi.cs" />
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
