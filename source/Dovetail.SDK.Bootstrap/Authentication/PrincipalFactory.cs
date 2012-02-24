@@ -1,7 +1,12 @@
-﻿using System.Security.Principal;
+﻿using System.Linq;
+using System.Security.Principal;
+using Dovetail.SDK.Bootstrap.Clarify;
 
 namespace Dovetail.SDK.Bootstrap.Authentication
 {
+    /// <summary>
+    /// Responsibile for creation of the current users principal. Replace the default on e
+    /// </summary>
     public interface IPrincipalFactory
     {
         IPrincipal CreatePrincipal(IIdentity identity);
@@ -9,27 +14,35 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 
     public class PrincipalFactory : IPrincipalFactory
     {
+        private readonly IClarifySessionCache _sessionCache;
+
+        public PrincipalFactory(IClarifySessionCache sessionCache)
+        {
+            _sessionCache = sessionCache;
+        }
+
         public IPrincipal CreatePrincipal(IIdentity identity)
         {
-            return new DovetailAgentPrincipal(identity);
+            var session = _sessionCache.GetSession(identity.Name);
+            
+            return new DovetailPrincipal(identity, session.Permissions);
         }
     }
 
-    public class DovetailAgentPrincipal : IPrincipal
+    public class DovetailPrincipal : IPrincipal
     {
         private readonly IIdentity _identity;
-        
-        public DovetailAgentPrincipal(IIdentity identity)
+        private readonly string[] _permissions;
+
+        public DovetailPrincipal(IIdentity identity, string[] permissions)
         {
             _identity = identity;
+            _permissions = permissions;
         }
 
         public bool IsInRole(string role)
         {
-            //TODO get permissions working 
-            //return ClarifySession.Permissions.Contains(role);
-
-            return true;
+            return _permissions.Any(p => p == role);
         }
 
         public IIdentity Identity

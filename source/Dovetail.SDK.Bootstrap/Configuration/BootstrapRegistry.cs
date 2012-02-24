@@ -1,3 +1,4 @@
+using System.Web;
 using Dovetail.SDK.Bootstrap.Clarify;
 using Dovetail.SDK.Bootstrap.History.AssemblerPolicies;
 using Dovetail.SDK.Bootstrap.History.Configuration;
@@ -37,6 +38,10 @@ namespace Dovetail.SDK.Bootstrap.Configuration
             For<IListCache>().Use(c => c.GetInstance<IClarifyApplicationFactory>().Create().ListCache);
 
 
+            //pulled in from FubuMVC for when authentication wraps HttpContext
+            For<HttpContextBase>().Use<HttpContextWrapper>()
+                .Ctor<HttpContext>().Is(x => x.ConstructedBy(BuildContextWrapper));
+
             For<ILogger>()
                 .AlwaysUnique()
                 .Use(s => s.ParentType == null ? new Log4NetLogger(s.BuildStack.Current.ConcreteType) : new Log4NetLogger(s.ParentType));
@@ -46,6 +51,23 @@ namespace Dovetail.SDK.Bootstrap.Configuration
             For<ICurrentSDKUser>().HybridHttpOrThreadLocalScoped().Use<CurrentSDKUser>();
 
             this.ActEntryTemplatePolicies<DefaultActEntryTemplatePolicyRegistry>();
+        }
+
+        public HttpContext BuildContextWrapper()
+        {
+            try
+            {
+                if (HttpContext.Current != null)
+                {
+                    return HttpContext.Current;
+                }
+            }
+            catch (HttpException)
+            {
+                //This is only here for web startup when HttpContext.Current is not available.
+            }
+
+            return null;
         }
     }
 }

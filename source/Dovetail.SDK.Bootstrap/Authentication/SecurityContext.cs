@@ -19,7 +19,6 @@ namespace Dovetail.SDK.Bootstrap.Authentication
             _context = httpContext;
         }
 
-
         public bool IsAuthenticated()
         {
             return _context.Request.IsAuthenticated;

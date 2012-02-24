@@ -9,6 +9,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
     {
         IClarifySession GetUserSession();
         void CloseUserSession();
+        IClarifySession GetSession(string username);
     }
 
     public class ClarifySessionCache : IClarifySessionCache
@@ -59,9 +60,8 @@ namespace Dovetail.SDK.Bootstrap.Clarify
             return clarifySession.SessionID;
         }
 
-        public IClarifySession GetUserSession()
+        public IClarifySession GetSession(string username)
         {
-            var username = _currentSdkUser.Username;
             var sessionId = _agentSessionCacheByUsername[username];
 
             try
@@ -75,8 +75,15 @@ namespace Dovetail.SDK.Bootstrap.Clarify
             {
                 _logger.LogDebug("Could not retrieve agent session for {0} via id {1}. Likely it expired. Creating a new one. Error: {2}".ToFormat(username, sessionId, exception.Message));
                 _agentSessionCacheByUsername.Remove(username);
-                return GetUserSession();
+                return GetSession(username);
             }
+        }
+
+        public IClarifySession GetUserSession()
+        {
+            var username = _currentSdkUser.Username;
+            
+            return GetSession(username);
         }
 
         public void CloseUserSession()

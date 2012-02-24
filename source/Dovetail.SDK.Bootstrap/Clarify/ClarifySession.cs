@@ -7,7 +7,8 @@ using FChoice.Toolkits.Clarify.Support;
 
 namespace Dovetail.SDK.Bootstrap.Clarify
 {
-    public interface IApplicationClarifySession : IClarifySession { }
+    public interface IApplicationClarifySession : IClarifySession {
+    }
 
     public interface IClarifySession
     {
@@ -21,6 +22,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
         FieldOpsToolkit CreateFieldOpsToolkit();
         InterfacesToolkit CreateInterfacesToolkit();
         SqlHelper CreateSqlHelper(string sql);
+        string[] Permissions { get; }
         void Close();
     }
 
@@ -36,6 +38,11 @@ namespace Dovetail.SDK.Bootstrap.Clarify
         public string SessionEmployeeSiteID
         {
             get { return Convert.ToString((object) ClarifySession["employee.site.site_id"]); }
+        }
+
+        public string[] Permissions
+        {
+            get { return ClarifySession.GetAssignedPermissions(); }
         }
 
         public Guid Id
