@@ -21,8 +21,7 @@ namespace Dovetail.SDK.ModelMap
         private readonly IModelBuilderResultEncoder _assemblerResultEncoder;
         private readonly IMapEntryBuilder _mapEntryBuilder;
 
-    	public ModelBuilder(ModelMap<MODEL> modelMap, IClarifyListCache listCache, ISchemaCache schemaCache, 
-            IModelBuilderResultEncoder assemblerResultEncoder, IMapEntryBuilder mapEntryBuilder)
+    	public ModelBuilder(ModelMap<MODEL> modelMap, IClarifyListCache listCache, ISchemaCache schemaCache, IModelBuilderResultEncoder assemblerResultEncoder, IMapEntryBuilder mapEntryBuilder)
         {
             _modelMap = modelMap;
             _mapEntryBuilder = mapEntryBuilder;

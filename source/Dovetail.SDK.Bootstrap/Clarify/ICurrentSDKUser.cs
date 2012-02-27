@@ -45,9 +45,8 @@ namespace Dovetail.SDK.Bootstrap.Clarify
             //verify user exists
 
             var dataSet = _session.CreateDataSet();
-            var userGeneric = dataSet.CreateGeneric("user");
+            var userGeneric = dataSet.CreateGenericWithFields("user", "objid");
             userGeneric.Filter(f => f.Equals("login_name", username));
-            userGeneric.DataFields.Add("objid");
 
             var employeeGeneric = userGeneric.TraverseWithFields("user2employee");
             var siteGeneric = employeeGeneric.TraverseWithFields("supp_person_off2site");

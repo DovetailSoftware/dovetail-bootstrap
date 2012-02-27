@@ -134,7 +134,7 @@ namespace :nuget do
 			projectPath = File.dirname(file)
 			Dir.chdir(projectPath) do 
 				puts "in project path #{projectPath}"
-				sh "#{NUGET_EXE} pack -OutputDirectory #{packagesDir} -Prop Configuration=Release"
+				sh "#{NUGET_EXE} pack -OutputDirectory #{packagesDir} -Prop Configuration=Release -Symbols"
 			end		
 		}
 	end
