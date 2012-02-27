@@ -24,9 +24,10 @@ namespace Dovetail.SDK.Bootstrap.Authentication
         {
             var identity = _securityContext.CurrentIdentity;
 
-            _securityContext.CurrentUser = _principalFactory.CreatePrincipal(identity);
-
-            _currentUserContext.SetUserName(identity.Name);
+            var principal = _principalFactory.CreatePrincipal(identity);
+            
+            _securityContext.CurrentUser = principal;
+            _currentUserContext.SetUser(principal);
         }
     }
 }

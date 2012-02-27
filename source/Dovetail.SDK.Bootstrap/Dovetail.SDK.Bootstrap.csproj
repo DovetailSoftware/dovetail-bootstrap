@@ -75,7 +75,7 @@
     <Compile Include="Authentication\AuthenticationService.cs" />
     <Compile Include="Authentication\FormsAuthenticationService.cs" />
     <Compile Include="Authentication\PrincipalFactory.cs" />
-    <Compile Include="Authentication\SecurityContext.cs" />
+    <Compile Include="Authentication\AspNetSecurityContext.cs" />
     <Compile Include="Authentication\SecurityModule.cs" />
     <Compile Include="Authentication\UserAuthenticator.cs" />
     <Compile Include="Clarify\ApplicationSessionCache.cs" />

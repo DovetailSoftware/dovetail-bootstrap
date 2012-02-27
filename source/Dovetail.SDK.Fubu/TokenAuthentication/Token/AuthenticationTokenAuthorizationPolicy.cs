@@ -60,7 +60,7 @@ namespace Dovetail.SDK.Fubu.TokenAuthentication.Token
             _logger.LogDebug("Authentication token {0} found in {1} validated for user {2}.", authenticationToken, source, authenticationToken);
             request.Set(authenticationToken);
 
-            _currentSdkUser.SetUserName(authenticationToken.Username);
+            _currentSdkUser.SetUser(authenticationToken.Username);
 
             return AuthorizationRight.Allow;
         }

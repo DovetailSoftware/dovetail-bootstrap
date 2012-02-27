@@ -93,7 +93,7 @@ namespace Dovetail.SDK.Bootstrap.Tests.Token
 
             _cut.RightsFor(_request);
 
-            MockFor<ICurrentSDKUser>().AssertWasCalled(s => s.SetUserName(username));
+            MockFor<ICurrentSDKUser>().AssertWasCalled(s => s.SetUser(username));
         }
     }
 }

@@ -29,7 +29,7 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 
             if (!authenticated) return false;
 
-            _currentSdkUser.SetUserName(username);
+            _currentSdkUser.SetUser(username);
 
             _formsAuthentication.SetAuthCookie(username, rememberMe);
 

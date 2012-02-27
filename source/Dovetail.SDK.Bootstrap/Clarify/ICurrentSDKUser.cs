@@ -1,4 +1,6 @@
 using System;
+using System.Security.Principal;
+using Dovetail.SDK.Bootstrap.Authentication;
 using Dovetail.SDK.Bootstrap.Clarify.Extensions;
 using FChoice.Foundation.Clarify;
 using FChoice.Foundation.DataObjects;
@@ -9,15 +11,18 @@ namespace Dovetail.SDK.Bootstrap.Clarify
     public interface ICurrentSDKUser
     {
     	string Username { get; }
-        ITimeZone Timezone { get; }
         bool IsAuthenticated { get; }
+        bool HasPermission(string permission);
+        ITimeZone Timezone { get; }
 
-        void SetUserName(string username);
         void SignOut();
+        void SetUser(string username);
+        void SetUser(IPrincipal principal);
     }
 
     public class CurrentSDKUser : ICurrentSDKUser
     {
+        private IPrincipal _principal; 
         private readonly IApplicationClarifySession _session;
         private readonly DovetailDatabaseSettings _settings;
         private readonly ILogger _logger;
@@ -40,9 +45,15 @@ namespace Dovetail.SDK.Bootstrap.Clarify
             SignOut();
         }
 
-        public void SetUserName(string username)
+        public bool HasPermission(string permission)
         {
-            //verify user exists
+            return _principal != null && _principal.IsInRole(permission);
+        } 
+        
+        public void SetUser(IPrincipal principal)
+        {
+            _principal = principal;
+            var username = principal.Identity.Name;
 
             var dataSet = _session.CreateDataSet();
             var userGeneric = dataSet.CreateGenericWithFields("user", "objid");
@@ -54,7 +65,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
             var timeZoneGeneric = addressGeneric.TraverseWithFields("address2time_zone", "name");
 
             dataSet.Query(userGeneric);
-            
+
             if (userGeneric.Count < 1)
             {
                 throw new ApplicationException("User {0} does not exist.".ToFormat(username));
@@ -65,7 +76,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 
             //get user timezone based on their site's primary address
 
-            if(timeZoneGeneric.Count < 1)
+            if (timeZoneGeneric.Count < 1)
             {
                 Timezone = _localeCache.ServerTimeZone;
                 _logger.LogWarn("Could not determine a default timezone for user {0}. Defaulting to server timezone {1}.", username, Timezone.Name);
@@ -74,6 +85,12 @@ namespace Dovetail.SDK.Bootstrap.Clarify
             var timezoneName = timeZoneGeneric.Rows[0].AsString("name");
             Timezone = _localeCache.TimeZones[timezoneName, false];
             _logger.LogDebug("Timezone for user {0} set to {1}.", username, Timezone.Name);
+        }
+
+        public void SetUser(string username)
+        {
+            var principal = new DovetailPrincipal(new GenericIdentity(username), new string[0]);
+            SetUser(principal);
         }
 
         public void SignOut()

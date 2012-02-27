@@ -30,7 +30,7 @@ namespace Dovetail.SDK.ModelMap.Integration
             AdministratorClarifySession = Container.GetInstance<IApplicationClarifySession>();
 
             CurrentSDKUser = Container.GetInstance<ICurrentSDKUser>();
-            CurrentSDKUser.SetUserName("sa");
+            CurrentSDKUser.SetUser("sa");
 
 			beforeAll();
 		}
