@@ -44,7 +44,8 @@ namespace Dovetail.SDK.Bootstrap.Configuration
             //authenticated user. 
             For<IClarifySessionCache>().Singleton().Use<ClarifySessionCache>();
             For<IClarifySession>().Use(ctx => ctx.GetInstance<IClarifySessionCache>().GetUserSession());
-            For<IApplicationClarifySession>().Singleton().Use(ctx => ctx.GetInstance<IApplicationSessionCache>().GetApplicationSession());
+            For<IApplicationSessionCache>().Singleton().Use<ApplicationSessionCache>();
+            For<IApplicationClarifySession>().Use(ctx => ctx.GetInstance<IApplicationSessionCache>().GetApplicationSession());
 
             For<IListCache>().Use(c => c.GetInstance<IClarifyApplicationFactory>().Create().ListCache);
             For<ISchemaCache>().Use(c => c.GetInstance<IClarifyApplicationFactory>().Create().SchemaCache);

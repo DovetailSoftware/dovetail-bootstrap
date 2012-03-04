@@ -28,25 +28,40 @@ namespace Dovetail.SDK.Bootstrap.Clarify
             get { return _clarifyApplication ?? (_clarifyApplication = _clarifyApplicationFactory.Create()); }
         }
         
+        //todo integration tests!!!!!!
         public IApplicationClarifySession GetApplicationSession()
         {
             try
             {
                 if (_applicationSessionId == Guid.Empty)
                 {
-                    var session = ClarifyApplication.CreateSession();
-                    _applicationSessionId = session.SessionID;
-                    return wrapSession(session);
+                    return CreateSession();
                 }
 
                 return wrapSession(ClarifyApplication.GetSession(_applicationSessionId));
             }
-            catch (Exception exception)
+            catch(ClarifyException clarifyException)
             {
-                _logger.LogDebug("Could not retrieve application session via id {0}. Likely it expired. Creating a new one. Error: {1}".ToFormat(_applicationSessionId, exception.Message));
-                _applicationSessionId = Guid.Empty;
-                return GetApplicationSession();
+                if (clarifyException.ErrorCode != 15056)
+                {
+                    throw;
+                }
+                
+                _logger.LogDebug("Could not retrieve application session via id {0}. Likely it expired. Creating a new one. Error: {1}".ToFormat(_applicationSessionId, clarifyException.Message));
+                return CreateSession();
             }
+            catch(Exception ex)
+            {
+                _logger.LogError("Application session could not be created.", ex);
+                throw;
+            }
+        }
+
+        private IApplicationClarifySession CreateSession()
+        {
+            var session = ClarifyApplication.CreateSession();
+            _applicationSessionId = session.SessionID;
+            return wrapSession(session);
         }
 
         private IApplicationClarifySession wrapSession(ClarifySession session)
