@@ -79,6 +79,7 @@
     <Compile Include="Authentication\SecurityModule.cs" />
     <Compile Include="Authentication\UserAuthenticator.cs" />
     <Compile Include="Clarify\ApplicationSessionCache.cs" />
+    <Compile Include="Clarify\UserDataAccess.cs" />
     <Compile Include="Configuration\AppSettingProviderRegistry.cs" />
     <Compile Include="Configuration\BootstrapRegistry.cs" />
     <Compile Include="Configuration\DovetailAppSettingsSource.cs" />

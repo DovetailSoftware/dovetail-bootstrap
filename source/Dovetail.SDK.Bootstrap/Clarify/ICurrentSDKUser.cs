@@ -1,10 +1,7 @@
-using System;
 using System.Security.Principal;
 using Dovetail.SDK.Bootstrap.Authentication;
-using Dovetail.SDK.Bootstrap.Clarify.Extensions;
 using FChoice.Foundation.Clarify;
 using FChoice.Foundation.DataObjects;
-using FubuCore;
 
 namespace Dovetail.SDK.Bootstrap.Clarify
 {
@@ -23,25 +20,23 @@ namespace Dovetail.SDK.Bootstrap.Clarify
     public class CurrentSDKUser : ICurrentSDKUser
     {
         private IPrincipal _principal; 
-        private readonly IApplicationClarifySession _session;
         private readonly DovetailDatabaseSettings _settings;
         private readonly ILogger _logger;
+        private readonly IUserDataAccess _userDataAccess;
         private readonly ILocaleCache _localeCache;
         public bool IsAuthenticated { get; private set; }
 
         public string Username { get; set; }
         public ITimeZone Timezone { get; set; }
 
-        public CurrentSDKUser(IApplicationClarifySession session, DovetailDatabaseSettings settings, ILocaleCache localeCache, ILogger logger)
+        public CurrentSDKUser(DovetailDatabaseSettings settings, ILocaleCache localeCache, ILogger logger, IUserDataAccess userDataAccess)
         {
-            //defaults to application user and the server timezone
-            Timezone = localeCache.ServerTimeZone;
-
-            _session = session;
             _settings = settings;
             _logger = logger;
+            _userDataAccess = userDataAccess;
             _localeCache = localeCache;
 
+            //set up defaults
             SignOut();
         }
 
@@ -55,36 +50,17 @@ namespace Dovetail.SDK.Bootstrap.Clarify
             _principal = principal;
             var username = principal.Identity.Name;
 
-            var dataSet = _session.CreateDataSet();
-            var userGeneric = dataSet.CreateGenericWithFields("user", "objid");
-            userGeneric.Filter(f => f.Equals("login_name", username));
+            var timezone = _userDataAccess.GetUserSiteTimezone(username); 
 
-            var employeeGeneric = userGeneric.TraverseWithFields("user2employee");
-            var siteGeneric = employeeGeneric.TraverseWithFields("supp_person_off2site");
-            var addressGeneric = siteGeneric.TraverseWithFields("cust_primaddr2address");
-            var timeZoneGeneric = addressGeneric.TraverseWithFields("address2time_zone", "name");
-
-            dataSet.Query(userGeneric);
-
-            if (userGeneric.Count < 1)
+            if (timezone == null)
             {
-                throw new ApplicationException("User {0} does not exist.".ToFormat(username));
+                _logger.LogWarn("Could not find user's site timezone. Setting their timezone to the default timezone.");
+                timezone = _localeCache.ServerTimeZone;
             }
 
             Username = username;
             IsAuthenticated = true;
-
-            //get user timezone based on their site's primary address
-
-            if (timeZoneGeneric.Count < 1)
-            {
-                Timezone = _localeCache.ServerTimeZone;
-                _logger.LogWarn("Could not determine a default timezone for user {0}. Defaulting to server timezone {1}.", username, Timezone.Name);
-            }
-
-            var timezoneName = timeZoneGeneric.Rows[0].AsString("name");
-            Timezone = _localeCache.TimeZones[timezoneName, false];
-            _logger.LogDebug("Timezone for user {0} set to {1}.", username, Timezone.Name);
+            Timezone = timezone;
         }
 
         public void SetUser(string username)
@@ -96,7 +72,11 @@ namespace Dovetail.SDK.Bootstrap.Clarify
         public void SignOut()
         {
             IsAuthenticated = false;
+
+            //when no user is authenticated the application user is used
             Username = _settings.ApplicationUsername;
+            Timezone = _localeCache.ServerTimeZone;
         }
     }
+
 }
