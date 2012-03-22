@@ -1,4 +1,5 @@
 using Bootstrap.Web.Handlers;
+using Bootstrap.Web.Handlers.error.http500;
 using Bootstrap.Web.Handlers.home;
 using Bootstrap.Web.Security;
 using Dovetail.SDK.Fubu.Clarify.Lists;
@@ -28,6 +29,9 @@ namespace Bootstrap.Web
             Routes.HomeIs<HomeRequest>();
 
             ApplyConvention<AuthenticationTokenConvention>();
+            
+            //convention to transfer exceptions to the view for an input model given via generic argument
+            ApplyConvention<APIExceptionConvention<Error500Request>>();
 
             HtmlConvention<BootstrapHtmlConvention>();
 

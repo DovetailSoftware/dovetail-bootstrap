@@ -157,6 +157,7 @@
     <Compile Include="Handlers\api\gbst\get_handler.cs" />
     <Compile Include="Handlers\api\gbst\show\get_Name_handler.cs" />
     <Compile Include="Handlers\api\history\get_Type_Id_handler.cs" />
+    <Compile Include="Handlers\error\http500\get_handler.cs" />
     <Compile Include="Handlers\home\UserOpenCaseListingMap.cs" />
     <Compile Include="Handlers\home\get_handler.cs" />
     <Compile Include="Handlers\HandlerMarker.cs" />
@@ -166,6 +167,7 @@
     <None Include="Handlers\api\authtoken\reset\reset.spark" />
     <None Include="Handlers\api\cases\create\post.spark" />
     <None Include="Handlers\api\cases\create\get.spark" />
+    <None Include="Handlers\error\http500\get.spark" />
     <None Include="Handlers\user\signin\signin.spark" />
     <None Include="Handlers\user\status\status.spark" />
     <None Include="Handlers\api\history\history.spark" />

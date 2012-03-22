@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using Dovetail.SDK.Bootstrap;
-using FubuCore;
+using Dovetail.SDK.Fubu.TokenAuthentication.Token.Extensions;
 using FubuMVC.Core.Registration;
 using FubuMVC.Core.Resources.Conneg;
 
@@ -14,17 +13,15 @@ namespace Dovetail.SDK.Fubu.TokenAuthentication.Token
         public void Configure(BehaviorGraph graph)
         {
             graph.Behaviors
-                .Where(x => x.InputType().CanBeCastTo<IApi>() || x.InputType().CanBeCastTo<IUnauthenticatedApi>())
-                .Each(x => x.MakeAsymmetricJson());
+                .Where(action => action.InputType().IsAPIRequest())
+                .Each(action => action.MakeAsymmetricJson());
 
             graph
                 .Actions()
-                .Where(action => action.InputType().CanBeCastTo<IApi>())
-                .Each(action => action
-                    .ParentChain()
-                    .Authorization
-                    .AddPolicy(typeof(AuthenticationTokenAuthorizationPolicy)));
+                .Where(action => action.InputType().IsAuthenticatedAPIRequest())
+                .Each(action => 
+                        action.ParentChain().Authorization.AddPolicy(typeof(AuthenticationTokenAuthorizationPolicy))
+                    );
         }
     }
-
 }

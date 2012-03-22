@@ -1,0 +1,21 @@
+﻿<viewdata model="Bootstrap.Web.Handlers.error.http500.Error500Model" />
+<use namespace="FubuCore"/>
+
+<content:pagehead>
+  <h1>
+    Server Error <small>Oops that's a status 500</small>
+  </h1>
+</content:pagehead>
+
+<div class="row">
+  <div class="span8">
+
+    <div id="error-message" class="alert alert-error" if="Model.ErrorMessage.IsNotEmpty()">
+      ${Model.ErrorMessage}
+    </div>
+    <div class="alert alert-error" if="Model.ErrorMessage.IsEmpty()">
+      An unexpected error happened while processing your request.
+    </div>
+
+  </div>
+</div>
