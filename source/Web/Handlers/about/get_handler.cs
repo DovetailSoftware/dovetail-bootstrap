@@ -6,16 +6,16 @@ namespace Bootstrap.Web.Handlers.about
 {
     public class get_handler
     {
-        private readonly IClarifySession _userSession;
+        private readonly IApplicationClarifySession _session;
 
-        public get_handler(IClarifySession userSession)
+        public get_handler(IApplicationClarifySession session)
         {
-            _userSession = userSession;
+            _session = session;
         }
 
         public AboutModel Execute(AboutRequest request)
         {
-            var sqlHelper = _userSession.CreateSqlHelper("SELECT count(*) from table_case");
+            var sqlHelper = _session.CreateSqlHelper("SELECT count(*) from table_case");
             var caseCount = Convert.ToInt32(sqlHelper.ExecuteScalar());
 
             sqlHelper.CommandText = "SELECT count(*) from table_subcase";

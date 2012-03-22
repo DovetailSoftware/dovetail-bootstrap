@@ -8,16 +8,16 @@ namespace Bootstrap.Web.Handlers.api.gbst
 {
     public class get_handler
     {
-        private readonly IClarifySession _userSession;
+        private readonly IApplicationClarifySession _session;
 
-        public get_handler(IClarifySession userSession)
+        public get_handler(IApplicationClarifySession session)
         {
-            _userSession = userSession;
+            _session = session;
         }
 
         public GbstListsModel Execute(GbstListsRequest request)
         {
-            var dataSet = _userSession.CreateDataSet();
+            var dataSet = _session.CreateDataSet();
             var listGeneric = dataSet.CreateGeneric("gbst_lst");
             listGeneric.DataFields.Add("title");
             listGeneric.AppendSort("title", true);

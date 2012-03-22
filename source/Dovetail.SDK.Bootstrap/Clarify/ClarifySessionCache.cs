@@ -16,7 +16,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
     {
         private readonly IClarifyApplicationFactory _clarifyApplicationFactory;
         private readonly ILogger _logger;
-        private readonly ICurrentSDKUser _currentSdkUser;
+        private readonly Func<ICurrentSDKUser> _currentSdkUser;
 
         //TODO configure StructureMap to do the Create() for us
         private ClarifyApplication _clarifyApplication;
@@ -24,7 +24,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
         private readonly Cache<string, Guid> _contactSessionCacheByUsername = new Cache<string, Guid>();
         private Guid _applicationSessionId;
 
-        public ClarifySessionCache(IClarifyApplicationFactory clarifyApplicationFactory, ILogger logger, ICurrentSDKUser currentSdkUser)
+        public ClarifySessionCache(IClarifyApplicationFactory clarifyApplicationFactory, ILogger logger, Func<ICurrentSDKUser> currentSdkUser)
         {
             _clarifyApplicationFactory = clarifyApplicationFactory;
             _logger = logger;
@@ -67,7 +67,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
             try
             {
                 var session = ClarifyApplication.GetSession(sessionId);
-                session.LocalTimeZone = _currentSdkUser.Timezone;
+                session.LocalTimeZone = _currentSdkUser().Timezone;
 
                 return wrapSession(session);
             }
@@ -81,14 +81,14 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 
         public IClarifySession GetUserSession()
         {
-            var username = _currentSdkUser.Username;
+            var username = _currentSdkUser().Username;
             
             return GetSession(username);
         }
 
         public void CloseUserSession()
         {
-            var username = _currentSdkUser.Username;
+            var username = _currentSdkUser().Username;
 
             if(!_agentSessionCacheByUsername.Has(username))
             {

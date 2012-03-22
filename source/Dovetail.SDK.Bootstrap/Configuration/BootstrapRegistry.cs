@@ -43,7 +43,7 @@ namespace Dovetail.SDK.Bootstrap.Configuration
             //any web class that takes a dependency on IClarifySession will get a session for the current 
             //authenticated user. 
             For<IClarifySessionCache>().Singleton().Use<ClarifySessionCache>();
-            For<IClarifySession>().Use(ctx => ctx.GetInstance<IClarifySessionCache>().GetUserSession());
+           
             For<IApplicationSessionCache>().Singleton().Use<ApplicationSessionCache>();
             For<IApplicationClarifySession>().Use(ctx => ctx.GetInstance<IApplicationSessionCache>().GetApplicationSession());
 

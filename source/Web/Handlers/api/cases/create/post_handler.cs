@@ -1,21 +1,20 @@
-﻿using System.ComponentModel;
-using Dovetail.SDK.Bootstrap.Clarify;
+﻿using Dovetail.SDK.Bootstrap.Clarify;
 using FChoice.Toolkits.Clarify.Support;
 
 namespace Bootstrap.Web.Handlers.api.cases.create
 {
     public class post_handler
     {
-        private readonly IClarifySession _userSession;
+        private readonly IClarifySessionCache _sessionCache;
 
-        public post_handler(IClarifySession userSession)
+        public post_handler(IClarifySessionCache sessionCache)
         {
-            _userSession = userSession;
+            _sessionCache = sessionCache;
         }
 
         public CreateCaseResult Execute(CreateCaseInputModel model)
         {
-            var toolkit = _userSession.CreateSupportToolkit();
+            var toolkit = _sessionCache.GetUserSession().CreateSupportToolkit();
 
             var setup = new CreateCaseSetup(model.SiteId, model.ContactFirstName, model.ContactLastName, model.ContactPhone)
                             {
