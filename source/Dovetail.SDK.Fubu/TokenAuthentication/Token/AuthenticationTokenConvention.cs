@@ -14,8 +14,8 @@ namespace Dovetail.SDK.Fubu.TokenAuthentication.Token
         public void Configure(BehaviorGraph graph)
         {
             graph.Behaviors
-                .Where(x => TypeExtensions.CanBeCastTo<IApi>(x.InputType()) || TypeExtensions.CanBeCastTo<IUnauthenticatedApi>(x.InputType()))
-                .Each(x => BehaviorChainConnegExtensions.MakeAsymmetricJson(x));
+                .Where(x => x.InputType().CanBeCastTo<IApi>() || x.InputType().CanBeCastTo<IUnauthenticatedApi>())
+                .Each(x => x.MakeAsymmetricJson());
 
             graph
                 .Actions()

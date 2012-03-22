@@ -11,13 +11,13 @@ namespace Dovetail.SDK.Bootstrap.Authentication
     {
         private readonly ISecurityContext _securityContext;
         private readonly IPrincipalFactory _principalFactory;
-        private readonly ICurrentSDKUser _currentUserContext;
+        private readonly ICurrentSDKUser _currentSdkUser;
 
-        public AuthenticationContextService(ISecurityContext securityContext, IPrincipalFactory principalFactory, ICurrentSDKUser currentUserContext)
+        public AuthenticationContextService(ISecurityContext securityContext, IPrincipalFactory principalFactory, ICurrentSDKUser currentSdkUser)
         {
             _securityContext = securityContext;
             _principalFactory = principalFactory;
-            _currentUserContext = currentUserContext;
+            _currentSdkUser = currentSdkUser;
         }
 
         public void SetupAuthenticationContext()
@@ -27,7 +27,7 @@ namespace Dovetail.SDK.Bootstrap.Authentication
             var principal = _principalFactory.CreatePrincipal(identity);
             
             _securityContext.CurrentUser = principal;
-            _currentUserContext.SetUser(principal);
+            _currentSdkUser.SetUser(principal);
         }
     }
 }

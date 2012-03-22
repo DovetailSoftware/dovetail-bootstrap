@@ -1,7 +1,7 @@
 require 'albacore'
 include REXML
 include Rake::DSL
-
+	
 BUILD_NUMBER_BASE = "0.2.0"
 PROJECT_NAME = "Bootstrap"
 SLN_PATH = "source/#{PROJECT_NAME}.sln"
@@ -166,7 +166,7 @@ namespace :setup do
 		Dir.glob(File.join('schema', "*schemascript.xml")) do |schema_script|  
  
 			File.open(seConfig) do |schema_editor_config_file|
-				doc = Document.new(schema_editor_config_file)
+				doc = REXML::Document.new(schema_editor_config_file)
 				doc.root.elements['database/type'].text = databaseType
 				doc.root.elements['database/connectionString'].text = DATABASE_CONNECTION
 				doc.root.elements['inputFilePath'].text = schema_script.gsub('/','\\')
@@ -184,6 +184,7 @@ namespace :setup do
 		File.delete seReport if File.exists? seReport
 	end
 end
+
 #desc "Prepares the working directory for a new build"
 task :clean do	
 
