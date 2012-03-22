@@ -37,6 +37,9 @@ namespace Dovetail.SDK.Fubu.TokenAuthentication.Token
                                                             }
                                                         });
 
+            //Workaround: RightsFor is getting called multiple times because of a Fubu bug 
+            if(request.Has<IAuthenticationToken>()) return AuthorizationRight.Allow;
+
             if(token.IsEmpty())
             {
                 if(_currentSdkUser.IsAuthenticated)
