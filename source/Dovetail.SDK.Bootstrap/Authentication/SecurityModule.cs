@@ -42,12 +42,12 @@ namespace Dovetail.SDK.Bootstrap.Authentication
             var ignoredFilesSetting = ObjectFactory.GetInstance<WebsiteSettings>().AnonymousAccessFileExtensions;
             if (ignoredFilesSetting.IsEmpty())
             {
-                _logger.LogDebug("Whitelisting default extensions: {0}", DefaultExtensionWhiteList);
+                _logger.LogInfo("Whitelisting authentication for default file extensions: {0}", DefaultExtensionWhiteList);
                 ignoredFilesSetting = DefaultExtensionWhiteList;
             }
             else
             {
-                _logger.LogDebug("Whitelisting using extensions from settings : {0}", ignoredFilesSetting);
+                _logger.LogInfo("Whitelisting authentication for file extensions from settings : {0}", ignoredFilesSetting);
             }
 
             _whiteListExtensions = new HashSet<string>(GetWhiteListedExtensions(ignoredFilesSetting), StringComparer.OrdinalIgnoreCase);
