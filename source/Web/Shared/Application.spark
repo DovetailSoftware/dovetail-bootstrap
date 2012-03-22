@@ -54,10 +54,10 @@
 					<ul class="dropdown-menu">
 					<li><a href="${this.Urls.UrlFor(new Bootstrap.Web.Handlers.api.authtoken.AuthTokenRequest())}">Auth Tokens <i class="icon-lock"></i></a></li>
 					<li class="divider"></li>
-					<li><a href="${this.Urls.UrlFor(new Bootstrap.Web.Handlers.api.cases.create.CreateCaseRequest { })}">Create Case</a></li>
+					<li><a href="${this.Urls.UrlFor(new Bootstrap.Web.Handlers.api.cases.create.CreateCaseRequest())}">Create Case</a></li>
 					<li><a href="${this.Urls.UrlFor(new Bootstrap.Web.Handlers.api.history.HistoryRequest { Type = "case", Id = "1" })}">History</a></li>
 					<li class="divider"></li>
-					<li><a href="/docs">API Docs <i class="icon-book"></i></a></li>
+					<li><a href="${this.Urls.UrlFor(new FubuMVC.Swagger.Actions.SwaggerUIRequest())}">API Docs <i class="icon-book"></i></a></li>
 					</ul>
 				</li>
 				<li><a href="/_fubu">Diagnostics <i class="icon-info-sign icon-white"></i></a></li>

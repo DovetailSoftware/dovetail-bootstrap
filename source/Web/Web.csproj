@@ -35,8 +35,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Bottles">
-      <HintPath>..\packages\Bottles.0.9.1.198\lib\Bottles.dll</HintPath>
+    <Reference Include="Bottles, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Bottles.0.9.1.202\lib\Bottles.dll</HintPath>
     </Reference>
     <Reference Include="FChoice.Common">
       <HintPath>..\packages\Dovetail.SDK.3.2.3.7\lib\net20\FChoice.Common.dll</HintPath>
@@ -53,32 +53,32 @@
     <Reference Include="fcSDK">
       <HintPath>..\packages\Dovetail.SDK.3.2.3.7\lib\net20\fcSDK.dll</HintPath>
     </Reference>
-    <Reference Include="FubuCore">
-      <HintPath>..\packages\FubuCore.0.9.4.114\lib\FubuCore.dll</HintPath>
+    <Reference Include="FubuCore, Version=0.9.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FubuCore.0.9.4.117\lib\FubuCore.dll</HintPath>
     </Reference>
-    <Reference Include="FubuLocalization">
-      <HintPath>..\packages\FubuLocalization.0.9.4.114\lib\FubuLocalization.dll</HintPath>
+    <Reference Include="FubuLocalization, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FubuLocalization.0.9.4.116\lib\FubuLocalization.dll</HintPath>
     </Reference>
-    <Reference Include="FubuMVC.Core">
-      <HintPath>..\packages\FubuMVC.References.0.9.3.744\lib\net40\FubuMVC.Core.dll</HintPath>
+    <Reference Include="FubuMVC.Core, Version=0.9.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FubuMVC.References.0.9.4.762\lib\net40\FubuMVC.Core.dll</HintPath>
     </Reference>
     <Reference Include="FubuMVC.Spark">
-      <HintPath>..\packages\FubuMVC.Spark.0.9.3.744\lib\net40\FubuMVC.Spark.dll</HintPath>
+      <HintPath>..\packages\FubuMVC.Spark.0.9.4.762\lib\net40\FubuMVC.Spark.dll</HintPath>
     </Reference>
-    <Reference Include="FubuMVC.StructureMap">
-      <HintPath>..\packages\FubuMVC.References.0.9.3.744\lib\net40\FubuMVC.StructureMap.dll</HintPath>
+    <Reference Include="FubuMVC.StructureMap, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FubuMVC.References.0.9.4.762\lib\net40\FubuMVC.StructureMap.dll</HintPath>
     </Reference>
     <Reference Include="FubuMVC.Swagger">
-      <HintPath>..\packages\FubuMVC.Swagger.0.1.0.0\lib\net40\FubuMVC.Swagger.dll</HintPath>
+      <HintPath>..\packages\FubuMVC.Swagger.0.2.3.3\lib\net40\FubuMVC.Swagger.dll</HintPath>
     </Reference>
-    <Reference Include="HtmlTags">
+    <Reference Include="HtmlTags, Version=1.0.0.55, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\HtmlTags.1.0.0.55\lib\4.0\HtmlTags.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Practices.ServiceLocation">
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Web.Infrastructure">
@@ -87,7 +87,7 @@
     <Reference Include="Spark">
       <HintPath>..\packages\Spark.1.6\lib\NET40\Spark.dll</HintPath>
     </Reference>
-    <Reference Include="StructureMap">
+    <Reference Include="StructureMap, Version=2.6.3.0, Culture=neutral, PublicKeyToken=e60ad81abae3c223, processorArchitecture=MSIL">
       <HintPath>..\packages\structuremap.2.6.3\lib\StructureMap.dll</HintPath>
     </Reference>
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -97,12 +97,8 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
-    <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
@@ -124,16 +120,16 @@
     <Content Include="content\styles\bootstrap.css" />
     <Content Include="content\styles\bootstrap.min.css" />
     <Content Include="content\styles\site.css" />
+    <Content Include="content\swagger-ui\index.html" />
+    <Content Include="content\swagger-ui\javascripts\app.js" />
+    <Content Include="content\swagger-ui\javascripts\swagger-service.js" />
+    <Content Include="content\swagger-ui\javascripts\swagger-ui.js" />
+    <Content Include="content\swagger-ui\stylesheets\screen.css" />
     <Content Include="docs\index.html" />
     <Content Include="docs\javascripts\app.js" />
     <Content Include="docs\javascripts\swagger-service.js" />
     <Content Include="docs\javascripts\swagger-ui.js" />
     <Content Include="docs\stylesheets\screen.css" />
-    <Content Include="swagger-ui\index.html" />
-    <Content Include="swagger-ui\javascripts\app.js" />
-    <Content Include="swagger-ui\javascripts\swagger-service.js" />
-    <Content Include="swagger-ui\javascripts\swagger-ui.js" />
-    <Content Include="swagger-ui\stylesheets\screen.css" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
