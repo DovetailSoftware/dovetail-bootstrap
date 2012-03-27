@@ -16,16 +16,22 @@ namespace Dovetail.SDK.Bootstrap.Authentication
     public class PrincipalFactory : IPrincipalFactory
     {
         private readonly IClarifySessionCache _sessionCache;
+        private readonly ILogger _logger;
 
-        public PrincipalFactory(IClarifySessionCache sessionCache)
+        public PrincipalFactory(IClarifySessionCache sessionCache, ILogger logger)
         {
             _sessionCache = sessionCache;
+            _logger = logger;
         }
 
         public IPrincipal CreatePrincipal(IIdentity identity)
         {
-            var session = _sessionCache.GetSession(identity.Name);
-            
+            var username = identity.Name;
+
+            var session = _sessionCache.GetSession(username);
+
+            _logger.LogDebug("Creating principal for user {0} with {1} permissions.", username, session.Permissions.Length);
+
             return new DovetailPrincipal(identity, session.Permissions);
         }
 

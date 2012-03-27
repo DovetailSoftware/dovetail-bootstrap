@@ -64,7 +64,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
             return wrapSession(session);
         }
 
-        private IApplicationClarifySession wrapSession(ClarifySession session)
+        private static IApplicationClarifySession wrapSession(ClarifySession session)
         {
             return new ClarifySessionWrapper(session);
         }
