@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Dovetail.SDK.Bootstrap.Clarify.Extensions;
 using FChoice.Foundation.Clarify;
 using FChoice.Foundation.Clarify.DataObjects;
@@ -11,7 +9,6 @@ namespace Dovetail.SDK.Bootstrap.Clarify
     public interface IUserDataAccess
     {
         FCTimeZone GetUserSiteTimezone(string username);
-        IEnumerable<string> UserPermissions(string username);
     }
 
     public class UserDataAccess : IUserDataAccess
@@ -61,21 +58,6 @@ namespace Dovetail.SDK.Bootstrap.Clarify
         {
             public int ID { get; set; }
             public string Login { get; set; }
-        }
-
-        public IEnumerable<string> UserPermissions(string username)
-        {
-            var dataSet = _session.CreateDataSet();
-            var userGeneric = dataSet.CreateGenericWithFields("user", "login_name");
-            var privGeneric = userGeneric.TraverseWithFields("user_access2privclass");
-            var cmdGeneric = privGeneric.TraverseWithFields("privclass2x_web_cmd", "x_name");
-
-            userGeneric.Filter(f => f.Equals("login_name", username));
-            userGeneric.Query();
-
-            if (userGeneric.Count < 1) return new string[0];
-
-            return cmdGeneric.DataRows().Select(r => r.AsString("x_name")).ToArray();
         }
     }
 }
