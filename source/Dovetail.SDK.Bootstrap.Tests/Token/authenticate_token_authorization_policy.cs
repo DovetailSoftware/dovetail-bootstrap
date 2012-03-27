@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Security.Principal;
 using Dovetail.SDK.Bootstrap.Clarify;
 using Dovetail.SDK.Bootstrap.Token;
 using Dovetail.SDK.Fubu.TokenAuthentication.Token;
@@ -7,6 +8,7 @@ using FubuMVC.Core.Runtime;
 using FubuMVC.Core.Security;
 using NUnit.Framework;
 using Rhino.Mocks;
+using IPrincipalFactory = Dovetail.SDK.Bootstrap.Authentication.IPrincipalFactory;
 
 namespace Dovetail.SDK.Bootstrap.Tests.Token
 {
@@ -90,10 +92,12 @@ namespace Dovetail.SDK.Bootstrap.Tests.Token
             const string username = "annie";
             IAuthenticationToken authToken = new AuthenticationToken { Token = _token, Username = username };
             MockFor<IAuthenticationTokenRepository>().Stub(a => a.RetrieveByToken(_token)).Return(authToken);
+            var principal = MockFor<IPrincipal>();
+            MockFor<IPrincipalFactory>().Stub(a => a.CreatePrincipal(username)).Return(principal);
 
             _cut.RightsFor(_request);
 
-            MockFor<ICurrentSDKUser>().AssertWasCalled(s => s.SetUser(username));
+            MockFor<ICurrentSDKUser>().AssertWasCalled(s => s.SetUser(principal));
         }
     }
 }

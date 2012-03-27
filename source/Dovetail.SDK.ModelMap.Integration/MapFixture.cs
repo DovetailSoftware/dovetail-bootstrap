@@ -1,3 +1,4 @@
+using Dovetail.SDK.Bootstrap.Authentication;
 using Dovetail.SDK.Bootstrap.Clarify;
 using Dovetail.SDK.Bootstrap.Configuration;
 using Dovetail.SDK.ModelMap.Configuration;
@@ -30,7 +31,8 @@ namespace Dovetail.SDK.ModelMap.Integration
             AdministratorClarifySession = Container.GetInstance<IApplicationClarifySession>();
 
             CurrentSDKUser = Container.GetInstance<ICurrentSDKUser>();
-            CurrentSDKUser.SetUser("sa");
+            var principalFactory = Container.GetInstance<IPrincipalFactory>();
+            CurrentSDKUser.SetUser(principalFactory.CreatePrincipal("sa"));
 
 			beforeAll();
 		}

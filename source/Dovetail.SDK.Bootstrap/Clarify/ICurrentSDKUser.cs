@@ -1,5 +1,4 @@
 using System.Security.Principal;
-using Dovetail.SDK.Bootstrap.Authentication;
 using FChoice.Foundation.Clarify;
 using FChoice.Foundation.DataObjects;
 
@@ -13,7 +12,6 @@ namespace Dovetail.SDK.Bootstrap.Clarify
         ITimeZone Timezone { get; }
 
         void SignOut();
-        void SetUser(string username);
         void SetUser(IPrincipal principal);
     }
 
@@ -61,12 +59,6 @@ namespace Dovetail.SDK.Bootstrap.Clarify
             Username = username;
             IsAuthenticated = true;
             Timezone = timezone;
-        }
-
-        public void SetUser(string username)
-        {
-            var principal = new DovetailPrincipal(new GenericIdentity(username), new string[0]);
-            SetUser(principal);
         }
 
         public void SignOut()

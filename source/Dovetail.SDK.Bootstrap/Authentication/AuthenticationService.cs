@@ -1,4 +1,5 @@
-﻿using Dovetail.SDK.Bootstrap.Clarify;
+﻿using System.Security.Principal;
+using Dovetail.SDK.Bootstrap.Clarify;
 
 namespace Dovetail.SDK.Bootstrap.Authentication
 {
@@ -14,13 +15,15 @@ namespace Dovetail.SDK.Bootstrap.Authentication
         private readonly IFormsAuthenticationService _formsAuthentication;
         private readonly IUserAuthenticator _agentAuthenticator;
         private readonly IClarifySessionCache _sessionCache;
+        private readonly IPrincipalFactory _principalFactory;
 
-        public AuthenticationService(ICurrentSDKUser currentSdkUser, IFormsAuthenticationService formsAuthentication, IUserAuthenticator agentAuthenticator, IClarifySessionCache sessionCache)
+        public AuthenticationService(ICurrentSDKUser currentSdkUser, IFormsAuthenticationService formsAuthentication, IUserAuthenticator agentAuthenticator, IClarifySessionCache sessionCache, IPrincipalFactory principalFactory)
         {
             _currentSdkUser = currentSdkUser;
             _formsAuthentication = formsAuthentication;
             _agentAuthenticator = agentAuthenticator;
             _sessionCache = sessionCache;
+            _principalFactory = principalFactory;
         }
 
         public bool SignIn(string username, string password, bool rememberMe)
@@ -28,8 +31,9 @@ namespace Dovetail.SDK.Bootstrap.Authentication
             var authenticated = _agentAuthenticator.Authenticate(username, password);
 
             if (!authenticated) return false;
-
-            _currentSdkUser.SetUser(username);
+            
+            var identity = new GenericIdentity(username);
+            _currentSdkUser.SetUser(_principalFactory.CreatePrincipal(identity));
 
             _formsAuthentication.SetAuthCookie(username, rememberMe);
 

@@ -10,6 +10,7 @@ namespace Dovetail.SDK.Bootstrap.Authentication
     public interface IPrincipalFactory
     {
         IPrincipal CreatePrincipal(IIdentity identity);
+        IPrincipal CreatePrincipal(string username);
     }
 
     public class PrincipalFactory : IPrincipalFactory
@@ -26,6 +27,11 @@ namespace Dovetail.SDK.Bootstrap.Authentication
             var session = _sessionCache.GetSession(identity.Name);
             
             return new DovetailPrincipal(identity, session.Permissions);
+        }
+
+        public IPrincipal CreatePrincipal(string username)
+        {
+            return CreatePrincipal(new GenericIdentity(username));
         }
     }
 
