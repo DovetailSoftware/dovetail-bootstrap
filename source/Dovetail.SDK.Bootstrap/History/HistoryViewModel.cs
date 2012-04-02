@@ -18,7 +18,12 @@ namespace Dovetail.SDK.Bootstrap.History
         /// When the activity entry was logged.
         /// </summary>
 		public DateTime When { get; set; }
-
+        
+        /// <summary>
+        /// Placeholder for describing the history when field. If this is desired it should be populated downstream from Bootstrap. This field is NOT populated by Dovetail Bootstrap. 
+        /// </summary>
+        public string WhenDescribed { get; set; }
+        
         /// <summary>
         /// Title of the item. Likely populated fromt he DSL's DisplayName.
         /// </summary>
