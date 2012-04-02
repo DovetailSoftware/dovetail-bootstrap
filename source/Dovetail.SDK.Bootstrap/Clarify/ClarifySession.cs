@@ -98,5 +98,4 @@ namespace Dovetail.SDK.Bootstrap.Clarify
             ClarifySession.CloseSession();
         }
     }
-
 }

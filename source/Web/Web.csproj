@@ -166,7 +166,9 @@
     <None Include="Handlers\error\http500\get.spark" />
     <None Include="Handlers\user\signin\signin.spark" />
     <None Include="Handlers\user\status\status.spark" />
-    <None Include="Handlers\api\history\history.spark" />
+    <None Include="Handlers\api\history\history.spark">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Handlers\home\home.spark" />
     <None Include="Handlers\about\about.spark">
       <SubType>Designer</SubType>

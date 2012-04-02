@@ -4,27 +4,34 @@ using Dovetail.SDK.Bootstrap.Clarify.Extensions;
 using Dovetail.SDK.Bootstrap.History.Configuration;
 using FChoice.Foundation;
 using FChoice.Foundation.Clarify;
+using FChoice.Foundation.DataObjects;
 using FChoice.Foundation.Filters;
 using FChoice.Foundation.Schema;
+using StructureMap;
+using System.Linq;
 
 namespace Dovetail.SDK.Bootstrap.History
 {
     public class HistoryBuilder
     {
-        private readonly IClarifySessionCache _sessionCache;
+        private readonly IApplicationClarifySession _session;
         private readonly ISchemaCache _schemaCache;
         private readonly IActEntryTemplatePolicyConfiguration _templatePolicyConfiguration;
+        private readonly ILocaleCache _localeCache;
+        private readonly IContainer _container;
 
-        public HistoryBuilder(IClarifySessionCache sessionCache, ISchemaCache schemaCache, IActEntryTemplatePolicyConfiguration templatePolicyConfiguration)
+        public HistoryBuilder(IApplicationClarifySession session,ISchemaCache schemaCache, IActEntryTemplatePolicyConfiguration templatePolicyConfiguration, ILocaleCache localeCache, IContainer container)
         {
-            _sessionCache = sessionCache;
+            _session = session;
             _schemaCache = schemaCache;
             _templatePolicyConfiguration = templatePolicyConfiguration;
+            _localeCache = localeCache;
+            _container = container;
         }
 
         public IEnumerable<HistoryItem> Build(WorkflowObject workflowObject, Filter actEntryFilter)
         {
-            var clarifyDataSet = _sessionCache.GetUserSession().CreateDataSet();
+            var clarifyDataSet = _session.CreateDataSet();
 
             var workflowObjectInfo = WorkflowObjectInfo.GetObjectInfo(workflowObject.Type);
             var workflowGeneric = clarifyDataSet.CreateGenericWithFields(workflowObjectInfo.ObjectName);
@@ -42,9 +49,10 @@ namespace Dovetail.SDK.Bootstrap.History
             }
             
             var templateDictionary = _templatePolicyConfiguration.RenderPolicies(workflowObject);
-            
+          
             //query generic hierarchy and while using act entry templates transform the results into HistoryItems
-            return new HistoryItemAssembler(templateDictionary, workflowObject).Assemble(actEntryGeneric);
+            var assembler = _container.With(templateDictionary).With(workflowObject).GetInstance<HistoryItemAssembler>();
+            return assembler.Assemble(actEntryGeneric);
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using Dovetail.SDK.Bootstrap.Clarify.Extensions;
 using Dovetail.SDK.Bootstrap.History.Configuration;
 using FChoice.Foundation.Clarify;
+using FChoice.Foundation.DataObjects;
 using FubuCore;
 
 namespace Dovetail.SDK.Bootstrap.History
@@ -12,18 +13,20 @@ namespace Dovetail.SDK.Bootstrap.History
     {
         private readonly IDictionary<int, ActEntryTemplate> _templatesByCode;
         private readonly WorkflowObject _workflowObject;
+        private readonly ILocaleCache _localeCache;
 
-        public HistoryItemAssembler(IDictionary<int, ActEntryTemplate> templatesByCode, WorkflowObject workflowObject)
+        public HistoryItemAssembler(IDictionary<int, ActEntryTemplate> templatesByCode, WorkflowObject workflowObject, ILocaleCache localeCache)
         {
             _templatesByCode = templatesByCode;
             _workflowObject = workflowObject;
+            _localeCache = localeCache;
         }
 
         public IEnumerable<HistoryItem> Assemble(ClarifyGeneric actEntryGeneric)
         {
-            var codes = _templatesByCode.Values.Select(d => d.Code);
+            var codes = _templatesByCode.Values.Select(d => d.Code).ToArray();
             actEntryGeneric.DataFields.AddRange("act_code", "entry_time", "addnl_info");
-            actEntryGeneric.AppendFilterInList("act_code", true, codes.ToArray());
+            actEntryGeneric.Filter(f => f.IsIn("act_code", codes));
 
             var actEntryUserGeneric = actEntryGeneric.TraverseWithFields("act_entry2user", "objid", "login_name");
             var actEntryEmployeeGeneric = actEntryUserGeneric.TraverseWithFields("user2employee", "first_name", "last_name");
@@ -40,14 +43,14 @@ namespace Dovetail.SDK.Bootstrap.History
                     return new HistoryItemEmployee();
 
                 var userRecord = userRows[0];
-                var login = userRecord["login_name"].ToString();
+                var login = userRecord.AsString("login_name");
                 var employeeRows = userRecord.RelatedRows(actEntryEmployeeGeneric);
                 if (employeeRows.Length == 0)
                     return new HistoryItemEmployee {Login = login};
 
                 var employeeRecord = employeeRows[0];
-                var name = "{0} {1}".ToFormat(employeeRecord["first_name"], employeeRecord["last_name"]);
-                var id = Convert.ToInt32(employeeRecord.UniqueID);
+                var name = "{0} {1}".ToFormat(employeeRecord.AsString("first_name"), employeeRecord.AsString("last_name"));
+                var id = employeeRecord.DatabaseIdentifier();
 
                 return new HistoryItemEmployee {Name = name, Id = id, Login = login};
             };
@@ -72,17 +75,42 @@ namespace Dovetail.SDK.Bootstrap.History
 
         private IEnumerable<ActEntry> assembleActEntryDTOs(ClarifyGeneric actEntryGeneric, IDictionary<int, ActEntryTemplate> actEntryTemplatesByCode, Func<ClarifyDataRow, HistoryItemEmployee> employeeAssembler)
         {
-            foreach (ClarifyDataRow actEntryRecord in actEntryGeneric.Rows)
+            return actEntryGeneric.DataRows().Select(actEntryRecord =>
+                                                         {
+                                                             var code = actEntryRecord.AsInt("act_code");
+                                                             var template = actEntryTemplatesByCode[code];
+
+                                                             var serverWhen = actEntryRecord.AsDateTime("entry_time");
+                                                             var utcWhen = ConvertToUTC(serverWhen);
+                                                             
+                                                             var detail = actEntryRecord.AsString("addnl_info");
+                                                             var who = employeeAssembler(actEntryRecord);
+
+                                                             return new ActEntry { Template = template, When = utcWhen, Who = who, AdditionalInfo = detail, ActEntryRecord = actEntryRecord, Type = _workflowObject.Type };
+                                                         }).ToArray();
+        }
+
+        private DateTime ConvertToUTC(DateTime when)
+        {
+            if (_localeCache.ServerTimeZone.UtcOffsetSeconds != 0)
             {
-                var code = Convert.ToInt32(actEntryRecord["act_code"]);
-                var template = actEntryTemplatesByCode[code];
+                var fromUtcOffset = getUTCOffset(_localeCache.ServerTimeZone, when);
 
-                var when = Convert.ToDateTime(actEntryRecord["entry_time"]);
-                var detail = actEntryRecord["addnl_info"].ToString();
-                var who = employeeAssembler(actEntryRecord);
-
-                yield return new ActEntry { Template = template, When = when, Who = who, AdditionalInfo = detail, ActEntryRecord = actEntryRecord, Type = _workflowObject.Type};
+                when = when.AddSeconds(0 - fromUtcOffset);
             }
+
+            return when;
+        }
+
+        private static int getUTCOffset(ITimeZone fromZone, DateTime date)
+        {
+            var offset = fromZone.UtcOffsetSeconds;
+
+            var isZoneInDST = fromZone.IsDaylightSavingsTime(date);
+
+            if (isZoneInDST) offset += 3600;
+
+            return offset;
         }
 
         private HistoryItem createActivityDTOFromMapper(ActEntry actEntry, IDictionary<ActEntryTemplate, ClarifyGeneric> templateRelatedGenerics)
