@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -17,39 +18,35 @@ namespace Dovetail.SDK.Bootstrap.Authentication
     {
         public const string DefaultExtensionWhiteList = "gif, jpg, css, js, png, htm, html";
         private HashSet<string> _whiteListExtensions;
-        private ILogger _logger;
-
+        
         public void Init(HttpApplication context)
-        {
-            _logger = ObjectFactory.GetInstance<ILogger>();
-
-            InitializeWhiteList();
-
-            context.AuthenticateRequest += (sender, e) =>
-                                               {
-                                                   var httpRequest = HttpContext.Current.Request;
-                                                   if (httpRequest.IsAuthenticated && PathRequiresPrincipal(httpRequest.Path))
-                                                   {
-                                                       ObjectFactory.Container.GetInstance<IAuthenticationContextService>().SetupAuthenticationContext();
-                                                   }
-                                               };
-
-            context.EndRequest += context_EndRequest;
-        }
-
-        public void InitializeWhiteList()
         {
             var ignoredFilesSetting = ObjectFactory.GetInstance<WebsiteSettings>().AnonymousAccessFileExtensions;
             if (ignoredFilesSetting.IsEmpty())
             {
-                _logger.LogInfo("Whitelisting authentication for default file extensions: {0}", DefaultExtensionWhiteList);
+                Trace.WriteLine("Whitelisting authentication for default file extensions: {0}", DefaultExtensionWhiteList);
                 ignoredFilesSetting = DefaultExtensionWhiteList;
             }
             else
             {
-                _logger.LogInfo("Whitelisting authentication for file extensions from settings : {0}", ignoredFilesSetting);
+                Trace.WriteLine("Whitelisting authentication for file extensions from settings : {0}", ignoredFilesSetting);
             }
+            InitializeWhiteList(ignoredFilesSetting);
 
+            context.AuthenticateRequest += onContextOnAuthenticateRequest;
+        }
+
+        private void onContextOnAuthenticateRequest(object sender, EventArgs e)
+        {
+            var httpRequest = HttpContext.Current.Request;
+            if (httpRequest.IsAuthenticated && PathRequiresPrincipal(httpRequest.Path))
+            {
+                ObjectFactory.Container.GetInstance<IAuthenticationContextService>().SetupAuthenticationContext();
+            }
+        }
+
+        public void InitializeWhiteList(string ignoredFilesSetting)
+        {
             _whiteListExtensions = new HashSet<string>(GetWhiteListedExtensions(ignoredFilesSetting), StringComparer.OrdinalIgnoreCase);
         }
 
@@ -67,23 +64,11 @@ namespace Dovetail.SDK.Bootstrap.Authentication
             var pathRequiresPrincipal = !_whiteListExtensions.Contains(extension);
             if (!pathRequiresPrincipal)
             {
-                _logger.LogDebug("Not loading principal for whitelisted extension on " + path);
+                Trace.WriteLine("Not loading principal for whitelisted extension on " + path);
             }
             return pathRequiresPrincipal;
         }
-
-
-        protected void context_EndRequest(object sender, EventArgs e)
-        {
-            var request = HttpContext.Current.Request;
-            var response = HttpContext.Current.Response;
-
-            if ((request.HttpMethod != "POST") || (response.StatusCode != 404 || response.SubStatusCode != 13)) return;
-
-            throw new ApplicationException("The size of your request was too large.");
-        }
-
-
+        
         public void Dispose()
         {
         }
