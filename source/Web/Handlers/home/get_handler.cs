@@ -1,5 +1,4 @@
-﻿using System;
-using Dovetail.SDK.ModelMap;
+﻿using Dovetail.SDK.ModelMap;
 
 namespace Bootstrap.Web.Handlers.home
 {

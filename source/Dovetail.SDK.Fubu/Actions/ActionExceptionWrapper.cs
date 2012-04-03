@@ -61,7 +61,7 @@ namespace Dovetail.SDK.Fubu.Actions
                 if (!AspNetSettings.IsCustomErrorsEnabled)
                     throw;
 
-                var request = new T { Exception = exception };
+                var request = new T {Exception = exception};
                 _request.Set(request);
                 var partial = _factory.BuildPartial(request.GetType());
                 partial.InvokePartial();

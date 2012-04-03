@@ -4,11 +4,9 @@ using Dovetail.SDK.Bootstrap.Clarify.Extensions;
 using Dovetail.SDK.Bootstrap.History.Configuration;
 using FChoice.Foundation;
 using FChoice.Foundation.Clarify;
-using FChoice.Foundation.DataObjects;
 using FChoice.Foundation.Filters;
 using FChoice.Foundation.Schema;
 using StructureMap;
-using System.Linq;
 
 namespace Dovetail.SDK.Bootstrap.History
 {

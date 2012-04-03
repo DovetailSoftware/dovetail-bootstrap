@@ -1,8 +1,8 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Dovetail.SDK.Bootstrap;
 using Dovetail.SDK.Bootstrap.History;
-using Dovetail.SDK.Fubu.TokenAuthentication.Token;
 using Dovetail.SDK.ModelMap;
 using FubuMVC.Swagger.Specification;
 

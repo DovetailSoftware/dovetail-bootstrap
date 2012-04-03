@@ -7,7 +7,7 @@ namespace Bootstrap.Web.Handlers.error.http500
     {
         public Error500Model Execute(Error500Request request)
         {
-           return new Error500Model { ErrorMessage = request.Exception != null ? request.Exception.Message : "" };
+            return new Error500Model { ErrorMessage = request.Exception != null ? request.Exception.Message : "" };
         }
     }
 

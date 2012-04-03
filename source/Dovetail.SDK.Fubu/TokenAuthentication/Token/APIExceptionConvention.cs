@@ -3,6 +3,7 @@ using System.Linq;
 using Dovetail.SDK.Fubu.Actions;
 using Dovetail.SDK.Fubu.TokenAuthentication.Token.Extensions;
 using FubuMVC.Core.Registration;
+using FubuMVC.Core.Registration.Nodes;
 
 namespace Dovetail.SDK.Fubu.TokenAuthentication.Token
 {
@@ -13,8 +14,13 @@ namespace Dovetail.SDK.Fubu.TokenAuthentication.Token
         {
             graph
                 .Actions()
-                .Where(action => action.InputType().IsAPIRequest())
+                .Where(Handles)
                 .Each(action => action.WrapWith<ActionExceptionWrapper<TServerErrorRequest>>());
+        }
+
+        public static bool Handles(ActionCall action)
+        {
+            return action.InputType().IsAPIRequest();
         }
     }
 }

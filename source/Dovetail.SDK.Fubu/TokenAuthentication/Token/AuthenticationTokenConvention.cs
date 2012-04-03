@@ -6,8 +6,6 @@ using FubuMVC.Core.Resources.Conneg;
 
 namespace Dovetail.SDK.Fubu.TokenAuthentication.Token
 {
-    public interface IApi { }
-
     public class AuthenticationTokenConvention : IConfigurationAction
     {
         public void Configure(BehaviorGraph graph)
