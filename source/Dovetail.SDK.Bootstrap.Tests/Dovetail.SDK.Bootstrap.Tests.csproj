@@ -104,7 +104,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="clarify_application_factory.cs" />
-    <Compile Include="history_parser.cs" />
+    <Compile Include="history_item_parser.cs" />
+    <Compile Include="history_parsers.cs" />
     <Compile Include="principal_factory.cs" />
     <Compile Include="security_module.cs" />
     <Compile Include="string_to_html.cs" />

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Text.RegularExpressions;
+using Dovetail.SDK.Bootstrap.History.Parser;
 using FubuCore;
 
 namespace Dovetail.SDK.Bootstrap.Extensions
@@ -14,9 +15,8 @@ namespace Dovetail.SDK.Bootstrap.Extensions
 		{
 			if (toHtml.IsEmpty()) return String.Empty;
 
-			var result = findLineBreaks.Replace(toHtml, "\n");
-
-            result = findLine.Replace(result, "<p>$1</p>");
+			var items = new HistoryItemParser().Parse(toHtml);
+            var result = new HistoryItemHtmlRenderer().Render(items);
             result = urlFinderRegEx.Replace(result, @"<a href=""${link}"">${link}</a>");
 
 			return result;

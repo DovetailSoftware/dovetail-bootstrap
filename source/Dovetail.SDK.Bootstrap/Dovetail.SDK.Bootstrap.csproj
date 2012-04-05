@@ -57,7 +57,7 @@
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <Reference Include="Sprache">
+    <Reference Include="Sprache, Version=1.9.1.31, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Sprache.1.9.1.31\lib\NET40\Sprache.dll</HintPath>
     </Reference>
     <Reference Include="StructureMap, Version=2.6.3.0, Culture=neutral, PublicKeyToken=e60ad81abae3c223, processorArchitecture=MSIL">
@@ -95,7 +95,7 @@
     <Compile Include="History\AssemblerPolicies\CaseHistoryAssemblerPolicy.cs" />
     <Compile Include="History\CommonActEntryBuilderDSLExtensions.cs" />
     <Compile Include="History\AssemblerPolicies\DefaultHistoryAssemblerProvider.cs" />
-    <Compile Include="History\HistoryParser.cs" />
+    <Compile Include="History\Parser\HistoryParsers.cs" />
     <Compile Include="History\TemplatePolicies\DefaultActEntryTemplatePolicyRegistry.cs" />
     <Compile Include="History\Configuration\HistorySettings.cs" />
     <Compile Include="History\TemplatePolicies\SamplePolicy.cs" />
@@ -127,9 +127,7 @@
     <None Include="Dovetail.SDK.Bootstrap.nuspec" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="History\Parser\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

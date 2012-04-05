@@ -65,3 +65,19 @@ h1 + p {
     margin-bottom: 8px;
 }
 
+.history-email-header {
+    list-style: none;
+}
+
+.history-email-header ul {
+    list-style: none;
+}
+
+.history-email-header ul li {
+    margin-left: -15px;
+}
+
+.email-header-name {
+    font-weight: bold;
+    width: 25px;
+}

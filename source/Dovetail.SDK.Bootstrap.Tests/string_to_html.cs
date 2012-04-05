@@ -20,17 +20,16 @@ namespace Dovetail.SDK.Bootstrap.Tests
 
             var result = input.ToHtml();
 
-            result.ShouldEqual("<p>line1</p>");
+            result.ShouldEqual("<p>line1</p>\r\n");
         }
 
         [Test]
         public void each_line_wrapped_in_a_p()
         {
             const string input = "line1\r\nline2";
-            Console.WriteLine(input);
             var result = input.ToHtml();
 
-            result.ShouldEqual("<p>line1</p>\n<p>line2</p>");
+            result.ShouldEqual("<p>line1</p>\r\n<p>line2</p>\r\n");
         }
 
         [Test]
@@ -43,7 +42,7 @@ line2";
 
             var result = input.ToHtml();
 
-            result.ShouldEqual("<p>line1</p>\n<p>line2</p>");
+            result.ShouldEqual("<p>line1</p>\r\n<p>line2</p>\r\n");
         }
     }
 }

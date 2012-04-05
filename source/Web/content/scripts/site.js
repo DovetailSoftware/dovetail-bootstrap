@@ -14,4 +14,6 @@ $(document).ready(function () {
         var date = moment(el.html());
         el.html(date.format("MMM Do YYYY \\at h:mm:ss a"));
     });
+
+    $('.history-email-header').addClass('well');
 });
