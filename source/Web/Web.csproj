@@ -114,9 +114,7 @@
     <Content Include="content\scripts\bootstrap.min.js" />
     <Content Include="content\scripts\site.js" />
     <Content Include="content\scripts\moment.min.js" />
-    <Content Include="content\styles\bootstrap-responsive.css" />
     <Content Include="content\styles\bootstrap-responsive.min.css" />
-    <Content Include="content\styles\bootstrap.css" />
     <Content Include="content\styles\bootstrap.min.css" />
     <Content Include="content\styles\site.css" />
     <Content Include="content\swagger-ui\index.html" />

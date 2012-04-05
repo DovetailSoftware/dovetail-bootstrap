@@ -84,6 +84,9 @@
     <Reference Include="Rhino.Mocks">
       <HintPath>..\packages\RhinoMocks.3.6\lib\Rhino.Mocks.dll</HintPath>
     </Reference>
+    <Reference Include="Sprache">
+      <HintPath>..\packages\Sprache.1.9.1.31\lib\NET40\Sprache.dll</HintPath>
+    </Reference>
     <Reference Include="StructureMap">
       <HintPath>..\packages\structuremap.2.6.3\lib\StructureMap.dll</HintPath>
     </Reference>
@@ -101,6 +104,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="clarify_application_factory.cs" />
+    <Compile Include="history_parser.cs" />
     <Compile Include="principal_factory.cs" />
     <Compile Include="security_module.cs" />
     <Compile Include="string_to_html.cs" />
