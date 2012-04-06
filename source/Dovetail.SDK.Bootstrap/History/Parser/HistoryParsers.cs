@@ -19,8 +19,6 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
         }
     }
 
-    public class HardRule : IItem { }
-
     public class EmailHeaderItem
     {
         public string Title { get; set; }
@@ -32,16 +30,17 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
         public IEnumerable<EmailHeaderItem> Headers { get; set; }
     }
 
-    public class Document
+    public class BlockQuote : IItem
     {
-        public IEnumerable<IItem> Items { get; set; }
+        public IEnumerable<string> Lines { get; set; }
     }
 
     public static class HistoryParsers
     {
         public static readonly Parser<string> HardRule =
             from text in Parse.Char('-').Many().Text().Token()
-            select text; 
+            select text;
+
         public static readonly Parser<char> UntilEndOfLine = Parse.CharExcept(c => c == '\r' || c == '\n', "start of line ending");
 
         public static readonly string[] EmailHeaderFields = new[] { "date", "from", "to", "send to", "cc", "subject", "sent" };
@@ -55,21 +54,29 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
             from _2 in HardRule
             select new EmailHeaderItem { Title = title, Text = text };
 
+        public static readonly Parser<string> BlockQuoteLine =
+            from leader in Parse.String("&gt;")
+            from text in UntilEndOfLine.Many().Token().Text()
+            select text;
+
+        public static readonly Parser<BlockQuote> BlockQuote =
+            from lines in BlockQuoteLine.Many()
+            select new BlockQuote {Lines = lines};
+        
         public static readonly Parser<EmailHeader> EmailHeader =
             from items in EmailHeaderItem.Many()
             select new EmailHeader {Headers = items};
 
         public static readonly Parser<Content> Content =
+            from _1 in Parse.WhiteSpace.Many()
             from text in UntilEndOfLine.Many().Text().Token()
             select new Content {Text = text.TrimEnd()};
 
         public static readonly Parser<IItem> Item =
-            EmailHeader.Select(n => (IItem) n)
-                .Or(Content);
-
-        public static readonly Parser<Document> Document =
-            from items in Item.Many().End()
-            select new Document {Items = items};
+            from items in EmailHeader.Select(n => (IItem) n)
+                .Or(BlockQuote)
+                .Or(Content)
+            select items;
     }
 
     public class HistoryItemParser
@@ -83,7 +90,8 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
     public class HistoryItemHtmlRenderer
     {
         private StringBuilder _output;
-
+        
+        private static long _idIndex;
         public string Render(IEnumerable<IItem> items)
         {
             _output = new StringBuilder();
@@ -95,12 +103,11 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
                     continue;
                 }
 
-                if (item.GetType().CanBeCastTo<HardRule>())
+                if (item.GetType().CanBeCastTo<BlockQuote>())
                 {
-                    _output.AppendLine("<hr/>");
+                    renderBlockQuote(item as BlockQuote);
                     continue;
                 }
-
                 renderItem(item);
             }
 
@@ -109,7 +116,10 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 
         private void renderEmailHeader(EmailHeader emailHeader)
         {
-            _output.AppendLine(@"<div class=""history-email-header""><ul>");
+            _idIndex += 1;
+            var id = "histitem" + _idIndex;
+
+            _output.AppendLine(@"<div id=""{0}"" class=""history-email-header collapse in""><i class=""icon-envelope"" title=""Click to expand"" data-toggle=""collapse"" data-target=""#{0}""></i><ul>".ToFormat(id));
 
             foreach (var header in emailHeader.Headers)
             {
@@ -117,6 +127,18 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
             }
 
             _output.Append(@"</ul></div>");
+        }
+
+        private void renderBlockQuote(BlockQuote blockQuote)
+        {
+            _output.AppendLine(@"<blockquote>");
+
+            foreach (var line in blockQuote.Lines)
+            {
+                _output.AppendLine(line + "<br/>");
+            }
+
+            _output.AppendLine(@"</blockquote>");
         }
 
         private void  renderItem(IItem item)

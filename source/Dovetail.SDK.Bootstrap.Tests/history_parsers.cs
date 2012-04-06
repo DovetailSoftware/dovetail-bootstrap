@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Dovetail.SDK.Bootstrap.History.Parser;
 using NUnit.Framework;
@@ -87,6 +88,19 @@ namespace Dovetail.SDK.Bootstrap.Tests
             var item = HistoryParsers.Item.Parse(input);
 
             (item as EmailHeader).ShouldBeNull();
+        }
+
+        [Test]
+        public void quoted_content_is_rolled_into_a_block_quote_item()
+        {
+            const string input = "line1\n&gt; quote line1\n&gt; quote line2\n&gt; quote line3";
+
+            var items = HistoryParsers.Item.Many().End().Parse(input).ToArray();
+
+            items.Length.ShouldEqual(2);
+            var blockQuote = (BlockQuote)items[1];
+
+            blockQuote.Lines.Count().ShouldEqual(3);
         }
     }
 }

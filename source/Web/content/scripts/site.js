@@ -1,7 +1,7 @@
 $(document).ready(function () {
 
     $('.dropdown-toggle').dropdown();
-    $(".collapse").collapse()
+    $(".collapse").collapse();
 
     $('.date-ago').each(function (index, value) {
         var el = $(value);
@@ -15,5 +15,4 @@ $(document).ready(function () {
         el.html(date.format("MMM Do YYYY \\at h:mm:ss a"));
     });
 
-    $('.history-email-header').addClass('well');
 });

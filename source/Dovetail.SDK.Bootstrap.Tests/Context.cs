@@ -150,6 +150,13 @@ namespace Dovetail.SDK.Bootstrap.Tests
             return actual;
         }
 
+        public static object ShouldBeOfType<T>(this object actual)
+        {
+            Assert.IsInstanceOf(typeof(T), actual);
+            return actual;
+        }
+
+
         public static void ShouldNotBeOfType(this object actual, Type expected)
         {
             Assert.IsNotInstanceOf(expected, actual);
