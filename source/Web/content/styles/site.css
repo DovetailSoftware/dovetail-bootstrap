@@ -65,8 +65,7 @@ h1 + p {
     margin-bottom: 8px;
 }
 
-.history-email-header 
-{
+.history-email-header, .history-inline-message {
     min-height: 15px;
     padding: 5px;
     margin: 10px 0px;
@@ -79,6 +78,17 @@ h1 + p {
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+.history-inline-header {
+    display: inline;
+    margin-left: 10px;
+    top: -1px;
+    position: relative;
+}
+
+.history-inline-content {
+    margin-top: 10px;
 }
 
 .history-email-header ul {

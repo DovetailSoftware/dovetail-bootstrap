@@ -20,9 +20,20 @@ namespace Dovetail.SDK.Bootstrap.Tests
         }
 
         [Test]
+        public void unicode_non_breaking_alone_not_considered_a_line()
+        {
+            const string input = "line1\r\n&#160;\r\nline2";
+
+            var items = HistoryParsers.Item.Many().Parse(input).ToArray();
+
+            items[0].ToString().ShouldEqual("line1");
+            items[1].ToString().ShouldEqual("line2");
+        }
+
+        [Test]
         public void item_white_space_is_removed()
         {
-            const string input = "   line1\r\n   line2    ";
+            const string input = "   line1 \r\n   line2    ";
 
             var items = HistoryParsers.Item.Many().Parse(input).ToArray();
 
@@ -99,8 +110,41 @@ namespace Dovetail.SDK.Bootstrap.Tests
 
             items.Length.ShouldEqual(2);
             var blockQuote = (BlockQuote)items[1];
-
             blockQuote.Lines.Count().ShouldEqual(3);
+        }
+
+        [Test]
+        public void original_message()
+        {
+            const string input = @"On Tue, Nov 3, 2009 at 12:34 PM, Sam Tyson <styson@gmail.com> wrote:
+
+Here are the config files. Please let me know what else I can get you.
+
+From: Sam Tyson [mailto:styson@gmail.com]
+Sent: Tuesday, November 03, 2009 12:12 PM
+To: Andy Hagerty
+Subject: Re: test
+
+test received
+
+&gt; Thanks,
+&gt;
+&gt;  Sam Tyson
+&gt;
+&gt;  On Tue, Nov 3, 2009 at 11:09 AM, Andy Hagerty <andy.hagerty@consona.com&gt;
+&gt; wrote:
+&gt;
+&gt; Test
+&gt; Andy Hagerty";
+
+            var items = HistoryParsers.Item.Many().End().Parse(input).ToArray();
+            items.Length.ShouldEqual(1);
+            
+            var originalMessage = (OriginalMessage)items[0];
+            originalMessage.Header.ShouldContain("styson@gmail.com");
+
+            var originalMessageItems = originalMessage.Items.ToArray();
+            originalMessageItems.Length.ShouldEqual(15);
         }
     }
 }
