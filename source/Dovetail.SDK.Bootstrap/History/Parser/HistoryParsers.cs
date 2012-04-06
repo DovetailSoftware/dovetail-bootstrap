@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using FubuCore;
 using Sprache;
 
 namespace Dovetail.SDK.Bootstrap.History.Parser
@@ -41,6 +39,12 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
         public IEnumerable<IItem> Items { get; set; }
     }
 
+    /// <summary>
+    /// Parsers for slicing apart case history items and projecting them into IItems. I recommend taking a look at this post for details on the Sprache parser.
+    /// Sprache Parser introduction - http://nblumhardt.com/2010/01/building-an-external-dsl-in-c/
+    /// Monadic Parsers in c# 3.0 - http://blogs.msdn.com/b/lukeh/archive/2007/08/19/monadic-parser-combinators-using-c-3-0.aspx
+    /// Parser Combinators - http://msdn.microsoft.com/en-us/magazine/hh580742.aspx
+    /// </summary>
     public static class HistoryParsers
     {
         public static readonly Parser<string> HardRule =
@@ -78,16 +82,13 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
             select new Content {Text = text.TrimEnd()};
 
         public static readonly Parser<string> OriginalMessageHeader =
-            from _1 in WhiteSpace
-            from o in Parse.Char('O')
-            from n in Parse.Char('n')
-            from middle in Parse.CharExcept('w').Many().Text()
-            from footer in Parse.String("wrote:").Token()
-            select "On " + middle + "wrote:";
+            from o in Parse.String("On")
+            from rest in Parse.AnyChar.Until(Parse.String("wrote:")).Text()
+            select "On " + rest + "wrote:";
 
         public static readonly Parser<OriginalMessage> OriginalMessage =
             from header in OriginalMessageHeader
-            from items in Content.Many().End()
+            from items in Parse.Ref(()=>Content).Many().End()
             select new OriginalMessage {Header = header, Items = items};
 
         public static readonly Parser<IItem> Item =
@@ -96,102 +97,5 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
                 .Or(BlockQuote)
                 .Or(Content)
             select items;
-    }
-
-    public class HistoryItemParser
-    {
-        public IEnumerable<IItem> Parse(string input)
-        {
-            return HistoryParsers.Item.Many().End().Parse(input);
-        }
-    }
-
-    //TODO pull our renderers into a their own types
-    public class HistoryItemHtmlRenderer
-    {
-        private readonly StringBuilder _output;
-
-        public HistoryItemHtmlRenderer()
-        {
-            _output = new StringBuilder();
-        }
-
-        private static long _idIndex;
-        public string Render(IEnumerable<IItem> items)
-        {
-            foreach (var item in items)
-            {
-                if(item.GetType().CanBeCastTo<EmailHeader>())
-                {
-                    renderEmailHeader(item as EmailHeader);
-                    continue;
-                }
-
-                if (item.GetType().CanBeCastTo<BlockQuote>())
-                {
-                    renderBlockQuote(item as BlockQuote);
-                    continue;
-                }
-
-                if (item.GetType().CanBeCastTo<OriginalMessage>())
-                {
-                    renderOriginalMessage(item as OriginalMessage);
-                    continue;
-                }
-
-                renderItem(item);
-            }
-
-            return _output.ToString();
-        }
-
-        private void renderEmailHeader(EmailHeader emailHeader)
-        {
-            _idIndex += 1;
-            var id = "emailHeader" + _idIndex;
-
-            _output.AppendLine(@"<div id=""{0}"" class=""history-email-header collapse in""><i class=""icon-envelope"" title=""Click to expand"" data-toggle=""collapse"" data-target=""#{0}""></i>".ToFormat(id));
-
-            var emailHeaderItem = emailHeader.Headers.First();
-            _output.AppendLine(@"<h5 class=""history-inline-header"">{0} : {1}</h5><div class=""history-inline-content""><ul>".ToFormat(emailHeaderItem.Title, emailHeaderItem.Text));
-
-            foreach (var header in emailHeader.Headers.Skip(1))
-            {
-                _output.AppendLine(@"<li><span class=""email-header-name"">{0}</span> <span class=""email-header-text"">{1}</span></li>".ToFormat(header.Title.ToLower().Capitalize(), header.Text));
-            }
-
-            _output.Append(@"</ul></div></div>");
-        }
-
-        private void renderBlockQuote(BlockQuote blockQuote)
-        {
-            _output.AppendLine(@"<blockquote>");
-
-            foreach (var line in blockQuote.Lines)
-            {
-                _output.AppendLine(line + "<br/>");
-            }
-
-            _output.AppendLine(@"</blockquote>");
-        }
-
-        private void renderOriginalMessage(OriginalMessage message)
-        {
-            _idIndex += 1;
-            var id = "originalMessage" + _idIndex;
-            _output.AppendLine(@"<div id=""{0}"" class=""history-inline-message collapse in ""><i class=""icon-comment"" title=""Click to expand"" data-toggle=""collapse"" data-target=""#{0}""></i>".ToFormat(id));
-
-            _output.AppendLine(@"<h5 class=""history-inline-header"">{0}</h5><div class=""history-inline-content"">".ToFormat(message.Header));
-
-            Render(message.Items);
-
-            _output.AppendLine(@"</div></div>");
-        }
-
-
-        private void  renderItem(IItem item)
-        {
-            _output.AppendLine("<p>{0}</p>".ToFormat(item));
-        }
     }
 }

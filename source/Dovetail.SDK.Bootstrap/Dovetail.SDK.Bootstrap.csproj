@@ -57,9 +57,6 @@
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <Reference Include="Sprache, Version=1.9.1.31, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Sprache.1.9.1.31\lib\NET40\Sprache.dll</HintPath>
-    </Reference>
     <Reference Include="StructureMap, Version=2.6.3.0, Culture=neutral, PublicKeyToken=e60ad81abae3c223, processorArchitecture=MSIL">
       <HintPath>..\packages\structuremap.2.6.3\lib\StructureMap.dll</HintPath>
     </Reference>
@@ -74,13 +71,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Authentication\AspNetSecurityContext.cs" />
     <Compile Include="Authentication\AuthenticationContextService.cs" />
     <Compile Include="Authentication\AuthenticationService.cs" />
     <Compile Include="Authentication\FormsAuthenticationService.cs" />
     <Compile Include="Authentication\PrincipalFactory.cs" />
-    <Compile Include="Authentication\AspNetSecurityContext.cs" />
     <Compile Include="Authentication\SecurityModule.cs" />
     <Compile Include="Authentication\UserAuthenticator.cs" />
+    <Compile Include="History\Parser\Sprache\Failure.cs" />
+    <Compile Include="History\Parser\Sprache\IFailure.cs" />
+    <Compile Include="History\Parser\Sprache\Input.cs" />
+    <Compile Include="History\Parser\Sprache\IResultOfT.cs" />
+    <Compile Include="History\Parser\Sprache\ISuccess.cs" />
+    <Compile Include="History\Parser\Sprache\Parse.cs" />
+    <Compile Include="History\Parser\Sprache\ParseException.cs" />
+    <Compile Include="History\Parser\Sprache\ParserOfT.cs" />
+    <Compile Include="History\Parser\Sprache\ResultHelper.cs" />
+    <Compile Include="History\Parser\Sprache\Success.cs" />
     <Compile Include="Clarify\ApplicationSessionCache.cs" />
     <Compile Include="Clarify\UserDataAccess.cs" />
     <Compile Include="Configuration\AppSettingProviderRegistry.cs" />
@@ -95,6 +102,8 @@
     <Compile Include="History\AssemblerPolicies\CaseHistoryAssemblerPolicy.cs" />
     <Compile Include="History\CommonActEntryBuilderDSLExtensions.cs" />
     <Compile Include="History\AssemblerPolicies\DefaultHistoryAssemblerProvider.cs" />
+    <Compile Include="History\Parser\HistoryItemHtmlRenderer.cs" />
+    <Compile Include="History\Parser\HistoryItemParser.cs" />
     <Compile Include="History\Parser\HistoryParsers.cs" />
     <Compile Include="History\TemplatePolicies\DefaultActEntryTemplatePolicyRegistry.cs" />
     <Compile Include="History\Configuration\HistorySettings.cs" />

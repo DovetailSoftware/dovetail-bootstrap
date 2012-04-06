@@ -12,7 +12,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
         [Test]
         public void detect_item()
         {
-            const string input = "line1\r\nline2";
+            const string input = "line1\nline2";
 
             var item = HistoryParsers.Item.Parse(input);
 
@@ -116,35 +116,71 @@ namespace Dovetail.SDK.Bootstrap.Tests
         [Test]
         public void original_message()
         {
-            const string input = @"On Tue, Nov 3, 2009 at 12:34 PM, Sam Tyson <styson@gmail.com> wrote:
+            const string input = @"On Tue, Nov 3, 2009 at 12:34 PM, Sam Tyson <dude@gmail.com> wrote:
 
 Here are the config files. Please let me know what else I can get you.
 
-From: Sam Tyson [mailto:styson@gmail.com]
+From: Dude Wee [mailto:dude@gmail.com]
 Sent: Tuesday, November 03, 2009 12:12 PM
-To: Andy Hagerty
+To: A Guy
 Subject: Re: test
 
 test received
 
 &gt; Thanks,
 &gt;
-&gt;  Sam Tyson
+&gt;  Dude Wee
 &gt;
-&gt;  On Tue, Nov 3, 2009 at 11:09 AM, Andy Hagerty <andy.hagerty@consona.com&gt;
+&gt;  On Tue, Nov 3, 2009 at 11:09 AM, A Guy <guy@place.com&gt;
 &gt; wrote:
 &gt;
 &gt; Test
-&gt; Andy Hagerty";
+&gt; A Guy";
 
-            var items = HistoryParsers.Item.Many().End().Parse(input).ToArray();
-            items.Length.ShouldEqual(1);
-            
-            var originalMessage = (OriginalMessage)items[0];
-            originalMessage.Header.ShouldContain("styson@gmail.com");
+            var originalMessage = HistoryParsers.OriginalMessage.Parse(input);
+            originalMessage.Header.ShouldContain("dude@gmail.com");
 
             var originalMessageItems = originalMessage.Items.ToArray();
             originalMessageItems.Length.ShouldEqual(15);
+
+            //TODO Make original message parser use Item not Content for items.
+            //originalMessageItems.Length.ShouldEqual(4);
         }
+
+        [Test]
+        [Ignore("Would like to have original messages return non Content IItems")]
+        public void original_message_from_item_parser()
+        {
+            const string input = @"On Tue, Nov 3, 2009 at 12:34 PM, Sam Tyson <dude@gmail.com> wrote:
+
+Here are the config files. Please let me know what else I can get you.
+
+From: Dude Wee [mailto:dude@gmail.com]
+Sent: Tuesday, November 03, 2009 12:12 PM
+To: A Guy
+Subject: Re: test
+
+test received
+
+&gt; Thanks,
+&gt;
+&gt;  Dude Wee
+&gt;
+&gt;  On Tue, Nov 3, 2009 at 11:09 AM, A Guy <guy@place.com&gt;
+&gt; wrote:
+&gt;
+&gt; Test
+&gt; A Guy";
+
+            var items = HistoryParsers.Item.Many().Parse(input).ToArray();
+            items.Length.ShouldEqual(1);
+
+            var originalMessage = (OriginalMessage)items[1];
+            originalMessage.Header.ShouldContain("dude@gmail.com");
+
+            var originalMessageItems = originalMessage.Items.ToArray();
+            originalMessageItems.Length.ShouldEqual(4);
+        }
+
     }
 }
