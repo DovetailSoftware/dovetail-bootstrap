@@ -35,7 +35,7 @@ namespace Dovetail.SDK.Bootstrap.Configuration
                 s.AddAllTypesOf<IHistoryAssemblerPolicy>();
             });
 
-            IncludeRegistry<AppSettingProviderRegistry>();
+            //IncludeRegistry<AppSettingProviderRegistry>();
 
             For<IClarifyApplicationFactory>().Singleton().Use<ClarifyApplicationFactory>();
 

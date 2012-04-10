@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Security.Principal;
+﻿using System.Security.Principal;
 using Dovetail.SDK.Bootstrap.Clarify;
 using Dovetail.SDK.Bootstrap.Token;
 using Dovetail.SDK.Fubu.TokenAuthentication.Token;
-using FubuCore.Binding;
 using FubuMVC.Core.Runtime;
 using FubuMVC.Core.Security;
 using NUnit.Framework;
@@ -14,31 +12,25 @@ namespace Dovetail.SDK.Bootstrap.Tests.Token
 {
     public class authenticate_token_authorization_policy : Context<AuthenticationTokenAuthorizationPolicy>
     {
-        private AggregateDictionary _aggregateDictionary;
         private string _token;
-        private Dictionary<string, object> _requestDictionary;
         private IFubuRequest _request;
+        private AuthenticationTokenRequest _authenticationTokenRequest;
 
         public override void Given()
         {
             _token = "token";
-            _requestDictionary = new Dictionary<string, object> { { "authToken", _token } };
-
-            _aggregateDictionary.AddDictionary("Other", _requestDictionary);
-
-            _request = MockFor<IFubuRequest>();
+            _authenticationTokenRequest = new AuthenticationTokenRequest {authToken = _token};
+            
+            _request = MockFor<IFubuRequest>(); 
+            _request.Stub(a => a.Get<AuthenticationTokenRequest>()).Return(_authenticationTokenRequest);
+            
             _request.Stub(a => a.Get<ICurrentSDKUser>()).Return(MockFor<ICurrentSDKUser>());
-        }
-
-        public override void OverrideMocks()
-        {
-            _aggregateDictionary = new AggregateDictionary();
-            Override(_aggregateDictionary);
         }
 
         [Test]
         public void token_should_be_found_on_request()
         {
+
             _cut.RightsFor(_request);
 
             MockFor<IAuthenticationTokenRepository>().AssertWasCalled(a => a.RetrieveByToken(_token));
@@ -47,7 +39,7 @@ namespace Dovetail.SDK.Bootstrap.Tests.Token
         [Test]
         public void should_allow_when_no_authentication_token_is_on_request_but_user_is_authenticated()
         {
-            _requestDictionary.Clear();
+            _authenticationTokenRequest.authToken = null;
             MockFor<ICurrentSDKUser>().Stub(a => a.IsAuthenticated).Return(true);
 
             var result = _cut.RightsFor(_request);
@@ -58,7 +50,7 @@ namespace Dovetail.SDK.Bootstrap.Tests.Token
         [Test]
         public void should_deny_when_authentication_token_is_not_on_request()
         {
-            _requestDictionary.Clear();
+            _authenticationTokenRequest.authToken = null;
 
             var result = _cut.RightsFor(_request);
 

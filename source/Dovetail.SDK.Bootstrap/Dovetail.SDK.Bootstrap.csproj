@@ -49,13 +49,10 @@
       <HintPath>..\packages\Dovetail.SDK.3.2.4.6\lib\net20\fcSDK.dll</HintPath>
     </Reference>
     <Reference Include="FubuCore">
-      <HintPath>..\packages\FubuCore.0.9.4.117\lib\FubuCore.dll</HintPath>
+      <HintPath>..\packages\FubuCore.0.9.8.130\lib\FubuCore.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="StructureMap, Version=2.6.3.0, Culture=neutral, PublicKeyToken=e60ad81abae3c223, processorArchitecture=MSIL">
       <HintPath>..\packages\structuremap.2.6.3\lib\StructureMap.dll</HintPath>
@@ -90,11 +87,9 @@
     <Compile Include="History\Parser\Sprache\Success.cs" />
     <Compile Include="Clarify\ApplicationSessionCache.cs" />
     <Compile Include="Clarify\UserDataAccess.cs" />
-    <Compile Include="Configuration\AppSettingProviderRegistry.cs" />
     <Compile Include="Configuration\BootstrapRegistry.cs" />
     <Compile Include="Configuration\DovetailAppSettingsSource.cs" />
     <Compile Include="Configuration\SettingsScanner.cs" />
-    <Compile Include="Configuration\StructureMapServiceLocator.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="History\AssemblerPolicies\IHistoryAssemblerPolicy.cs" />
     <Compile Include="History\Configuration\ActEntryTemplatePolicyConfiguration.cs" />

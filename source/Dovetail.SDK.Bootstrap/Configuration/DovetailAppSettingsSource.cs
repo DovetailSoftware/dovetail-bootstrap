@@ -10,17 +10,18 @@ namespace Dovetail.SDK.Bootstrap.Configuration
         {
             var appSettings = ConfigurationManager.AppSettings;
 
-            var data = new SettingsData(SettingCategory.profile) { Provenance = "applicationConfiguration/appSettings"};
+            var data = new SettingsData(SettingCategory.profile) { Provenance = "applicationConfiguration/appSettings" };
 
             appSettings.AllKeys.Each(key =>
-                                         {
-                                             var value = appSettings[key];
-                                             var keyWithSettings = appendSettingsToKeyTypeName(key);
-                                             data[keyWithSettings] = value;
-                                         });
+            {
+                var value = appSettings[key];
+                var keyWithSettings = appendSettingsToKeyTypeName(key);
+                data[keyWithSettings] = value;
+            });
 
             return new[] { data };
         }
+
 
         private static string appendSettingsToKeyTypeName(string key)
         {
@@ -30,8 +31,8 @@ namespace Dovetail.SDK.Bootstrap.Configuration
             // <ClassName>Settings.<Property>
 
             //don't mess with fchoice keys
-            if (key.StartsWith("fchoice")) return key; 
-            
+            if (key.StartsWith("fchoice")) return key;
+
             //no dots means we don't care
             var dotIndex = key.IndexOf('.');
             if (dotIndex == -1) return key;
