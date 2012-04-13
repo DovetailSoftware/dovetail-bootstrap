@@ -8,6 +8,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
     {
     	string Username { get; }
         bool IsAuthenticated { get; }
+        bool IsAgent{ get; }
         bool HasPermission(string permission);
         ITimeZone Timezone { get; }
 
@@ -23,6 +24,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
         private readonly IUserDataAccess _userDataAccess;
         private readonly ILocaleCache _localeCache;
         public bool IsAuthenticated { get; private set; }
+        public bool IsAgent { get; private set; }
 
         public string Username { get; set; }
         public ITimeZone Timezone { get; set; }
@@ -48,6 +50,8 @@ namespace Dovetail.SDK.Bootstrap.Clarify
             _principal = principal;
             var username = principal.Identity.Name;
 
+            //TODO figure out which timezone based on contact or agent
+            //TODO Better yet move timezone selection to its own service
             var timezone = _userDataAccess.GetUserSiteTimezone(username); 
 
             if (timezone == null)

@@ -26,10 +26,12 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 
         public IPrincipal CreatePrincipal(IIdentity identity)
         {
-            var username = identity.Name;
+            var split = identity.Name.Split(':');
+            var type = split[0];
+            var username = split[1];
 
+            //if agent get session and use it's permissions
             var session = _sessionCache.GetSession(username);
-
             _logger.LogDebug("Creating principal for user {0} with {1} permissions.", username, session.Permissions.Length);
 
             return new DovetailPrincipal(identity, session.Permissions);
