@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Security.Principal;
 using FChoice.Foundation.Clarify;
 using FChoice.Foundation.DataObjects;
@@ -8,9 +10,9 @@ namespace Dovetail.SDK.Bootstrap.Clarify
     {
     	string Username { get; }
         bool IsAuthenticated { get; }
-        bool IsAgent{ get; }
         bool HasPermission(string permission);
         ITimeZone Timezone { get; }
+        IEnumerable<UserQueue> Queues { get; }
 
         void SignOut();
         void SetUser(IPrincipal principal);
@@ -24,10 +26,30 @@ namespace Dovetail.SDK.Bootstrap.Clarify
         private readonly IUserDataAccess _userDataAccess;
         private readonly ILocaleCache _localeCache;
         public bool IsAuthenticated { get; private set; }
-        public bool IsAgent { get; private set; }
 
         public string Username { get; set; }
-        public ITimeZone Timezone { get; set; }
+
+        private readonly Lazy<ITimeZone> _timeZone; 
+        public ITimeZone Timezone { 
+            get
+            {
+                if (Username == _settings.ApplicationUsername)
+                    return _localeCache.ServerTimeZone;
+
+                return _timeZone.Value;
+            }
+        }
+
+        private readonly Lazy<IEnumerable<UserQueue>> _queues;
+        public IEnumerable<UserQueue> Queues {
+            get
+            {
+                if (Username == _settings.ApplicationUsername)
+                    return new UserQueue[0];
+
+                return _queues.Value;
+            }
+        }
 
         public CurrentSDKUser(DovetailDatabaseSettings settings, ILocaleCache localeCache, ILogger logger, IUserDataAccess userDataAccess)
         {
@@ -38,6 +60,21 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 
             //set up defaults
             SignOut();
+
+            _timeZone = new Lazy<ITimeZone>(()=>
+            {
+                var timezone = _userDataAccess.GetUserSiteTimezone(Username);
+
+                if (timezone == null)
+                {
+                    _logger.LogWarn("Could not find user {0}'s site timezone. Setting their timezone to the default timezone.", Username);
+                    return _localeCache.ServerTimeZone;
+                }
+
+                return timezone;
+            });
+
+            _queues = new Lazy<IEnumerable<UserQueue>>(() => _userDataAccess.GetQueueMemberships(Username));
         }
 
         public bool HasPermission(string permission)
@@ -48,21 +85,10 @@ namespace Dovetail.SDK.Bootstrap.Clarify
         public void SetUser(IPrincipal principal)
         {
             _principal = principal;
-            var username = principal.Identity.Name;
-
-            //TODO figure out which timezone based on contact or agent
-            //TODO Better yet move timezone selection to its own service
-            var timezone = _userDataAccess.GetUserSiteTimezone(username); 
-
-            if (timezone == null)
-            {
-                _logger.LogWarn("Could not find user's site timezone. Setting their timezone to the default timezone.");
-                timezone = _localeCache.ServerTimeZone;
-            }
-
-            Username = username;
+            
+            Username = _principal.Identity.Name;
+            
             IsAuthenticated = true;
-            Timezone = timezone;
         }
 
         public void SignOut()
@@ -71,8 +97,6 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 
             //when no user is authenticated the application user is used
             Username = _settings.ApplicationUsername;
-            Timezone = _localeCache.ServerTimeZone;
         }
     }
-
 }

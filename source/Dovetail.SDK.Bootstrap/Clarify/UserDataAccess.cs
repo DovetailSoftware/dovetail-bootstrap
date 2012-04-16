@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Dovetail.SDK.Bootstrap.Clarify.Extensions;
 using FChoice.Foundation.Clarify;
 using FChoice.Foundation.Clarify.DataObjects;
+using FChoice.Foundation.Filters;
 using FubuCore;
 
 namespace Dovetail.SDK.Bootstrap.Clarify
@@ -9,7 +12,15 @@ namespace Dovetail.SDK.Bootstrap.Clarify
     public interface IUserDataAccess
     {
         FCTimeZone GetUserSiteTimezone(string username);
+        IEnumerable<UserQueue> GetQueueMemberships(string userName);
     }
+
+    public class UserQueue
+    {
+        public string Name { get; set; }
+        public int DatabaseIdentifier { get; set; }
+    }
+
 
     public class UserDataAccess : IUserDataAccess
     {
@@ -23,6 +34,31 @@ namespace Dovetail.SDK.Bootstrap.Clarify
             _localeCache = localeCache;
             _logger = logger;
         }
+
+        public IEnumerable<UserQueue> GetQueueMemberships(string userName)
+        {
+            var dataSet = _session.CreateDataSet();
+            var userGeneric = dataSet.CreateGeneric("user");
+            userGeneric.Filter.AddFilter(FilterType.Equals("login_name", userName));
+
+            var queueGeneric = userGeneric.Traverse("user_assigned2queue");
+            queueGeneric.DataFields.Add("title");
+
+            userGeneric.Query();
+
+            if (userGeneric.Count < 1)
+            {
+                _logger.LogWarn("Could not find queue membership for employee {0} that does not exist.", userName);
+                return new UserQueue[0];
+            }
+
+            return queueGeneric.DataRows().Select(row => new UserQueue
+            {
+                DatabaseIdentifier = Convert.ToInt32(row.UniqueID),
+                Name = row["title"].ToString()
+            });
+        }
+
 
         public FCTimeZone GetUserSiteTimezone(string username)
         {

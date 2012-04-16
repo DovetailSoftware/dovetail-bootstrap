@@ -26,9 +26,7 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 
         public IPrincipal CreatePrincipal(IIdentity identity)
         {
-            var split = identity.Name.Split(':');
-            var type = split[0];
-            var username = split[1];
+            var username = identity.Name;
 
             //if agent get session and use it's permissions
             var session = _sessionCache.GetSession(username);
