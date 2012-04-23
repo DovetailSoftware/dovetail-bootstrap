@@ -12,7 +12,8 @@ namespace Dovetail.SDK.Bootstrap.Clarify
         bool IsAuthenticated { get; }
         bool HasPermission(string permission);
         ITimeZone Timezone { get; }
-        IEnumerable<UserQueue> Queues { get; }
+        IEnumerable<SDKUserQueue> Queues { get; }
+		string Workgroup { get; }
 
         void SignOut();
         void SetUser(IPrincipal principal);
@@ -22,59 +23,54 @@ namespace Dovetail.SDK.Bootstrap.Clarify
     {
         private IPrincipal _principal; 
         private readonly DovetailDatabaseSettings _settings;
-        private readonly ILogger _logger;
         private readonly IUserDataAccess _userDataAccess;
         private readonly ILocaleCache _localeCache;
         public bool IsAuthenticated { get; private set; }
 
         public string Username { get; set; }
 
-        private readonly Lazy<ITimeZone> _timeZone; 
+		private readonly Lazy<SDKUser> _user; 
         public ITimeZone Timezone { 
             get
             {
                 if (Username == _settings.ApplicationUsername)
                     return _localeCache.ServerTimeZone;
 
-                return _timeZone.Value;
+                return _user.Value.Timezone;
             }
         }
 
-        private readonly Lazy<IEnumerable<UserQueue>> _queues;
-        public IEnumerable<UserQueue> Queues {
+        public IEnumerable<SDKUserQueue> Queues {
             get
             {
                 if (Username == _settings.ApplicationUsername)
-                    return new UserQueue[0];
+                    return new SDKUserQueue[0];
 
-                return _queues.Value;
+                return _user.Value.Queues;
             }
         }
 
-        public CurrentSDKUser(DovetailDatabaseSettings settings, ILocaleCache localeCache, ILogger logger, IUserDataAccess userDataAccess)
+    	public string Workgroup
+    	{
+			get
+			{
+				if (Username == _settings.ApplicationUsername)
+					return "";
+
+				return _user.Value.Workgroup;
+			}
+    	}
+
+    	public CurrentSDKUser(DovetailDatabaseSettings settings, ILocaleCache localeCache, IUserDataAccess userDataAccess)
         {
             _settings = settings;
-            _logger = logger;
             _userDataAccess = userDataAccess;
             _localeCache = localeCache;
 
             //set up defaults
             SignOut();
 
-            _timeZone = new Lazy<ITimeZone>(()=>
-            {
-                var timezone = _userDataAccess.GetUserSiteTimezone(Username);
-
-                if (timezone == null)
-                {
-                    _logger.LogWarn("Could not find user {0}'s site timezone. Setting their timezone to the default timezone.", Username);
-                    return _localeCache.ServerTimeZone;
-                }
-
-                return timezone;
-            });
-
-            _queues = new Lazy<IEnumerable<UserQueue>>(() => _userDataAccess.GetQueueMemberships(Username));
+            _user = new Lazy<SDKUser>(()=> _userDataAccess.GetUser(Username));
         }
 
         public bool HasPermission(string permission)

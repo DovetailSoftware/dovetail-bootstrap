@@ -32,6 +32,6 @@ namespace Bootstrap.Web.Handlers.home
     public class HomeModel 
     {
         public UserOpenCaseListing[] Cases { get; set; }
-        public UserQueue[] Queues{ get; set; }
+        public SDKUserQueue[] Queues{ get; set; }
     }
 }
