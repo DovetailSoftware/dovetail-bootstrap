@@ -1,0 +1,3 @@
+﻿<use namespace="System.Linq" />
+<use namespace="FubuMVC.Core" />
+<use namespace="FubuCore" />

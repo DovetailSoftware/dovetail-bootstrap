@@ -180,6 +180,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Security\BootstrapAuthorizationFailureHandler.cs" />
     <Compile Include="WebRegistry.cs" />
+    <None Include="Shared\_global.spark" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
