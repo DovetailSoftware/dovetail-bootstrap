@@ -8,8 +8,6 @@ namespace Dovetail.SDK.Bootstrap.Extensions
 {
 	public static class StringExtensions
 	{
-        private static readonly Regex findLineBreaks = new Regex(@"\s*(\n\r|\n)\s*");
-        private static readonly Regex findLine = new Regex(@"^(.*)$", RegexOptions.Multiline);
         private static readonly Regex urlFinderRegEx = new Regex(@"(?<link>(?<protocol>ftp|http|https|mailto|file|webcal):(?:(?:[A-Za-z0-9$_.+!*(),;/?:@&~=-])|%[A-Fa-f0-9]{2}){2,}(?:#(?:[a-zA-Z0-9][a-zA-Z0-9$_.+!*(),;/?:@&~=%-]*))?(?:[A-Za-z0-9$_+!*();/?:~-]))");
         public static string ToHtml(this String toHtml)
 		{
