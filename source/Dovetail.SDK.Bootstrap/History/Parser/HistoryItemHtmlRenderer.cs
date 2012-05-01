@@ -48,18 +48,29 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
         {
             _idIndex += 1;
             var id = "emailHeader" + _idIndex;
-
-            _output.AppendLine(@"<div id=""{0}"" class=""history-email-header collapse in""><i class=""icon-envelope"" title=""Click to expand"" data-toggle=""collapse"" data-target=""#{0}""></i>".ToFormat(id));
+			var shouldCollapse = emailHeader.Headers.Count() > 1;
+            _output
+				//.AppendLine(@"<div id=""{0}"" class=""history-email-header collapse in""><i class=""icon-envelope"" title=""Click to expand"" data-toggle=""collapse"" data-target=""#{0}""></i>"
+				.AppendLine(@"<div id=""{0}"" class=""history-email-header {1}""><i class=""icon-envelope"" {2} data-target=""#{0}""></i>"
+				.ToFormat(id, shouldCollapse ? "collapse in" : "", shouldCollapse ? @"data-toggle=""collapse"" title=""Click to expand""" : ""));
 
             var emailHeaderItem = emailHeader.Headers.First();
-            _output.AppendLine(@"<h5 class=""history-inline-header"">{0} : {1}</h5><div class=""history-inline-content""><ul>".ToFormat(emailHeaderItem.Title, emailHeaderItem.Text));
+            _output
+				.AppendLine(@"<h5 class=""history-inline-header"">{0} : {1}</h5>"
+				.ToFormat(emailHeaderItem.Title.ToLower().Capitalize(), emailHeaderItem.Text));
 
-            foreach (var header in emailHeader.Headers.Skip(1))
-            {
-                _output.AppendLine(@"<li><span class=""email-header-name"">{0}</span> <span class=""email-header-text"">{1}</span></li>".ToFormat(header.Title.ToLower().Capitalize(), header.Text));
-            }
-
-            _output.Append(@"</ul></div></div>");
+        	var rest = emailHeader.Headers.Skip(1).ToArray();
+			if (rest.Any())
+			{
+				_output.AppendLine(@"<div class=""history-inline-content""><ul>");
+				foreach (var header in rest)
+				{
+					_output.AppendLine(@"<li><span class=""email-header-name"">{0}</span> <span class=""email-header-text"">{1}</span></li>".ToFormat(header.Title.ToLower().Capitalize(), header.Text));
+				}
+				_output.Append(@"</ul></div>");
+			}
+        	
+        	_output.AppendLine("</div>");
         }
 
         private void renderBlockQuote(BlockQuote blockQuote)
