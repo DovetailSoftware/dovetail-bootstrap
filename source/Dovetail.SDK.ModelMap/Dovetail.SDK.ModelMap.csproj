@@ -90,6 +90,7 @@
     <Compile Include="Instructions\EndMapMany.cs" />
     <Compile Include="Instructions\EndModelMap.cs" />
     <Compile Include="Instructions\EndRelation.cs" />
+    <Compile Include="IPagination.cs" />
     <Compile Include="MapEntryBuilder.cs" />
     <Compile Include="MappingExtensions.cs" />
     <Compile Include="ModelBuilder.cs" />

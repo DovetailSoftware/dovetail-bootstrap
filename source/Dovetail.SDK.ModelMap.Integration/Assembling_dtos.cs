@@ -6,6 +6,64 @@ using NUnit.Framework;
 namespace Dovetail.SDK.ModelMap.Integration
 {
 	[TestFixture]
+	public class Assembling_paginated_dtos : MapFixture
+	{
+		private SolutionDTO _solution1Dto;
+		private SolutionDTO _solution2Dto;
+		private IModelBuilder<Solution> _solutionAssembler;
+
+		public override void beforeAll()
+		{
+			base.beforeAll();
+
+			_solution1Dto = new ObjectMother(AdministratorClarifySession).CreateSolution();
+			_solution2Dto = new ObjectMother(AdministratorClarifySession).CreateSolution();
+
+			Container.Configure(d => d.For<ModelMap<Solution>>().Use<SolutionIdentifiedByIdNumberMap>());
+		}
+
+		[SetUp]
+		public void beforeEach()
+		{
+			_solutionAssembler = Container.GetInstance<IModelBuilder<Solution>>();
+		}
+
+		[Test]
+		public void results_are_limited_to_the_requested_page()
+		{
+			var results = _solutionAssembler.Get(f => f.IsIn("objid", _solution1Dto.Objid, _solution2Dto.Objid), new Pagination {PageSize = 1, CurrentPage = 1});
+
+			results.Results.Count().ShouldEqual(1);
+			results.Results.First().IdNumber.ShouldEqual(_solution1Dto.IDNumber);
+
+			results.Pagination.CurrentPage.ShouldEqual(1);
+			results.Pagination.PageSize.ShouldEqual(1);
+			results.Pagination.TotalCount.ShouldEqual(2);
+		}
+
+		[Test]
+		public void second_page()
+		{
+			var results = _solutionAssembler.Get(f => f.IsIn("objid", _solution1Dto.Objid, _solution2Dto.Objid), new Pagination {PageSize = 1, CurrentPage = 2});
+
+			results.Results.Count().ShouldEqual(1);
+			results.Results.First().IdNumber.ShouldEqual(_solution2Dto.IDNumber);
+
+			results.Pagination.CurrentPage.ShouldEqual(2);
+			results.Pagination.PageSize.ShouldEqual(1);
+			results.Pagination.TotalCount.ShouldEqual(2);
+		}
+
+		[Test]
+		public void pages_past_the_possible_results_should_be_empty()
+		{
+			var results = _solutionAssembler.Get(f => f.IsIn("objid", _solution1Dto.Objid, _solution2Dto.Objid), new Pagination {PageSize = 1, CurrentPage = 3});
+
+			results.Results.Count().ShouldEqual(0);
+		}
+	}
+
+	[TestFixture]
 	public class Assembling_dtos : MapFixture
 	{
 		private SolutionDTO _solution1Dto;
@@ -19,16 +77,6 @@ namespace Dovetail.SDK.ModelMap.Integration
 			_solution2Dto = new ObjectMother(AdministratorClarifySession).CreateSolution();
 
 			Container.Configure(d => d.For<ModelMap<Solution>>().Use<SolutionIdentifiedByIdNumberMap>());
-		}
-
-		[Test]
-		public void top_dtos_for_a_filter_only_the_requested_number_of_dtos_should_be_returned()
-		{
-			var solutionAssembler = Container.GetInstance<IModelBuilder<Solution>>();
-
-			var solutions = solutionAssembler.GetTop(FilterType.NotEqual(("objid"), -100), 1);
-
-			solutions.Count().ShouldEqual(1);
 		}
 
 		[Test]
@@ -62,32 +110,33 @@ namespace Dovetail.SDK.ModelMap.Integration
 
 			solution.Title.ShouldEqual(_solution1Dto.Title);
 		}
+	}
 
-		public class SolutionIdentifiedByIdNumberMap : ModelMap<Solution>
+	public class SolutionIdentifiedByObjIdMap : ModelMap<Solution>
+	{
+		protected override void MapDefinition()
 		{
-			protected override void MapDefinition()
-			{
-				FromTable("probdesc")
-					.Assign(d => d.IdNumber).FromIdentifyingField("id_number")
-					.Assign(d => d.Title).FromField("title");
-			}
+			FromTable("probdesc")
+				.Assign(d => d.DatabaseIdentifier).FromIdentifyingField("objid")
+				.Assign(d => d.Title).FromField("title")
+				.SortAscendingBy("id_number");
 		}
+	}
 
-		public class SolutionIdentifiedByObjIdMap : ModelMap<Solution>
-		{
-			protected override void MapDefinition()
-			{
-				FromTable("probdesc")
-					.Assign(d => d.DatabaseIdentifier).FromIdentifyingField("objid")
-					.Assign(d => d.Title).FromField("title");
-			}
-		}
+	public class Solution
+	{
+		public int DatabaseIdentifier { get; set; }
+		public string IdNumber { get; set; }
+		public string Title { get; set; }
+	}
 
-		public class Solution
+	public class SolutionIdentifiedByIdNumberMap : ModelMap<Solution>
+	{
+		protected override void MapDefinition()
 		{
-			public int DatabaseIdentifier { get; set; }
-			public string IdNumber { get; set; }
-			public string Title { get; set; }
+			FromTable("probdesc")
+				.Assign(d => d.IdNumber).FromIdentifyingField("id_number")
+				.Assign(d => d.Title).FromField("title");
 		}
 	}
 }

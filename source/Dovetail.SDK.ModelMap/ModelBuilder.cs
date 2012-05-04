@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Dovetail.SDK.Bootstrap.Clarify.Extensions;
 using Dovetail.SDK.ModelMap.Clarify;
 using Dovetail.SDK.ModelMap.ObjectModel;
 using Dovetail.SDK.ModelMap.Registration;
@@ -37,7 +38,7 @@ namespace Dovetail.SDK.ModelMap
         public MODEL[] Get(Filter filter)
         {
             var rootGenericMap = _mapEntryBuilder.BuildFromModelMap(_modelMap);
-            return assembleWithFilter(filter, rootGenericMap);
+            return assembleWithFilter(filter, rootGenericMap, null).Results;
         }
 
 	    public MODEL[] Get(Func<FilterExpression, Filter> filterFunction)
@@ -59,18 +60,17 @@ namespace Dovetail.SDK.ModelMap
             return assembleWithIdentifier(identifier, rootGenericMap);
         }
 
-        public MODEL[] GetTop(Func<FilterExpression, Filter> func, int dtoCountLimit)
+		public PaginatedResults<MODEL> Get(Func<FilterExpression, Filter> func, IPagination pagination)
         {
             var filter = func(new FilterExpression());
             
-            return GetTop(filter, dtoCountLimit);
+            return Get(filter, pagination);
         }
 
-        public MODEL[] GetTop(Filter filter, int dtoCountLimit)
+		public PaginatedResults<MODEL> Get(Filter filter, IPagination pagination)
         {
             var rootGenericMap = _mapEntryBuilder.BuildFromModelMap(_modelMap);
-            rootGenericMap.ClarifyGeneric.MaximumRows = dtoCountLimit;
-            return assembleWithFilter(filter, rootGenericMap);
+            return assembleWithFilter(filter, rootGenericMap, pagination);
         }
 
 		public MODEL[] GetAll(int dtoCountLimit)
@@ -80,7 +80,7 @@ namespace Dovetail.SDK.ModelMap
 			if(dtoCountLimit > 0)
 				rootGenericMap.ClarifyGeneric.MaximumRows = dtoCountLimit;
 
-			return assembleWithSortOverrides(rootGenericMap);
+			return assembleWithSortOverrides(rootGenericMap, null).Results;
 		}
 
 		public MODEL[] GetAll()
@@ -88,14 +88,14 @@ namespace Dovetail.SDK.ModelMap
 			return GetAll(-1);
 		}
 
-        private MODEL[] assembleWithFilter(Filter filter, ClarifyGenericMapEntry rootGenericMap)
+		private PaginatedResults<MODEL> assembleWithFilter(Filter filter, ClarifyGenericMapEntry rootGenericMap, IPagination pagination)
         {
         	rootGenericMap.ClarifyGeneric.Filter.AddFilter(filter);
 
-        	return assembleWithSortOverrides(rootGenericMap);
+        	return assembleWithSortOverrides(rootGenericMap, pagination);
         }
 
-    	private MODEL[] assembleWithSortOverrides(ClarifyGenericMapEntry rootGenericMap)
+		private PaginatedResults<MODEL> assembleWithSortOverrides(ClarifyGenericMapEntry rootGenericMap, IPagination pagination)
     	{
     		if (FieldSortMapOverrides.Any()) //override map sort with our own
     		{
@@ -106,7 +106,7 @@ namespace Dovetail.SDK.ModelMap
     			}
     		}
 
-    		return assemble(rootGenericMap);
+    		return assemble(rootGenericMap, pagination);
     	}
 
     	private MODEL assembleWithIdentifier(string identifier, ClarifyGenericMapEntry rootGenericMap)
@@ -115,7 +115,7 @@ namespace Dovetail.SDK.ModelMap
 
             var filter = FilterType.Equals(identifierFieldName, identifier);
 
-            return assembleWithFilter(filter, rootGenericMap).FirstOrDefault();
+            return assembleWithFilter(filter, rootGenericMap, null).Results.FirstOrDefault();
         }
 
         private MODEL assembleWithIdentifier(int identifier, ClarifyGenericMapEntry rootGenericMap)
@@ -124,7 +124,7 @@ namespace Dovetail.SDK.ModelMap
 
             var filter = FilterType.Equals(identifierFieldName, identifier);
 
-            return assembleWithFilter(filter, rootGenericMap).FirstOrDefault();
+			return assembleWithFilter(filter, rootGenericMap, null).Results.FirstOrDefault();
         }
 
         private static string GetIdentifierFieldName(ClarifyGenericMapEntry rootGenericMap)
@@ -139,25 +139,49 @@ namespace Dovetail.SDK.ModelMap
             return identifierFieldName;
         }
 
-        private MODEL[] assemble(ClarifyGenericMapEntry rootGenericMap)
-        {
+		private PaginatedResults<MODEL> assemble(ClarifyGenericMapEntry rootGenericMap, IPagination pagination)
+		{
+			var results = new PaginatedResults<MODEL> {Pagination = pagination};
+
             var rootClarifyGeneric = rootGenericMap.ClarifyGeneric;
+
+			//setup SDK generic for pagination if necessary
+			if (pagination != null)
+			{
+				var rowsToReturn = pagination.CurrentPage * pagination.PageSize;
+				rootClarifyGeneric.MaximumRows = rowsToReturn;
+				rootClarifyGeneric.MaximumRowsExceeded += (sender, args) =>
+					{
+						args.RowsToReturn = rowsToReturn;
+						results.Pagination.TotalCount = args.TotalPossibleRows;
+					};
+			}
 
             rootClarifyGeneric.DataSet.Query(rootClarifyGeneric);
 
             traverseGenericsPopulatingSubRootMaps(rootGenericMap);
 
-            var models = createDtosForMap(rootGenericMap);
+			var records = rootGenericMap.ClarifyGeneric.DataRows();
 
-            return models;
+			//take the results and constrain them to the requested page 
+			if (pagination != null)
+			{
+				var startRow = (pagination.CurrentPage - 1) * pagination.PageSize;
+				records = records.Skip(startRow).Take(pagination.PageSize);
+				results.Pagination = pagination;
+			}
+
+            results.Results = createDtosForMap(rootGenericMap, records);
+
+            return results;
         }
 
-        private void traverseGenericsPopulatingSubRootMaps(ClarifyGenericMapEntry parentGenericMap)
+		private void traverseGenericsPopulatingSubRootMaps(ClarifyGenericMapEntry parentGenericMap)
         {
             if (parentGenericMap.ClarifyGeneric.Count < 1)
                 return;
 
-            var childSubRootMaps = parentGenericMap.ChildGenericMaps.Where(map => map.IsNewRoot());
+            var childSubRootMaps = parentGenericMap.ChildGenericMaps.Where(map => map.IsNewRoot()).ToArray();
 
             if (!childSubRootMaps.Any())
                 return;
@@ -185,11 +209,11 @@ namespace Dovetail.SDK.ModelMap
             }
         }
 
-        private MODEL[] createDtosForMap(ClarifyGenericMapEntry genericMap)
+        private MODEL[] createDtosForMap(ClarifyGenericMapEntry genericMap, IEnumerable<ClarifyDataRow> records)
         {
             var dtos = new List<MODEL>();
 
-            foreach (ClarifyDataRow record in genericMap.ClarifyGeneric.Rows)
+            foreach (var record in records)
             {
                 var dto = Activator.CreateInstance(genericMap.Model.ModelType);
 
@@ -260,8 +284,7 @@ namespace Dovetail.SDK.ModelMap
             populateBasedOnRelatedGenerics(dto, childMapsForDtoType, record);
         }
 
-        private void populateSubRootMaps(object dto, IEnumerable<ClarifyGenericMapEntry> childMapsForDtoType,
-                                         ClarifyDataRow parentRecord)
+        private void populateSubRootMaps(object dto, IEnumerable<ClarifyGenericMapEntry> childMapsForDtoType, ClarifyDataRow parentRecord)
         {
             var childSubRootMaps = childMapsForDtoType.Where(map => map.IsNewRoot());
 
@@ -417,4 +440,10 @@ namespace Dovetail.SDK.ModelMap
             return new Exception("No fields were specified for this assignment");
         }
     }
+
+	public class PaginatedResults<MODEL>
+	{
+		public MODEL[] Results { get; set; }
+		public IPagination Pagination { get; set; }
+	}
 }

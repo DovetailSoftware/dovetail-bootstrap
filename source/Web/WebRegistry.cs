@@ -1,4 +1,4 @@
-﻿using Dovetail.SDK.Bootstrap.Authentication;
+﻿using Dovetail.SDK.Bootstrap.Clarify;
 using Dovetail.SDK.Bootstrap.Configuration;
 using Dovetail.SDK.ModelMap.Configuration;
 using Dovetail.SDK.ModelMap.Registration;
@@ -15,8 +15,8 @@ namespace Bootstrap.Web
                      {
                          //web assembly
                          scan.TheCallingAssembly();
-                         //fubu assembly
-                         scan.AssemblyContainingType<IAuthenticationService>();
+                         //bootstrap assembly
+						 scan.AssemblyContainingType<DovetailDatabaseSettings>();
                          
                          //register model maps found in scanned assemblies
                          //this lets your classes take dependencies on 
