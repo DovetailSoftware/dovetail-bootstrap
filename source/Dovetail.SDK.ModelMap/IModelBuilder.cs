@@ -12,8 +12,8 @@ namespace Dovetail.SDK.ModelMap
         MODEL GetOne(string identifier);
         MODEL GetOne(int identifier);
 		MODEL[] GetAll();
-		PaginatedResults<MODEL> Get(Filter filter, IPagination pagination);
-		PaginatedResults<MODEL> Get(Func<FilterExpression, Filter> filterFunction, IPagination pagination);
+		PaginationResult<MODEL> Get(Filter filter, IPaginationRequest paginationRequest);
+		PaginationResult<MODEL> Get(Func<FilterExpression, Filter> filterFunction, IPaginationRequest paginationRequest);
     	IEnumerable<FieldSortMap> FieldSortMapOverrides { get; set; }
     	MODEL[] GetAll(int dtoCountLimit);
     }

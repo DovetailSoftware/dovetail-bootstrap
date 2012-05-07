@@ -5,7 +5,7 @@ using Dovetail.SDK.Bootstrap.Clarify;
 namespace Dovetail.SDK.Bootstrap.Authentication
 {
     /// <summary>
-    /// Responsibile for creation of the current users principal. Replace the default on e
+    /// Responsibile for creation of the current user's principal. 
     /// </summary>
     public interface IPrincipalFactory
     {
@@ -28,7 +28,7 @@ namespace Dovetail.SDK.Bootstrap.Authentication
         {
             var username = identity.Name;
 
-            //if agent get session and use it's permissions
+            //if agent get session and use its permissions
             var session = _sessionCache.GetSession(username);
             _logger.LogDebug("Creating principal for user {0} with {1} permissions.", username, session.Permissions.Length);
 

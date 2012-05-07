@@ -38,7 +38,7 @@ namespace Dovetail.SDK.ModelMap
         public MODEL[] Get(Filter filter)
         {
             var rootGenericMap = _mapEntryBuilder.BuildFromModelMap(_modelMap);
-            return assembleWithFilter(filter, rootGenericMap, null).Results;
+            return assembleWithFilter(filter, rootGenericMap, null).Models;
         }
 
 	    public MODEL[] Get(Func<FilterExpression, Filter> filterFunction)
@@ -60,17 +60,17 @@ namespace Dovetail.SDK.ModelMap
             return assembleWithIdentifier(identifier, rootGenericMap);
         }
 
-		public PaginatedResults<MODEL> Get(Func<FilterExpression, Filter> func, IPagination pagination)
+		public PaginationResult<MODEL> Get(Func<FilterExpression, Filter> func, IPaginationRequest paginationRequest)
         {
             var filter = func(new FilterExpression());
             
-            return Get(filter, pagination);
+            return Get(filter, paginationRequest);
         }
 
-		public PaginatedResults<MODEL> Get(Filter filter, IPagination pagination)
+		public PaginationResult<MODEL> Get(Filter filter, IPaginationRequest paginationRequest)
         {
             var rootGenericMap = _mapEntryBuilder.BuildFromModelMap(_modelMap);
-            return assembleWithFilter(filter, rootGenericMap, pagination);
+            return assembleWithFilter(filter, rootGenericMap, paginationRequest);
         }
 
 		public MODEL[] GetAll(int dtoCountLimit)
@@ -80,7 +80,7 @@ namespace Dovetail.SDK.ModelMap
 			if(dtoCountLimit > 0)
 				rootGenericMap.ClarifyGeneric.MaximumRows = dtoCountLimit;
 
-			return assembleWithSortOverrides(rootGenericMap, null).Results;
+			return assembleWithSortOverrides(rootGenericMap, null).Models;
 		}
 
 		public MODEL[] GetAll()
@@ -88,14 +88,14 @@ namespace Dovetail.SDK.ModelMap
 			return GetAll(-1);
 		}
 
-		private PaginatedResults<MODEL> assembleWithFilter(Filter filter, ClarifyGenericMapEntry rootGenericMap, IPagination pagination)
+		private PaginationResult<MODEL> assembleWithFilter(Filter filter, ClarifyGenericMapEntry rootGenericMap, IPaginationRequest paginationRequest)
         {
         	rootGenericMap.ClarifyGeneric.Filter.AddFilter(filter);
 
-        	return assembleWithSortOverrides(rootGenericMap, pagination);
+        	return assembleWithSortOverrides(rootGenericMap, paginationRequest);
         }
 
-		private PaginatedResults<MODEL> assembleWithSortOverrides(ClarifyGenericMapEntry rootGenericMap, IPagination pagination)
+		private PaginationResult<MODEL> assembleWithSortOverrides(ClarifyGenericMapEntry rootGenericMap, IPaginationRequest paginationRequest)
     	{
     		if (FieldSortMapOverrides.Any()) //override map sort with our own
     		{
@@ -106,7 +106,7 @@ namespace Dovetail.SDK.ModelMap
     			}
     		}
 
-    		return assemble(rootGenericMap, pagination);
+    		return assemble(rootGenericMap, paginationRequest);
     	}
 
     	private MODEL assembleWithIdentifier(string identifier, ClarifyGenericMapEntry rootGenericMap)
@@ -115,7 +115,7 @@ namespace Dovetail.SDK.ModelMap
 
             var filter = FilterType.Equals(identifierFieldName, identifier);
 
-            return assembleWithFilter(filter, rootGenericMap, null).Results.FirstOrDefault();
+            return assembleWithFilter(filter, rootGenericMap, null).Models.FirstOrDefault();
         }
 
         private MODEL assembleWithIdentifier(int identifier, ClarifyGenericMapEntry rootGenericMap)
@@ -124,7 +124,7 @@ namespace Dovetail.SDK.ModelMap
 
             var filter = FilterType.Equals(identifierFieldName, identifier);
 
-			return assembleWithFilter(filter, rootGenericMap, null).Results.FirstOrDefault();
+			return assembleWithFilter(filter, rootGenericMap, null).Models.FirstOrDefault();
         }
 
         private static string GetIdentifierFieldName(ClarifyGenericMapEntry rootGenericMap)
@@ -139,21 +139,23 @@ namespace Dovetail.SDK.ModelMap
             return identifierFieldName;
         }
 
-		private PaginatedResults<MODEL> assemble(ClarifyGenericMapEntry rootGenericMap, IPagination pagination)
+		private PaginationResult<MODEL> assemble(ClarifyGenericMapEntry rootGenericMap, IPaginationRequest paginationRequest)
 		{
-			var results = new PaginatedResults<MODEL> {Pagination = pagination};
+			var result = new PaginationResult<MODEL>();
 
             var rootClarifyGeneric = rootGenericMap.ClarifyGeneric;
 
-			//setup SDK generic for pagination if necessary
-			if (pagination != null)
+			//setup SDK generic for PaginationRequest if necessary
+			if (paginationRequest != null)
 			{
-				var rowsToReturn = pagination.CurrentPage * pagination.PageSize;
-				rootClarifyGeneric.MaximumRows = rowsToReturn;
+				result.CurrentPage = paginationRequest.CurrentPage;
+				result.PageSize = paginationRequest.PageSize;
+				
+				rootClarifyGeneric.MaximumRows = 1; //hack! what if query has only one result?
 				rootClarifyGeneric.MaximumRowsExceeded += (sender, args) =>
 					{
-						args.RowsToReturn = rowsToReturn;
-						results.Pagination.TotalCount = args.TotalPossibleRows;
+						args.RowsToReturn = paginationRequest.CurrentPage * paginationRequest.PageSize;
+						result.TotalRecordCount = args.TotalPossibleRows;
 					};
 			}
 
@@ -164,16 +166,15 @@ namespace Dovetail.SDK.ModelMap
 			var records = rootGenericMap.ClarifyGeneric.DataRows();
 
 			//take the results and constrain them to the requested page 
-			if (pagination != null)
+			if (paginationRequest != null)
 			{
-				var startRow = (pagination.CurrentPage - 1) * pagination.PageSize;
-				records = records.Skip(startRow).Take(pagination.PageSize);
-				results.Pagination = pagination;
+				var startRow = (paginationRequest.CurrentPage - 1) * paginationRequest.PageSize;
+				records = records.Skip(startRow).Take(paginationRequest.PageSize);
 			}
 
-            results.Results = createDtosForMap(rootGenericMap, records);
+            result.Models = createDtosForMap(rootGenericMap, records);
 
-            return results;
+            return result;
         }
 
 		private void traverseGenericsPopulatingSubRootMaps(ClarifyGenericMapEntry parentGenericMap)
@@ -440,10 +441,4 @@ namespace Dovetail.SDK.ModelMap
             return new Exception("No fields were specified for this assignment");
         }
     }
-
-	public class PaginatedResults<MODEL>
-	{
-		public MODEL[] Results { get; set; }
-		public IPagination Pagination { get; set; }
-	}
 }

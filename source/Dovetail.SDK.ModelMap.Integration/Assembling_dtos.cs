@@ -29,37 +29,60 @@ namespace Dovetail.SDK.ModelMap.Integration
 		}
 
 		[Test]
-		public void results_are_limited_to_the_requested_page()
+		public void requesting_a_page_should_populate_models_and_pagination_result()
 		{
-			var results = _solutionAssembler.Get(f => f.IsIn("objid", _solution1Dto.Objid, _solution2Dto.Objid), new Pagination {PageSize = 1, CurrentPage = 1});
+			var results = _solutionAssembler.Get(f => f.IsIn("objid", _solution1Dto.Objid, _solution2Dto.Objid), new PaginationRequest {PageSize = 1, CurrentPage = 1});
 
-			results.Results.Count().ShouldEqual(1);
-			results.Results.First().IdNumber.ShouldEqual(_solution1Dto.IDNumber);
+			results.Models.Count().ShouldEqual(1);
+			results.Models.First().IdNumber.ShouldEqual(_solution1Dto.IDNumber);
 
-			results.Pagination.CurrentPage.ShouldEqual(1);
-			results.Pagination.PageSize.ShouldEqual(1);
-			results.Pagination.TotalCount.ShouldEqual(2);
+			results.CurrentPage.ShouldEqual(1);
+			results.PageSize.ShouldEqual(1);
+			results.TotalRecordCount.ShouldEqual(2);
 		}
 
 		[Test]
-		public void second_page()
+		public void requesting_the_second_page()
 		{
-			var results = _solutionAssembler.Get(f => f.IsIn("objid", _solution1Dto.Objid, _solution2Dto.Objid), new Pagination {PageSize = 1, CurrentPage = 2});
+			var results = _solutionAssembler.Get(f => f.IsIn("objid", _solution1Dto.Objid, _solution2Dto.Objid), new PaginationRequest {PageSize = 1, CurrentPage = 2});
 
-			results.Results.Count().ShouldEqual(1);
-			results.Results.First().IdNumber.ShouldEqual(_solution2Dto.IDNumber);
-
-			results.Pagination.CurrentPage.ShouldEqual(2);
-			results.Pagination.PageSize.ShouldEqual(1);
-			results.Pagination.TotalCount.ShouldEqual(2);
+			results.Models.Count().ShouldEqual(1);
+			results.Models.First().IdNumber.ShouldEqual(_solution2Dto.IDNumber);
+			
+			results.CurrentPage.ShouldEqual(2);	
+			results.PageSize.ShouldEqual(1);
+			results.TotalRecordCount.ShouldEqual(2);
 		}
 
 		[Test]
-		public void pages_past_the_possible_results_should_be_empty()
+		public void requesting_multi_item_page()
 		{
-			var results = _solutionAssembler.Get(f => f.IsIn("objid", _solution1Dto.Objid, _solution2Dto.Objid), new Pagination {PageSize = 1, CurrentPage = 3});
+			var results = _solutionAssembler.Get(f => f.IsIn("objid", _solution1Dto.Objid, _solution2Dto.Objid), new PaginationRequest { PageSize = 10, CurrentPage = 1 });
 
-			results.Results.Count().ShouldEqual(0);
+			results.Models.Count().ShouldEqual(2);
+			results.Models.First().IdNumber.ShouldEqual(_solution1Dto.IDNumber);
+			results.Models.Skip(1).First().IdNumber.ShouldEqual(_solution2Dto.IDNumber);
+
+			results.CurrentPage.ShouldEqual(1);
+			results.PageSize.ShouldEqual(10);
+			results.TotalRecordCount.ShouldEqual(2);
+		}
+
+		[Test]
+		//This is an ANTI-TEST. Under scoring a limitation of Dovetial SDK
+		public void requesting_multi_item_page_when_only_one_result_is_possible_does_not_populate_total_record_count()
+		{
+			var results = _solutionAssembler.Get(f => f.IsIn("objid", _solution1Dto.Objid), new PaginationRequest { PageSize = 2, CurrentPage = 1 });
+			
+			results.TotalRecordCount.ShouldEqual(0);
+		}
+
+		[Test]
+		public void requesting_pages_outside_the_possible_results_should_be_empty()
+		{
+			var results = _solutionAssembler.Get(f => f.IsIn("objid", _solution1Dto.Objid, _solution2Dto.Objid), new PaginationRequest {PageSize = 1, CurrentPage = 3});
+
+			results.Models.Count().ShouldEqual(0);
 		}
 	}
 
