@@ -133,6 +133,18 @@ namespace Dovetail.SDK.ModelMap.Integration
 
 			solution.Title.ShouldEqual(_solution1Dto.Title);
 		}
+
+		[Test]
+		public void getting_top_should_return_limited_results()
+		{
+			Container.Configure(d => d.For<ModelMap<Solution>>().Use<SolutionIdentifiedByIdNumberMap>());
+			var solutionAssembler = Container.GetInstance<IModelBuilder<Solution>>();
+
+			var solutions = solutionAssembler.GetTop(f => f.IsIn("objid", _solution1Dto.Objid, _solution2Dto.Objid), 1);
+
+			solutions.Count().ShouldEqual(1);
+			solutions.First().Title.ShouldEqual(_solution1Dto.Title);
+		}
 	}
 
 	public class SolutionIdentifiedByObjIdMap : ModelMap<Solution>

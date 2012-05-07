@@ -48,7 +48,17 @@ namespace Dovetail.SDK.ModelMap
             return Get(filter);
 	    }
 
-	    public MODEL GetOne(string identifier)
+		public MODEL[] GetTop(Filter filter, int numberOfRecords)
+		{
+			return Get(filter, new PaginationRequest {CurrentPage = 1, PageSize = numberOfRecords}).Models;
+		}
+
+		public MODEL[] GetTop(Func<FilterExpression, Filter> filterFunction, int numberOfRecords)
+		{
+			return Get(filterFunction, new PaginationRequest {CurrentPage = 1, PageSize = numberOfRecords}).Models;
+		}
+
+		public MODEL GetOne(string identifier)
         {
             var rootGenericMap = _mapEntryBuilder.BuildFromModelMap(_modelMap);
             return assembleWithIdentifier(identifier, rootGenericMap);
