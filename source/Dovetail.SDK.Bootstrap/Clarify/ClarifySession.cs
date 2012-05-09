@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using FChoice.Common.Data;
 using FChoice.Foundation.Clarify;
 using FChoice.Toolkits.Clarify.FieldOps;
@@ -8,6 +9,7 @@ using FChoice.Toolkits.Clarify.Support;
 namespace Dovetail.SDK.Bootstrap.Clarify
 {
     public interface IApplicationClarifySession : IClarifySession {
+    	IEnumerable<string> DataRestriction { get; }
     }
 
     public interface IClarifySession
@@ -65,6 +67,16 @@ namespace Dovetail.SDK.Bootstrap.Clarify
         {
             get { return Convert.ToInt32((object) ClarifySession["user.id"]); }
         }
+
+		public IEnumerable<string> DataRestriction
+		{
+			get
+			{
+				var restrictionGroup = ClarifySession.RestrictionGroup;
+
+				return restrictionGroup == null ? new string[0] : restrictionGroup.Restrictions;
+			}
+		}
 
         public ClarifyDataSet CreateDataSet()
         {
