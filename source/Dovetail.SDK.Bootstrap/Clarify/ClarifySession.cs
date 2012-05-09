@@ -9,7 +9,6 @@ using FChoice.Toolkits.Clarify.Support;
 namespace Dovetail.SDK.Bootstrap.Clarify
 {
     public interface IApplicationClarifySession : IClarifySession {
-    	IEnumerable<string> DataRestriction { get; }
     }
 
     public interface IClarifySession
@@ -25,7 +24,8 @@ namespace Dovetail.SDK.Bootstrap.Clarify
         InterfacesToolkit CreateInterfacesToolkit();
         SqlHelper CreateSqlHelper(string sql);
         string[] Permissions { get; }
-        void Close();
+    	IEnumerable<string> DataRestriction { get; }
+    	void Close();
     }
 
     public class ClarifySessionWrapper : IApplicationClarifySession
