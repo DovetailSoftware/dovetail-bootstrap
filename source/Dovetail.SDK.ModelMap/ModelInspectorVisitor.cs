@@ -9,6 +9,28 @@ using FChoice.Foundation.Schema;
 
 namespace Dovetail.SDK.ModelMap
 {
+	public class ModelMapFieldDetails
+	{
+		/// <summary>
+		/// Property of the Model class
+		/// </summary>
+		public PropertyInfo Property { get; set; }
+		/// <summary>
+		/// Name of the database field 
+		/// </summary>
+		public string FieldName { get; set; }
+
+		/// <summary>
+		/// Type of the field in the Clarify schema. Currently only string and integer types are supported.
+		/// </summary>
+		public Type SchemaFieldType { get; set; }
+	}
+
+	/// <summary>
+	/// Inspects the model map for a model (generic argument). 
+	/// Currently used to get at the identifying field details for a given model map. 
+	/// </summary>
+	/// <typeparam name="MODEL">Model whose ModelMap should be inspected.</typeparam>
 	public class ModelInspector<MODEL>
 	{
 	    private readonly ModelMap<MODEL> _modelMap;
@@ -21,26 +43,20 @@ namespace Dovetail.SDK.ModelMap
 		    _modelInspectorVisitor = modelInspectorVisitor;
 		}
 
-	    public MapFieldDetails Identifier
+		/// <summary>
+		/// Inspects the model map and returns details about the identifying field of the map.
+		/// </summary>
+		/// <returns></returns>
+		public ModelMapFieldDetails GetIdentifier()
 		{
-			get
-			{
-                if(!_visited)
-                {
-                    _modelMap.Accept(_modelInspectorVisitor);
-                    _visited = true;
-                }
+            if(!_visited)
+            {
+                _modelMap.Accept(_modelInspectorVisitor);
+                _visited = true;
+            }
 
-			    return _modelInspectorVisitor.IndentifierField;
-			}
+			return _modelInspectorVisitor.IndentifierField;
 		}
-	}
-
-	public class MapFieldDetails
-	{
-		public PropertyInfo Property { get; set; }
-		public string FieldName { get; set; }
-	    public Type SchemaFieldType { get; set; }
 	}
 
 	public class ModelInspectorVisitor : IModelMapVisitor
@@ -53,7 +69,7 @@ namespace Dovetail.SDK.ModelMap
 	        _schemaCache = schemaCache;
 	    }
 
-	    public MapFieldDetails IndentifierField { get; set; }
+	    public ModelMapFieldDetails IndentifierField { get; set; }
 
 		public void Visit(FieldMap fieldMap)
 		{
@@ -62,7 +78,7 @@ namespace Dovetail.SDK.ModelMap
             if(IndentifierField != null)
                 throw new ArgumentException("There are multiple identifying fields defined on the model map being visited.");
             
-		    IndentifierField = new MapFieldDetails
+		    IndentifierField = new ModelMapFieldDetails
 		                           {
 		                               FieldName = fieldMap.FieldNames.First(),
 		                               Property = fieldMap.Property,
