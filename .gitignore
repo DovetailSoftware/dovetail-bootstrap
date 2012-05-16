@@ -27,3 +27,4 @@ libs/DovetailSDK/*.dll
 !repositories.config
 !source/Web/bootstrap.log4net
 .idea
+*.sublime-workspace

@@ -9,7 +9,8 @@ namespace Dovetail.SDK.Bootstrap.Clarify
     public interface ICurrentSDKUser
     {
     	string Username { get; }
-        bool IsAuthenticated { get; }
+    	string Fullname { get; }
+    	bool IsAuthenticated { get; }
         bool HasPermission(string permission);
         ITimeZone Timezone { get; }
         IEnumerable<SDKUserQueue> Queues { get; }
@@ -25,15 +26,26 @@ namespace Dovetail.SDK.Bootstrap.Clarify
         private readonly DovetailDatabaseSettings _settings;
         private readonly IUserDataAccess _userDataAccess;
         private readonly ILocaleCache _localeCache;
-        public bool IsAuthenticated { get; private set; }
 
+    	public string Fullname
+    	{
+    		get
+    		{
+				if (!IsAuthenticated) return "";
+
+    			var user = _user.Value;
+    			return user.FirstName + " " + user.LastName;
+    		}
+    	}
+
+    	public bool IsAuthenticated { get; private set; }
         public string Username { get; set; }
 
 		private readonly Lazy<SDKUser> _user; 
         public ITimeZone Timezone { 
             get
             {
-                if (Username == _settings.ApplicationUsername)
+				if (!IsAuthenticated) 
                     return _localeCache.ServerTimeZone;
 
                 return _user.Value.Timezone;
@@ -43,7 +55,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
         public IEnumerable<SDKUserQueue> Queues {
             get
             {
-                if (Username == _settings.ApplicationUsername)
+				if (!IsAuthenticated) 
                     return new SDKUserQueue[0];
 
                 return _user.Value.Queues;
@@ -54,8 +66,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
     	{
 			get
 			{
-				if (Username == _settings.ApplicationUsername)
-					return "";
+				if (!IsAuthenticated) return "";
 
 				return _user.Value.Workgroup;
 			}
