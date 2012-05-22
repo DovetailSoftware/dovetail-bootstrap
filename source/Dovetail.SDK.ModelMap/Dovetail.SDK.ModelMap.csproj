@@ -54,7 +54,7 @@
       <HintPath>..\packages\Dovetail.SDK.3.2.4.11\lib\net20\fcSDK.dll</HintPath>
     </Reference>
     <Reference Include="FubuCore">
-      <HintPath>..\packages\FubuCore.0.9.8.130\lib\FubuCore.dll</HintPath>
+      <HintPath>..\packages\FubuCore.0.9.9.149\lib\FubuCore.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
