@@ -17,19 +17,21 @@ namespace Dovetail.SDK.Bootstrap.Clarify
         private readonly IClarifyApplicationFactory _clarifyApplicationFactory;
         private readonly ILogger _logger;
         private readonly Func<ICurrentSDKUser> _currentSdkUser;
+    	private readonly IUserClarifySessionConfigurator _sessionConfigurator;
 
-        //TODO configure StructureMap to do the Create() for us
+    	//TODO configure StructureMap to do the Create() for us
         private ClarifyApplication _clarifyApplication;
         private readonly Cache<string, Guid> _agentSessionCacheByUsername = new Cache<string, Guid>();
         private readonly Cache<string, Guid> _contactSessionCacheByUsername = new Cache<string, Guid>();
         private Guid _applicationSessionId;
 
-        public ClarifySessionCache(IClarifyApplicationFactory clarifyApplicationFactory, ILogger logger, Func<ICurrentSDKUser> currentSdkUser)
+        public ClarifySessionCache(IClarifyApplicationFactory clarifyApplicationFactory, ILogger logger, Func<ICurrentSDKUser> currentSdkUser, IUserClarifySessionConfigurator sessionConfigurator)
         {
             _clarifyApplicationFactory = clarifyApplicationFactory;
             _logger = logger;
             _currentSdkUser = currentSdkUser;
-            _agentSessionCacheByUsername.OnMissing = onAgentMissing;
+        	_sessionConfigurator = sessionConfigurator;
+        	_agentSessionCacheByUsername.OnMissing = onAgentMissing;
             _contactSessionCacheByUsername.OnMissing = onContactMissing;
         }
 
@@ -67,8 +69,8 @@ namespace Dovetail.SDK.Bootstrap.Clarify
             try
             {
                 var session = ClarifyApplication.GetSession(sessionId);
-                session.LocalTimeZone = _currentSdkUser().Timezone;
-
+            	_sessionConfigurator.Configure(session);
+             
                 return wrapSession(session);
             }
             catch (Exception exception)

@@ -39,7 +39,7 @@ namespace Dovetail.SDK.Bootstrap.Configuration
 
             For<IClarifyApplicationFactory>().Singleton().Use<ClarifyApplicationFactory>();
 
-            //configure the container to use the session cache as a factory for the current user's session
+            //configure the container to use the session cache as a factory for the current user's session	
             //any web class that takes a dependency on IClarifySession will get a session for the current 
             //authenticated user. 
             For<IClarifySessionCache>().Singleton().Use<ClarifySessionCache>();
@@ -55,7 +55,7 @@ namespace Dovetail.SDK.Bootstrap.Configuration
 
             //It is the responsibility of the application using bootstrap to set the current sdk user's login 
             For<ICurrentSDKUser>().HybridHttpOrThreadLocalScoped().Use<CurrentSDKUser>();
-
+        	For<IUserClarifySessionConfigurator>().Use<UTCTimezoneUserClarifySessionConfigurator>();
             this.ActEntryTemplatePolicies<DefaultActEntryTemplatePolicyRegistry>();
         }
     }
