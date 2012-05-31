@@ -354,12 +354,14 @@ namespace Dovetail.SDK.ModelMap
                     propertyValue = Convert.ToInt32(propertyValue);
                 }
 
-				//if(fieldMap.Property.PropertyType == typeof(DateTime))
-				//{
-				//    propertyValue = _timezoneService.ConvertToUserTimeZone(Convert.ToDateTime(propertyValue));
-				//}
+				if (fieldMap.Property.PropertyType == typeof(DateTime))
+				{
+					var dateTime = Convert.ToDateTime(propertyValue);
+					var utcDateTime = new DateTime(dateTime.Ticks, DateTimeKind.Utc);
+					propertyValue = utcDateTime;
+				}
 
-				try
+            	try
 				{
 					fieldMap.Property.SetValue(dto, propertyValue, null);	
 				}
