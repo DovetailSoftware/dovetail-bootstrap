@@ -12,24 +12,22 @@ namespace Dovetail.SDK.Bootstrap.History
 {
     public class HistoryBuilder
     {
-        private readonly IApplicationClarifySession _session;
-        private readonly ISchemaCache _schemaCache;
+    	private readonly IClarifySessionCache _sessionCache;
+    	private readonly ISchemaCache _schemaCache;
         private readonly IActEntryTemplatePolicyConfiguration _templatePolicyConfiguration;
-        private readonly ILocaleCache _localeCache;
         private readonly IContainer _container;
 
-        public HistoryBuilder(IApplicationClarifySession session,ISchemaCache schemaCache, IActEntryTemplatePolicyConfiguration templatePolicyConfiguration, ILocaleCache localeCache, IContainer container)
+        public HistoryBuilder(IClarifySessionCache sessionCache, ISchemaCache schemaCache, IActEntryTemplatePolicyConfiguration templatePolicyConfiguration, IContainer container)
         {
-            _session = session;
-            _schemaCache = schemaCache;
+        	_sessionCache = sessionCache;
+        	_schemaCache = schemaCache;
             _templatePolicyConfiguration = templatePolicyConfiguration;
-            _localeCache = localeCache;
             _container = container;
         }
 
         public IEnumerable<HistoryItem> Build(WorkflowObject workflowObject, Filter actEntryFilter)
         {
-            var clarifyDataSet = _session.CreateDataSet();
+			var clarifyDataSet = _sessionCache.GetUserSession().CreateDataSet();
 
             var workflowObjectInfo = WorkflowObjectInfo.GetObjectInfo(workflowObject.Type);
             var workflowGeneric = clarifyDataSet.CreateGenericWithFields(workflowObjectInfo.ObjectName);

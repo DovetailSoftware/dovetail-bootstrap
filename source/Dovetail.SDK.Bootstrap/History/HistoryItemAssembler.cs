@@ -4,7 +4,6 @@ using System.Linq;
 using Dovetail.SDK.Bootstrap.Clarify.Extensions;
 using Dovetail.SDK.Bootstrap.History.Configuration;
 using FChoice.Foundation.Clarify;
-using FChoice.Foundation.DataObjects;
 using FubuCore;
 
 namespace Dovetail.SDK.Bootstrap.History
@@ -13,13 +12,11 @@ namespace Dovetail.SDK.Bootstrap.History
     {
         private readonly IDictionary<int, ActEntryTemplate> _templatesByCode;
         private readonly WorkflowObject _workflowObject;
-        private readonly ILocaleCache _localeCache;
 
-        public HistoryItemAssembler(IDictionary<int, ActEntryTemplate> templatesByCode, WorkflowObject workflowObject, ILocaleCache localeCache)
+        public HistoryItemAssembler(IDictionary<int, ActEntryTemplate> templatesByCode, WorkflowObject workflowObject)
         {
             _templatesByCode = templatesByCode;
             _workflowObject = workflowObject;
-            _localeCache = localeCache;
         }
 
         public IEnumerable<HistoryItem> Assemble(ClarifyGeneric actEntryGeneric)
@@ -80,37 +77,13 @@ namespace Dovetail.SDK.Bootstrap.History
                                                              var code = actEntryRecord.AsInt("act_code");
                                                              var template = actEntryTemplatesByCode[code];
 
-                                                             var serverWhen = actEntryRecord.AsDateTime("entry_time");
-                                                             var utcWhen = ConvertToUTC(serverWhen);
+                                                             var when = actEntryRecord.AsDateTime("entry_time");
                                                              
                                                              var detail = actEntryRecord.AsString("addnl_info");
                                                              var who = employeeAssembler(actEntryRecord);
 
-                                                             return new ActEntry { Template = template, When = utcWhen, Who = who, AdditionalInfo = detail, ActEntryRecord = actEntryRecord, Type = _workflowObject.Type };
+                                                             return new ActEntry { Template = template, When = when, Who = who, AdditionalInfo = detail, ActEntryRecord = actEntryRecord, Type = _workflowObject.Type };
                                                          }).ToArray();
-        }
-
-        private DateTime ConvertToUTC(DateTime when)
-        {
-            if (_localeCache.ServerTimeZone.UtcOffsetSeconds != 0)
-            {
-                var fromUtcOffset = getUTCOffset(_localeCache.ServerTimeZone, when);
-
-                when = when.AddSeconds(0 - fromUtcOffset);
-            }
-
-            return when;
-        }
-
-        private static int getUTCOffset(ITimeZone fromZone, DateTime date)
-        {
-            var offset = fromZone.UtcOffsetSeconds;
-
-            var isZoneInDST = fromZone.IsDaylightSavingsTime(date);
-
-            if (isZoneInDST) offset += 3600;
-
-            return offset;
         }
 
         private HistoryItem createActivityDTOFromMapper(ActEntry actEntry, IDictionary<ActEntryTemplate, ClarifyGeneric> templateRelatedGenerics)
