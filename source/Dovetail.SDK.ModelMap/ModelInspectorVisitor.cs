@@ -6,6 +6,7 @@ using Dovetail.SDK.ModelMap.ObjectModel;
 using Dovetail.SDK.ModelMap.Registration;
 using FChoice.Foundation.Clarify.Schema;
 using FChoice.Foundation.Schema;
+using FubuCore;
 
 namespace Dovetail.SDK.ModelMap
 {
@@ -49,7 +50,7 @@ namespace Dovetail.SDK.ModelMap
 		/// <returns></returns>
 		public ModelMapFieldDetails GetIdentifier()
 		{
-            if(!_visited)
+			if(!_visited)
             {
                 _modelMap.Accept(_modelInspectorVisitor);
                 _visited = true;
@@ -70,6 +71,11 @@ namespace Dovetail.SDK.ModelMap
 	    }
 
 	    public ModelMapFieldDetails IndentifierField { get; set; }
+
+		public void Visit(BeginModelMap beginModelMap)
+		{
+			IndentifierField = null;
+		}
 
 		public void Visit(FieldMap fieldMap)
 		{
@@ -93,8 +99,7 @@ namespace Dovetail.SDK.ModelMap
 	        
 	        var schemaField = _schemaTable.Fields[identifyingFieldName];
 	        
-            
-            var isString = (int) schemaField.DataType == (int) SchemaCommonType.String;
+            var isString = schemaField.DataType == (int) SchemaCommonType.String;
 
             return isString ? typeof(string) : typeof(int);
 	    }
@@ -102,11 +107,21 @@ namespace Dovetail.SDK.ModelMap
 	    public void Visit(BeginTable beginTable)
 		{
 		    _schemaTable = _schemaCache.Tables[beginTable.TableName];
+
+			if(_schemaTable == null)
+			{
+				throw new Exception("No table {0} was found in the schema.".ToFormat(beginTable.TableName));
+			}
 		}
 
 	    public void Visit(BeginView beginView)
 	    {
 	        _schemaTable = _schemaCache.Views[beginView.TableName];
+
+			if (_schemaTable == null)
+			{
+				throw new Exception("No view {0} was found in the schema.".ToFormat(beginView.TableName));
+			}
 	    }
 		public void Visit(BeginAdHocRelation beginAdHocRelation) { }
 		public void Visit(BeginRelation beginRelation) { }
@@ -115,7 +130,6 @@ namespace Dovetail.SDK.ModelMap
 		public void Visit(EndMapMany endMapMany) { }
 		public void Visit(FieldSortMap fieldSortMap ) { }
 		public void Visit(AddFilter addFilter) { }
-		public void Visit(BeginModelMap beginModelMap) { }
 		public void Visit(EndModelMap endModelMap) { }
 	}
 }

@@ -27,7 +27,7 @@ namespace Dovetail.SDK.ModelMap.Integration
 		public void assigning_from_field_should_map_values_from_database()
 		{
 			_solution.Title.ShouldEqual(_solutionDto.Title);
-			_solution.Created.ShouldBeClose(_solutionDto.CreateDate);
+			_solution.Created.ShouldBeClose(_solutionDto.CreateDate.ToUniversalTime());
 			_solution.DatabaseIdentifier.ShouldEqual(_solutionDto.Objid);
 		}
 
