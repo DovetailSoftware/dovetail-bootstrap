@@ -152,6 +152,7 @@
     <Compile Include="Handlers\api\cases\create\CreateCaseModel.cs" />
     <Compile Include="Handlers\api\cases\create\get_handler.cs" />
     <Compile Include="Handlers\api\cases\create\post_handler.cs" />
+    <Compile Include="Handlers\api\histories\get_Type_handler.cs" />
     <Compile Include="Handlers\api\gbst\get_handler.cs" />
     <Compile Include="Handlers\api\gbst\show\get_Name_handler.cs" />
     <Compile Include="Handlers\api\history\get_Type_Id_handler.cs" />
@@ -165,6 +166,9 @@
     <None Include="Handlers\api\authtoken\reset\reset.spark" />
     <None Include="Handlers\api\cases\create\post.spark" />
     <None Include="Handlers\api\cases\create\get.spark" />
+    <None Include="Handlers\api\histories\histories.spark">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Handlers\error\http500\get.spark" />
     <None Include="Handlers\user\signin\signin.spark" />
     <None Include="Handlers\user\status\status.spark" />

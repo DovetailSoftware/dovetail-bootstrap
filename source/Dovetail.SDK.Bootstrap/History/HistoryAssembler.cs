@@ -8,6 +8,9 @@ namespace Dovetail.SDK.Bootstrap.History
 {
 	public interface IHistoryAssembler
 	{
+		HistoryItem[] GetHistories(string type, string[] ids);
+		HistoryItem[] GetHistoriesSince(string type, string[] ids, DateTime sinceDate);
+
 		HistoryViewModel GetHistory(WorkflowObject workflowObject);
 		HistoryViewModel GetHistoryTop(WorkflowObject workflowObject, int numberOfMostRecentEntries);
 	    HistoryViewModel GetHistorySince(WorkflowObject workflowObject, DateTime sinceDate);
@@ -22,7 +25,32 @@ namespace Dovetail.SDK.Bootstrap.History
 		    _entityHistoryBuilders = entityHistoryBuilders;
 		}
 
-	    public HistoryViewModel GetHistory(WorkflowObject workflowObject)
+		public HistoryItem[] GetHistoriesSince(string type, string[] ids, DateTime sinceDate)
+    	{
+			return getHistories(type, ids, ()=> new FilterExpression().MoreThan("entry_time", sinceDate));
+    	}
+
+		public HistoryItem[] GetHistories(string type, string[] ids)
+		{
+			return getHistories(type, ids, null);
+		}
+
+		private HistoryItem[] getHistories(string type, string[] ids, Func<Filter> filterFunc)
+		{
+			var workflowObject = WorkflowObject.Create(type, ids.FirstOrDefault());
+			var historyBuilderPolicy = _entityHistoryBuilders.First(policy => policy.Handles(workflowObject));
+
+			Filter filter = null;
+			if(filterFunc != null)
+			{
+				filter = filterFunc();
+			}
+
+			return historyBuilderPolicy.BuildHistories(type, ids, filter).ToArray();
+		}
+
+
+    	public HistoryViewModel GetHistory(WorkflowObject workflowObject)
 		{
 			return getHistoryWithConstraint(workflowObject, null);
 		}
