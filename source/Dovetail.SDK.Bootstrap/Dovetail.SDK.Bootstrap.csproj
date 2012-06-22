@@ -101,7 +101,7 @@
     <Compile Include="History\AssemblerPolicies\IHistoryAssemblerPolicy.cs" />
     <Compile Include="History\Configuration\ActEntryTemplatePolicyConfiguration.cs" />
     <Compile Include="History\Configuration\ActEntryTemplatePolicyRegistry.cs" />
-    <Compile Include="History\AssemblerPolicies\CaseHistoryAssemblerPolicy.cs" />
+    <Compile Include="History\AssemblerPolicies\MergeCaseWithSubcaseHistoryAssemblerPolicy.cs" />
     <Compile Include="History\CommonActEntryBuilderDSLExtensions.cs" />
     <Compile Include="History\AssemblerPolicies\DefaultHistoryAssemblerProvider.cs" />
     <Compile Include="History\Parser\HistoryItemHtmlRenderer.cs" />

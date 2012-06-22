@@ -8,7 +8,7 @@ using FChoice.Foundation.Filters;
 
 namespace Dovetail.SDK.Bootstrap.History.AssemblerPolicies
 {
-    public class CaseHistoryAssemblerPolicy : IHistoryAssemblerPolicy
+    public class MergeCaseWithSubcaseHistoryAssemblerPolicy : IHistoryAssemblerPolicy
     {
         private readonly IClarifySessionCache _sessionCache;
         private readonly HistoryBuilder _historyBuilder;
@@ -16,7 +16,7 @@ namespace Dovetail.SDK.Bootstrap.History.AssemblerPolicies
 
         //TODO add settings object to allow getting subcases to be configurable - default (do not get subcase)
 
-        public CaseHistoryAssemblerPolicy(IClarifySessionCache sessionCache, HistoryBuilder historyBuilder, HistorySettings historySettings)
+        public MergeCaseWithSubcaseHistoryAssemblerPolicy(IClarifySessionCache sessionCache, HistoryBuilder historyBuilder, HistorySettings historySettings)
         {
             _sessionCache = sessionCache;
             _historyBuilder = historyBuilder;
@@ -25,16 +25,11 @@ namespace Dovetail.SDK.Bootstrap.History.AssemblerPolicies
 
         public bool Handles(WorkflowObject workflowObject)
         {
-            return workflowObject.Type == WorkflowObject.Case;
+			return _historySettings.MergeCaseHistoryChildSubcases && workflowObject.Type == WorkflowObject.Case;
         }
 
         public IEnumerable<HistoryItem> BuildHistory(WorkflowObject workflowObject, Filter actEntryFilter)
         {
-            if(!_historySettings.MergeCaseHistoryChildSubcases)
-            {
-                return _historyBuilder.Build(workflowObject, actEntryFilter);
-            }
-
             var subcaseIds = GetSubcaseIds(workflowObject);
             
             var caseHistory = _historyBuilder.Build(workflowObject, actEntryFilter);
@@ -50,7 +45,16 @@ namespace Dovetail.SDK.Bootstrap.History.AssemblerPolicies
             return results.OrderByDescending(r => r.When);
         }
 
-        private IEnumerable<string> GetSubcaseIds(WorkflowObject workflowObject)
+    	public IEnumerable<HistoryItem> BuildHistories(string type, string[] ids, Filter actEntryFilter)
+    	{
+    		return ids.SelectMany(id =>
+    			{
+    				var workflowObject = WorkflowObject.Create(type, id);
+    				return BuildHistory(workflowObject, actEntryFilter);
+    			});
+    	}
+
+    	private IEnumerable<string> GetSubcaseIds(WorkflowObject workflowObject)
         {
             var clarifyDataSet = _sessionCache.GetUserSession().CreateDataSet();
             var caseGeneric = clarifyDataSet.CreateGenericWithFields("case");
