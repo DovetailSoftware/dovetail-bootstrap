@@ -11,14 +11,14 @@ namespace Dovetail.SDK.ModelMap
 {
 	public class DovetailGenericModelMapVisitor : IModelMapVisitor
     {
-        private readonly IClarifySessionCache _sessionCache;
+        private readonly IClarifySession _session;
 		private readonly ISchemaCache _schemaCache;
 		private readonly Stack<ModelInformation> _modelStack = new Stack<ModelInformation>();
         private readonly Stack<ClarifyGenericMapEntry> _genericStack = new Stack<ClarifyGenericMapEntry>();
 
-    	public DovetailGenericModelMapVisitor(IClarifySessionCache sessionCache, ISchemaCache schemaCache)
+    	public DovetailGenericModelMapVisitor(IClarifySession session, ISchemaCache schemaCache)
     	{
-    		_sessionCache = sessionCache;
+    		_session = session;
     		_schemaCache = schemaCache;
     	}
 
@@ -35,7 +35,7 @@ namespace Dovetail.SDK.ModelMap
 
         public void Visit(BeginModelMap beginModelMap)
         {
-			DataSet = _sessionCache.GetUserSession().CreateDataSet();
+			DataSet = _session.CreateDataSet();
 
             _modelStack.Push(new ModelInformation { ModelType = beginModelMap.ModelType });
         }

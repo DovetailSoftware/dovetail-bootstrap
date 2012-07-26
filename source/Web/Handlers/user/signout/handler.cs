@@ -6,16 +6,16 @@ namespace Bootstrap.Web.Handlers.user.signout
 {
     public class get_handler
     {
-        private readonly IAuthenticationService _authenticationService;
+		private readonly IAuthenticationSignOutService _signOutService;
 
-        public get_handler(IAuthenticationService authenticationService)
+        public get_handler(IAuthenticationSignOutService signOutService)
         {
-            _authenticationService = authenticationService;
+            _signOutService = signOutService;
         }
 
         public FubuContinuation Execute(SignOutRequest request)
         {
-            _authenticationService.SignOut();
+            _signOutService.SignOut();
 
             return FubuContinuation.RedirectTo<HomeRequest>();
         }

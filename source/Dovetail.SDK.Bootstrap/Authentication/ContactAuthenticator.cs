@@ -32,13 +32,13 @@ namespace Dovetail.SDK.Bootstrap.Authentication
     {
         private readonly IFormsAuthenticationService _formsAuthentication;
         private readonly IUserAuthenticator _agentAuthenticator;
-        private readonly IClarifySessionCache _sessionCache;
+	    private readonly IAuthenticationSignOutService _signOutService;
 
-        public ContactAuthenticationService(IFormsAuthenticationService formsAuthentication, ContactAuthenticator agentAuthenticator, IClarifySessionCache sessionCache)
+	    public ContactAuthenticationService(IFormsAuthenticationService formsAuthentication, ContactAuthenticator agentAuthenticator, IAuthenticationSignOutService signOutService)
         {
             _formsAuthentication = formsAuthentication;
             _agentAuthenticator = agentAuthenticator;
-            _sessionCache = sessionCache;
+	        _signOutService = signOutService;
         }
 
         public bool SignIn(string username, string password, bool rememberMe)
@@ -54,8 +54,7 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 
         public void SignOut()
         {
-            _sessionCache.CloseUserSession();
-            _formsAuthentication.SignOut();
+            _signOutService.SignOut();
         }
     }
 

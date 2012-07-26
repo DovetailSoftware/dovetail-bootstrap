@@ -10,13 +10,13 @@ namespace Dovetail.SDK.Bootstrap.History.AssemblerPolicies
 {
     public class CaseHistoryAssemblerPolicy : IHistoryAssemblerPolicy
     {
-        private readonly IClarifySessionCache _sessionCache;
+        private readonly IClarifySession _session;
         private readonly HistoryBuilder _historyBuilder;
         private readonly HistorySettings _historySettings;
 
-        public CaseHistoryAssemblerPolicy(IClarifySessionCache sessionCache, HistoryBuilder historyBuilder, HistorySettings historySettings)
+        public CaseHistoryAssemblerPolicy(IClarifySession session, HistoryBuilder historyBuilder, HistorySettings historySettings)
         {
-            _sessionCache = sessionCache;
+            _session = session;
             _historyBuilder = historyBuilder;
             _historySettings = historySettings;
         }
@@ -59,7 +59,7 @@ namespace Dovetail.SDK.Bootstrap.History.AssemblerPolicies
 
     	private IEnumerable<string> GetSubcaseIds(WorkflowObject workflowObject)
         {
-            var clarifyDataSet = _sessionCache.GetUserSession().CreateDataSet();
+            var clarifyDataSet = _session.CreateDataSet();
             var caseGeneric = clarifyDataSet.CreateGenericWithFields("case");
             caseGeneric.AppendFilter("id_number", StringOps.Equals, workflowObject.Id);
 
