@@ -18,6 +18,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 
         void SignOut();
         void SetUser(IPrincipal principal);
+	    void SetTimezone(ITimeZone timezone);
     }
 
     public class CurrentSDKUser : ICurrentSDKUser
@@ -26,6 +27,8 @@ namespace Dovetail.SDK.Bootstrap.Clarify
         private readonly DovetailDatabaseSettings _settings;
         private readonly IUserDataAccess _userDataAccess;
         private readonly ILocaleCache _localeCache;
+		private readonly Lazy<SDKUser> _user;
+		private Lazy<ITimeZone> _timezone; 
 
     	public string Fullname
     	{
@@ -41,16 +44,22 @@ namespace Dovetail.SDK.Bootstrap.Clarify
     	public bool IsAuthenticated { get; private set; }
         public string Username { get; set; }
 
-		private readonly Lazy<SDKUser> _user; 
         public ITimeZone Timezone { 
             get
             {
 				if (!IsAuthenticated) 
                     return _localeCache.ServerTimeZone;
 
-                return _user.Value.Timezone;
+                return _timezone.Value;
             }
         }
+
+		public void SetTimezone(ITimeZone timezone)
+		{
+			if(!_timezone.IsValueCreated) {
+				_timezone = new Lazy<ITimeZone>(()=>timezone);
+			}
+		}
 
         public IEnumerable<SDKUserQueue> Queues {
             get
@@ -82,6 +91,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
             SignOut();
 
             _user = new Lazy<SDKUser>(()=> _userDataAccess.GetUser(Username));
+			_timezone = new Lazy<ITimeZone>(() => _user.Value.Timezone);
         }
 
         public bool HasPermission(string permission)
@@ -97,8 +107,8 @@ namespace Dovetail.SDK.Bootstrap.Clarify
             
             IsAuthenticated = true;
         }
-
-        public void SignOut()
+		
+	    public void SignOut()
         {
             IsAuthenticated = false;
 
