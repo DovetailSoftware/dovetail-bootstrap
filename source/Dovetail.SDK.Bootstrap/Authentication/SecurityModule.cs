@@ -16,7 +16,7 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 
     public class SecurityModule : IHttpModule
     {
-        public const string DefaultExtensionWhiteList = "gif, jpg, css, js, png, htm, html";
+        public const string DefaultExtensionWhiteList = "gif, jpg, css, js, png, htm, html, ico";
         private HashSet<string> _whiteListExtensions;
         
         public void Init(HttpApplication context)
