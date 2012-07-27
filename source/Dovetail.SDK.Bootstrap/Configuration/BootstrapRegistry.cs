@@ -45,12 +45,12 @@ namespace Dovetail.SDK.Bootstrap.Configuration
             For<IClarifySessionCache>().Singleton().Use<ClarifySessionCache>();
 			For<IClarifySession>().HybridHttpOrThreadLocalScoped().Use(ctx =>
 				{
-					var session = ctx.GetInstance<IClarifySessionCache>().GetUserSession();
+					var user = ctx.GetInstance<ICurrentSDKUser>();
+					var session = ctx.GetInstance<IClarifySessionCache>().GetSession(user.Username);
 					return session;
 				});
-           
-            For<IApplicationSessionCache>().Singleton().Use<ApplicationSessionCache>();
-            For<IApplicationClarifySession>().Use(ctx => ctx.GetInstance<IApplicationSessionCache>().GetApplicationSession());
+
+			For<IApplicationClarifySession>().Use(ctx => ctx.GetInstance<IClarifySessionCache>().GetApplicationSession());
 
             For<IListCache>().Use(c => c.GetInstance<IClarifyApplicationFactory>().Create().ListCache);
             For<ISchemaCache>().Use(c => c.GetInstance<IClarifyApplicationFactory>().Create().SchemaCache);

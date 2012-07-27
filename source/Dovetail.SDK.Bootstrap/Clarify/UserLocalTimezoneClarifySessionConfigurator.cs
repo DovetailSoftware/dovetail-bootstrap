@@ -9,7 +9,6 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		void Configure(ClarifySession session);
 	}
 
-
 	public class UserLocalTimezoneClarifySessionConfigurator : IUserClarifySessionConfigurator
 	{
 		private readonly Func<ICurrentSDKUser> _user;

@@ -9,29 +9,25 @@ namespace Dovetail.SDK.Bootstrap.Clarify
     {
         IClarifySession GetUserSession();
         IClarifySession GetSession(string username);
+		IApplicationClarifySession GetApplicationSession();
     }
 
     public class ClarifySessionCache : IClarifySessionCache
     {
         private readonly IClarifyApplicationFactory _clarifyApplicationFactory;
         private readonly ILogger _logger;
-        private readonly Func<ICurrentSDKUser> _currentSdkUser;
     	private readonly IUserClarifySessionConfigurator _sessionConfigurator;
 
-    	//TODO configure StructureMap to do the Create() for us
         private ClarifyApplication _clarifyApplication;
         private readonly Cache<string, Guid> _agentSessionCacheByUsername = new Cache<string, Guid>();
-        private readonly Cache<string, Guid> _contactSessionCacheByUsername = new Cache<string, Guid>();
         private Guid _applicationSessionId;
 
-        public ClarifySessionCache(IClarifyApplicationFactory clarifyApplicationFactory, ILogger logger, Func<ICurrentSDKUser> currentSdkUser, IUserClarifySessionConfigurator sessionConfigurator)
+        public ClarifySessionCache(IClarifyApplicationFactory clarifyApplicationFactory, ILogger logger, IUserClarifySessionConfigurator sessionConfigurator)
         {
             _clarifyApplicationFactory = clarifyApplicationFactory;
             _logger = logger;
-            _currentSdkUser = currentSdkUser;
         	_sessionConfigurator = sessionConfigurator;
         	_agentSessionCacheByUsername.OnMissing = onAgentMissing;
-            _contactSessionCacheByUsername.OnMissing = onContactMissing;
         }
 
         public ClarifyApplication ClarifyApplication
@@ -46,17 +42,6 @@ namespace Dovetail.SDK.Bootstrap.Clarify
             var clarifySession = ClarifyApplication.CreateSession(username, ClarifyLoginType.User);
 
             _logger.LogDebug("Created session {0} for agent {1}.".ToFormat(clarifySession.SessionID, username));
-
-            return clarifySession.SessionID;
-        }
-
-        private Guid onContactMissing(string username)
-        {
-            _logger.LogDebug("Creating missing session for contact {0}.".ToFormat(username));
-
-            var clarifySession = ClarifyApplication.CreateSession(username, ClarifyLoginType.Contact);
-
-            _logger.LogDebug("Created session {0} for contact {1}.".ToFormat(clarifySession.SessionID, username));
 
             return clarifySession.SessionID;
         }

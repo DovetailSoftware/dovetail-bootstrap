@@ -92,7 +92,6 @@
     <Compile Include="History\Parser\Sprache\ParserOfT.cs" />
     <Compile Include="History\Parser\Sprache\ResultHelper.cs" />
     <Compile Include="History\Parser\Sprache\Success.cs" />
-    <Compile Include="Clarify\ApplicationSessionCache.cs" />
     <Compile Include="Clarify\UserDataAccess.cs" />
     <Compile Include="Configuration\BootstrapRegistry.cs" />
     <Compile Include="Configuration\DovetailAppSettingsSource.cs" />
