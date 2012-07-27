@@ -7,7 +7,6 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 {
 	public interface IClarifySessionCache
     {
-        IClarifySession GetUserSession();
         IClarifySession GetSession(string username);
 		IApplicationClarifySession GetApplicationSession();
     }
@@ -59,20 +58,18 @@ namespace Dovetail.SDK.Bootstrap.Clarify
             }
             catch (Exception exception)
             {
-                _logger.LogDebug("Could not retrieve agent session for {0} via id {1}. Likely it expired. Creating a new one. Error: {2}".ToFormat(username, sessionId, exception.Message));
                 _agentSessionCacheByUsername.Remove(username);
-                return GetSession(username);
+				if (exception.GetType().CanBeCastTo<ClarifyException>() && ((ClarifyException)exception).ErrorCode == 15056)
+				{
+					_logger.LogDebug("Could not retrieve agent session for {0} via id {1} because it expired. Creating a new one. Error: {2}".ToFormat(username, sessionId, exception.Message));
+					return GetSession(username);
+				}
+				_logger.LogError("Getting the session for {0} with id {1} failed but not because it was expired.".ToFormat(username, sessionId), exception);
+				throw new ApplicationException("Could not create a session for {0} with id {1}.".ToFormat(username,sessionId), exception);
             }
         }
 
-        public IClarifySession GetUserSession()
-        {
-            var username = _currentSdkUser().Username;
-            
-            return GetSession(username);
-        }
-
-        public IClarifySession GetApplicationSession()
+        public IApplicationClarifySession GetApplicationSession()
         {
             try
             {
@@ -87,29 +84,18 @@ namespace Dovetail.SDK.Bootstrap.Clarify
             }
             catch (Exception exception)
             {
-                _logger.LogDebug("Could not retrieve application session via id {0}. Likely it expired. Creating a new one. Error: {1}".ToFormat(_applicationSessionId, exception.Message));
-                _applicationSessionId = Guid.Empty;
-                return GetApplicationSession();
+				_applicationSessionId = Guid.Empty;
+				if (exception.GetType().CanBeCastTo<ClarifyException>() && ((ClarifyException)exception).ErrorCode == 15056)
+				{
+					_logger.LogDebug("Could not retrieve application session via id {0} because it expired. Creating a new one. Error: {1}".ToFormat(_applicationSessionId, exception.Message));
+					return GetApplicationSession();
+				}
+
+				throw new ApplicationException("Could not create an application session with id {0}.".ToFormat(_applicationSessionId), exception);
             }
         }
 
-        public IClarifySession GetContactSession(string username)
-        {
-            var sessionId = _contactSessionCacheByUsername[username];
-
-            try
-            {
-                return wrapSession(ClarifyApplication.GetSession(sessionId));
-            }
-            catch (Exception exception)
-            {
-                _logger.LogDebug("Could not retrieve contact session via id {0}. Likely it expired. Creating a new one. Error: {1}".ToFormat(sessionId, exception.Message));
-                _contactSessionCacheByUsername.Remove(username);
-                return GetContactSession(username);
-            }
-        }
-
-        private IClarifySession wrapSession(ClarifySession session)
+		private IApplicationClarifySession wrapSession(ClarifySession session)
         {
             return new ClarifySessionWrapper(session);
         }
