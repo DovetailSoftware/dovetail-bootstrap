@@ -17,7 +17,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 
     	public string Type { get; set; }
         public string ConnectionString { get; set; }
-        public int SessionTimeoutInMinutes { get; set; }
+        public double SessionTimeoutInMinutes { get; set; }
     	public string ApplicationUsername { get; set; }
     }
     
