@@ -1,4 +1,3 @@
-using System;
 using FChoice.Foundation.Clarify;
 using FubuCore;
 using FubuCore.Util;
@@ -13,14 +12,14 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 
     public class ClarifySessionCache : IClarifySessionCache
     {
-        private readonly IClarifyApplicationFactory _clarifyApplicationFactory;
+	    private const string ApplicationSessionUserKey = "___ApplicationUser___";
+	    private readonly IClarifyApplicationFactory _clarifyApplicationFactory;
         private readonly ILogger _logger;
     	private readonly IUserClarifySessionConfigurator _sessionConfigurator;
 
         private ClarifyApplication _clarifyApplication;
-        private readonly Cache<string, Guid> _agentSessionCacheByUsername = new Cache<string, Guid>();
-        private Guid _applicationSessionId;
-
+		private readonly Cache<string, IApplicationClarifySession> _agentSessionCacheByUsername = new Cache<string, IApplicationClarifySession>();
+		
         public ClarifySessionCache(IClarifyApplicationFactory clarifyApplicationFactory, ILogger logger, IUserClarifySessionConfigurator sessionConfigurator)
         {
             _clarifyApplicationFactory = clarifyApplicationFactory;
@@ -34,68 +33,44 @@ namespace Dovetail.SDK.Bootstrap.Clarify
             get { return _clarifyApplication ?? (_clarifyApplication = _clarifyApplicationFactory.Create()); }
         }
 
-        private Guid onAgentMissing(string username)
+		private IApplicationClarifySession onAgentMissing(string username)
         {
             _logger.LogDebug("Creating missing session for agent {0}.".ToFormat(username));
 
-            var clarifySession = ClarifyApplication.CreateSession(username, ClarifyLoginType.User);
+			var clarifySession = (username == ApplicationSessionUserKey) ? ClarifyApplication.CreateSession() : ClarifyApplication.CreateSession(username, ClarifyLoginType.User);
 
-            _logger.LogDebug("Created session {0} for agent {1}.".ToFormat(clarifySession.SessionID, username));
+			_sessionConfigurator.Configure(clarifySession);
 
-            return clarifySession.SessionID;
+			_logger.LogDebug("Created and configured session {0} for agent {1}.".ToFormat(clarifySession.SessionID, username));
+
+            return wrapSession(clarifySession);
         }
 
-        public IClarifySession GetSession(string username)
+	    public IClarifySession GetSession(string username)
+		{
+			return getSession(username);
+		}
+
+
+	    public IApplicationClarifySession GetApplicationSession()
         {
-            var sessionId = _agentSessionCacheByUsername[username];
-
-            try
-            {
-                var session = ClarifyApplication.GetSession(sessionId);
-            	_sessionConfigurator.Configure(session);
-             
-                return wrapSession(session);
-            }
-            catch (Exception exception)
-            {
-                _agentSessionCacheByUsername.Remove(username);
-				if (exception.GetType().CanBeCastTo<ClarifyException>() && ((ClarifyException)exception).ErrorCode == 15056)
-				{
-					_logger.LogDebug("Could not retrieve agent session for {0} via id {1} because it expired. Creating a new one. Error: {2}".ToFormat(username, sessionId, exception.Message));
-					return GetSession(username);
-				}
-				_logger.LogError("Getting the session for {0} with id {1} failed but not because it was expired.".ToFormat(username, sessionId), exception);
-				throw new ApplicationException("Could not create a session for {0} with id {1}.".ToFormat(username,sessionId), exception);
-            }
+	        return getSession(ApplicationSessionUserKey);
         }
 
-        public IApplicationClarifySession GetApplicationSession()
-        {
-            try
-            {
-                if (_applicationSessionId == Guid.Empty)
-                {
-                    var session = ClarifyApplication.CreateSession();
-                    _applicationSessionId = session.SessionID;
-                    return wrapSession(session);
-                }
-                
-                return wrapSession(ClarifyApplication.GetSession(_applicationSessionId));
-            }
-            catch (Exception exception)
-            {
-				_applicationSessionId = Guid.Empty;
-				if (exception.GetType().CanBeCastTo<ClarifyException>() && ((ClarifyException)exception).ErrorCode == 15056)
-				{
-					_logger.LogDebug("Could not retrieve application session via id {0} because it expired. Creating a new one. Error: {1}".ToFormat(_applicationSessionId, exception.Message));
-					return GetApplicationSession();
-				}
+	    private IApplicationClarifySession getSession(string username)
+	    {
+		    var session = _agentSessionCacheByUsername[username];
 
-				throw new ApplicationException("Could not create an application session with id {0}.".ToFormat(_applicationSessionId), exception);
-            }
-        }
+		    if (ClarifyApplication.IsSessionValid(session.Id))
+		    {
+			    return session;
+		    }
 
-		private IApplicationClarifySession wrapSession(ClarifySession session)
+		    _agentSessionCacheByUsername.Remove(username);
+		    return getSession(username);
+	    }
+
+	    private IApplicationClarifySession wrapSession(ClarifySession session)
         {
             return new ClarifySessionWrapper(session);
         }

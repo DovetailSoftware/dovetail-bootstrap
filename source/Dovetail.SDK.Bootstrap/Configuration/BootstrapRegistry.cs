@@ -1,3 +1,4 @@
+using System;
 using System.Web;
 using Dovetail.SDK.Bootstrap.Authentication;
 using Dovetail.SDK.Bootstrap.Clarify;
@@ -10,7 +11,35 @@ using StructureMap.Configuration.DSL;
 
 namespace Dovetail.SDK.Bootstrap.Configuration
 {
-    public class BootstrapRegistry : Registry
+	public interface IClarifySessionFactory
+	{
+		IClarifySession GetUserSession();
+		IApplicationClarifySession GetApplicationSession();
+	}
+
+	public class ClarifySessionFactory : IClarifySessionFactory
+	{
+		private readonly IClarifySessionCache _clarifySessionCache;
+		private readonly Func<ICurrentSDKUser> _currentSdkUser;
+
+		public ClarifySessionFactory(IClarifySessionCache clarifySessionCache, Func<ICurrentSDKUser> currentSdkUser)
+		{
+			_clarifySessionCache = clarifySessionCache;
+			_currentSdkUser = currentSdkUser;
+		}
+
+		public IClarifySession GetUserSession()
+		{
+			return _clarifySessionCache.GetSession(_currentSdkUser().Username);
+		}
+
+		public IApplicationClarifySession GetApplicationSession()
+		{
+			return _clarifySessionCache.GetApplicationSession();
+		}
+	}
+
+	public class BootstrapRegistry : Registry
     {
         public BootstrapRegistry()
         {
@@ -43,14 +72,9 @@ namespace Dovetail.SDK.Bootstrap.Configuration
             //any web class that takes a dependency on IClarifySession will get a session for the current 
             //authenticated user. 
             For<IClarifySessionCache>().Singleton().Use<ClarifySessionCache>();
-			For<IClarifySession>().HybridHttpOrThreadLocalScoped().Use(ctx =>
-				{
-					var user = ctx.GetInstance<ICurrentSDKUser>();
-					var session = ctx.GetInstance<IClarifySessionCache>().GetSession(user.Username);
-					return session;
-				});
-
-			For<IApplicationClarifySession>().Use(ctx => ctx.GetInstance<IClarifySessionCache>().GetApplicationSession());
+			For<IClarifySessionFactory>().HybridHttpOrThreadLocalScoped().Use<ClarifySessionFactory>();
+			For<IClarifySession>().HybridHttpOrThreadLocalScoped().Use(ctx=>ctx.GetInstance<IClarifySessionFactory>().GetUserSession());
+			For<IApplicationClarifySession>().HybridHttpOrThreadLocalScoped().Use(ctx => ctx.GetInstance<IClarifySessionFactory>().GetApplicationSession());
 
             For<IListCache>().Use(c => c.GetInstance<IClarifyApplicationFactory>().Create().ListCache);
             For<ISchemaCache>().Use(c => c.GetInstance<IClarifyApplicationFactory>().Create().SchemaCache);
