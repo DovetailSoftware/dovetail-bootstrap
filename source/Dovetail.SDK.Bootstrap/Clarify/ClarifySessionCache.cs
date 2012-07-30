@@ -16,20 +16,21 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 	//TODO interaction test
 	public class ClarifySessionCache : IClarifySessionCache
     {
-	    private const string ApplicationSessionUserKey = "___ApplicationUser___";
 	    private readonly IClarifyApplicationFactory _clarifyApplicationFactory;
         private readonly ILogger _logger;
     	private readonly IUserClarifySessionConfigurator _sessionConfigurator;
+		private readonly DovetailDatabaseSettings _settings;
 
-        private ClarifyApplication _clarifyApplication;
+		private ClarifyApplication _clarifyApplication;
 		private readonly Cache<string, IApplicationClarifySession> _agentSessionCacheByUsername;
 		
-        public ClarifySessionCache(IClarifyApplicationFactory clarifyApplicationFactory, ILogger logger, IUserClarifySessionConfigurator sessionConfigurator)
+        public ClarifySessionCache(IClarifyApplicationFactory clarifyApplicationFactory, ILogger logger, IUserClarifySessionConfigurator sessionConfigurator, DovetailDatabaseSettings settings)
         {
 	        _agentSessionCacheByUsername = new Cache<string, IApplicationClarifySession>(new ConcurrentDictionary<string, IApplicationClarifySession>()) {OnMissing = onAgentMissing};
 	        _clarifyApplicationFactory = clarifyApplicationFactory;
             _logger = logger;
         	_sessionConfigurator = sessionConfigurator;
+	        _settings = settings;
         }
 
         public ClarifyApplication ClarifyApplication
@@ -41,9 +42,9 @@ namespace Dovetail.SDK.Bootstrap.Clarify
         {
             _logger.LogDebug("Creating missing session for agent {0}.".ToFormat(username));
 
-			var clarifySession = (username == ApplicationSessionUserKey) ? ClarifyApplication.CreateSession() : ClarifyApplication.CreateSession(username, ClarifyLoginType.User);
+			var clarifySession = (username == _settings.ApplicationUsername) ? ClarifyApplication.CreateSession(_settings.ApplicationUsername, ClarifyLoginType.User) : ClarifyApplication.CreateSession(username, ClarifyLoginType.User);
 
-			if (username != ApplicationSessionUserKey)
+			if (username != _settings.ApplicationUsername)
 			{
 				_sessionConfigurator.Configure(clarifySession);
 			}
@@ -60,7 +61,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 
 	    public IApplicationClarifySession GetApplicationSession()
         {
-	        return getSession(ApplicationSessionUserKey);
+			return getSession(_settings.ApplicationUsername);
         }
 
 		public IClarifySessionUsage GetUsage()
