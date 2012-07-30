@@ -56,9 +56,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 
 		public void SetTimezone(ITimeZone timezone)
 		{
-			if(!_timezone.IsValueCreated) {
-				_timezone = new Lazy<ITimeZone>(()=>timezone);
-			}
+			_timezone = new Lazy<ITimeZone>(()=>timezone);
 		}
 
         public IEnumerable<SDKUserQueue> Queues {

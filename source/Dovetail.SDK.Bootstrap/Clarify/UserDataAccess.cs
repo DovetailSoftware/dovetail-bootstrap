@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Dovetail.SDK.Bootstrap.Clarify.Extensions;
 using FChoice.Foundation.Clarify;
-using FChoice.Foundation.Clarify.DataObjects;
+using FChoice.Foundation.DataObjects;
 using FChoice.Foundation.Filters;
 
 namespace Dovetail.SDK.Bootstrap.Clarify
@@ -14,7 +14,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		public string FirstName { get; set; }
 		public string LastName { get; set; }
 
-		public FCTimeZone Timezone { get; set; }
+		public ITimeZone Timezone { get; set; }
 		public IEnumerable<SDKUserQueue> Queues{ get; set; }
 		public string Workgroup { get; set; }
 	}
@@ -80,7 +80,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
     			};
     	}
 
-    	private FCTimeZone findTimezone(ClarifyGeneric timeZoneGeneric, string username)
+    	private ITimeZone findTimezone(ClarifyGeneric timeZoneGeneric, string username)
     	{
 			if (timeZoneGeneric.Count < 1)
 			{

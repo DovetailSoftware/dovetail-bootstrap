@@ -33,25 +33,25 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FChoice.Common, Version=3.2.4.25, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+    <Reference Include="FChoice.Common, Version=3.2.5.1, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Dovetail.SDK.3.2.4.25\lib\net20\FChoice.Common.dll</HintPath>
+      <HintPath>..\packages\Dovetail.SDK.3.2.5.1\lib\net20\FChoice.Common.dll</HintPath>
     </Reference>
-    <Reference Include="FChoice.Foundation.Clarify.Compatibility, Version=3.2.4.25, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+    <Reference Include="FChoice.Foundation.Clarify.Compatibility, Version=3.2.5.1, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Dovetail.SDK.3.2.4.25\lib\net20\FChoice.Foundation.Clarify.Compatibility.dll</HintPath>
+      <HintPath>..\packages\Dovetail.SDK.3.2.5.1\lib\net20\FChoice.Foundation.Clarify.Compatibility.dll</HintPath>
     </Reference>
-    <Reference Include="FChoice.Foundation.Clarify.Compatibility.Toolkits, Version=3.2.4.25, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+    <Reference Include="FChoice.Foundation.Clarify.Compatibility.Toolkits, Version=3.2.5.1, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Dovetail.SDK.3.2.4.25\lib\net20\FChoice.Foundation.Clarify.Compatibility.Toolkits.dll</HintPath>
+      <HintPath>..\packages\Dovetail.SDK.3.2.5.1\lib\net20\FChoice.Foundation.Clarify.Compatibility.Toolkits.dll</HintPath>
     </Reference>
-    <Reference Include="FChoice.Toolkits.Clarify, Version=3.2.4.25, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+    <Reference Include="FChoice.Toolkits.Clarify, Version=3.2.5.1, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Dovetail.SDK.3.2.4.25\lib\net20\FChoice.Toolkits.Clarify.dll</HintPath>
+      <HintPath>..\packages\Dovetail.SDK.3.2.5.1\lib\net20\FChoice.Toolkits.Clarify.dll</HintPath>
     </Reference>
-    <Reference Include="fcSDK, Version=3.2.4.25, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+    <Reference Include="fcSDK, Version=3.2.5.1, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Dovetail.SDK.3.2.4.25\lib\net20\fcSDK.dll</HintPath>
+      <HintPath>..\packages\Dovetail.SDK.3.2.5.1\lib\net20\fcSDK.dll</HintPath>
     </Reference>
     <Reference Include="FubuCore">
       <HintPath>..\packages\FubuCore.0.9.9.149\lib\FubuCore.dll</HintPath>
@@ -67,6 +67,9 @@
     </Reference>
     <Reference Include="pnunit.framework">
       <HintPath>..\packages\NUnit.2.5.10.11092\lib\pnunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Rhino.Mocks">
+      <HintPath>..\packages\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
     </Reference>
     <Reference Include="StructureMap">
       <HintPath>..\packages\structuremap.2.6.3\lib\StructureMap.dll</HintPath>
@@ -95,6 +98,10 @@
     <Compile Include="Temporal_extension.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Dovetail.SDK.Bootstrap.Tests\Dovetail.SDK.Bootstrap.Tests.csproj">
+      <Project>{0EFB9B2A-CD04-4DED-A9EA-3F76DA349553}</Project>
+      <Name>Dovetail.SDK.Bootstrap.Tests</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Dovetail.SDK.Bootstrap\Dovetail.SDK.Bootstrap.csproj">
       <Project>{9947E369-AFF9-4911-AB0A-99B918A8F3CF}</Project>
       <Name>Dovetail.SDK.Bootstrap</Name>
@@ -109,6 +116,9 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="User\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
