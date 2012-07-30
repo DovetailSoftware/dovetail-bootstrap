@@ -39,7 +39,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 
         public string SessionEmployeeSiteID
         {
-            get { return Convert.ToString((object) ClarifySession["employee.site.site_id"]); }
+            get { return Convert.ToString(ClarifySession["employee.site.site_id"]); }
         }
 
         public string[] Permissions
@@ -60,12 +60,12 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 
         public int SessionEmployeeID
         {
-            get { return Convert.ToInt32((object) ClarifySession["employee.id"]); }
+            get { return Convert.ToInt32(ClarifySession["employee.id"]); }
         }
 
         public int SessionUserID
         {
-            get { return Convert.ToInt32((object) ClarifySession["user.id"]); }
+            get { return Convert.ToInt32(ClarifySession["user.id"]); }
         }
 
 		public IEnumerable<string> DataRestriction

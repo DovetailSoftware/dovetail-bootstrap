@@ -81,6 +81,7 @@
     <Compile Include="Authentication\PrincipalFactory.cs" />
     <Compile Include="Authentication\SecurityModule.cs" />
     <Compile Include="Authentication\UserAuthenticator.cs" />
+    <Compile Include="Clarify\ClarifySessionUsage.cs" />
     <Compile Include="Clarify\UserLocalTimezoneClarifySessionConfigurator.cs" />
     <Compile Include="History\Parser\Sprache\Failure.cs" />
     <Compile Include="History\Parser\Sprache\IFailure.cs" />

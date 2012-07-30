@@ -1,3 +1,5 @@
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using FChoice.Foundation.Clarify;
 using FubuCore;
 using FubuCore.Util;
@@ -8,9 +10,11 @@ namespace Dovetail.SDK.Bootstrap.Clarify
     {
         IClarifySession GetSession(string username);
 		IApplicationClarifySession GetApplicationSession();
+		IClarifySessionUsage GetUsage();
     }
 
-    public class ClarifySessionCache : IClarifySessionCache
+	//TODO interaction test
+	public class ClarifySessionCache : IClarifySessionCache
     {
 	    private const string ApplicationSessionUserKey = "___ApplicationUser___";
 	    private readonly IClarifyApplicationFactory _clarifyApplicationFactory;
@@ -18,14 +22,14 @@ namespace Dovetail.SDK.Bootstrap.Clarify
     	private readonly IUserClarifySessionConfigurator _sessionConfigurator;
 
         private ClarifyApplication _clarifyApplication;
-		private readonly Cache<string, IApplicationClarifySession> _agentSessionCacheByUsername = new Cache<string, IApplicationClarifySession>();
+		private readonly Cache<string, IApplicationClarifySession> _agentSessionCacheByUsername;
 		
         public ClarifySessionCache(IClarifyApplicationFactory clarifyApplicationFactory, ILogger logger, IUserClarifySessionConfigurator sessionConfigurator)
         {
-            _clarifyApplicationFactory = clarifyApplicationFactory;
+	        _agentSessionCacheByUsername = new Cache<string, IApplicationClarifySession>(new ConcurrentDictionary<string, IApplicationClarifySession>()) {OnMissing = onAgentMissing};
+	        _clarifyApplicationFactory = clarifyApplicationFactory;
             _logger = logger;
         	_sessionConfigurator = sessionConfigurator;
-        	_agentSessionCacheByUsername.OnMissing = onAgentMissing;
         }
 
         public ClarifyApplication ClarifyApplication
@@ -39,8 +43,11 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 
 			var clarifySession = (username == ApplicationSessionUserKey) ? ClarifyApplication.CreateSession() : ClarifyApplication.CreateSession(username, ClarifyLoginType.User);
 
-			_sessionConfigurator.Configure(clarifySession);
-
+			if (username != ApplicationSessionUserKey)
+			{
+				_sessionConfigurator.Configure(clarifySession);
+			}
+			
 			_logger.LogDebug("Created and configured session {0} for agent {1}.".ToFormat(clarifySession.SessionID, username));
 
             return wrapSession(clarifySession);
@@ -51,13 +58,33 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 			return getSession(username);
 		}
 
-
 	    public IApplicationClarifySession GetApplicationSession()
         {
 	        return getSession(ApplicationSessionUserKey);
         }
 
-	    private IApplicationClarifySession getSession(string username)
+		public IClarifySessionUsage GetUsage()
+		{
+			int valid = 0;
+			int total = 0;
+			var expiredUsers = new List<string>();
+			_agentSessionCacheByUsername.Each((user, session) =>
+				{
+					total += 1;
+					if (ClarifyApplication.IsSessionValid(session.Id))
+					{
+						valid += 1;
+					}
+					else
+					{
+						expiredUsers.Add(user);
+					}
+				});
+
+			return new ClarifySessionUsage {TotalSessions = total, ValidSessions = valid};
+		}
+
+		private IApplicationClarifySession getSession(string username)
 	    {
 		    var session = _agentSessionCacheByUsername[username];
 
