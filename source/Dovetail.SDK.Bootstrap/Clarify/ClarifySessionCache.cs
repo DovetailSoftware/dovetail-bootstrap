@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using FChoice.Foundation.Clarify;
@@ -26,7 +27,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		
         public ClarifySessionCache(IClarifyApplicationFactory clarifyApplicationFactory, ILogger logger, IUserClarifySessionConfigurator sessionConfigurator, DovetailDatabaseSettings settings)
         {
-	        _agentSessionCacheByUsername = new Cache<string, IApplicationClarifySession>(new ConcurrentDictionary<string, IApplicationClarifySession>()) {OnMissing = onAgentMissing};
+	        _agentSessionCacheByUsername = new Cache<string, IApplicationClarifySession> {OnMissing = onAgentMissing};
 	        _clarifyApplicationFactory = clarifyApplicationFactory;
             _logger = logger;
         	_sessionConfigurator = sessionConfigurator;
@@ -68,18 +69,19 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		{
 			int valid = 0;
 			int total = 0;
-			var expiredUsers = new List<string>();
-			_agentSessionCacheByUsername.Each((user, session) =>
+			
+			var sessionsByUserDictionary = _agentSessionCacheByUsername.ToDictionary();
+
+			sessionsByUserDictionary.Keys.Each(user =>
 				{
+					var session = sessionsByUserDictionary[user];
 					total += 1;
 					if (ClarifyApplication.IsSessionValid(session.Id))
 					{
 						valid += 1;
 					}
-					else
-					{
-						expiredUsers.Add(user);
-					}
+
+					//if we want to get fancy in the future we can return expired session ids and kick them out of the cache
 				});
 
 			return new ClarifySessionUsage {TotalSessions = total, ValidSessions = valid};
