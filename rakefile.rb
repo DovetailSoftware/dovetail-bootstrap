@@ -30,7 +30,7 @@ buildsupportfiles.each { |ext|
 props = {:archive => "build", :testing => "results", :database => ""}
 
 desc "**Default**, compiles and runs unit tests"
-task :default => [:clean,:version,:compile,:test_assemblies,:unit_tests]
+task :default => [:clean,:version,:compile,:test_assemblies,:unit_tests,:integration_tests]
 
 desc "Run unit and integration tests. **Requires Database**"
 task :ci => [:default,:integration_tests]
@@ -84,8 +84,8 @@ nunit :integration_tests do |nunit|
 	Dir.glob("results/assemblies/*{I,i}ntegration.dll.config") { |appConfig|
 		File.open(appConfig) { |c|
 			doc = REXML::Document.new(c)
-			doc.root.elements["/configuration/appSettings/add[@key='DovetailDatabase.Type']"].attributes['value'] = DATABASE_TYPE
-			doc.root.elements["/configuration/appSettings/add[@key='DovetailDatabase.ConnectionString']"].attributes['value'] = DATABASE_CONNECTION
+			doc.root.elements["/configuration/appSettings/add[@key='DovetailDatabaseSettings.Type']"].attributes['value'] = DATABASE_TYPE
+			doc.root.elements["/configuration/appSettings/add[@key='DovetailDatabaseSettings.ConnectionString']"].attributes['value'] = DATABASE_CONNECTION
 			formatter = REXML::Formatters::Default.new
 			File.open(c, 'w') do |result|
 				formatter.write(doc, result)
