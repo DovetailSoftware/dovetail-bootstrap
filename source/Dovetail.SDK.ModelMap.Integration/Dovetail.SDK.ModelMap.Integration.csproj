@@ -93,6 +93,7 @@
     <Compile Include="model_inspector.cs" />
     <Compile Include="ObjectMother.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Session\session_cache.cs" />
     <Compile Include="SpecificationExtensions.cs" />
     <Compile Include="StructureMapServiceLocator.cs" />
     <Compile Include="Temporal_extension.cs" />

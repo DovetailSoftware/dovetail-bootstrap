@@ -20,7 +20,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
         public double SessionTimeoutInMinutes { get; set; }
     	public string ApplicationUsername { get; set; }
     }
-    
+
     public interface IClarifyApplicationFactory
     {
         ClarifyApplication Create();

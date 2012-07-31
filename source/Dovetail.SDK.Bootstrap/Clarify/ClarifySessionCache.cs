@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using FChoice.Foundation.Clarify;
 using FubuCore;
@@ -9,12 +7,12 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 {
 	public interface IClarifySessionCache
     {
-        IClarifySession GetSession(string username);
 		IApplicationClarifySession GetApplicationSession();
-		IClarifySessionUsage GetUsage();
+		IClarifySession GetSession(string username);
+		void EjectSession(string username);
+		IDictionary<string, IApplicationClarifySession> SessionsByName { get; }
     }
 
-	//TODO interaction test
 	public class ClarifySessionCache : IClarifySessionCache
     {
 	    private readonly IClarifyApplicationFactory _clarifyApplicationFactory;
@@ -39,6 +37,11 @@ namespace Dovetail.SDK.Bootstrap.Clarify
             get { return _clarifyApplication ?? (_clarifyApplication = _clarifyApplicationFactory.Create()); }
         }
 
+		public IDictionary<string, IApplicationClarifySession> SessionsByName
+		{
+			get { return _agentSessionCacheByUsername.ToDictionary(); }
+		}
+
 		private IApplicationClarifySession onAgentMissing(string username)
         {
             _logger.LogDebug("Creating missing session for agent {0}.".ToFormat(username));
@@ -60,43 +63,29 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 			return getSession(username);
 		}
 
-	    public IApplicationClarifySession GetApplicationSession()
+		public void EjectSession(string username)
+		{
+			if(_agentSessionCacheByUsername.Has(username))
+			{
+				_agentSessionCacheByUsername.Remove(username);
+			}
+		}
+
+		public IApplicationClarifySession GetApplicationSession()
         {
 			return getSession(_settings.ApplicationUsername);
         }
 
-		public IClarifySessionUsage GetUsage()
-		{
-			int valid = 0;
-			int total = 0;
-			
-			var sessionsByUserDictionary = _agentSessionCacheByUsername.ToDictionary();
-
-			sessionsByUserDictionary.Keys.Each(user =>
-				{
-					var session = sessionsByUserDictionary[user];
-					total += 1;
-					if (ClarifyApplication.IsSessionValid(session.Id))
-					{
-						valid += 1;
-					}
-
-					//if we want to get fancy in the future we can return expired session ids and kick them out of the cache
-				});
-
-			return new ClarifySessionUsage {TotalSessions = total, ValidSessions = valid};
-		}
-
 		private IApplicationClarifySession getSession(string username)
 	    {
-		    var session = _agentSessionCacheByUsername[username];
+			var session = _agentSessionCacheByUsername[username];
 
-		    if (ClarifyApplication.IsSessionValid(session.Id))
+		    if (session != null && ClarifyApplication.IsSessionValid(session.Id))
 		    {
 			    return session;
 		    }
 
-		    _agentSessionCacheByUsername.Remove(username);
+			_agentSessionCacheByUsername.Remove(username);
 		    return getSession(username);
 	    }
 
