@@ -35,7 +35,7 @@ namespace Dovetail.SDK.Bootstrap.Configuration
 
 		public IApplicationClarifySession GetApplicationSession()
 		{
-			return _clarifySessionCache.GetApplicationSession();
+			return _clarifySessionCache.GetApplicationSession() as IApplicationClarifySession;
 		}
 	}
 

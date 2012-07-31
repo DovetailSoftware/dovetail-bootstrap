@@ -18,7 +18,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 			var validSessions = new List<ClarifySessionUser>();
 			var inValidSessions = new List<ClarifySessionUser>();
 
-			var sessionsByUserDictionary = _clarifySessionCache.SessionsByName;
+			var sessionsByUserDictionary = _clarifySessionCache.SessionsByUsername;
 
 			var clarifyApplication = _clarifyApplicationFactory.Create();
 

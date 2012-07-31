@@ -23,7 +23,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 
     public interface IClarifyApplicationFactory
     {
-        ClarifyApplication Create();
+        IClarifyApplication Create();
     }
 
     public class ClarifyApplicationFactory : IClarifyApplicationFactory
@@ -36,7 +36,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
             _dovetailDatabaseSettings = dovetailDatabaseSettings;
         }
 
-        public ClarifyApplication Create()
+        public IClarifyApplication Create()
         {
             if (FCApplication.IsInitialized)
             {
