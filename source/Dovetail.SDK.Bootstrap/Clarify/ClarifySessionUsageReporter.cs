@@ -3,7 +3,12 @@ using FubuCore;
 
 namespace Dovetail.SDK.Bootstrap.Clarify
 {
-	public class ClarifySessionUsageReporter
+	public interface IClarifySessionUsageReporter
+	{
+		IClarifySessionUsage GetUsage();
+	}
+
+	public class ClarifySessionUsageReporter : IClarifySessionUsageReporter
 	{
 		private readonly IClarifySessionCache _clarifySessionCache;
 		private readonly IClarifyApplicationFactory _clarifyApplicationFactory;

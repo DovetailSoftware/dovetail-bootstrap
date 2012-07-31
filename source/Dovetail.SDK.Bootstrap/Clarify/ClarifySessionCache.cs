@@ -85,7 +85,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 
 			var session = _agentSessionCacheByUsername.GetOrAdd(username, onAgentMissing);
 
-		    if (ClarifyApplication.IsSessionValid(session.Id))
+		    if (session != null && ClarifyApplication.IsSessionValid(session.Id))
 		    {
 			    return session;
 		    }
