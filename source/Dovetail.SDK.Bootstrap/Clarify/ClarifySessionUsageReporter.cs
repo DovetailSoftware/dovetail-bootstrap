@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using FubuCore;
 
 namespace Dovetail.SDK.Bootstrap.Clarify
 {
@@ -6,11 +7,13 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 	{
 		private readonly IClarifySessionCache _clarifySessionCache;
 		private readonly IClarifyApplicationFactory _clarifyApplicationFactory;
+		private readonly ILogger _logger;
 
-		public ClarifySessionUsageReporter(IClarifySessionCache clarifySessionCache, IClarifyApplicationFactory clarifyApplicationFactory)
+		public ClarifySessionUsageReporter(IClarifySessionCache clarifySessionCache, IClarifyApplicationFactory clarifyApplicationFactory, ILogger logger)
 		{
 			_clarifySessionCache = clarifySessionCache;
 			_clarifyApplicationFactory = clarifyApplicationFactory;
+			_logger = logger;
 		}
 
 		public IClarifySessionUsage GetUsage()
@@ -22,6 +25,8 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 
 			var clarifyApplication = _clarifyApplicationFactory.Create();
 
+			_logger.LogDebug("Building clarify session usage report from {0} items in the cache.".ToFormat(sessionsByUserDictionary.Count));
+
 			foreach (var username in sessionsByUserDictionary.Keys)
 			{
 				var session = sessionsByUserDictionary[username];
@@ -31,9 +36,12 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 				else
 				{
 					inValidSessions.Add(sessionUser);
+					_logger.LogDebug("Ejecting invalid session for user {0} from the cache".ToFormat(username));
 					_clarifySessionCache.EjectSession(username);
 				}
 			}
+
+			_logger.LogDebug("Found {0} sessions and {1} invalid sessions (now ejected) in the cache.".ToFormat(validSessions.Count, inValidSessions.Count));
 
 			return new ClarifySessionUsage(validSessions, inValidSessions);
 		}
