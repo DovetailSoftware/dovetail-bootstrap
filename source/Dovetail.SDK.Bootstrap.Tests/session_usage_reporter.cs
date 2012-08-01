@@ -19,39 +19,32 @@ namespace Dovetail.SDK.Bootstrap.Tests
 			_sessionsByUser = new Dictionary<string, IClarifySession>
 				{
 					{"annie", getMockSession()}, 
-					{"hank", getMockSession()}
+					{"hank", getMockSession()},
+					{"sven", getMockSession()}
 				};
 			MockFor<IClarifySessionCache>().Stub(s => s.SessionsByUsername).Return(_sessionsByUser);
 
 			_app = MockFor<IClarifyApplication>();
-			MockFor<IClarifyApplicationFactory>().Stub(s => s.Create()).Return(_app);
-
 			_app.Stub(s => s.IsSessionValid(_sessionsByUser["hank"].Id)).Return(true);
 			_app.Stub(s => s.IsSessionValid(_sessionsByUser["annie"].Id)).Return(false);
-
-			_result = _cut.GetUsage();
+			_app.Stub(s => s.IsSessionValid(_sessionsByUser["sven"].Id)).Return(true);
 		}
 
 		[Test]
-		public void should_group_sessions_correctly()
+		public void get_usage_should_group_sessions_correctly()
 		{
-			_result.Sessions.Count().ShouldEqual(1);
+			_result = _cut.GetUsage();
+
+			_result.Sessions.Count().ShouldEqual(2);
 			_result.InvalidSessions.Count().ShouldEqual(1);
 		}
 
 		[Test]
-		public void should_eject_invalid_sessions()
+		public void get_active_session_count_should_return_count_of_valid_sessions()
 		{
-			MockFor<IClarifySessionCache>().AssertWasCalled(a=>a.EjectSession("annie"));
+			_cut.GetActiveSessionCount().ShouldEqual(2);
 		}
-
-		[Test]
-		public void should_not_eject_valid_sessions()
-		{
-			MockFor<IClarifySessionCache>().AssertWasNotCalled(a => a.EjectSession("hank"));
-		}
-
-
+		
 		private IClarifySession getMockSession()
 		{
 			var session = _services.AddAdditionalMockFor<IClarifySession>();

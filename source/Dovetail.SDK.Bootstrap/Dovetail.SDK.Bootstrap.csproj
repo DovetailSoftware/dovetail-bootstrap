@@ -75,7 +75,9 @@
   <ItemGroup>
     <Compile Include="Authentication\AspNetSecurityContext.cs" />
     <Compile Include="Authentication\AuthenticationContextService.cs" />
+    <Compile Include="Authentication\AuthenticationMonitoringService.cs" />
     <Compile Include="Authentication\AuthenticationService.cs" />
+    <Compile Include="Authentication\AuthenticationSignOutService.cs" />
     <Compile Include="Authentication\ContactAuthenticator.cs" />
     <Compile Include="Authentication\FormsAuthenticationService.cs" />
     <Compile Include="Authentication\PrincipalFactory.cs" />
@@ -84,6 +86,8 @@
     <Compile Include="Clarify\ClarifySessionUsage.cs" />
     <Compile Include="Clarify\ClarifySessionUsageReporter.cs" />
     <Compile Include="Clarify\UserLocalTimezoneClarifySessionConfigurator.cs" />
+    <Compile Include="Configuration\AspNetHttpRequest.cs" />
+    <Compile Include="Configuration\WebsiteSettings.cs" />
     <Compile Include="History\Parser\Sprache\Failure.cs" />
     <Compile Include="History\Parser\Sprache\IFailure.cs" />
     <Compile Include="History\Parser\Sprache\Input.cs" />

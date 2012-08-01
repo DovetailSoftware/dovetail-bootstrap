@@ -1,6 +1,7 @@
 ﻿using System;
+using Dovetail.SDK.Bootstrap;
+using Dovetail.SDK.Bootstrap.Authentication;
 using Dovetail.SDK.Bootstrap.Clarify;
-using Dovetail.SDK.Bootstrap.Tests;
 using FChoice.Foundation.Clarify;
 using NUnit.Framework;
 using Rhino.Mocks;
@@ -10,43 +11,33 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 {
 	public class session_cache
 	{
-		public class clarify_application : Context<ClarifySessionCache>
-		{
-			[Test]
-			public void should_use_factory_once()
-			{
-				var clarifyApplicationFactory = MockFor<IClarifyApplicationFactory>();
-				clarifyApplicationFactory.Expect(e => e.Create()).Repeat.Once();
-
-				var app1 = _cut.ClarifyApplication;
-				var app2 = _cut.ClarifyApplication;
-
-				app1.ShouldBeTheSameAs(app2);
-				clarifyApplicationFactory.VerifyAllExpectations();
-			}
-		}
-
 		[TestFixture]
 		public class session_cache_context
 		{
 			protected IContainer _container;
 			protected ClarifySessionCache _cut;
 			protected IUserClarifySessionConfigurator _userClarifySessionConfigurator;
-			protected IClarifyApplicationFactory _applicationFactory;
 			protected ClarifySession _expectedSession;
 			protected IClarifyApplication _clarifyApplication;
 			protected DovetailDatabaseSettings _settings;
+			protected IUserSessionStartObserver _userSessionStartObserver;
+			protected IUserSessionEndObserver _userSessionEndObserver;
 
 			[TestFixtureSetUp]
 			public void beforeAll()
 			{
 				_userClarifySessionConfigurator = MockRepository.GenerateStub<IUserClarifySessionConfigurator>();
-				_applicationFactory = MockRepository.GenerateStub<IClarifyApplicationFactory>();
+				_clarifyApplication = MockRepository.GenerateStub<IClarifyApplication>();
+
+				_userSessionStartObserver = MockRepository.GenerateStub<IUserSessionStartObserver>();
+				_userSessionEndObserver = MockRepository.GenerateStub<IUserSessionEndObserver>();
 
 				_container = bootstrap_ioc.getContainer(c =>
 				{
 					c.For<IUserClarifySessionConfigurator>().Use(_userClarifySessionConfigurator);
-					c.For<IClarifyApplicationFactory>().Use(_applicationFactory);
+					c.For<IClarifyApplication>().Use(_clarifyApplication);
+					c.For<IUserSessionStartObserver>().Use(_userSessionStartObserver);
+					c.For<IUserSessionEndObserver>().Use(_userSessionEndObserver);
 				});
 
 				_cut = _container.GetInstance<ClarifySessionCache>();
@@ -65,14 +56,12 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 
 			protected ClarifySession CreateRealSession()
 			{
-				return new ClarifyApplicationFactory(_settings).Create().CreateSession();
+				return new ClarifyApplicationFactory(_settings, MockRepository.GenerateStub<ILogger>()).Create().CreateSession();
 			}
 
 			[SetUp]
 			public void beforeEach()
 			{
-				_clarifyApplication = MockRepository.GenerateStub<IClarifyApplication>();
-				_applicationFactory.Expect(s => s.Create()).Return(_clarifyApplication);
 				setup();
 			}
 
@@ -109,11 +98,22 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 
 				_userClarifySessionConfigurator.AssertWasCalled(a => a.Configure(_expectedSession));
 			}
+
+			[Test]
+			public void should_tell_observer()
+			{
+				_cut.GetSession(UserName);
+
+				_userSessionStartObserver.AssertWasCalled(a => a.SessionStarted(null), x=>x.IgnoreArguments());
+			}
 		}
 
 		public class ejecting_a_session_user : session_cache_context
 		{
 			private ClarifySession _secondSession;
+			private IClarifySession _result;
+
+			
 			private const string UserName = "annie";
 
 			public override void setup()
@@ -126,17 +126,53 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 				_secondSession = CreateRealSession();
 				_clarifyApplication.Stub(s => s.CreateSession(UserName, ClarifyLoginType.User)).Return(_secondSession).Repeat.Once();
 				_clarifyApplication.Stub(s => s.IsSessionValid(_secondSession.SessionID)).Return(true);
+
+				_result = _cut.GetSession(UserName);
+			}
+
+			[Test]
+			public void should_return_true()
+			{
+				_cut.EjectSession(UserName).ShouldBeTrue();
 			}
 
 			[Test]
 			public void should_force_a_new_session_to_be_created()
 			{
-				_cut.GetSession(UserName).Id.ShouldEqual(_expectedSession.SessionID);
+				_result.Id.ShouldEqual(_expectedSession.SessionID);
 				_cut.EjectSession(UserName);
-				_cut.GetSession(UserName).Id.ShouldEqual(_secondSession.SessionID); ;
+				var newSession = _cut.GetSession(UserName);
+				newSession.Id.ShouldEqual(_secondSession.SessionID); ;
+			}
+
+			[Test]
+			public void should_tell_observer()
+			{
+				_cut.EjectSession(UserName);
+
+				_userSessionEndObserver.AssertWasCalled(a => a.SessionExpired(_result), x => x.IgnoreArguments());
 			}
 		}
 
+
+		public class ejecting_a_session_that_does_not_exist : session_cache_context
+		{
+			private const string UserName = "annie";
+
+			[Test]
+			public void should_return_false()
+			{
+				_cut.EjectSession(UserName).ShouldBeFalse();
+			}
+
+			[Test]
+			public void should_not_tell_observer()
+			{
+				_cut.EjectSession(UserName);
+
+				_userSessionEndObserver.AssertWasNotCalled(a => a.SessionExpired(null), x => x.IgnoreArguments());
+			}
+		}
 
 		public class session_user_with_failed_attempts : session_cache_context
 		{
@@ -181,7 +217,6 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 			[Test]
 			public void should_use_application_username()
 			{
-				_applicationFactory.VerifyAllExpectations();
 				_clarifyApplication.VerifyAllExpectations();
 			}
 
@@ -189,6 +224,16 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 			public void should_not_be_configured()
 			{
 				_userClarifySessionConfigurator.AssertWasNotCalled(a=>a.Configure(_expectedSession));
+			}
+
+			[Test]
+			public void ejecting_session_should_not_tell_observer()
+			{
+				var result = _cut.EjectSession(_settings.ApplicationUsername);
+
+				result.ShouldBeTrue();
+
+				_userSessionEndObserver.AssertWasNotCalled(a => a.SessionExpired(null), x => x.IgnoreArguments());
 			}
 		}
 	}

@@ -68,6 +68,11 @@ namespace Dovetail.SDK.Bootstrap.Clarify
             get { return Convert.ToInt32(ClarifySession["user.id"]); }
         }
 
+	    public DateTime LastLoadTime
+	    {
+			get { return ClarifySession.LastLoadTime; }
+	    }
+
 		public IEnumerable<string> DataRestriction
 		{
 			get

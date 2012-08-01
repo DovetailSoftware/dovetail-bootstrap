@@ -9,14 +9,19 @@ namespace Dovetail.SDK.Bootstrap.Tests
     public class clarify_application_factory
     {
         [TestFixture]
-        public class get_sdk_configuration
+        public class get_sdk_configuration : Context<ClarifyApplicationFactory>
         {
-            private readonly DovetailDatabaseSettings _settings = new DovetailDatabaseSettings { ConnectionString = "connstr", SessionTimeoutInMinutes = 1234, Type = "mssql" };
+	        private DovetailDatabaseSettings _settings;
+
+	        public override void OverrideMocks()
+	        {
+		        _settings = new DovetailDatabaseSettings { ConnectionString = "connstr", SessionTimeoutInMinutes = 1234, Type = "mssql" };
+	        }
 
             [Test]
             public void should_contain_any_appsettings_starting_with_fchoice()
             {
-                var configuration = ClarifyApplicationFactory.GetDovetailSDKConfiguration(_settings);
+				var configuration = ClarifyApplicationFactory.GetDovetailSDKConfiguration(_settings);
 
                 configuration.Get("fchoice.test").ShouldNotBeNull();
             }
@@ -24,7 +29,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
             [Test]
             public void should_set_state_manager_timeout_using_database_settings()
             {
-                ClarifyApplicationFactory.setSessionDefaultTimeout(_settings);
+                _cut.setSessionDefaultTimeout(_settings);
 
                 StateManager.StateTimeout.ShouldEqual(TimeSpan.FromMinutes(_settings.SessionTimeoutInMinutes));
             }

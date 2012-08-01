@@ -29,14 +29,16 @@ namespace Dovetail.SDK.Bootstrap.Clarify
     public class ClarifyApplicationFactory : IClarifyApplicationFactory
     {
         private readonly DovetailDatabaseSettings _dovetailDatabaseSettings;
-        private static readonly object SyncRoot = new object();
+	    private readonly ILogger _logger;
+	    private static readonly object SyncRoot = new object();
 
-        public ClarifyApplicationFactory(DovetailDatabaseSettings dovetailDatabaseSettings)
+        public ClarifyApplicationFactory(DovetailDatabaseSettings dovetailDatabaseSettings, ILogger logger)
         {
-            _dovetailDatabaseSettings = dovetailDatabaseSettings;
+	        _dovetailDatabaseSettings = dovetailDatabaseSettings;
+	        _logger = logger;
         }
 
-        public IClarifyApplication Create()
+	    public IClarifyApplication Create()
         {
             if (FCApplication.IsInitialized)
             {
@@ -59,12 +61,16 @@ namespace Dovetail.SDK.Bootstrap.Clarify
             }
         }
 
-        public static void setSessionDefaultTimeout(DovetailDatabaseSettings dovetailDatabaseSettings)
+        public void setSessionDefaultTimeout(DovetailDatabaseSettings dovetailDatabaseSettings)
         {
-            StateManager.StateTimeout = TimeSpan.FromMinutes(dovetailDatabaseSettings.SessionTimeoutInMinutes);
+	        var stateTimeoutTimespan = TimeSpan.FromMinutes(dovetailDatabaseSettings.SessionTimeoutInMinutes);
+
+			_logger.LogDebug("Setting session time out to be {0} minutes long.", stateTimeoutTimespan);
+
+	        StateManager.StateTimeout = stateTimeoutTimespan;
         }
 
-        public static NameValueCollection GetDovetailSDKConfiguration(DovetailDatabaseSettings dovetailDatabaseSettings)
+	    public static NameValueCollection GetDovetailSDKConfiguration(DovetailDatabaseSettings dovetailDatabaseSettings)
         {
             var configuration = new NameValueCollection
 			                    {

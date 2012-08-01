@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using Dovetail.SDK.Bootstrap.Authentication;
 using FChoice.Foundation.Clarify;
 using FubuCore;
 
@@ -17,26 +18,25 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 	public class ClarifySessionCache : IClarifySessionCache
     {
 		public const int MaximumAttempts = 3;
-		private readonly IClarifyApplicationFactory _clarifyApplicationFactory;
-        private readonly ILogger _logger;
+		private readonly IClarifyApplication _clarifyApplication; 
+		private readonly ILogger _logger;
     	private readonly IUserClarifySessionConfigurator _sessionConfigurator;
+		private readonly Func<IUserSessionEndObserver> _sessionEndObserver;
+		private readonly Func<IUserSessionStartObserver> _sessionStartObserver;
 		private readonly DovetailDatabaseSettings _settings;
 
-		private IClarifyApplication _clarifyApplication;
+
 		private readonly ConcurrentDictionary<string, IClarifySession> _agentSessionCacheByUsername;
 		
-        public ClarifySessionCache(IClarifyApplicationFactory clarifyApplicationFactory, ILogger logger, IUserClarifySessionConfigurator sessionConfigurator, DovetailDatabaseSettings settings)
+        public ClarifySessionCache(IClarifyApplication clarifyApplication, ILogger logger, IUserClarifySessionConfigurator sessionConfigurator, Func<IUserSessionEndObserver> sessionEndObserver, Func<IUserSessionStartObserver> sessionStartObserver, DovetailDatabaseSettings settings)
         {
 			_agentSessionCacheByUsername = new ConcurrentDictionary<string, IClarifySession>();
-	        _clarifyApplicationFactory = clarifyApplicationFactory;
-            _logger = logger;
+	        _clarifyApplication = clarifyApplication;
+	        _logger = logger;
         	_sessionConfigurator = sessionConfigurator;
+	        _sessionEndObserver = sessionEndObserver;
+	        _sessionStartObserver = sessionStartObserver;
 	        _settings = settings;
-        }
-
-        public IClarifyApplication ClarifyApplication
-        {
-            get { return _clarifyApplication ?? (_clarifyApplication = _clarifyApplicationFactory.Create()); }
         }
 
 		public IDictionary<string, IClarifySession> SessionsByUsername
@@ -48,16 +48,18 @@ namespace Dovetail.SDK.Bootstrap.Clarify
         {
             _logger.LogDebug("Creating missing session for agent {0}.".ToFormat(username));
 
-			var clarifySession = ClarifyApplication.CreateSession(username, ClarifyLoginType.User);
+			var clarifySession = _clarifyApplication.CreateSession(username, ClarifyLoginType.User);
+			var wrappedSession = wrapSession(clarifySession);
 
-			if (username != _settings.ApplicationUsername)
+			if (!isApplicationUsername(username))
 			{
 				_sessionConfigurator.Configure(clarifySession);
+				_sessionStartObserver().SessionStarted(wrappedSession);
 			}
 			
 			_logger.LogDebug("Created and configured session {0} for agent {1}.".ToFormat(clarifySession.SessionID, username));
 
-            return wrapSession(clarifySession);
+			return wrappedSession;
         }
 
 	    public IClarifySession GetSession(string username)
@@ -69,7 +71,17 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		{
 			_logger.LogDebug("Ejecting session for {0}", username);
 			IClarifySession value;
-			return _agentSessionCacheByUsername.TryRemove(username, out value);
+			var success = _agentSessionCacheByUsername.TryRemove(username, out value);
+			if (success && !isApplicationUsername(username))
+			{
+				_sessionEndObserver().SessionExpired(value);
+			}
+			return success;
+		}
+
+		private bool isApplicationUsername(string username)
+		{
+			return username == _settings.ApplicationUsername;
 		}
 
 		public IClarifySession GetApplicationSession()
@@ -77,7 +89,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 			return getSession(_settings.ApplicationUsername);
         }
 
-		private IClarifySession getSession(string username, int attempt = 0)
+		private IClarifySession getSession(string username, int attempt = 1)
 		{
 			_logger.LogDebug("Getting session for user {0}. Attempt {1}.".ToFormat(username, attempt));
 
@@ -88,7 +100,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 
 			var session = _agentSessionCacheByUsername.GetOrAdd(username, onAgentMissing);
 
-		    if (ClarifyApplication.IsSessionValid(session.Id))
+			if (_clarifyApplication.IsSessionValid(session.Id))
 		    {
 			    return session;
 		    }

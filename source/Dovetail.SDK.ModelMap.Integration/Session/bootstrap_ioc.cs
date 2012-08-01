@@ -5,6 +5,7 @@ using Dovetail.SDK.Bootstrap.Configuration;
 using Dovetail.SDK.Bootstrap.History.AssemblerPolicies;
 using Dovetail.SDK.ModelMap.Configuration;
 using Dovetail.SDK.ModelMap.Registration;
+using FChoice.Foundation.Clarify;
 using StructureMap;
 
 namespace Dovetail.SDK.ModelMap.Integration.Session
@@ -26,6 +27,7 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 							s.WithDefaultConventions();
 						});
 					c.For<IClarifyApplicationFactory>().Singleton().Use<ClarifyApplicationFactory>();
+					c.For<IClarifyApplication>().Singleton().Use(ctx=>ctx.GetInstance<IClarifyApplicationFactory>().Create());
 					c.For<ILogger>().AlwaysUnique().Use(s => s.ParentType == null ? new Log4NetLogger(s.BuildStack.Current.ConcreteType) : new Log4NetLogger(s.ParentType));
 					c.AddRegistry<SettingsProviderRegistry>();
 					c.AddRegistry<ModelMapperRegistry>();

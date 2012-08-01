@@ -4,17 +4,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Web;
+using Dovetail.SDK.Bootstrap.Configuration;
 using StructureMap;
 using FubuCore;
 
 namespace Dovetail.SDK.Bootstrap.Authentication
 {
-    public class WebsiteSettings
-    {
-        public string AnonymousAccessFileExtensions { get; set; }
-    }
-
-    public class SecurityModule : IHttpModule
+	public class SecurityModule : IHttpModule
     {
         public const string DefaultExtensionWhiteList = "gif, jpg, css, js, png, htm, html, ico";
         private HashSet<string> _whiteListExtensions;
