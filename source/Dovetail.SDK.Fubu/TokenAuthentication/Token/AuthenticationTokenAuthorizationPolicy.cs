@@ -41,7 +41,7 @@ namespace Dovetail.SDK.Fubu.TokenAuthentication.Token
             {
                 if(_currentSdkUser.IsAuthenticated)
                 {
-                    _logger.LogDebug("No AuthToken was found in this request but a user is authenticated. Using the current user's credentials.");
+                    _logger.LogDebug("No AuthToken was found in this request but a user is already authenticated. Using the current user's credentials.");
                     return AuthorizationRight.Allow;
                 }
                 

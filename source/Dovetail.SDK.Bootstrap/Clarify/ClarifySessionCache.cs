@@ -67,6 +67,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 
 		public bool EjectSession(string username)
 		{
+			_logger.LogDebug("Ejecting session for {0}", username);
 			IClarifySession value;
 			return _agentSessionCacheByUsername.TryRemove(username, out value);
 		}
@@ -78,9 +79,11 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 
 		private IClarifySession getSession(string username, int attempt = 0)
 		{
+			_logger.LogDebug("Getting session for user {0}. Attempt {1}.".ToFormat(username, attempt));
+
 			if(attempt > MaximumAttempts)
 			{
-				throw new ApplicationException("Giving up gettig session after {0} attempts for user {1}".ToFormat(attempt, username));
+				throw new ApplicationException("Giving up getting session after {0} attempts for user {1}".ToFormat(attempt, username));
 			}
 
 			var session = _agentSessionCacheByUsername.GetOrAdd(username, onAgentMissing);

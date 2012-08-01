@@ -26,7 +26,8 @@ namespace Dovetail.SDK.Bootstrap.Clarify
         private IPrincipal _principal; 
         private readonly DovetailDatabaseSettings _settings;
         private readonly IUserDataAccess _userDataAccess;
-        private readonly ILocaleCache _localeCache;
+	    private readonly ILogger _logger;
+	    private readonly ILocaleCache _localeCache;
 		private readonly Lazy<SDKUser> _user;
 		private Lazy<ITimeZone> _timezone; 
 
@@ -79,11 +80,12 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 			}
     	}
 
-    	public CurrentSDKUser(DovetailDatabaseSettings settings, ILocaleCache localeCache, IUserDataAccess userDataAccess)
+    	public CurrentSDKUser(DovetailDatabaseSettings settings, ILocaleCache localeCache, IUserDataAccess userDataAccess, ILogger logger)
         {
             _settings = settings;
             _userDataAccess = userDataAccess;
-            _localeCache = localeCache;
+    		_logger = logger;
+    		_localeCache = localeCache;
 
             //set up defaults
             SignOut();
@@ -102,7 +104,9 @@ namespace Dovetail.SDK.Bootstrap.Clarify
             _principal = principal;
             
             Username = _principal.Identity.Name;
-            
+
+			_logger.LogDebug("Setting the current user to be {0}", Username);
+
             IsAuthenticated = true;
         }
 		
