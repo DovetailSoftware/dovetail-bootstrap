@@ -8,30 +8,59 @@ using Rhino.Mocks;
 
 namespace Dovetail.SDK.Bootstrap.Tests
 {
-	public class session_usage_reporter : Context<ClarifySessionUsageReporter>
+	public abstract class session_usage_reporter_context : Context<ClarifySessionUsageReporter>
 	{
-		private Dictionary<string, IClarifySession> _sessionsByUser;
-		private IClarifyApplication _app;
-		private IClarifySessionUsage _result;
+		protected Dictionary<string, IClarifySession> _sessionsByUser;
+		protected IClarifyApplication _app;
+		protected IClarifySessionUsage _result;
 
 		public override void Given()
 		{
-			_sessionsByUser = new Dictionary<string, IClarifySession>
-				{
-					{"annie", getMockSession()}, 
-					{"hank", getMockSession()},
-					{"sven", getMockSession()}
-				};
-			MockFor<IClarifySessionCache>().Stub(s => s.SessionsByUsername).Return(_sessionsByUser);
-
+			_sessionsByUser = new Dictionary<string, IClarifySession>();
 			_app = MockFor<IClarifyApplication>();
-			_app.Stub(s => s.IsSessionValid(_sessionsByUser["hank"].Id)).Return(true);
-			_app.Stub(s => s.IsSessionValid(_sessionsByUser["annie"].Id)).Return(false);
-			_app.Stub(s => s.IsSessionValid(_sessionsByUser["sven"].Id)).Return(true);
+
+			addMockSessionFor("annie", false);
+			addMockSessionFor("hank", true);
+			addMockSessionFor("sven", true);
+
+			MockFor<IClarifySessionCache>().Stub(s => s.SessionsByUsername).Return(_sessionsByUser);
+		}
+
+		private void addMockSessionFor(string username, bool isValid)
+		{
+			var id = Guid.NewGuid();
+
+			var session = _services.AddAdditionalMockFor<IClarifySession>();
+			session.Stub(s => s.Id).Return(id);
+			session.Stub(s => s.UserName).Return(username);
+
+			_app.Stub(s => s.IsSessionValid(id)).Return(isValid);
+
+			_sessionsByUser.Add(username, session);
+		}
+	}
+
+	public class get_active_session_count : session_usage_reporter_context
+	{
+		[Test]
+		public void should_return_count_of_valid_sessions()
+		{
+			_cut.GetActiveSessionCount().ShouldEqual(2);
 		}
 
 		[Test]
-		public void get_usage_should_group_sessions_correctly()
+		public void inactive_sessions_should_be_ejected()
+		{
+			_cut.GetActiveSessionCount();
+
+			MockFor<IClarifySessionCache>().AssertWasCalled(a => a.EjectSession("annie"));
+		}
+	}
+
+	public class session_usage_reporter : session_usage_reporter_context
+	{
+		[Test]
+		public void should_group_sessions_correctly()
 		{
 			_result = _cut.GetUsage();
 
@@ -40,16 +69,11 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		}
 
 		[Test]
-		public void get_active_session_count_should_return_count_of_valid_sessions()
+		public void inactive_sessions_should_be_ejected()
 		{
-			_cut.GetActiveSessionCount().ShouldEqual(2);
-		}
-		
-		private IClarifySession getMockSession()
-		{
-			var session = _services.AddAdditionalMockFor<IClarifySession>();
-			session.Stub(s => s.Id).Return(Guid.NewGuid());
-			return session;
+			_result = _cut.GetUsage();
+
+			MockFor<IClarifySessionCache>().AssertWasCalled(a=>a.EjectSession("annie"));
 		}
 	}
 }

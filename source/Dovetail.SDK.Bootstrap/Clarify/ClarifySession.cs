@@ -51,7 +51,6 @@ namespace Dovetail.SDK.Bootstrap.Clarify
         {
             get { return ClarifySession.SessionID; }
         }
-
         
         public string UserName
         {
@@ -67,11 +66,6 @@ namespace Dovetail.SDK.Bootstrap.Clarify
         {
             get { return Convert.ToInt32(ClarifySession["user.id"]); }
         }
-
-	    public DateTime LastLoadTime
-	    {
-			get { return ClarifySession.LastLoadTime; }
-	    }
 
 		public IEnumerable<string> DataRestriction
 		{

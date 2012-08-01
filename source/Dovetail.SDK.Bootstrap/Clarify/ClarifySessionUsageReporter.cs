@@ -37,12 +37,11 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 			{
 				var session = sessionsByUserDictionary[username];
 				var sessionUser = new ClarifySessionUser { SessionId = session.Id, Username = session.UserName };
-				if (_clarifyApplication.IsSessionValid(session.Id))
+				if (IsSessionValid(session))
 					validSessions.Add(sessionUser);
 				else
 				{
 					inValidSessions.Add(sessionUser);
-					invalidateSession(sessionUser);
 				}
 			}
 
@@ -51,21 +50,22 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 			return new ClarifySessionUsage(validSessions, inValidSessions);
 		}
 
-		private void invalidateSession(ClarifySessionUser sessionUser)
-		{
-			_logger.LogDebug("Invalidating session for user {0}.".ToFormat(sessionUser.Username));
-			_clarifySessionCache.EjectSession(sessionUser.Username);
-		}
-
 		public int GetActiveSessionCount()
 		{
 			var sessionsByUsername = _clarifySessionCache.SessionsByUsername;
 			
-			return sessionsByUsername.Keys.Count(k=>
-				{
-					var id = sessionsByUsername[k].Id;
-					return _clarifyApplication.IsSessionValid(id);
-				});
+			return sessionsByUsername.Values.Count(IsSessionValid);
+		}
+
+		private bool IsSessionValid(IClarifySession session)
+		{
+			var isSessionValid = _clarifyApplication.IsSessionValid(session.Id);
+			if(!isSessionValid)
+			{
+				_logger.LogDebug("Ejecting inactive session for user {0}.".ToFormat(session.UserName));
+				_clarifySessionCache.EjectSession(session.UserName);
+			}
+			return isSessionValid;
 		}
 	}
 }
