@@ -103,15 +103,10 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 			}
 
 			[Test]
-			public void should_use_application_username()
+			public void should_be_configured()
 			{
-				_applicationFactory.VerifyAllExpectations();
-				_clarifyApplication.VerifyAllExpectations();
-			}
+				_cut.GetSession(UserName);
 
-			[Test]
-			public void should_not_be_configured()
-			{
 				_userClarifySessionConfigurator.AssertWasCalled(a => a.Configure(_expectedSession));
 			}
 		}
