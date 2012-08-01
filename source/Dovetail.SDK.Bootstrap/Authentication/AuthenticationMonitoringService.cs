@@ -6,6 +6,7 @@ using Dovetail.SDK.Bootstrap.Clarify.Extensions;
 using Dovetail.SDK.Bootstrap.Configuration;
 using FChoice.Foundation;
 using FChoice.Foundation.Schema;
+using FubuCore;
 
 namespace Dovetail.SDK.Bootstrap.Authentication
 {
@@ -80,7 +81,11 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 		public static string GetLocalhostFqdn()
 		{
 			var ipProperties = IPGlobalProperties.GetIPGlobalProperties();
-			return string.Format("{0}.{1}", ipProperties.HostName, ipProperties.DomainName);
+
+			var hostName = ipProperties.HostName;
+			var domain = ipProperties.DomainName;
+			
+			return domain.IsEmpty() ? hostName : string.Format("{0}.{1}", hostName, domain);
 		}
 
 		public void SessionStarted(IClarifySession session)
@@ -101,7 +106,7 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 			var monitorRow = monitorGeneric.AddNew();
 			monitorRow["application"] = _settings.ApplicationName;
 			monitorRow["login_time"] = FCGeneric.NOW_DATE;
-			monitorRow["logout_time"] = FCGeneric.NOW_DATE;
+			monitorRow["logout_time"] = FCGeneric.MIN_DATE;
 			monitorRow["login_name"] = session.UserName;
 			monitorRow["fcsessionid"] = session.Id.ToString();
 			monitorRow["num_sessions"] = _sessionUsageReporter.GetActiveSessionCount();
