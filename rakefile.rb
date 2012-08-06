@@ -18,7 +18,7 @@ DOVETAILSDK_PATH = "#{Rake::Win32::normalize(ENV['ProgramW6432'].nil? ? ENV['PRO
 SCHEMAEDITOR_PATH = "#{Rake::Win32::normalize(ENV['PROGRAMFILES'])}/Dovetail Software/SchemaEditor/SchemaEditor.exe"
 
 NUGET_EXE = File.absolute_path("nuget.exe")
-NUGET_FEEDS = ["#{DOVETAILSDK_PATH}","https://go.microsoft.com/fwlink/?LinkID=230477"]
+NUGET_FEEDS = ["#{DOVETAILSDK_PATH}","http://build.fubu-project.org/guestAuth/app/nuget/v1/FeedService.svc","https://go.microsoft.com/fwlink/?LinkID=230477"]
 
 puts "Loading scripts from build support directory..."
 buildsupportfiles = Dir["#{File.dirname(__FILE__)}/buildsupport/*.rb"]
