@@ -26,7 +26,7 @@ namespace Dovetail.SDK.Bootstrap.History
             actEntryGeneric.Filter(f => f.IsIn("act_code", codes));
 
             var actEntryUserGeneric = actEntryGeneric.TraverseWithFields("act_entry2user", "objid", "login_name");
-            var actEntryEmployeeGeneric = actEntryUserGeneric.TraverseWithFields("user2employee", "first_name", "last_name");
+            var actEntryEmployeeGeneric = actEntryUserGeneric.TraverseWithFields("user2employee", "first_name", "last_name", "e_mail");
 
             //adding related generics expected by any fancy act entry templates
             var templateRelatedGenerics = traverseRelatedGenerics(actEntryGeneric);
@@ -47,9 +47,10 @@ namespace Dovetail.SDK.Bootstrap.History
 
                 var employeeRecord = employeeRows[0];
                 var name = "{0} {1}".ToFormat(employeeRecord.AsString("first_name"), employeeRecord.AsString("last_name"));
+	            var email = employeeRecord.AsString("e_mail");
                 var id = employeeRecord.DatabaseIdentifier();
 
-                return new HistoryItemEmployee {Name = name, Id = id, Login = login};
+	            return new HistoryItemEmployee {Name = name, Id = id, Login = login, Email = email};
             };
 
             var actEntryDTOS = assembleActEntryDTOs(actEntryGeneric, _templatesByCode, employeeAssembler);
