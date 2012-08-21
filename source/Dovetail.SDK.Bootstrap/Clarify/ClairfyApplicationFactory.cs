@@ -42,14 +42,18 @@ namespace Dovetail.SDK.Bootstrap.Clarify
         {
             if (FCApplication.IsInitialized)
             {
-                return ClarifyApplication.Instance;
+				_logger.LogDebug("Dovetail SDK already initialized");
+				return ClarifyApplication.Instance;
             }
             lock (SyncRoot)
             {
                 if (FCApplication.IsInitialized)
                 {
+					_logger.LogWarn("Dovetail SDK already initialized (In Sync Check)");
                     return ClarifyApplication.Instance;
                 }
+
+				_logger.LogInfo("Initializing Dovetail SDK");
 
                 var configuration = GetDovetailSDKConfiguration(_dovetailDatabaseSettings);
 

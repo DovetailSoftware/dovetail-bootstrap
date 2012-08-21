@@ -67,21 +67,21 @@ namespace Dovetail.SDK.Bootstrap.Configuration
             //IncludeRegistry<AppSettingProviderRegistry>();
 
             For<IClarifyApplicationFactory>().Singleton().Use<ClarifyApplicationFactory>();
-			For<IClarifyApplication>().Use(ctx=>ctx.GetInstance<IClarifyApplicationFactory>().Create());
+			For<IClarifyApplication>().Singleton().Use(ctx=>ctx.GetInstance<IClarifyApplicationFactory>().Create());
 
             //configure the container to use the session cache as a factory for the current user's session	
             //any web class that takes a dependency on IClarifySession will get a session for the current 
             //authenticated user. 
             For<IClarifySessionCache>().Singleton().Use<ClarifySessionCache>();
-			For<IClarifySessionFactory>().HybridHttpOrThreadLocalScoped().Use<ClarifySessionFactory>();
+			For<IClarifySessionFactory>().Use<ClarifySessionFactory>();
 			For<IClarifySession>().HybridHttpOrThreadLocalScoped().Use(ctx=>ctx.GetInstance<IClarifySessionFactory>().GetUserSession());
-			For<IApplicationClarifySession>().HybridHttpOrThreadLocalScoped().Use(ctx => ctx.GetInstance<IClarifySessionFactory>().GetApplicationSession());
+			For<IApplicationClarifySession>().Use(ctx => ctx.GetInstance<IClarifySessionCache>().GetApplicationSession() as ClarifySessionWrapper);
 
-            For<IListCache>().Use(c => c.GetInstance<IClarifyApplicationFactory>().Create().ListCache);
-            For<ISchemaCache>().Use(c => c.GetInstance<IClarifyApplicationFactory>().Create().SchemaCache);
-            For<IStringCache>().Use(c => c.GetInstance<IClarifyApplicationFactory>().Create().StringCache);
-            For<ILocaleCache>().Use(c => c.GetInstance<IClarifyApplicationFactory>().Create().LocaleCache);
-            For<IListCache>().Use(c => c.GetInstance<IClarifyApplicationFactory>().Create().ListCache);
+			For<IListCache>().Use(c => c.GetInstance<IClarifyApplication>().ListCache);
+			For<ISchemaCache>().Use(c => c.GetInstance<IClarifyApplication>().SchemaCache);
+            For<IStringCache>().Use(c => c.GetInstance<IClarifyApplication>().StringCache);
+            For<ILocaleCache>().Use(c => c.GetInstance<IClarifyApplication>().LocaleCache);
+            For<IListCache>().Use(c => c.GetInstance<IClarifyApplication>().ListCache);
 
             //It is the responsibility of the applicationUrl using bootstrap to set the current sdk user's login 
             For<ICurrentSDKUser>().HybridHttpOrThreadLocalScoped().Use<CurrentSDKUser>();

@@ -1,4 +1,3 @@
-using Dovetail.SDK.Bootstrap.Clarify;
 using FChoice.Foundation.Clarify;
 using FubuCore;
 
@@ -12,19 +11,17 @@ namespace Dovetail.SDK.Bootstrap.Authentication
     public class UserAuthenticator : IUserAuthenticator
     {
         private readonly ILogger _logger;
-        private readonly IClarifyApplicationFactory _clarifyApplicationFactory;
+        private readonly IClarifyApplication _clarifyApplication;
 
-        public UserAuthenticator(ILogger logger, IClarifyApplicationFactory clarifyApplicationFactory)
+        public UserAuthenticator(ILogger logger, IClarifyApplication clarifyApplication)
         {
             _logger = logger;
-            _clarifyApplicationFactory = clarifyApplicationFactory;
+			//HACK to make sure SDK is spun up. ICK
+			_clarifyApplication = clarifyApplication;
         }
 
         public bool Authenticate(string username, string password)
         {
-            //HACK to make sure SDK is spun up. ICK
-            _clarifyApplicationFactory.Create();
-
             var clarifyAuthenticationService = new ClarifyAuthenticationService();
 
             var result = clarifyAuthenticationService.AuthenticateUser(username, password);

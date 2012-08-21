@@ -7,19 +7,18 @@ namespace Dovetail.SDK.Bootstrap.Authentication
     public class ContactAuthenticator : IUserAuthenticator
     {
         private readonly ILogger _logger;
-        private readonly IClarifyApplicationFactory _clarifyApplicationFactory;
+        private readonly IClarifyApplication _clarifyApplication;
 
-        public ContactAuthenticator(ILogger logger, IClarifyApplicationFactory clarifyApplicationFactory)
+        public ContactAuthenticator(ILogger logger, IClarifyApplication clarifyApplication)
         {
             _logger = logger;
-            _clarifyApplicationFactory = clarifyApplicationFactory;
+			
+			//HACK to make sure SDK is spun up. ICK
+			_clarifyApplication = clarifyApplication;
         }
 
         public bool Authenticate(string username, string password)
         {
-            //HACK to make sure SDK is spun up. ICK
-            _clarifyApplicationFactory.Create();
-
             var success = ClarifySession.AuthenticateContact(username, password);
 
             _logger.LogDebug("Authentication for contact {0} was {1}successful.".ToFormat(username, success ? "" : "not "));
