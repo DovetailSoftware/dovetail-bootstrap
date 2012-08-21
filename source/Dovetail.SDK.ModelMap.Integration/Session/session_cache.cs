@@ -9,7 +9,7 @@ using StructureMap;
 
 namespace Dovetail.SDK.ModelMap.Integration.Session
 {
-	public class session_cache
+	public abstract class session_cache
 	{
 		[TestFixture]
 		public class session_cache_context
