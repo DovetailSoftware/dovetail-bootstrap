@@ -9,7 +9,7 @@
       <param name="MaximumFileSize" value="1024KB" />
       <param name="StaticLogFileName" value="true" />
       <layout type="log4net.Layout.PatternLayout">
-        <conversionPattern value="%date %-5level %logger - %message %newline" />
+        <conversionPattern value="%date %-5level %logger[%thread] %identity - %message %newline" />
       </layout>
     </appender>
    
