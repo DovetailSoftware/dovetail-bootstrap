@@ -4,23 +4,9 @@ using System.Linq;
 using FChoice.Foundation;
 using FubuCore;
 
-namespace Dovetail.SDK.ModelMap
+namespace Dovetail.SDK.ModelMap.Extensions
 {
-    public interface ISystemTime
-    {
-        DateTime Now { get; }
-    }
-
-    public class SystemTime : ISystemTime
-    {
-        public DateTime Now
-        {
-            get { return DateTime.Now; }
-        }
-    }
-
-
-    public static class TemporalExtensions
+	public static class TemporalExtensions
 	{
 		private static IEnumerable<ElapsedTimeSlot> _timeFormats;
 

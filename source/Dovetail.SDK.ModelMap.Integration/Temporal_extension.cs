@@ -1,4 +1,5 @@
 using System;
+using Dovetail.SDK.ModelMap.Extensions;
 using FChoice.Foundation.Clarify;
 using NUnit.Framework;
 

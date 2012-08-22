@@ -2,7 +2,7 @@ using System;
 using Dovetail.SDK.ModelMap.Registration.DSL;
 using FChoice.Foundation.Clarify;
 
-namespace Dovetail.SDK.ModelMap
+namespace Dovetail.SDK.ModelMap.Extensions
 {
     public static class MappingExtensions
     {
@@ -10,8 +10,11 @@ namespace Dovetail.SDK.ModelMap
         {
             Func<string, object> describeDateTime = value =>
             {
-                var dateTime = Convert.ToDateTime(value);
-                return dateTime.ElapsedTimeDescription(true, basedOn);
+				DateTime dateTime;
+				if (DateTime.TryParse(value, out dateTime))
+					return string.Empty;
+
+				return dateTime.ElapsedTimeDescription(true, basedOn);
             };
 
             expression.Do(describeDateTime);
