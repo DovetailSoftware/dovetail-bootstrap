@@ -76,7 +76,7 @@
   <ItemGroup>
     <Compile Include="Authentication\AspNetSecurityContext.cs" />
     <Compile Include="Authentication\AuthenticationContextService.cs" />
-    <Compile Include="Authentication\AuthenticationMonitoringService.cs" />
+    <Compile Include="Authentication\UserSessionStartObserver.cs" />
     <Compile Include="Authentication\AuthenticationService.cs" />
     <Compile Include="Authentication\AuthenticationSignOutService.cs" />
     <Compile Include="Authentication\ContactAuthenticator.cs" />
@@ -84,6 +84,7 @@
     <Compile Include="Authentication\PrincipalFactory.cs" />
     <Compile Include="Authentication\SecurityModule.cs" />
     <Compile Include="Authentication\UserAuthenticator.cs" />
+    <Compile Include="Authentication\UserSessionEndObserver.cs" />
     <Compile Include="Clarify\ClarifySessionUsage.cs" />
     <Compile Include="Clarify\ClarifySessionUsageReporter.cs" />
     <Compile Include="Clarify\UserLocalTimezoneClarifySessionConfigurator.cs" />

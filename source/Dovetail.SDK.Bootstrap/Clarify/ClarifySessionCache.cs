@@ -26,11 +26,10 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		private readonly DovetailDatabaseSettings _settings;
 		private readonly Guid _cacheId;
 
-		private readonly ConcurrentDictionary<string, IClarifySession> _agentSessionCacheByUsername;
+		private static readonly ConcurrentDictionary<string, IClarifySession> _agentSessionCacheByUsername = new ConcurrentDictionary<string, IClarifySession>();
 		
         public ClarifySessionCache(IClarifyApplication clarifyApplication, ILogger logger, IUserClarifySessionConfigurator sessionConfigurator, Func<IUserSessionEndObserver> sessionEndObserver, Func<IUserSessionStartObserver> sessionStartObserver, DovetailDatabaseSettings settings)
         {
-			_agentSessionCacheByUsername = new ConcurrentDictionary<string, IClarifySession>();
 	        _clarifyApplication = clarifyApplication;
 	        _logger = logger;
         	_sessionConfigurator = sessionConfigurator;

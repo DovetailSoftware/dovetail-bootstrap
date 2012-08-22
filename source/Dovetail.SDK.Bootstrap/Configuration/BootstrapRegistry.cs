@@ -60,19 +60,20 @@ namespace Dovetail.SDK.Bootstrap.Configuration
             Scan(s =>
             {
                 s.TheCallingAssembly();
+				s.AssemblyContainingType<IClarifySessionCache>();
                 s.WithDefaultConventions();
                 s.AddAllTypesOf<IHistoryAssemblerPolicy>();
             });
 
             //IncludeRegistry<AppSettingProviderRegistry>();
 
-            For<IClarifyApplicationFactory>().Singleton().Use<ClarifyApplicationFactory>();
-			For<IClarifyApplication>().Singleton().Use(ctx=>ctx.GetInstance<IClarifyApplicationFactory>().Create());
+            ForSingletonOf<IClarifyApplicationFactory>().Use<ClarifyApplicationFactory>();
+			ForSingletonOf<IClarifyApplication>().Use(ctx => ctx.GetInstance<IClarifyApplicationFactory>().Create());
 
             //configure the container to use the session cache as a factory for the current user's session	
             //any web class that takes a dependency on IClarifySession will get a session for the current 
             //authenticated user. 
-            For<IClarifySessionCache>().Singleton().Use<ClarifySessionCache>();
+            ForSingletonOf<IClarifySessionCache>().Use<ClarifySessionCache>();
 			For<IClarifySessionFactory>().Use<ClarifySessionFactory>();
 			For<IClarifySession>().HybridHttpOrThreadLocalScoped().Use(ctx=>ctx.GetInstance<IClarifySessionFactory>().GetUserSession());
 			For<IApplicationClarifySession>().Use(ctx => ctx.GetInstance<IClarifySessionCache>().GetApplicationSession() as ClarifySessionWrapper);
