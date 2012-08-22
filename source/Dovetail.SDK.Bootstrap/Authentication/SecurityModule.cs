@@ -34,8 +34,8 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 
         private void onContextOnAuthenticateRequest(object sender, EventArgs e)
         {
-            var httpRequest = HttpContext.Current.Request;
-            if (httpRequest.IsAuthenticated && PathRequiresPrincipal(httpRequest.Path))
+	        var securityContext = ObjectFactory.Container.GetInstance<ISecurityContext>();
+			if (securityContext.IsAuthenticated() && PathRequiresPrincipal(HttpContext.Current.Request.Path))
             {
                 ObjectFactory.Container.GetInstance<IAuthenticationContextService>().SetupAuthenticationContext();
             }
