@@ -41,8 +41,7 @@
     <logger name="FChoice">
       <!-- which levels should be logged for this logger -->
       <level value="ERROR" />
-    </logger>
-    
+    </logger>   
 
   </log4net> 
 </configuration>
