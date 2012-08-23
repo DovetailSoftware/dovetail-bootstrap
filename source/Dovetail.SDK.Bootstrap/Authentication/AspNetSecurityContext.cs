@@ -8,6 +8,7 @@ namespace Dovetail.SDK.Bootstrap.Authentication
         IIdentity CurrentIdentity { get; }
         IPrincipal CurrentUser { get; set; }
         bool IsAuthenticated();
+	    bool RequiresAuthentication();
     }
 
     public class NullSecurityContext : ISecurityContext
@@ -23,14 +24,31 @@ namespace Dovetail.SDK.Bootstrap.Authentication
         {
             return CurrentUser != null;
         }
+
+	    public bool RequiresAuthentication()
+	    {
+		    return true;
+	    }
     }
 
-    public class AspNetSecurityContext : ISecurityContext
+	public class AspNetSecurityContext : ISecurityContext
     {
-        public bool IsAuthenticated()
+		private readonly IRequestPathAuthenticationPolicy _requestPathAuthenticationPolicy;
+
+		public AspNetSecurityContext(IRequestPathAuthenticationPolicy requestPathAuthenticationPolicy)
+		{
+			_requestPathAuthenticationPolicy = requestPathAuthenticationPolicy;
+		}
+
+		public bool IsAuthenticated()
         {
             return HttpContext.Current.Request.IsAuthenticated;
         }
+
+		public bool RequiresAuthentication()
+		{
+			return _requestPathAuthenticationPolicy.PathRequiresAuthentication(HttpContext.Current.Request.Path);
+		}
 
         public IIdentity CurrentIdentity { get { return HttpContext.Current.User.Identity; } }
 

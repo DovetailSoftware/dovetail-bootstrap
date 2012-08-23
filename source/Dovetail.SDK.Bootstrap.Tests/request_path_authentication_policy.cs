@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using Dovetail.SDK.Bootstrap.Authentication;
+using Dovetail.SDK.Bootstrap.Configuration;
 using NUnit.Framework;
+using Rhino.Mocks;
 
 namespace Dovetail.SDK.Bootstrap.Tests
 {
     [TestFixture]
-    public class SecurityModuleTester
+	public class request_path_authentication_policy 
     {
         [Test]
         [TestCase("", "")]
@@ -16,7 +18,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
         [TestCase(" jpg  CSS;     html", ".jpg|.CSS|.html")]
         public void parse_the_whitelist_extension_setting(string setting, string parsedValues)
         {
-            SecurityModule.GetWhiteListedExtensions(setting).Join("|").ShouldEqual(parsedValues);
+			RequestPathAuthenticationPolicy.GetWhiteListedExtensions(setting).Join("|").ShouldEqual(parsedValues);
         }
 
         [Test]
@@ -30,9 +32,8 @@ namespace Dovetail.SDK.Bootstrap.Tests
         [TestCase("css jpg", @"app\image.jpg", false)]
         public void requests_that_require_the_principal_to_load(string extensions, string path, bool requiresPrincipal)
         {
-            var securityModule = new SecurityModule();
-            securityModule.InitializeWhiteList(extensions);
-            securityModule.PathRequiresPrincipal(path).ShouldEqual(requiresPrincipal);
+	        var cut = new RequestPathAuthenticationPolicy(new WebsiteSettings {AnonymousAccessFileExtensions = extensions}, MockRepository.GenerateStub<ILogger>());
+            cut.PathRequiresAuthentication(path).ShouldEqual(requiresPrincipal);
         }
     }
 }
