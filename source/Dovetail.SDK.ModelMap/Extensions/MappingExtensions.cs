@@ -11,7 +11,7 @@ namespace Dovetail.SDK.ModelMap.Extensions
             Func<string, object> describeDateTime = value =>
             {
 				DateTime dateTime;
-				if (DateTime.TryParse(value, out dateTime))
+				if (DateTime.TryParse(value, out dateTime) == false)
 					return string.Empty;
 
 				return dateTime.ElapsedTimeDescription(true, basedOn);
@@ -36,6 +36,5 @@ namespace Dovetail.SDK.ModelMap.Extensions
 
             return expression as IMapExpressionPostRoot<MODEL>;
         }
-
     }
 }
