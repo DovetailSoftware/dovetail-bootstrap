@@ -180,7 +180,9 @@
     <None Include="Handlers\api\history\history.spark">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Handlers\home\home.spark" />
+    <None Include="Handlers\home\home.spark">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Handlers\about\about.spark">
       <SubType>Designer</SubType>
     </None>

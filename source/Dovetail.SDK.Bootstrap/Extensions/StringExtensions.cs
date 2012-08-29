@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Web;
 using Dovetail.SDK.Bootstrap.History.Parser;
 using FubuCore;
 
@@ -32,11 +31,6 @@ namespace Dovetail.SDK.Bootstrap.Extensions
                 builder.Append(character);
             }
             return builder.ToString().ToLower();
-        }
-
-        public static string HtmlEncode(this string unEncoded)
-        {
-            return HttpUtility.HtmlEncode(unEncoded);
         }
 	}
 }
