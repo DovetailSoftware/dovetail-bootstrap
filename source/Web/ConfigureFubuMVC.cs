@@ -5,8 +5,8 @@ using Bootstrap.Web.Security;
 using Dovetail.SDK.Fubu.Clarify.Lists;
 using Dovetail.SDK.Fubu.TokenAuthentication.Token;
 using FubuMVC.Core;
+using FubuMVC.Core.Registration.Conventions;
 using FubuMVC.Core.Security;
-using FubuMVC.Spark;
 using FubuMVC.Swagger;
 
 namespace Bootstrap.Web
@@ -15,14 +15,9 @@ namespace Bootstrap.Web
     {
         public ConfigureFubuMVC()
         {
-#if DEBUG
-            IncludeDiagnostics(true);
-#endif
-            ApplyHandlerConventions<HandlerMarker>();
+            Import<HandlerConvention>(x => x.MarkerType<HandlerMarker>());
             
-            this.UseSpark();
-
-            // Match views to action methods by matching
+			// Match views to action methods by matching
             // on model type, view name, and namespace
             Views.TryToAttachWithDefaultConventions();
 
@@ -33,7 +28,7 @@ namespace Bootstrap.Web
             //convention to transfer exceptions to the view for an input model given via generic argument
             ApplyConvention<APIExceptionConvention<Error500Request>>();
 
-            HtmlConvention<BootstrapHtmlConvention>();
+			Import<BootstrapHtmlConvention>();
 
             //TODO replace this with Swagger Bottle
             ApplyConvention<SwaggerConvention>();

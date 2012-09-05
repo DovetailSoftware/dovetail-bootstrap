@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 using Dovetail.SDK.Bootstrap.History.Parser;
 using FubuCore;
 
@@ -18,6 +19,11 @@ namespace Dovetail.SDK.Bootstrap.Extensions
             result = urlFinderRegEx.Replace(result, @"<a href=""${link}"">${link}</a>");
 
 			return result;
+		}
+
+		public static string HtmlEncode(this string encodeMe)
+		{
+			return HttpUtility.HtmlEncode(encodeMe);
 		}
 
         private static readonly Random _random = new Random(((int)DateTime.Now.Ticks));

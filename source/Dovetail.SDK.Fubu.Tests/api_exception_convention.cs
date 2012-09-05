@@ -4,6 +4,7 @@ using Dovetail.SDK.Bootstrap.Tests;
 using Dovetail.SDK.Fubu.Actions;
 using Dovetail.SDK.Fubu.TokenAuthentication.Token;
 using FubuMVC.Core;
+using FubuMVC.Core.Registration;
 using FubuMVC.Core.Registration.Nodes;
 using NUnit.Framework;
 
@@ -42,7 +43,7 @@ namespace Dovetail.SDK.Fubu.Tests
             var registry = new FubuRegistry(r => r.ApplyConvention<APIExceptionConvention<Error500Request>>());
             registry.Actions.IncludeType<Action>();
 
-            var graph = registry.BuildGraph();
+			var graph = BehaviorGraph.BuildFrom(registry);
 
             graph.BehaviorFor<Action>(x => x.ApiMethod(null)).IsWrappedBy(typeof(ActionExceptionWrapper<Error500Request>)).ShouldBeTrue();
         }
