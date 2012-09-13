@@ -63,7 +63,7 @@ namespace Service
 						{
 							s.TheCallingAssembly();
 							s.WithDefaultConventions();
-							s.AddAllTypesOf(typeof(ModelMap<>));
+							s.AddAllTypesOf(typeof (ModelMap<>));
 						});
 
 					//this is only here because there is a current bug in StructureMap where add all types of a open generic don't work
@@ -73,7 +73,7 @@ namespace Service
 		}
 	}
 
-	public class CaseMonitor 
+	public class CaseMonitor
 	{
 		private readonly HostSettings _settings;
 		private readonly ILogger _logger;
@@ -84,7 +84,7 @@ namespace Service
 		private Timer _timer;
 		private IDisposable _loggingContext;
 
-		public CaseMonitor(HostSettings settings,  ILogger logger, ISystemTime systemTime, IModelBuilder<RecentCaseModel> caseModelBuilder)
+		public CaseMonitor(HostSettings settings, ILogger logger, ISystemTime systemTime, IModelBuilder<RecentCaseModel> caseModelBuilder)
 		{
 			_settings = settings;
 			_logger = logger;
@@ -107,7 +107,7 @@ namespace Service
 
 			return true;
 		}
-		
+
 		private void pollForOpenCases(object sender, ElapsedEventArgs elapsedEventArgs)
 		{
 			var from = _lastPolled;
@@ -115,7 +115,7 @@ namespace Service
 
 			//using a ModelMap to project cases created between the last poll and now
 			var cases = _caseModelBuilder.Get(f => f.Between("creation_time", from, to));
-			
+
 			_logger.LogInfo("{0} cases were created in the last {1} seconds", cases.Length, to.Subtract(from).TotalSeconds);
 
 			foreach (var kase in cases)
