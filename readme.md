@@ -1,10 +1,45 @@
 Dovetail Bootstrap
 ==================
 
-This project aims to get you started writing web applications using Dovetail SDK and FubuMVC
+This project aims to make your life easier while you write [Dovetail SDK](http://www.dovetailsoftware.com/dovetail-sdk) based applications. Included in this project are two example applications:
+
+Features
+--------
+
+### Database operations
+
+* Easily pull data out of your Clarify database and into view models using Model Maps.
+* Simplify calling Dovetail SDK APIs and ad hoc data access while making it easy to manager your session usage using IClarifySessionCache.
+
+### Authentication
+
+* Native ASP.Net authentication support that integrates with Dovetail SDK making it easy to do API operations a behalf of the current user.
+* Web service API token authentication support for FubuMVC applications
+
+Examples 
+--------
+
+### Web Applications
+Our premier example is a [web application](https://github.com/DovetailSoftware/dovetail-bootstrap/tree/master/source/Web) using Dovetail SDK and [FubuMVC](http://mvc.fubu-project.org/). This web application is a good starting point for whatever information or user experiences you wish to expose for your Dovetail/Clarify applications.
+
+![Bootstrap-Web](http://f.cl.ly/items/1g2w0M272r1W240O061V/Image%202012-09-13%20at%202.02.46%20PM.png)
+
+This example web application can: 
+
+* Authenticate a clarify user.
+* Show the current user their open cases.
+* Show history for a given case.
+* Display Gbst lists and details.
+* Examples for exposing Dovetail SDK API calls as web service APIs.
+
+### Windows Service 
+
+We also include a [simple Windows service](https://github.com/DovetailSoftware/dovetail-bootstrap/tree/master/source/Service) example using Dovetail SDK and [Topself](http://topshelf-project.com/) which polls a Clarify database for open case information.
+
+![Bootstrap-Service](http://cl.ly/JQOJ/Image%202012-09-13%20at%202.08.52%20PM.png)
 
 Setup
------
+----
 
 ### Dovetail SDK 
 
