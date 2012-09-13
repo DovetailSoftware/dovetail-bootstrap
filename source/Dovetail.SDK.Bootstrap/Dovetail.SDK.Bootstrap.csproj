@@ -90,6 +90,8 @@
     <Compile Include="Clarify\ClarifySessionUsageReporter.cs" />
     <Compile Include="Clarify\UserLocalTimezoneClarifySessionConfigurator.cs" />
     <Compile Include="Configuration\AspNetHttpRequest.cs" />
+    <Compile Include="Configuration\SettingsProviderRegistry.cs" />
+    <Compile Include="Configuration\StructureMapServiceLocator.cs" />
     <Compile Include="Configuration\WebsiteSettings.cs" />
     <Compile Include="History\Parser\Sprache\Failure.cs" />
     <Compile Include="History\Parser\Sprache\IFailure.cs" />

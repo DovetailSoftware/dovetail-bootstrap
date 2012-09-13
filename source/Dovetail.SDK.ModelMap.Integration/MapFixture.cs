@@ -54,21 +54,4 @@ namespace Dovetail.SDK.ModelMap.Integration
 		public virtual void beforeAll() { }
 
 	}
-
-	//TODO should this get moved up into bootstrap?
-	public class SettingsProviderRegistry : Registry
-	{
-		public SettingsProviderRegistry()
-		{
-			For<ITypeDescriptorCache>().Use<TypeDescriptorCache>();
-			For<IBindingLogger>().Use<NulloBindingLogger>();
-			For<IServiceLocator>().Use<StructureMapServiceLocator>();
-			For<IObjectResolver>().Use<ObjectResolver>();
-			For<IObjectConverter>().Use<ObjectConverter>();
-
-
-			For<ISettingsSource>().Add<DovetailAppSettingsSource>();
-			For<ISettingsProvider>().Use<SettingsProvider>();
-		}
-	}
 }
