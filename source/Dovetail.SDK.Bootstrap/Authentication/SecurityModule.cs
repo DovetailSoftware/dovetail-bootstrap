@@ -6,15 +6,17 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 {
 	public class SecurityModule : IHttpModule
     {
-       public void Init(HttpApplication context)
+		private ISecurityContext _securityContext;
+
+		public void Init(HttpApplication context)
         {
+			_securityContext = ObjectFactory.Container.GetInstance<ISecurityContext>();
             context.AuthenticateRequest += onContextOnAuthenticateRequest;
         }
 
         private void onContextOnAuthenticateRequest(object sender, EventArgs e)
         {
-	        var securityContext = ObjectFactory.Container.GetInstance<ISecurityContext>();
-	        if (RequiresAuthentication(securityContext))
+	        if (RequiresAuthentication(_securityContext))
             {
                 ObjectFactory.Container.GetInstance<IAuthenticationContextService>().SetupAuthenticationContext();
             }
