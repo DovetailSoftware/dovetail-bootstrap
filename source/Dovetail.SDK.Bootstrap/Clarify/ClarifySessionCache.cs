@@ -65,22 +65,33 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 			return getSession(username);
 		}
 
+		public bool addSessionToCache(string username, IClarifySession session)
+		{
+			return _agentSessionCacheByUsername.TryAdd(username, session);
+		}
+
 		public bool EjectSession(string username)
 		{
 			_logger.LogDebug("Ejecting session for {0}.", username);
-			IClarifySession value;
-			var success = _agentSessionCacheByUsername.TryRemove(username, out value);
+			IClarifySession ejectingSession;
+			var success = _agentSessionCacheByUsername.TryRemove(username, out ejectingSession);
 			var isApplicationUser = isApplicationUsername(username);
-			if (success && !isApplicationUser)
+			if (!success)
 			{
-				_sessionEndObserver().SessionExpired(value);
+				_logger.LogDebug("Session could not be ejected for user {0} as it was not found in the cache.", username);
+				return false;
 			}
-			else
+
+			if (!isApplicationUser)
 			{
-				var reason = String.Format("Username was{0} in the session cache. ", success ? "" :" not")  + String.Format("Username is{0} the application user.", isApplicationUser ? "" : " not");
-				_logger.LogInfo("Skipped ejecting session for {0}. Reason: {1}", username, reason);	
+				_logger.LogDebug("Expiring session {0} for user {1}.", ejectingSession.Id, username);
+				_sessionEndObserver().SessionExpired(ejectingSession);
 			}
-			return success;
+
+			_logger.LogDebug("Closing ejected session {0} for user {1}", ejectingSession.Id, username);
+			ejectingSession.Close();
+
+			return true;
 		}
 
 		private bool isApplicationUsername(string username)
