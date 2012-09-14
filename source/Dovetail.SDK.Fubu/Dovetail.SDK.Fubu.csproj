@@ -36,25 +36,25 @@
     <Reference Include="Bottles, Version=0.9.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Bottles.0.9.1.345\lib\Bottles.dll</HintPath>
     </Reference>
-    <Reference Include="FChoice.Common, Version=3.2.5.5, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+    <Reference Include="FChoice.Common, Version=3.2.5.6, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Dovetail.SDK.3.2.5.5\lib\net20\FChoice.Common.dll</HintPath>
+      <HintPath>..\packages\Dovetail.SDK.3.2.5.6\lib\net20\FChoice.Common.dll</HintPath>
     </Reference>
-    <Reference Include="FChoice.Foundation.Clarify.Compatibility, Version=3.2.5.5, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+    <Reference Include="FChoice.Foundation.Clarify.Compatibility, Version=3.2.5.6, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Dovetail.SDK.3.2.5.5\lib\net20\FChoice.Foundation.Clarify.Compatibility.dll</HintPath>
+      <HintPath>..\packages\Dovetail.SDK.3.2.5.6\lib\net20\FChoice.Foundation.Clarify.Compatibility.dll</HintPath>
     </Reference>
-    <Reference Include="FChoice.Foundation.Clarify.Compatibility.Toolkits, Version=3.2.5.5, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+    <Reference Include="FChoice.Foundation.Clarify.Compatibility.Toolkits, Version=3.2.5.6, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Dovetail.SDK.3.2.5.5\lib\net20\FChoice.Foundation.Clarify.Compatibility.Toolkits.dll</HintPath>
+      <HintPath>..\packages\Dovetail.SDK.3.2.5.6\lib\net20\FChoice.Foundation.Clarify.Compatibility.Toolkits.dll</HintPath>
     </Reference>
-    <Reference Include="FChoice.Toolkits.Clarify, Version=3.2.5.5, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+    <Reference Include="FChoice.Toolkits.Clarify, Version=3.2.5.6, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Dovetail.SDK.3.2.5.5\lib\net20\FChoice.Toolkits.Clarify.dll</HintPath>
+      <HintPath>..\packages\Dovetail.SDK.3.2.5.6\lib\net20\FChoice.Toolkits.Clarify.dll</HintPath>
     </Reference>
-    <Reference Include="fcSDK, Version=3.2.5.5, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+    <Reference Include="fcSDK, Version=3.2.5.6, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Dovetail.SDK.3.2.5.5\lib\net20\fcSDK.dll</HintPath>
+      <HintPath>..\packages\Dovetail.SDK.3.2.5.6\lib\net20\fcSDK.dll</HintPath>
     </Reference>
     <Reference Include="FubuCore, Version=0.9.9.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\FubuCore.0.9.9.178\lib\FubuCore.dll</HintPath>
