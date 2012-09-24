@@ -48,9 +48,8 @@ namespace Dovetail.SDK.Bootstrap.History
                 .WithFields("notes", "internal", "x_is_internal")
                 .UpdateActivityDTOWith((row, dto) =>
                                            {
-                                               dto.Detail = row["x_is_internal"].ToString() == "0" ? row["notes"].ToString() : "";
-                                               dto.Internal = row["x_is_internal"].ToString() == "1" || row["internal"].ToString().Length > 0 ? 
-                                                   row["x_is_internal"].ToString() == "1" ? row["notes"].ToString() : row["internal"].ToString() : "";
+                                               dto.Detail = row["x_is_internal"].ToString() ;
+                                               dto.Internal = row["x_is_internal"].ToString() ;
                                            });
         }
 
@@ -115,9 +114,8 @@ namespace Dovetail.SDK.Bootstrap.History
                 .GetRelatedRecord("act_entry2notes_log").WithFields("description", "internal", "x_is_internal")
                 .UpdateActivityDTOWith((record, dto) =>
                                            {
-                                               dto.Detail = record["x_is_internal"].ToString() == "0" ? record["description"].ToString() : "";
-                                               dto.Internal = record["x_is_internal"].ToString() == "1" || record["internal"].ToString().Length > 0 ? 
-                                                   record["x_is_internal"].ToString() == "1" ? record["description"].ToString()  : record["internal"].ToString() : "";
+                                               dto.Detail = record["description"].ToString();
+                                               dto.Internal = record["internal"].ToString();
                                            });
         }
     }
