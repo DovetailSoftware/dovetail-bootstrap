@@ -29,12 +29,6 @@ namespace Dovetail.SDK.ModelMap.NextGen
 		}
 	}
 
-	public class JoinClause
-	{
-		public string Alias { get; set; }
-		public string JoinSql { get; set; }
-	}
-
 	public class ModelBuilder<IN, OUT>
 	{
 		private readonly ModelMapConfig<IN, OUT> _mapConfig;
@@ -78,6 +72,9 @@ namespace Dovetail.SDK.ModelMap.NextGen
 		private int _selectIndex;
 		private int _aliasIndex;
 		private int _mtmAliasCount;
+		private List<SelectClause> _selectedFields;
+		private List<JoinClause> _joinClauses;
+		private List<WhereClause> _whereClauses;
 
 		public Query BuildQuery(IN inputModel)
 		{
@@ -85,37 +82,39 @@ namespace Dovetail.SDK.ModelMap.NextGen
 			_selectIndex = 0;
 			_aliasIndex = 0;
 
-			var rootSelectClauses = _mapConfig.Fields.Select(f => BuildField(inputModel, "root", f, _selectIndex++));
+			//todo DRY up these linq queries
+			var rootSelectClauses = _mapConfig.Fields.Where(f => f.OutProperty != null).Select(f => BuildSelect("root", f, _selectIndex++));
+			var rootWhereClauses = _mapConfig.Fields.Where(f => f.Operator != null).Select(f => BuildWhere(inputModel, "root", f));
+
 			var rootJoinClause = new JoinClause {Alias = "root", JoinSql = "from table_{0}".ToFormat(_mapConfig.BaseTable.Name)};
 
-			var selectClauses = new List<SelectClause>(rootSelectClauses);
-			var joinClauses = new List<JoinClause> {rootJoinClause};
+			_selectedFields = new List<SelectClause>(rootSelectClauses);
+			_joinClauses = new List<JoinClause> {rootJoinClause};
+			_whereClauses = new List<WhereClause>(rootWhereClauses);
 
-			_mapConfig.Joins.Each(j => BuildJoin(inputModel, j, rootJoinClause, selectClauses, joinClauses));
+			_mapConfig.Joins.Each(j => BuildJoin(inputModel, j, rootJoinClause));
 
 			//var joins = _map.Joins.SelectMany(join => @join.PreorderTraverse(j => j.Joins)).ToList();
 
 			return new Query
 				{
-					Joins = joinClauses, 
-					SelectedFields = selectClauses, 
+					Joins = _joinClauses, 
+					SelectedFields = _selectedFields, 
 					Sql = "sql"
 				};
 		}
 
-		public void BuildJoin(IN inputModel, ModelMapConfig<IN, OUT> mapConfig, JoinClause parentJoinClause, List<SelectClause> selectClauses, List<JoinClause> joinClauses)
+		public void BuildJoin(IN inputModel, ModelMapConfig<IN, OUT> mapConfig, JoinClause parentJoinClause)
 		{
 			var toAlias = "T" + _aliasIndex++;
 			var relation = (SchemaRelation) mapConfig.ViaRelation;
 			const string rowIdColumnName = "objid";
 
-			selectClauses.AddRange(
-					mapConfig.Fields
-					.Where(f=>f.OutProperty != null)
-					.Select(field => BuildField(inputModel, toAlias, field, _selectIndex++))
-				);
+			var selects = mapConfig.Fields.Where(f => f.OutProperty != null).Select(field => BuildSelect(toAlias, field, _selectIndex++));
+			_selectedFields.AddRange(selects);
 
-			//TODO add where clauses
+			var wheres = mapConfig.Fields.Where(f => f.Operator != null).Select(field => BuildWhere(inputModel, toAlias, field));
+			_whereClauses.AddRange(wheres);
 
 			// this is where it gets hairy
 
@@ -172,26 +171,45 @@ namespace Dovetail.SDK.ModelMap.NextGen
 					JoinSql = joinBuilder.ToString()
 				};
 
-			joinClauses.Add(joinClause);
+			_joinClauses.Add(joinClause);
 
-			mapConfig.Joins.Each(j => BuildJoin(inputModel, j, joinClause, selectClauses, joinClauses));
+			mapConfig.Joins.Each(j => BuildJoin(inputModel, j, joinClause));
 		}
 
-		public SelectClause BuildField(IN inputModel, string alias, FieldConfig field, int index)
+		public SelectClause BuildSelect(string alias, FieldConfig field, int index)
 		{
-			if (field.Operator != null && field.InputProperty != null)
+			//if (field.Operator != null && field.InputProperty != null)
+			//{
+			//    field.InputValue = field.OutProperty.GetValue(inputModel, null);
+			//}
+
+			return new SelectClause {Alias = alias, Field = field, Index = index};
+		}
+
+		public WhereClause BuildWhere(IN inputModel, string alias, FieldConfig field)
+		{
+			var value = field.InputValue;
+
+			if (value == null && field.InputProperty != null)
 			{
 				field.InputValue = field.OutProperty.GetValue(inputModel, null);
 			}
 
-			return new SelectClause {Alias = alias, Field = field, Index = index};
+			if (value == null)
+			{
+				throw new ApplicationException("Field {0} does not have a value.".ToFormat(field.FieldName));
+			}
+
+			return new WhereClause { Alias = alias, Field = field, Value = value};
 		}
+
 
 		public class Query
 		{
 			public string Sql { get; set; }
 			public IEnumerable<SelectClause> SelectedFields { get; set; }
 			public IEnumerable<JoinClause> Joins { get; set; }
+			public IEnumerable<WhereClause> Wheres { get; set; }
 		}
 
 		public class SelectClause
@@ -199,6 +217,19 @@ namespace Dovetail.SDK.ModelMap.NextGen
 			public int Index { get; set; }
 			public string Alias { get; set; }
 			public string FieldName { get; set; }
+			public FieldConfig Field { get; set; }
+		}
+
+		public class JoinClause
+		{
+			public string Alias { get; set; }
+			public string JoinSql { get; set; }
+		}
+
+		public class WhereClause
+		{
+			public string Alias { get; set; }
+			public object Value { get; set; }
 			public FieldConfig Field { get; set; }
 		}
 	}
