@@ -103,6 +103,7 @@
     <Compile Include="ModelBuilder.cs" />
     <Compile Include="ModelInspectorVisitor.cs" />
     <Compile Include="ModelMapSchemaValidationSource.cs" />
+    <Compile Include="NextGen\nextgen.cs" />
     <Compile Include="ObjectModel\ClarifyGenericMapEntry.cs" />
     <Compile Include="ObjectModel\FieldMap.cs" />
     <Compile Include="ObjectModel\FieldSortMap.cs" />
@@ -144,6 +145,7 @@
       <Name>Dovetail.SDK.Bootstrap</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
