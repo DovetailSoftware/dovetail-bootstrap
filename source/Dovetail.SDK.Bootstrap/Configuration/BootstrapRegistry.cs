@@ -1,4 +1,3 @@
-using System;
 using System.Web;
 using Dovetail.SDK.Bootstrap.Authentication;
 using Dovetail.SDK.Bootstrap.Clarify;
@@ -46,12 +45,12 @@ namespace Dovetail.SDK.Bootstrap.Configuration
             //any web class that takes a dependency on IClarifySession will get a session for the current 
             //authenticated user. 
             ForSingletonOf<IClarifySessionCache>().Use<ClarifySessionCache>();
-			For<IClarifySession>().Use(ctx=>
+			For<IClarifySession>().HybridHttpOrThreadLocalScoped().Use(ctx=>
 				{
 					var user = ctx.GetInstance<ICurrentSDKUser>();
 					return ctx.GetInstance<IClarifySessionCache>().GetSession(user.Username);
 				});
-			For<IApplicationClarifySession>().Use(ctx => ctx.GetInstance<IClarifySessionCache>().GetApplicationSession() as ClarifySessionWrapper);
+			For<IApplicationClarifySession>().HybridHttpOrThreadLocalScoped().Use(ctx => ctx.GetInstance<IClarifySessionCache>().GetApplicationSession() as ClarifySessionWrapper);
 
 			//Make Dovetail SDK caches directly available for DI.
 			For<IListCache>().Use(c => c.GetInstance<IClarifyApplication>().ListCache);
@@ -59,6 +58,8 @@ namespace Dovetail.SDK.Bootstrap.Configuration
 			For<IStringCache>().Use(c => c.GetInstance<IClarifyApplication>().StringCache);
 			For<ILocaleCache>().Use(c => c.GetInstance<IClarifyApplication>().LocaleCache);
 			For<IListCache>().Use(c => c.GetInstance<IClarifyApplication>().ListCache);
+
+	        ForSingletonOf<IRequestPathAuthenticationPolicy>().Use<RequestPathAuthenticationPolicy>();
 
             //It is the responsibility of the applicationUrl using bootstrap to set the current sdk user's login 
             For<ICurrentSDKUser>().HybridHttpOrThreadLocalScoped().Use<CurrentSDKUser>();
