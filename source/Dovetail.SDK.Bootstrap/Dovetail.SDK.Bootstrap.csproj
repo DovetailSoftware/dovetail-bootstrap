@@ -90,6 +90,7 @@
     <Compile Include="Clarify\ClarifySessionUsageReporter.cs" />
     <Compile Include="Clarify\UserLocalTimezoneClarifySessionConfigurator.cs" />
     <Compile Include="Configuration\AspNetHttpRequest.cs" />
+    <Compile Include="Configuration\LogRequestContextModule.cs" />
     <Compile Include="Configuration\SettingsProviderRegistry.cs" />
     <Compile Include="Configuration\StructureMapServiceLocator.cs" />
     <Compile Include="Configuration\WebsiteSettings.cs" />
