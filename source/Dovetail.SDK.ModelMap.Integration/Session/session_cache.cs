@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using Dovetail.SDK.Bootstrap;
 using Dovetail.SDK.Bootstrap.Authentication;
 using Dovetail.SDK.Bootstrap.Clarify;
@@ -55,6 +54,7 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 			public void afterAll()
 			{
 				_expectedSession.CloseSession();
+				_cut.clear();
 			}
 
 			protected ClarifySession CreateRealSession()
@@ -198,23 +198,6 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 				_cut.EjectSession(UserName);
 
 				_userSessionEndObserver.AssertWasNotCalled(a => a.SessionExpired(null), x => x.IgnoreArguments());
-			}
-		}
-
-		public class session_user_with_failed_attempts : session_cache_context
-		{
-			private const string UserName = "annie";
-			
-			public override void setup()
-			{
-				_clarifyApplication.Stub(s => s.CreateSession(UserName, ClarifyLoginType.User)).Return(_expectedSession);
-				_clarifyApplication.Stub(s => s.IsSessionValid(_expectedSession.SessionID)).Return(false);
-			}
-
-			[Test]
-			public void should_throw_an_exception()
-			{
-				typeof(ApplicationException).ShouldBeThrownBy(()=>_cut.GetSession(UserName));
 			}
 		}
 
