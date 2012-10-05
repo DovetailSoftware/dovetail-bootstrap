@@ -81,7 +81,6 @@
     <Compile Include="Configuration\ModelMapperRegistry.cs" />
     <Compile Include="DovetailGenericModelMapVisitor.cs" />
     <Compile Include="DovetailMappingException.cs" />
-    <Compile Include="Extensions\LinqExtension.cs" />
     <Compile Include="Extensions\MappingExtensions.cs" />
     <Compile Include="Extensions\TemporalExtensions.cs" />
     <Compile Include="HttpAssemblerResultEncoder.cs" />

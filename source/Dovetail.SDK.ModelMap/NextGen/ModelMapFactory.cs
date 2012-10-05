@@ -26,12 +26,11 @@ namespace Dovetail.SDK.ModelMap.NextGen
 			}
 
 			var configurator = new ModelMapConfigurator<IN, OUT>(_container, _schemaCache);
-			config(configurator);
-
 			var map = configurator.MapConfig;
-
 			var baseTable = _schemaCache.IsValidTable(objectName) ? _schemaCache.Tables[objectName] as ISchemaTableBase : _schemaCache.Views[objectName] as ISchemaTableBase;
 			map.BaseTable = baseTable;
+
+			config(configurator);
 
 			return map;
 		}

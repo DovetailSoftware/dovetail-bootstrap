@@ -29,22 +29,33 @@ namespace Dovetail.SDK.ModelMap.NextGen
 
 		public FieldConfig<IN> Field(string fieldName)
 		{
-			var fieldMap = new FieldConfig<IN>(fieldName);
+			var schemaField = getSchemaField(fieldName);
 
-			MapConfig.Fields.Add(fieldMap);
+			var fieldConfig = new FieldConfig<IN>(schemaField);
 
-			return fieldMap;
+			MapConfig.Fields.Add(fieldConfig);
+
+			return fieldConfig;
 		}
 
 		public FieldConfig<IN> SelectField(string fieldName, Expression<Func<OUT, object>> expression)
 		{
+			var fieldConfig = Field(fieldName);
+			
 			var propertyInfo = ReflectionHelper.GetProperty(expression);
+			fieldConfig.OutProperty = propertyInfo;
 
-			var fieldMap = new FieldConfig<IN>(fieldName) {OutProperty = propertyInfo};
+			return fieldConfig;
+		}
 
-			MapConfig.Fields.Add(fieldMap);
+		private ISchemaField getSchemaField(string fieldName)
+		{
+			if (!_schemaCache.IsValidField(MapConfig.BaseTable.Name, fieldName))
+			{
+				throw new DovetailMappingException(2003, "Could not find the field {0} for base object {1} in the schema.", MapConfig.BaseTable.Name, fieldName);
+			}
 
-			return fieldMap;
+			return _schemaCache.GetField(MapConfig.BaseTable.Name, fieldName);
 		}
 
 		public void Join(string relationName, Action<ModelMapConfigurator<IN, OUT>> config)
@@ -55,14 +66,12 @@ namespace Dovetail.SDK.ModelMap.NextGen
 			}
 
 			var joinConfigurator = new ModelMapConfigurator<IN, OUT>(_container, _schemaCache);
-
-			config(joinConfigurator);
-
 			var joinMap = joinConfigurator.MapConfig;
-
 			joinMap.Parent = MapConfig;
 			joinMap.ViaRelation = _schemaCache.GetRelation(MapConfig.BaseTable.Name, relationName);
-			joinMap.BaseTable = joinMap.ViaRelation.SourceTable;
+			joinMap.BaseTable = joinMap.ViaRelation.TargetTable;
+
+			config(joinConfigurator);
 
 			MapConfig.Joins.Add(joinMap);
 		}
@@ -73,7 +82,7 @@ namespace Dovetail.SDK.ModelMap.NextGen
 
 	public class FieldConfig
 	{
-		public string FieldName { get; set; }
+		public ISchemaField SchemaField { get; set; }
 		public PropertyInfo OutProperty { get; set; }
 		public PropertyInfo InputProperty { get; set; }
 		public object InputValue { get; set; }
@@ -82,9 +91,9 @@ namespace Dovetail.SDK.ModelMap.NextGen
 
 	public class FieldConfig<IN> : FieldConfig
 	{
-		public FieldConfig(string fieldName)
+		public FieldConfig(ISchemaField schemaField)
 		{
-			FieldName = fieldName;
+			SchemaField = schemaField;
 		}
 
 		public void EqualTo(Expression<Func<IN, object>> expression)
