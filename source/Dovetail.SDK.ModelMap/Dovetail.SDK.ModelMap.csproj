@@ -81,6 +81,7 @@
     <Compile Include="Configuration\ModelMapperRegistry.cs" />
     <Compile Include="DovetailGenericModelMapVisitor.cs" />
     <Compile Include="DovetailMappingException.cs" />
+    <Compile Include="Extensions\LinqExtension.cs" />
     <Compile Include="Extensions\MappingExtensions.cs" />
     <Compile Include="Extensions\TemporalExtensions.cs" />
     <Compile Include="HttpAssemblerResultEncoder.cs" />
@@ -103,7 +104,10 @@
     <Compile Include="ModelBuilder.cs" />
     <Compile Include="ModelInspectorVisitor.cs" />
     <Compile Include="ModelMapSchemaValidationSource.cs" />
-    <Compile Include="NextGen\nextgen.cs" />
+    <Compile Include="NextGen\ModelBuilder.cs" />
+    <Compile Include="NextGen\ModelMapConfigurator.cs" />
+    <Compile Include="NextGen\ModelMapFactory.cs" />
+    <Compile Include="NextGen\QueryBuilder.cs" />
     <Compile Include="ObjectModel\ClarifyGenericMapEntry.cs" />
     <Compile Include="ObjectModel\FieldMap.cs" />
     <Compile Include="ObjectModel\FieldSortMap.cs" />
