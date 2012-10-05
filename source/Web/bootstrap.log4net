@@ -5,8 +5,8 @@
       <param name="File" value="logs/bootstrap.log" />
       <param name="AppendToFile" value="true" />
       <param name="RollingStyle" value="Size" />
-      <param name="MaxSizeRollBackups" value="100" />
-      <param name="MaximumFileSize" value="1024KB" />
+      <param name="MaxSizeRollBackups" value="15" />
+      <param name="MaximumFileSize" value="10MB" />
       <param name="StaticLogFileName" value="true" />
       <layout type="log4net.Layout.PatternLayout">
         <conversionPattern value="%date %-5level [%identity|%thread] %logger %ndc %message %newline" />
@@ -33,7 +33,6 @@
 
     <root>
       <level value="DEBUG" />
-      <appender-ref ref="ColoredConsoleAppender" />
       <appender-ref ref="RollingFileAppender" />
     </root>
 
