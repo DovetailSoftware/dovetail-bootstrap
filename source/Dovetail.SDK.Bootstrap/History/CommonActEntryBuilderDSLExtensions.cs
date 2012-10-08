@@ -48,8 +48,8 @@ namespace Dovetail.SDK.Bootstrap.History
                 .WithFields("notes", "internal", "x_is_internal")
                 .UpdateActivityDTOWith((row, dto) =>
                                            {
-                                               dto.Detail = row["x_is_internal"].ToString() ;
-                                               dto.Internal = row["x_is_internal"].ToString() ;
+                                             dto.Detail = row["notes"].ToString();
+                                             dto.Internal = row["internal"].ToString();
                                            });
         }
 
