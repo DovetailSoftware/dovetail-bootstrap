@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using FChoice.Foundation.Clarify.Schema;
 using FChoice.Foundation.Schema;
@@ -36,7 +37,7 @@ namespace Dovetail.SDK.ModelMap.NextGen
 
 			//todo DRY up these linq queries
 			var rootSelectClauses = _mapConfig.Selects.Select(f => BuildSelectItem("root", f, _selectIndex++));
-			var rootWhereClauses = _mapConfig.Filters.Where(f => f.Operator != null).Select(f => BuildWhereItem(filterModel, "root", f));
+			var rootWhereClauses = _mapConfig.Filters.Where(f => f.IsConfigured).Select(f => BuildWhereItem(filterModel, "root", f));
 
 			var rootJoinClause = new JoinItem { Alias = "root", JoinSql = "from table_{0}".ToFormat(_mapConfig.BaseTable.Name) };
 
@@ -60,10 +61,10 @@ namespace Dovetail.SDK.ModelMap.NextGen
 			var relation = (SchemaRelation)mapConfig.ViaRelation;
 			const string rowIdColumnName = "objid";
 
-			var selects = mapConfig.Selects.Where(f => f.OutProperty != null).Select(field => BuildSelectItem(toAlias, field, _selectIndex++));
+			var selects = mapConfig.Selects.Select(field => BuildSelectItem(toAlias, field, _selectIndex++));
 			_selectedFields.AddRange(selects);
 
-			var wheres = mapConfig.Filters.Where(f => f.Operator != null).Select(field => BuildWhereItem(filterModel, toAlias, field));
+			var wheres = mapConfig.Filters.Where(f => f.IsConfigured).Select(field => BuildWhereItem(filterModel, toAlias, field));
 			_whereClauses.AddRange(wheres);
 
 			//where this gets hairy
@@ -126,9 +127,15 @@ namespace Dovetail.SDK.ModelMap.NextGen
 			mapConfig.Joins.Each(j => BuildJoinItem(filterModel, j, joinClause));
 		}
 
-		public SelectItem BuildSelectItem(string alias, SelectConfig filter, int index)
+		public SelectItem BuildSelectItem(string alias, SelectConfig config, int index)
 		{
-			return new SelectItem { Alias = alias, Field = filter.SchemaField, Index = index };
+			return new SelectItem
+				{
+					Alias = alias,
+					Field = config.SchemaField,
+					OutProperty = config.OutProperty,
+					Index = index
+				};
 		}
 
 		public WhereItem BuildWhereItem(FILTER filterModel, string alias, FilterConfig filter)
@@ -142,10 +149,10 @@ namespace Dovetail.SDK.ModelMap.NextGen
 
 			if (value == null)
 			{
-				throw new ApplicationException("Field {0} has not been given an input value.".ToFormat(filter.SchemaField.Name));
+				throw new DovetailMappingException(2004, "Filtered field {0} has not been given an input value.".ToFormat(filter.SchemaField.Name));
 			}
 
-			return new WhereItem { Alias = alias, Field = filter.SchemaField, Value = value };
+			return new WhereItem { Alias = alias, Field = filter.SchemaField, Value = value, Operator = filter.Operator};
 		}
 	}
 
@@ -161,6 +168,7 @@ namespace Dovetail.SDK.ModelMap.NextGen
 		public int Index { get; set; }
 		public string Alias { get; set; }
 		public ISchemaField Field { get; set; }
+		public PropertyInfo OutProperty { get; set; }
 	}
 
 	public class JoinItem
@@ -175,5 +183,6 @@ namespace Dovetail.SDK.ModelMap.NextGen
 		public string Alias { get; set; }
 		public object Value { get; set; }
 		public ISchemaField Field { get; set; }
+		public FilterConfigOperator Operator { get; set; }
 	}
 }

@@ -39,7 +39,7 @@ namespace Dovetail.SDK.ModelMap.NextGen
 
 		public FilterConfig<FILTER> Field(string fieldName)
 		{
-			var schemaField = getSchemaField(fieldName);
+			var schemaField = getSchemaField(fieldName);	
 
 			var filterConfig = new FilterConfig<FILTER>(schemaField);
 
@@ -106,7 +106,7 @@ namespace Dovetail.SDK.ModelMap.NextGen
 
 		public bool IsConfigured
 		{
-			get { return FilterValue != null || IsEditable; }
+			get { return Operator != null && (FilterValue != null || IsEditable); }
 		}
 
 		public bool IsEditable
@@ -142,13 +142,13 @@ namespace Dovetail.SDK.ModelMap.NextGen
 
 		public void EqualTo(Expression<Func<FILTER, object>> expression)
 		{
-			FilteredBy(expression);
+			FilterableBy(expression);
 
 			Operator = new Matches();
 		}
 
 		//TODO use interface to hide this method from the modelmap config's Override method?
-		public FilterConfig<FILTER> FilteredBy(Expression<Func<FILTER, object>> expression)
+		public FilterConfig<FILTER> FilterableBy(Expression<Func<FILTER, object>> expression)
 		{
 			var propertyInfo = ReflectionHelper.GetProperty(expression);
 

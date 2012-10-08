@@ -17,11 +17,12 @@ namespace Dovetail.SDK.ModelMap.Integration.NextGen
 	public class FilterModel	
 	{
 		public string SiteName { get; set; }
-		public DateTime Modified { get; set; }
+		public DateTime? Modified { get; set; }
+		public int ObjId { get; set; }
 	}
 
 	[TestFixture]
-	public class model_map_factory : MapFixture
+	public class model_map_factory_set_filter : MapFixture
 	{
 		private ISchemaCache _schemaCache;
 		private RootModelMapConfig<FilterModel, TestModel> _map;
@@ -37,18 +38,29 @@ namespace Dovetail.SDK.ModelMap.Integration.NextGen
 
 					c.Join("case_reporter2site", site =>
 						{
-							site.Field("update_stamp").FilteredBy(filter => filter.Modified);
-							site.SelectField("name", f=>f.SiteName);
+							site.Field("update_stamp").FilterableBy(filter => filter.Modified);
+							site.SelectField("name", f=>f.SiteName).EqualTo(f=>f.SiteName);
 						});
 				});
 		}
 
 		[Test]
-		public void future_filter_adds_field_config_to_root_map_config()
+		public void should_find_filterable_property()
 		{
-			_map.SetFilter(f=>f.Modified).Operator = new Matches();
+			_map.SetFilter(f=>f.Modified).ShouldNotBeNull();
 		}
 
+		[Test]
+		public void should_find_filtered_property()
+		{
+			_map.SetFilter(f => f.SiteName).ShouldNotBeNull();
+		}
+
+		[Test]
+		public void should_throw_when_property_is_not_a_configured_filter()
+		{
+			typeof (DovetailMappingException).ShouldBeThrownBy(() => _map.SetFilter(f => f.ObjId));
+		}
 	}
 
 	[TestFixture]
@@ -70,9 +82,10 @@ namespace Dovetail.SDK.ModelMap.Integration.NextGen
 				c.Join("case_reporter2site", site =>
 				{
 					site.Field("status").EqualTo(42);
+					site.Field("region");
 					site.SelectField("name", f => f.SiteName).EqualTo(filter => filter.SiteName);
 					site.SelectField("site_id", f => f.SiteiD);
-					site.Field("update_stamp").FilteredBy(filter => filter.Modified);
+					site.Field("update_stamp").FilterableBy(filter => filter.Modified);
 				});
 			});
 
@@ -137,5 +150,16 @@ namespace Dovetail.SDK.ModelMap.Integration.NextGen
 			status.Value.ShouldEqual(_filter.SiteName);
 		}
 
+		[Test]
+		public void field_with_no_filter_specified_should_have_no_where_item()
+		{
+			_query.Wheres.Any(s => s.Field.Name == "region").ShouldBeFalse();
+		}
+
+		[Test]
+		public void field_with_no_filter_value_should_have_no_where_item()
+		{
+			_query.Wheres.Any(s => s.Field.Name == "update_stamp").ShouldBeFalse();
+		}
 	}
 }
