@@ -13,7 +13,7 @@ namespace Dovetail.SDK.ModelMap.Integration.NextGen
 		public int SiteStatus { get; set; }
 	}
 
-	public class InputModel	
+	public class FilterModel	
 	{
 		public string SiteName { get; set; }
 	}
@@ -23,12 +23,12 @@ namespace Dovetail.SDK.ModelMap.Integration.NextGen
 	{
 		private MapQueryConfig _query;
 		private ISchemaCache _schemaCache;
-		private InputModel _input;
+		private FilterModel _filter;
 
 		public override void beforeAll()
 		{
 			_schemaCache = Container.GetInstance<ISchemaCache>();
-			var mapFactory = new ModelMapFactory<InputModel, TestModel>(Container, _schemaCache);
+			var mapFactory = new ModelMapFactory<FilterModel, TestModel>(Container, _schemaCache);
 
 			var map = mapFactory.Create("case", c =>
 			{
@@ -42,11 +42,11 @@ namespace Dovetail.SDK.ModelMap.Integration.NextGen
 				});
 			});
 
-			var builder = new MapQueryConfigFactory<InputModel, TestModel>(map);
+			var builder = new MapQueryConfigFactory<FilterModel, TestModel>(map);
 
-			_input = new InputModel { SiteName = "site name" };
+			_filter = new FilterModel { SiteName = "site name" };
 
-			_query = builder.Create(_input);
+			_query = builder.Create(_filter);
 		}
 
 		[Test]
@@ -92,7 +92,7 @@ namespace Dovetail.SDK.ModelMap.Integration.NextGen
 			var status = _query.Wheres.First(s => s.Field.Name == "name");
 			status.Alias.ShouldEqual("T0");
 			status.Field.ShouldEqual(_schemaCache.GetField("site", "name"));
-			status.Value.ShouldEqual(_input.SiteName);
+			status.Value.ShouldEqual(_filter.SiteName);
 		}
 
 	}

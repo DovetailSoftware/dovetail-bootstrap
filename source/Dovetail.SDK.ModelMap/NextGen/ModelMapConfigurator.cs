@@ -9,17 +9,17 @@ using StructureMap;
 
 namespace Dovetail.SDK.ModelMap.NextGen
 {
-	public class ModelMapConfigurator<IN, OUT>
+	public class ModelMapConfigurator<FILTER, OUT>
 	{
 		private readonly IContainer _container;
 		private readonly ISchemaCache _schemaCache;
-		public ModelMapConfig<IN, OUT> MapConfig { get; set; }
+		public ModelMapConfig<FILTER, OUT> MapConfig { get; set; }
 
 		public ModelMapConfigurator(IContainer container, ISchemaCache schemaCache)
 		{
 			_container = container;
 			_schemaCache = schemaCache;
-			MapConfig = new ModelMapConfig<IN, OUT>();
+			MapConfig = new ModelMapConfig<FILTER, OUT>();
 		}
 
 		public T Get<T>()
@@ -27,18 +27,18 @@ namespace Dovetail.SDK.ModelMap.NextGen
 			return _container.GetInstance<T>();
 		}
 
-		public FieldConfig<IN> Field(string fieldName)
+		public FieldConfig<FILTER> Field(string fieldName)
 		{
 			var schemaField = getSchemaField(fieldName);
 
-			var fieldConfig = new FieldConfig<IN>(schemaField);
+			var fieldConfig = new FieldConfig<FILTER>(schemaField);
 
 			MapConfig.Fields.Add(fieldConfig);
 
 			return fieldConfig;
 		}
 
-		public FieldConfig<IN> SelectField(string fieldName, Expression<Func<OUT, object>> expression)
+		public FieldConfig<FILTER> SelectField(string fieldName, Expression<Func<OUT, object>> expression)
 		{
 			var fieldConfig = Field(fieldName);
 			
@@ -58,14 +58,14 @@ namespace Dovetail.SDK.ModelMap.NextGen
 			return _schemaCache.GetField(MapConfig.BaseTable.Name, fieldName);
 		}
 
-		public void Join(string relationName, Action<ModelMapConfigurator<IN, OUT>> config)
+		public void Join(string relationName, Action<ModelMapConfigurator<FILTER, OUT>> config)
 		{
 			if (!_schemaCache.IsValidRelation(MapConfig.BaseTable.Name, relationName))
 			{
-				throw new DovetailMappingException(2002, "Could not Join the relation {0} for the parent ModelMap<{1}, {2}> based on {3}.".ToFormat(relationName, typeof (IN).Name, typeof (OUT).Name, MapConfig.BaseTable.Name));
+				throw new DovetailMappingException(2002, "Could not Join the relation {0} for the parent ModelMap<{1}, {2}> based on {3}.".ToFormat(relationName, typeof (FILTER).Name, typeof (OUT).Name, MapConfig.BaseTable.Name));
 			}
 
-			var joinConfigurator = new ModelMapConfigurator<IN, OUT>(_container, _schemaCache);
+			var joinConfigurator = new ModelMapConfigurator<FILTER, OUT>(_container, _schemaCache);
 			var joinMap = joinConfigurator.MapConfig;
 			joinMap.Parent = MapConfig;
 			joinMap.ViaRelation = _schemaCache.GetRelation(MapConfig.BaseTable.Name, relationName);
@@ -89,14 +89,14 @@ namespace Dovetail.SDK.ModelMap.NextGen
 		public FieldConfigOperator Operator { get; set; }
 	}
 
-	public class FieldConfig<IN> : FieldConfig
+	public class FieldConfig<FILTER> : FieldConfig
 	{
 		public FieldConfig(ISchemaField schemaField)
 		{
 			SchemaField = schemaField;
 		}
 
-		public void EqualTo(Expression<Func<IN, object>> expression)
+		public void EqualTo(Expression<Func<FILTER, object>> expression)
 		{
 			var propertyInfo = ReflectionHelper.GetProperty(expression);
 
@@ -113,19 +113,19 @@ namespace Dovetail.SDK.ModelMap.NextGen
 		}
 	}
 
-	public class ModelMapConfig<IN, OUT>
+	public class ModelMapConfig<FILTER, OUT>
 	{
-		public ModelMapConfig<IN, OUT> Parent { get; set; }
+		public ModelMapConfig<FILTER, OUT> Parent { get; set; }
 		public ISchemaTableBase BaseTable { get; set; }
 		public ISchemaRelation ViaRelation { get; set; }
 
-		public List<FieldConfig<IN>> Fields { get; private set; }
-		public List<ModelMapConfig<IN, OUT>> Joins { get; private set; }
+		public List<FieldConfig<FILTER>> Fields { get; private set; }
+		public List<ModelMapConfig<FILTER, OUT>> Joins { get; private set; }
 
 		public ModelMapConfig()
 		{
-			Fields = new List<FieldConfig<IN>>();
-			Joins = new List<ModelMapConfig<IN, OUT>>();
+			Fields = new List<FieldConfig<FILTER>>();
+			Joins = new List<ModelMapConfig<FILTER, OUT>>();
 		}
 	}
 }

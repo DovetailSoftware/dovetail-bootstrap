@@ -8,14 +8,14 @@ using FubuCore;
 
 namespace Dovetail.SDK.ModelMap.NextGen
 {
-	public interface IMapQueryFactory<IN, OUT>
+	public interface IMapQueryFactory<in FILTER, OUT>
 	{
-		MapQueryConfig Create(IN inputModel);
+		MapQueryConfig Create(FILTER filterModel);
 	}
 
-	public class MapQueryConfigFactory<IN, OUT> : IMapQueryFactory<IN, OUT>
+	public class MapQueryConfigFactory<FILTER, OUT> : IMapQueryFactory<FILTER, OUT>
 	{
-		private readonly ModelMapConfig<IN, OUT> _mapConfig;
+		private readonly ModelMapConfig<FILTER, OUT> _mapConfig;
 		private int _selectIndex;
 		private int _aliasIndex;
 		private int _mtmAliasCount;
@@ -23,20 +23,20 @@ namespace Dovetail.SDK.ModelMap.NextGen
 		private List<JoinItem> _joinClauses;
 		private List<WhereItem> _whereClauses;
 
-		public MapQueryConfigFactory(ModelMapConfig<IN,OUT> mapConfig)
+		public MapQueryConfigFactory(ModelMapConfig<FILTER,OUT> mapConfig)
 		{
 			_mapConfig = mapConfig;
 		}
 
-		public MapQueryConfig Create(IN inputModel)
+		public MapQueryConfig Create(FILTER filterModel)
 		{
-			//look in field maps and set the InputValue based on the inputModel expression where needed
+			//look in field maps and set the InputValue based on the filterModel expression where needed
 			_selectIndex = 0;
 			_aliasIndex = 0;
 
 			//todo DRY up these linq queries
 			var rootSelectClauses = _mapConfig.Fields.Where(f => f.OutProperty != null).Select(f => BuildSelectItem("root", f, _selectIndex++));
-			var rootWhereClauses = _mapConfig.Fields.Where(f => f.Operator != null).Select(f => BuildWhereItem(inputModel, "root", f));
+			var rootWhereClauses = _mapConfig.Fields.Where(f => f.Operator != null).Select(f => BuildWhereItem(filterModel, "root", f));
 
 			var rootJoinClause = new JoinItem { Alias = "root", JoinSql = "from table_{0}".ToFormat(_mapConfig.BaseTable.Name) };
 
@@ -44,7 +44,7 @@ namespace Dovetail.SDK.ModelMap.NextGen
 			_joinClauses = new List<JoinItem> { rootJoinClause };
 			_whereClauses = new List<WhereItem>(rootWhereClauses);
 
-			_mapConfig.Joins.Each(j => BuildJoinItem(inputModel, j, rootJoinClause));
+			_mapConfig.Joins.Each(j => BuildJoinItem(filterModel, j, rootJoinClause));
 
 			return new MapQueryConfig
 				{
@@ -54,7 +54,7 @@ namespace Dovetail.SDK.ModelMap.NextGen
 				};
 		}
 
-		public void BuildJoinItem(IN inputModel, ModelMapConfig<IN, OUT> mapConfig, JoinItem parentJoinItem)
+		public void BuildJoinItem(FILTER filterModel, ModelMapConfig<FILTER, OUT> mapConfig, JoinItem parentJoinItem)
 		{
 			var toAlias = "T" + _aliasIndex++;
 			var relation = (SchemaRelation)mapConfig.ViaRelation;
@@ -63,7 +63,7 @@ namespace Dovetail.SDK.ModelMap.NextGen
 			var selects = mapConfig.Fields.Where(f => f.OutProperty != null).Select(field => BuildSelectItem(toAlias, field, _selectIndex++));
 			_selectedFields.AddRange(selects);
 
-			var wheres = mapConfig.Fields.Where(f => f.Operator != null).Select(field => BuildWhereItem(inputModel, toAlias, field));
+			var wheres = mapConfig.Fields.Where(f => f.Operator != null).Select(field => BuildWhereItem(filterModel, toAlias, field));
 			_whereClauses.AddRange(wheres);
 
 			//where this gets hairy
@@ -123,7 +123,7 @@ namespace Dovetail.SDK.ModelMap.NextGen
 
 			_joinClauses.Add(joinClause);
 
-			mapConfig.Joins.Each(j => BuildJoinItem(inputModel, j, joinClause));
+			mapConfig.Joins.Each(j => BuildJoinItem(filterModel, j, joinClause));
 		}
 
 		public SelectItem BuildSelectItem(string alias, FieldConfig field, int index)
@@ -131,13 +131,13 @@ namespace Dovetail.SDK.ModelMap.NextGen
 			return new SelectItem { Alias = alias, Field = field.SchemaField, Index = index };
 		}
 
-		public WhereItem BuildWhereItem(IN inputModel, string alias, FieldConfig field)
+		public WhereItem BuildWhereItem(FILTER filterModel, string alias, FieldConfig field)
 		{
 			var value = field.InputValue;
 
 			if (value == null && field.InputProperty != null)
 			{
-				value = field.InputProperty.GetValue(inputModel, null);
+				value = field.InputProperty.GetValue(filterModel, null);
 			}
 
 			if (value == null)

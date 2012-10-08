@@ -28,20 +28,18 @@ namespace Dovetail.SDK.ModelMap.NextGen
 	}
 
 
-	public class ModelBuilder<IN, OUT>
+	public class ModelBuilder<FILTER, OUT>
 	{
-		private readonly MapQueryConfigFactory<IN, OUT> _mapQueryConfigFactory;
+		private readonly MapQueryConfigFactory<FILTER, OUT> _mapQueryConfigFactory;
 
-		public ModelBuilder(MapQueryConfigFactory<IN, OUT> mapQueryConfigFactory)
+		public ModelBuilder(MapQueryConfigFactory<FILTER, OUT> mapQueryConfigFactory)
 		{
 			_mapQueryConfigFactory = mapQueryConfigFactory;
 		}
 
-		public IEnumerable<OUT> Execute(IN inputModel)
+		public IEnumerable<OUT> Execute(FILTER filterModel)
 		{
-			var query = _mapQueryConfigFactory.Create(inputModel);
-
-
+			var query = _mapQueryConfigFactory.Create(filterModel);
 
 			return new OUT[0];
 		}
