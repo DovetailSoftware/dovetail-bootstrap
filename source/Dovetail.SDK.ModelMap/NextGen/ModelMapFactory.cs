@@ -18,7 +18,7 @@ namespace Dovetail.SDK.ModelMap.NextGen
 
 		//TODO see if the resulting modelmap can be cached for reuse.
 
-		public ModelMapConfig<FILTER, OUT> Create(string objectName, Action<ModelMapConfigurator<FILTER, OUT>> config)
+		public RootModelMapConfig<FILTER, OUT> Create(string objectName, Action<ModelMapConfigurator<FILTER, OUT>> config)
 		{
 			if (!_schemaCache.IsValidTableOrView(objectName))
 			{
@@ -26,13 +26,14 @@ namespace Dovetail.SDK.ModelMap.NextGen
 			}
 
 			var configurator = new ModelMapConfigurator<FILTER, OUT>(_container, _schemaCache);
+			
 			var map = configurator.MapConfig;
 			var baseTable = _schemaCache.IsValidTable(objectName) ? _schemaCache.Tables[objectName] as ISchemaTableBase : _schemaCache.Views[objectName] as ISchemaTableBase;
 			map.BaseTable = baseTable;
 
 			config(configurator);
 
-			return map;
+			return map as RootModelMapConfig<FILTER, OUT>;
 		}
 	}
 }

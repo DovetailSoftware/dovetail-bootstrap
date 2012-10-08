@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Dovetail.SDK.ModelMap.NextGen;
 using FChoice.Foundation.Schema;
 using NUnit.Framework;
@@ -16,6 +17,38 @@ namespace Dovetail.SDK.ModelMap.Integration.NextGen
 	public class FilterModel	
 	{
 		public string SiteName { get; set; }
+		public DateTime Modified { get; set; }
+	}
+
+	[TestFixture]
+	public class model_map_factory : MapFixture
+	{
+		private ISchemaCache _schemaCache;
+		private RootModelMapConfig<FilterModel, TestModel> _map;
+
+		public override void beforeAll()
+		{
+			_schemaCache = Container.GetInstance<ISchemaCache>();
+			var mapFactory = new ModelMapFactory<FilterModel, TestModel>(Container, _schemaCache);
+
+			_map = mapFactory.Create("case", c =>
+				{
+					c.SelectField("title", f => f.Title);
+
+					c.Join("case_reporter2site", site =>
+						{
+							site.Field("update_stamp").FilteredBy(filter => filter.Modified);
+							site.SelectField("name", f=>f.SiteName);
+						});
+				});
+		}
+
+		[Test]
+		public void future_filter_adds_field_config_to_root_map_config()
+		{
+			_map.SetFilter(f=>f.Modified).Operator = new Matches();
+		}
+
 	}
 
 	[TestFixture]
@@ -37,8 +70,9 @@ namespace Dovetail.SDK.ModelMap.Integration.NextGen
 				c.Join("case_reporter2site", site =>
 				{
 					site.Field("status").EqualTo(42);
-					site.SelectField("name", f => f.SiteName).EqualTo(input => input.SiteName);
+					site.SelectField("name", f => f.SiteName).EqualTo(filter => filter.SiteName);
 					site.SelectField("site_id", f => f.SiteiD);
+					site.Field("update_stamp").FilteredBy(filter => filter.Modified);
 				});
 			});
 
@@ -55,6 +89,14 @@ namespace Dovetail.SDK.ModelMap.Integration.NextGen
 			var title = _query.Selects.First(s => s.Field.Name == "title");
 			title.Alias.ShouldEqual("root");
 			title.Field.ShouldEqual(_schemaCache.GetField("case","title"));
+		}
+
+		[Test]
+		public void future_filter_adds_field_config_to_root_map_config()
+		{
+			var title = _query.Selects.First(s => s.Field.Name == "title");
+			title.Alias.ShouldEqual("root");
+			title.Field.ShouldEqual(_schemaCache.GetField("case", "title"));
 		}
 
 		[Test]

@@ -30,13 +30,13 @@ namespace Dovetail.SDK.ModelMap.NextGen
 
 		public MapQueryConfig Create(FILTER filterModel)
 		{
-			//look in field maps and set the InputValue based on the filterModel expression where needed
+			//look in filter maps and set the FilterValue based on the filterModel expression where needed
 			_selectIndex = 0;
 			_aliasIndex = 0;
 
 			//todo DRY up these linq queries
-			var rootSelectClauses = _mapConfig.Fields.Where(f => f.OutProperty != null).Select(f => BuildSelectItem("root", f, _selectIndex++));
-			var rootWhereClauses = _mapConfig.Fields.Where(f => f.Operator != null).Select(f => BuildWhereItem(filterModel, "root", f));
+			var rootSelectClauses = _mapConfig.Selects.Select(f => BuildSelectItem("root", f, _selectIndex++));
+			var rootWhereClauses = _mapConfig.Filters.Where(f => f.Operator != null).Select(f => BuildWhereItem(filterModel, "root", f));
 
 			var rootJoinClause = new JoinItem { Alias = "root", JoinSql = "from table_{0}".ToFormat(_mapConfig.BaseTable.Name) };
 
@@ -60,10 +60,10 @@ namespace Dovetail.SDK.ModelMap.NextGen
 			var relation = (SchemaRelation)mapConfig.ViaRelation;
 			const string rowIdColumnName = "objid";
 
-			var selects = mapConfig.Fields.Where(f => f.OutProperty != null).Select(field => BuildSelectItem(toAlias, field, _selectIndex++));
+			var selects = mapConfig.Selects.Where(f => f.OutProperty != null).Select(field => BuildSelectItem(toAlias, field, _selectIndex++));
 			_selectedFields.AddRange(selects);
 
-			var wheres = mapConfig.Fields.Where(f => f.Operator != null).Select(field => BuildWhereItem(filterModel, toAlias, field));
+			var wheres = mapConfig.Filters.Where(f => f.Operator != null).Select(field => BuildWhereItem(filterModel, toAlias, field));
 			_whereClauses.AddRange(wheres);
 
 			//where this gets hairy
@@ -126,26 +126,26 @@ namespace Dovetail.SDK.ModelMap.NextGen
 			mapConfig.Joins.Each(j => BuildJoinItem(filterModel, j, joinClause));
 		}
 
-		public SelectItem BuildSelectItem(string alias, FieldConfig field, int index)
+		public SelectItem BuildSelectItem(string alias, SelectConfig filter, int index)
 		{
-			return new SelectItem { Alias = alias, Field = field.SchemaField, Index = index };
+			return new SelectItem { Alias = alias, Field = filter.SchemaField, Index = index };
 		}
 
-		public WhereItem BuildWhereItem(FILTER filterModel, string alias, FieldConfig field)
+		public WhereItem BuildWhereItem(FILTER filterModel, string alias, FilterConfig filter)
 		{
-			var value = field.InputValue;
+			var value = filter.FilterValue;
 
-			if (value == null && field.InputProperty != null)
+			if (value == null && filter.FilterProperty != null)
 			{
-				value = field.InputProperty.GetValue(filterModel, null);
+				value = filter.FilterProperty.GetValue(filterModel, null);
 			}
 
 			if (value == null)
 			{
-				throw new ApplicationException("Field {0} has not been given an input value.".ToFormat(field.SchemaField.Name));
+				throw new ApplicationException("Field {0} has not been given an input value.".ToFormat(filter.SchemaField.Name));
 			}
 
-			return new WhereItem { Alias = alias, Field = field.SchemaField, Value = value };
+			return new WhereItem { Alias = alias, Field = filter.SchemaField, Value = value };
 		}
 	}
 
