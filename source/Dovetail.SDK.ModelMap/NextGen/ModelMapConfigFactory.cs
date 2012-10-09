@@ -5,18 +5,21 @@ using StructureMap;
 
 namespace Dovetail.SDK.ModelMap.NextGen
 {
-	public class ModelMapFactory<FILTER, OUT>
+	public interface IModelMapConfigFactory<FILTER, OUT>
+	{
+		RootModelMapConfig<FILTER, OUT> Create(string objectName, Action<ModelMapConfigurator<FILTER, OUT>> config);
+	}
+
+	public class ModelMapConfigFactory<FILTER, OUT> : IModelMapConfigFactory<FILTER, OUT>
 	{
 		private readonly IContainer _container;
 		private readonly ISchemaCache _schemaCache;
 
-		public ModelMapFactory(IContainer container, ISchemaCache schemaCache)
+		public ModelMapConfigFactory(IContainer container, ISchemaCache schemaCache)
 		{
 			_container = container;
 			_schemaCache = schemaCache;
 		}
-
-		//TODO see if the resulting modelmap can be cached for reuse.
 
 		public RootModelMapConfig<FILTER, OUT> Create(string objectName, Action<ModelMapConfigurator<FILTER, OUT>> config)
 		{

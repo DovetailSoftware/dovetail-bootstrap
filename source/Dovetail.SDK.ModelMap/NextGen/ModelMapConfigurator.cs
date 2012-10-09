@@ -93,16 +93,12 @@ namespace Dovetail.SDK.ModelMap.NextGen
 		}
 	}
 
-	public class Matches : FilterConfigOperator { }
-	
-	public class FilterConfigOperator { }
-
 	public class FilterConfig
 	{
 		public ISchemaField SchemaField { get; set; }
 		public PropertyInfo FilterProperty { get; set; }
 		public object FilterValue { get; set; }
-		public FilterConfigOperator Operator { get; set; }
+		public FilterOperator Operator { get; set; }
 
 		public bool IsConfigured
 		{
@@ -135,7 +131,7 @@ namespace Dovetail.SDK.ModelMap.NextGen
 
 		public void EqualTo(object value)
 		{
-			Operator = new Matches();
+			Operator = new EqualsFilterOperator();
 
 			FilterValue = value;
 		}
@@ -144,7 +140,7 @@ namespace Dovetail.SDK.ModelMap.NextGen
 		{
 			FilterableBy(expression);
 
-			Operator = new Matches();
+			Operator = new EqualsFilterOperator();
 		}
 
 		//TODO use interface to hide this method from the modelmap config's Override method?

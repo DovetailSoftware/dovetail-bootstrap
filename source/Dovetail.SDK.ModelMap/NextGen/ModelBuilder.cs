@@ -1,47 +1,70 @@
 using System.Collections.Generic;
+using System.Linq;
+using Dovetail.SDK.Bootstrap;
 using FChoice.Common.Data;
+using FubuCore;
 
 namespace Dovetail.SDK.ModelMap.NextGen
 {
-	public class MapQuerySqlGenerator
+	public interface IModelBuilder<in FILTER, out OUT> where OUT : new()
 	{
-		public SqlHelper Generate(MapQueryConfig query)
-		{
-			var sql = BuildSql();
-
-			var sqlHelper = new SqlHelper(sql);
-
-			AddParameters(sqlHelper);
-
-			return sqlHelper;
-		}
-
-		private void AddParameters(SqlHelper sqlHelper)
-		{
-			
-		}
-
-		private string BuildSql()
-		{
-			return "";
-		}
+		IEnumerable<OUT> Execute(FILTER filterModel);
 	}
 
-
-	public class ModelBuilder<FILTER, OUT>
+	public class ModelBuilder<FILTER, OUT> : IModelBuilder<FILTER, OUT> where OUT : new()
 	{
-		private readonly MapQueryConfigFactory<FILTER, OUT> _mapQueryConfigFactory;
+		private readonly IMapQueryFactory<FILTER, OUT> _mapQueryFactory;
+		private readonly ILogger _logger;
 
-		public ModelBuilder(MapQueryConfigFactory<FILTER, OUT> mapQueryConfigFactory)
+		public ModelBuilder(IMapQueryFactory<FILTER, OUT> mapQueryFactory, ILogger logger)
 		{
-			_mapQueryConfigFactory = mapQueryConfigFactory;
+			_mapQueryFactory = mapQueryFactory;
+			_logger = logger;
 		}
 
 		public IEnumerable<OUT> Execute(FILTER filterModel)
 		{
-			var query = _mapQueryConfigFactory.Create(filterModel);
+			var query = _mapQueryFactory.Create(filterModel);
 
-			return new OUT[0];
+			var sqlHelper = BuildSql(query);
+
+			_logger.LogDebug("SQL Generated:", sqlHelper.CommandText);
+
+			var results = new List<OUT>();
+			using(var reader = sqlHelper.ExecuteReader())
+			{
+				while(reader.Read())
+				{
+					var result = new OUT();
+
+					foreach (var s in query.Selects)
+					{
+						var value = reader[s.Index];
+						s.OutProperty.SetValue(result, value, null);
+					}
+
+					results.Add(result);
+				}
+			}
+
+			return results;
+		}
+
+		public static SqlHelper BuildSql(MapQueryConfig query)
+		{
+			var sqlHelper = new SqlHelper();
+
+			var selectClause = query.Selects.Select(s => "{0}.{1}".ToFormat(s.Alias, s.Field.Name)).Join(",");
+
+			var joinClause = query.Joins.Select(j => j.JoinSql).Join(" ");
+
+			var whereClause = "WHERE " + query.Wheres.Select(w => w.Operator.Render(w, sqlHelper)).Join(" AND ");
+
+			var sql = "SELECT {0} {1} {2}".ToFormat(selectClause, joinClause, whereClause);
+
+			sqlHelper.CommandText = sql;
+
+			return sqlHelper;
 		}
 	}
 }

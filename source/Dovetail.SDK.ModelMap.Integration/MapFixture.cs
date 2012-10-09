@@ -1,18 +1,11 @@
-using System;
 using Dovetail.SDK.Bootstrap.Authentication;
 using Dovetail.SDK.Bootstrap.Clarify;
 using Dovetail.SDK.Bootstrap.Configuration;
 using Dovetail.SDK.ModelMap.Configuration;
+using Dovetail.SDK.ModelMap.NextGen;
 using Dovetail.SDK.ModelMap.Registration;
-using FubuCore;
-using FubuCore.Binding;
-using FubuCore.Binding.InMemory;
-using FubuCore.Configuration;
-using FubuCore.Conversion;
-using FubuCore.Reflection;
 using NUnit.Framework;
 using StructureMap;
-using StructureMap.Configuration.DSL;
 
 namespace Dovetail.SDK.ModelMap.Integration
 {

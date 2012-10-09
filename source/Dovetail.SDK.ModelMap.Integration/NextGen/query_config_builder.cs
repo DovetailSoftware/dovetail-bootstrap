@@ -14,7 +14,7 @@ namespace Dovetail.SDK.ModelMap.Integration.NextGen
 		public int SiteStatus { get; set; }
 	}
 
-	public class FilterModel	
+	public class FilterModel
 	{
 		public string SiteName { get; set; }
 		public DateTime? Modified { get; set; }
@@ -22,7 +22,7 @@ namespace Dovetail.SDK.ModelMap.Integration.NextGen
 	}
 
 	[TestFixture]
-	public class model_map_factory_set_filter : MapFixture
+	public class model_map_factory_filterable_fields : MapFixture
 	{
 		private ISchemaCache _schemaCache;
 		private RootModelMapConfig<FilterModel, TestModel> _map;
@@ -30,7 +30,7 @@ namespace Dovetail.SDK.ModelMap.Integration.NextGen
 		public override void beforeAll()
 		{
 			_schemaCache = Container.GetInstance<ISchemaCache>();
-			var mapFactory = new ModelMapFactory<FilterModel, TestModel>(Container, _schemaCache);
+			var mapFactory = new ModelMapConfigFactory<FilterModel, TestModel>(Container, _schemaCache);
 
 			_map = mapFactory.Create("case", c =>
 				{
@@ -64,7 +64,7 @@ namespace Dovetail.SDK.ModelMap.Integration.NextGen
 	}
 
 	[TestFixture]
-	public class query_config_builder : MapFixture
+	public class map_query_config_factory : MapFixture
 	{
 		private MapQueryConfig _query;
 		private ISchemaCache _schemaCache;
@@ -73,7 +73,7 @@ namespace Dovetail.SDK.ModelMap.Integration.NextGen
 		public override void beforeAll()
 		{
 			_schemaCache = Container.GetInstance<ISchemaCache>();
-			var mapFactory = new ModelMapFactory<FilterModel, TestModel>(Container, _schemaCache);
+			var mapFactory = new ModelMapConfigFactory<FilterModel, TestModel>(Container, _schemaCache);
 
 			var map = mapFactory.Create("case", c =>
 			{
@@ -89,7 +89,7 @@ namespace Dovetail.SDK.ModelMap.Integration.NextGen
 				});
 			});
 
-			var builder = new MapQueryConfigFactory<FilterModel, TestModel>(map);
+			var builder = new MapQueryFactory<FilterModel, TestModel>(map);
 
 			_filter = new FilterModel { SiteName = "site name" };
 
@@ -135,19 +135,20 @@ namespace Dovetail.SDK.ModelMap.Integration.NextGen
 		{
 			_query.Selects.Any(s => s.Field.Name == "status").ShouldBeFalse();
 
-			var status = _query.Wheres.First(s => s.Field.Name == "status");
-			status.Alias.ShouldEqual("T0");
-			status.Field.ShouldEqual(_schemaCache.GetField("site", "status"));
-			status.Value.ShouldEqual(42);		
+			var where = _query.Wheres.First(s => s.Field.Name == "status");
+			where.Alias.ShouldEqual("T0");
+			where.Field.ShouldEqual(_schemaCache.GetField("site", "status"));
+			where.Value.ShouldEqual(42);		
 		}
 
 		[Test]
 		public void field_with_where_constrained_by_an_input_property()
 		{
-			var status = _query.Wheres.First(s => s.Field.Name == "name");
-			status.Alias.ShouldEqual("T0");
-			status.Field.ShouldEqual(_schemaCache.GetField("site", "name"));
-			status.Value.ShouldEqual(_filter.SiteName);
+			var where = _query.Wheres.First(s => s.Field.Name == "name");
+			where.Alias.ShouldEqual("T0");
+			where.Field.ShouldEqual(_schemaCache.GetField("site", "name"));
+			where.Operator.ShouldEqual(_schemaCache.GetField("site", "name"));
+			where.Value.ShouldEqual(_filter.SiteName);
 		}
 
 		[Test]

@@ -14,7 +14,7 @@ namespace Dovetail.SDK.ModelMap.NextGen
 		MapQueryConfig Create(FILTER filterModel);
 	}
 
-	public class MapQueryConfigFactory<FILTER, OUT> : IMapQueryFactory<FILTER, OUT>
+	public class MapQueryFactory<FILTER, OUT> : IMapQueryFactory<FILTER, OUT>
 	{
 		private readonly ModelMapConfig<FILTER, OUT> _mapConfig;
 		private int _selectIndex;
@@ -24,7 +24,7 @@ namespace Dovetail.SDK.ModelMap.NextGen
 		private List<JoinItem> _joinClauses;
 		private List<WhereItem> _whereClauses;
 
-		public MapQueryConfigFactory(ModelMapConfig<FILTER,OUT> mapConfig)
+		public MapQueryFactory(ModelMapConfig<FILTER,OUT> mapConfig)
 		{
 			_mapConfig = mapConfig;
 		}
@@ -39,7 +39,7 @@ namespace Dovetail.SDK.ModelMap.NextGen
 			var rootSelectClauses = _mapConfig.Selects.Select(f => BuildSelectItem("root", f, _selectIndex++));
 			var rootWhereClauses = _mapConfig.Filters.Where(f => f.IsConfigured).Select(f => BuildWhereItem(filterModel, "root", f));
 
-			var rootJoinClause = new JoinItem { Alias = "root", JoinSql = "from table_{0}".ToFormat(_mapConfig.BaseTable.Name) };
+			var rootJoinClause = new JoinItem { Alias = "root", JoinSql = "FROM table_{0} {1}".ToFormat(_mapConfig.BaseTable.Name, "root") };
 
 			_selectedFields = new List<SelectItem>(rootSelectClauses);
 			_joinClauses = new List<JoinItem> { rootJoinClause };
@@ -183,6 +183,6 @@ namespace Dovetail.SDK.ModelMap.NextGen
 		public string Alias { get; set; }
 		public object Value { get; set; }
 		public ISchemaField Field { get; set; }
-		public FilterConfigOperator Operator { get; set; }
+		public FilterOperator Operator { get; set; }
 	}
 }
