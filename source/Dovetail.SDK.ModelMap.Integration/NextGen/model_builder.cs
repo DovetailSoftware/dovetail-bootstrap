@@ -14,6 +14,7 @@ namespace Dovetail.SDK.ModelMap.Integration.NextGen
 
 	public class CaseModel
 	{
+		public int Objid { get; set; }
 		public string Title { get; set; }
 		public string Id { get; set; }
 		public string SiteName { get; set; }
@@ -144,18 +145,6 @@ namespace Dovetail.SDK.ModelMap.Integration.NextGen
 
 			results.First().Equals(_modemModel).ShouldBeTrue();
 		}
-
-/*		[Test]
-		public void should_all_filters_set_on_map()
-		{
-			_map.SetFilter(f => f.ObjId).Operator = new EqualsFilterOperator();
-			_map.SetFilter(f => f.HostName).Operator = new EqualsFilterOperator();
-			_map.SetFilter(f => f.DeviceName).Operator = new EqualsFilterOperator();
-
-			var results = _modelBuilder.Execute(_modemModel);
-
-			results.First().Equals(_modemModel).ShouldBeTrue();
-		}*/
 	}
 
 	public class ModemModel
@@ -189,4 +178,5 @@ namespace Dovetail.SDK.ModelMap.Integration.NextGen
 			}
 		}
 	}
+
 }

@@ -37,9 +37,9 @@ namespace Dovetail.SDK.ModelMap.NextGen
 			return _container.GetInstance<T>();
 		}
 
-		public FilterConfig<FILTER> Field(string fieldName)
+		private FilterConfig<FILTER> getField(string fieldName)
 		{
-			var schemaField = getSchemaField(fieldName);	
+			var schemaField = getSchemaField(fieldName);
 
 			var filterConfig = new FilterConfig<FILTER>(schemaField);
 
@@ -48,9 +48,14 @@ namespace Dovetail.SDK.ModelMap.NextGen
 			return filterConfig;
 		}
 
-		public FilterConfig<FILTER> SelectField(string fieldName, Expression<Func<OUT, object>> expression)
+		public IFilterConfig<FILTER> Field(string fieldName)
 		{
-			var filterConfig = Field(fieldName);
+			return getField(fieldName);
+		}
+
+		public IFilterConfig<FILTER> SelectField(string fieldName, Expression<Func<OUT, object>> expression)
+		{
+			var filterConfig = getField(fieldName);
 			
 			var propertyInfo = ReflectionHelper.GetProperty(expression);
 
@@ -122,7 +127,19 @@ namespace Dovetail.SDK.ModelMap.NextGen
 		}
 	}
 
-	public class FilterConfig<FILTER> : FilterConfig
+	public interface IRootFilterConfig<FILTER>
+	{
+		FilterOperator Operator { set; }
+	}
+
+	public interface IFilterConfig<FILTER> : IRootFilterConfig<FILTER>
+	{
+		void FilterableBy(Expression<Func<FILTER, object>> expression);
+		void EqualTo(object value);
+		void EqualTo(Expression<Func<FILTER, object>> expression);
+	}
+
+	public class FilterConfig<FILTER> : FilterConfig, IFilterConfig<FILTER>, IRootFilterConfig<FILTER>
 	{
 		public FilterConfig(ISchemaField schemaField)
 		{
@@ -144,13 +161,11 @@ namespace Dovetail.SDK.ModelMap.NextGen
 		}
 
 		//TODO use interface to hide this method from the modelmap config's Override method?
-		public FilterConfig<FILTER> FilterableBy(Expression<Func<FILTER, object>> expression)
+		public void FilterableBy(Expression<Func<FILTER, object>> expression)
 		{
 			var propertyInfo = ReflectionHelper.GetProperty(expression);
 
 			FilterProperty = propertyInfo;
-
-			return this;
 		}
 	}
 
@@ -161,7 +176,7 @@ namespace Dovetail.SDK.ModelMap.NextGen
 		IEnumerable<FilterConfig<FILTER>> Filters { get; }
 		
 		ISchemaTableBase BaseTable { get; set; }
-		FilterConfig<FILTER> SetFilter(Expression<Func<FILTER, object>> expression);
+		IRootFilterConfig<FILTER> SetFilter(Expression<Func<FILTER, object>> expression);
 	}
 
 	public class ModelMapConfig<FILTER, OUT> : JoinConfig<FILTER, OUT>, IModelMapConfig<FILTER, OUT>
@@ -177,7 +192,7 @@ namespace Dovetail.SDK.ModelMap.NextGen
 			_editableFilters = new Dictionary<PropertyInfo, FilterConfig<FILTER>>();
 		}
 
-		public FilterConfig<FILTER> SetFilter(Expression<Func<FILTER, object>> expression)
+		public IRootFilterConfig<FILTER> SetFilter(Expression<Func<FILTER, object>> expression)
 		{
 			var propertyInfo = ReflectionHelper.GetProperty(expression);
 
