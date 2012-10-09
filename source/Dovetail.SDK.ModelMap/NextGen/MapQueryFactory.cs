@@ -9,14 +9,13 @@ using FubuCore;
 
 namespace Dovetail.SDK.ModelMap.NextGen
 {
-	public interface IMapQueryFactory<in FILTER, OUT>
+	public interface IMapQueryFactory<FILTER, OUT>
 	{
-		MapQueryConfig Create(FILTER filterModel);
+		MapQueryConfig Create(FILTER filterModel, IModelMapConfig<FILTER, OUT> mapConfig);
 	}
 
 	public class MapQueryFactory<FILTER, OUT> : IMapQueryFactory<FILTER, OUT>
 	{
-		private readonly IModelMapConfig<FILTER, OUT> _mapConfig;
 		private int _selectIndex;
 		private int _aliasIndex;
 		private int _mtmAliasCount;
@@ -24,28 +23,23 @@ namespace Dovetail.SDK.ModelMap.NextGen
 		private List<JoinItem> _joinClauses;
 		private List<WhereItem> _whereClauses;
 
-		public MapQueryFactory(IModelMapConfig<FILTER, OUT> mapConfig)
-		{
-			_mapConfig = mapConfig;
-		}
-
-		public MapQueryConfig Create(FILTER filterModel)
+		public MapQueryConfig Create(FILTER filterModel, IModelMapConfig<FILTER, OUT> mapConfig)
 		{
 			//look in filter maps and set the FilterValue based on the filterModel expression where needed
 			_selectIndex = 0;
 			_aliasIndex = 0;
 
 			//todo DRY up these linq queries
-			var rootSelectClauses = _mapConfig.Selects.Select(f => BuildSelectItem("root", f, _selectIndex++));
-			var rootWhereClauses = _mapConfig.Filters.Where(f => f.IsConfigured).Select(f => BuildWhereItem(filterModel, "root", f));
+			var rootSelectClauses = mapConfig.Selects.Select(f => BuildSelectItem("root", f, _selectIndex++));
+			var rootWhereClauses = mapConfig.Filters.Where(f => f.IsConfigured).Select(f => BuildWhereItem(filterModel, "root", f));
 
-			var rootJoinClause = new JoinItem { Alias = "root", JoinSql = "FROM table_{0} {1}".ToFormat(_mapConfig.BaseTable.Name, "root") };
+			var rootJoinClause = new JoinItem { Alias = "root", JoinSql = "FROM table_{0} {1}".ToFormat(mapConfig.BaseTable.Name, "root") };
 
 			_selectedFields = new List<SelectItem>(rootSelectClauses);
 			_joinClauses = new List<JoinItem> { rootJoinClause };
 			_whereClauses = new List<WhereItem>(rootWhereClauses);
 
-			_mapConfig.Joins.Each(j => BuildJoinItem(filterModel, j, rootJoinClause));
+			mapConfig.Joins.Each(j => BuildJoinItem(filterModel, j, rootJoinClause));
 
 			return new MapQueryConfig
 				{

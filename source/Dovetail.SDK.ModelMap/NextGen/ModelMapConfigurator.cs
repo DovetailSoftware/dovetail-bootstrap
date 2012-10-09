@@ -129,6 +129,7 @@ namespace Dovetail.SDK.ModelMap.NextGen
 
 	public interface IRootFilterConfig<FILTER>
 	{
+		//todo this is horrible. 
 		FilterOperator Operator { set; }
 	}
 
@@ -139,7 +140,7 @@ namespace Dovetail.SDK.ModelMap.NextGen
 		void EqualTo(Expression<Func<FILTER, object>> expression);
 	}
 
-	public class FilterConfig<FILTER> : FilterConfig, IFilterConfig<FILTER>, IRootFilterConfig<FILTER>
+	public class FilterConfig<FILTER> : FilterConfig, IFilterConfig<FILTER>
 	{
 		public FilterConfig(ISchemaField schemaField)
 		{

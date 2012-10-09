@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Dovetail.SDK.Bootstrap;
@@ -6,25 +7,44 @@ using FubuCore;
 
 namespace Dovetail.SDK.ModelMap.NextGen
 {
-	public interface IModelBuilder<in FILTER, out OUT> where OUT : new()
+	public interface IModelBuilder<FILTER, OUT> where OUT : new()
 	{
 		IEnumerable<OUT> Execute(FILTER filterModel);
+		IEnumerable<OUT> Execute(FILTER filterModel, Action<IModelMapConfig<FILTER,OUT>> action);
+	}
+
+	public interface IModelMap<FILTER, OUT>
+	{
+		IModelMapConfig<FILTER, OUT> Create(IModelMapConfigFactory<FILTER, OUT> mapFactory);
 	}
 
 	public class ModelBuilder<FILTER, OUT> : IModelBuilder<FILTER, OUT> where OUT : new()
 	{
 		private readonly IMapQueryFactory<FILTER, OUT> _mapQueryFactory;
+		private readonly IModelMapConfigFactory<FILTER, OUT> _mapFactory;
+		private readonly IModelMap<FILTER, OUT> _map;
 		private readonly ILogger _logger;
 
-		public ModelBuilder(IMapQueryFactory<FILTER, OUT> mapQueryFactory, ILogger logger)
+		public ModelBuilder(IMapQueryFactory<FILTER, OUT> mapQueryFactory, IModelMapConfigFactory<FILTER, OUT> mapFactory, IModelMap<FILTER, OUT> map, ILogger logger)
 		{
 			_mapQueryFactory = mapQueryFactory;
+			_mapFactory = mapFactory;
+			_map = map;
 			_logger = logger;
 		}
 
 		public IEnumerable<OUT> Execute(FILTER filterModel)
 		{
-			var query = _mapQueryFactory.Create(filterModel);
+			return Execute(filterModel, config => { });
+		}
+
+		public IEnumerable<OUT> Execute(FILTER filterModel, Action<IModelMapConfig<FILTER, OUT>> action)
+		{
+			var modelMap = _map.Create(_mapFactory);
+
+			action(modelMap);
+
+			var query = _mapQueryFactory.Create(filterModel, modelMap);
 
 			var sqlHelper = BuildSql(query);
 
@@ -32,9 +52,9 @@ namespace Dovetail.SDK.ModelMap.NextGen
 			_logger.LogDebug("SQL Generated:", sqlHelper.CommandText);
 
 			var results = new List<OUT>();
-			using(var reader = sqlHelper.ExecuteReader())
+			using (var reader = sqlHelper.ExecuteReader())
 			{
-				while(reader.Read())
+				while (reader.Read())
 				{
 					var result = new OUT();
 

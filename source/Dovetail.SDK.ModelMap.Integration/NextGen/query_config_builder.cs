@@ -109,11 +109,11 @@ namespace Dovetail.SDK.ModelMap.Integration.NextGen
 				});
 			});
 
-			var builder = new MapQueryFactory<FilterModel, TestModel>(map);
+			var builder = Container.GetInstance<IMapQueryFactory<FilterModel, TestModel>>();
 
 			_filter = new FilterModel { SiteName = "site name" };
 
-			_query = builder.Create(_filter);
+			_query = builder.Create(_filter, map);
 		}
 
 		[Test]
