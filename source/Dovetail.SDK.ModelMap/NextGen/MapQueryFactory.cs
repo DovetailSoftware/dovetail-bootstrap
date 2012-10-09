@@ -16,7 +16,7 @@ namespace Dovetail.SDK.ModelMap.NextGen
 
 	public class MapQueryFactory<FILTER, OUT> : IMapQueryFactory<FILTER, OUT>
 	{
-		private readonly ModelMapConfig<FILTER, OUT> _mapConfig;
+		private readonly IModelMapConfig<FILTER, OUT> _mapConfig;
 		private int _selectIndex;
 		private int _aliasIndex;
 		private int _mtmAliasCount;
@@ -24,7 +24,7 @@ namespace Dovetail.SDK.ModelMap.NextGen
 		private List<JoinItem> _joinClauses;
 		private List<WhereItem> _whereClauses;
 
-		public MapQueryFactory(ModelMapConfig<FILTER,OUT> mapConfig)
+		public MapQueryFactory(IModelMapConfig<FILTER, OUT> mapConfig)
 		{
 			_mapConfig = mapConfig;
 		}
@@ -55,16 +55,16 @@ namespace Dovetail.SDK.ModelMap.NextGen
 				};
 		}
 
-		public void BuildJoinItem(FILTER filterModel, ModelMapConfig<FILTER, OUT> mapConfig, JoinItem parentJoinItem)
+		public void BuildJoinItem(FILTER filterModel, JoinConfig<FILTER, OUT> mapConfig, JoinItem parentJoinItem)
 		{
 			var toAlias = "T" + _aliasIndex++;
 			var relation = (SchemaRelation)mapConfig.ViaRelation;
 			const string rowIdColumnName = "objid";
 
-			var selects = mapConfig.Selects.Select(field => BuildSelectItem(toAlias, field, _selectIndex++));
+			var selects = mapConfig.SelectConfigList.Select(field => BuildSelectItem(toAlias, field, _selectIndex++));
 			_selectedFields.AddRange(selects);
 
-			var wheres = mapConfig.Filters.Where(f => f.IsConfigured).Select(field => BuildWhereItem(filterModel, toAlias, field));
+			var wheres = mapConfig.FilterConfigList.Where(f => f.IsConfigured).Select(field => BuildWhereItem(filterModel, toAlias, field));
 			_whereClauses.AddRange(wheres);
 
 			//where this gets hairy
@@ -124,7 +124,7 @@ namespace Dovetail.SDK.ModelMap.NextGen
 
 			_joinClauses.Add(joinClause);
 
-			mapConfig.Joins.Each(j => BuildJoinItem(filterModel, j, joinClause));
+			mapConfig.JoinConfigList.Each(j => BuildJoinItem(filterModel, j, joinClause));
 		}
 
 		public SelectItem BuildSelectItem(string alias, SelectConfig config, int index)

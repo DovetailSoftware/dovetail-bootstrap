@@ -14,22 +14,22 @@ namespace Dovetail.SDK.ModelMap.NextGen
 	{
 		private readonly IContainer _container;
 		private readonly ISchemaCache _schemaCache;
-		public ModelMapConfig<FILTER, OUT> MapConfig { get; set; }
+		public JoinConfig<FILTER, OUT> MapConfig { get; set; }
 
 		public ModelMapConfigurator(IContainer container, ISchemaCache schemaCache)
 		{
 			_container = container;
 			_schemaCache = schemaCache;
-			var rootModelMapConfig = new RootModelMapConfig<FILTER, OUT>();
+			var rootModelMapConfig = new ModelMapConfig<FILTER, OUT>();
 			MapConfig = rootModelMapConfig;
 			MapConfig.Root = rootModelMapConfig;
 		}
 
-		public ModelMapConfigurator(IContainer container, ISchemaCache schemaCache, RootModelMapConfig<FILTER, OUT> root, ModelMapConfig<FILTER, OUT> parent)
+		public ModelMapConfigurator(IContainer container, ISchemaCache schemaCache, ModelMapConfig<FILTER, OUT> root, JoinConfig<FILTER, OUT> parent)
 		{
 			_container = container;
 			_schemaCache = schemaCache;
-			MapConfig = new ModelMapConfig<FILTER, OUT>(root, parent);
+			MapConfig = new JoinConfig<FILTER, OUT>(root, parent);
 		}
 
 		public T Get<T>()
@@ -43,7 +43,7 @@ namespace Dovetail.SDK.ModelMap.NextGen
 
 			var filterConfig = new FilterConfig<FILTER>(schemaField);
 
-			MapConfig.Filters.Add(filterConfig);
+			MapConfig.FilterConfigList.Add(filterConfig);
 
 			return filterConfig;
 		}
@@ -55,7 +55,7 @@ namespace Dovetail.SDK.ModelMap.NextGen
 			var propertyInfo = ReflectionHelper.GetProperty(expression);
 
 			var selectConfig = new SelectConfig(filterConfig.SchemaField) {OutProperty = propertyInfo};
-			MapConfig.Selects.Add(selectConfig);
+			MapConfig.SelectConfigList.Add(selectConfig);
 
 			return filterConfig;
 		}
@@ -85,10 +85,10 @@ namespace Dovetail.SDK.ModelMap.NextGen
 			config(joinConfigurator);
 
 			//tell parent map about child join map
-			MapConfig.Joins.Add(joinMap);
+			MapConfig.JoinConfigList.Add(joinMap);
 
 			//tell root map about all of the configured filters so that they can be setable in the future.
-			var editableFilters = joinMap.Filters.Where(f => f.IsEditable);
+			var editableFilters = joinMap.FilterConfigList.Where(f => f.IsEditable);
 			MapConfig.Root.AddEditableFilters(editableFilters);
 		}
 	}
@@ -154,11 +154,25 @@ namespace Dovetail.SDK.ModelMap.NextGen
 		}
 	}
 
-	public class RootModelMapConfig<FILTER, OUT> : ModelMapConfig<FILTER, OUT>
+	public interface IModelMapConfig<FILTER, OUT>
+	{
+		IEnumerable<SelectConfig> Selects { get; }
+		IEnumerable<JoinConfig<FILTER, OUT>> Joins { get; }
+		IEnumerable<FilterConfig<FILTER>> Filters { get; }
+		
+		ISchemaTableBase BaseTable { get; set; }
+		FilterConfig<FILTER> SetFilter(Expression<Func<FILTER, object>> expression);
+	}
+
+	public class ModelMapConfig<FILTER, OUT> : JoinConfig<FILTER, OUT>, IModelMapConfig<FILTER, OUT>
 	{
 		private readonly IDictionary<PropertyInfo, FilterConfig<FILTER>> _editableFilters;
 
-		public RootModelMapConfig() : base(null, null)
+		public IEnumerable<SelectConfig> Selects { get { return SelectConfigList.ToArray(); } }
+		public IEnumerable<JoinConfig<FILTER, OUT>> Joins { get { return JoinConfigList.ToArray(); } }
+		public IEnumerable<FilterConfig<FILTER>> Filters { get { return FilterConfigList.ToArray(); } }
+
+		public ModelMapConfig() : base(null, null)
 		{
 			_editableFilters = new Dictionary<PropertyInfo, FilterConfig<FILTER>>();
 		}
@@ -175,32 +189,30 @@ namespace Dovetail.SDK.ModelMap.NextGen
 			return _editableFilters[propertyInfo];
 		}
 
-		//todo make this scoped via an interface not internal 
-		internal void AddEditableFilters(IEnumerable<FilterConfig<FILTER>> filters)
+		public void AddEditableFilters(IEnumerable<FilterConfig<FILTER>> filters)
 		{
 			filters.Each(filter => _editableFilters.Add(filter.FilterProperty, filter));
 		}
 	}
 
-
-	public class ModelMapConfig<FILTER, OUT>
+	public class JoinConfig<FILTER, OUT>
 	{
-		public RootModelMapConfig<FILTER, OUT> Root { get; set; }
-		public ModelMapConfig<FILTER, OUT> Parent { get; set; }
+		public ModelMapConfig<FILTER, OUT> Root { get; set; }
+		public JoinConfig<FILTER, OUT> Parent { get; set; }
 		public ISchemaTableBase BaseTable { get; set; }
 		public ISchemaRelation ViaRelation { get; set; }
 
-		public List<SelectConfig> Selects { get; private set; }
-		public List<FilterConfig<FILTER>> Filters { get; private set; }
-		public List<ModelMapConfig<FILTER, OUT>> Joins { get; private set; }
+		public List<SelectConfig> SelectConfigList { get; private set; }
+		public List<FilterConfig<FILTER>> FilterConfigList { get; private set; }
+		public List<JoinConfig<FILTER, OUT>> JoinConfigList { get; private set; }
 		
-		public ModelMapConfig(RootModelMapConfig<FILTER, OUT> root, ModelMapConfig<FILTER, OUT> parent)
+		public JoinConfig(ModelMapConfig<FILTER, OUT> root, JoinConfig<FILTER, OUT> parent)
 		{
 			Root = root;
 			Parent = parent;
-			Selects = new List<SelectConfig>();
-			Joins = new List<ModelMapConfig<FILTER, OUT>>();
-			Filters = new List<FilterConfig<FILTER>>();
+			SelectConfigList = new List<SelectConfig>();
+			JoinConfigList = new List<JoinConfig<FILTER, OUT>>();
+			FilterConfigList = new List<FilterConfig<FILTER>>();
 		}
 	}
 }

@@ -8,7 +8,7 @@ namespace Dovetail.SDK.ModelMap.NextGen
 {
 	public interface IModelMapConfigFactory<FILTER, OUT>
 	{
-		RootModelMapConfig<FILTER, OUT> Create(string objectName, Action<ModelMapConfigurator<FILTER, OUT>> config);
+		IModelMapConfig<FILTER, OUT> Create(string objectName, Action<ModelMapConfigurator<FILTER, OUT>> config);
 	}
 
 	public class ModelMapConfigFactory<FILTER, OUT> : IModelMapConfigFactory<FILTER, OUT>
@@ -22,7 +22,7 @@ namespace Dovetail.SDK.ModelMap.NextGen
 			_schemaCache = schemaCache;
 		}
 
-		public RootModelMapConfig<FILTER, OUT> Create(string objectName, Action<ModelMapConfigurator<FILTER, OUT>> config)
+		public IModelMapConfig<FILTER, OUT> Create(string objectName, Action<ModelMapConfigurator<FILTER, OUT>> config)
 		{
 			if (!_schemaCache.IsValidTableOrView(objectName))
 			{
@@ -37,15 +37,15 @@ namespace Dovetail.SDK.ModelMap.NextGen
 
 			config(configurator);
 
-			var editableFilters = map.Filters.Where(f => f.IsEditable);
+			var editableFilters = map.FilterConfigList.Where(f => f.IsEditable);
 			map.Root.AddEditableFilters(editableFilters);
 
-			if(!map.Selects.Any())
+			if(!map.SelectConfigList.Any())
 			{
 				throw new DovetailMappingException(2006, "No fields were selected by the '{0}' map", objectName);
 			}
 
-			return map as RootModelMapConfig<FILTER, OUT>;
+			return map as ModelMapConfig<FILTER, OUT>;
 		}
 	}
 }

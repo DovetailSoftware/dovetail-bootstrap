@@ -45,7 +45,7 @@ namespace Dovetail.SDK.ModelMap.Integration.NextGen
 	public class model_map_factory_filterable_fields : MapFixture
 	{
 		private ISchemaCache _schemaCache;
-		private RootModelMapConfig<FilterModel, TestModel> _map;
+		private IModelMapConfig<FilterModel, TestModel> _map;
 
 		public override void beforeAll()
 		{

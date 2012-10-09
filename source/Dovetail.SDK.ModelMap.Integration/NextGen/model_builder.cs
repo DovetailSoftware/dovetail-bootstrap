@@ -42,7 +42,7 @@ namespace Dovetail.SDK.ModelMap.Integration.NextGen
 							site.SelectField("name", s => s.SiteName);
 						});
 				});
-			Container.Configure(c => c.For<ModelMapConfig<CaseModelFilter, CaseModel>>().Use(map));
+			Container.Configure(c => c.For<IModelMapConfig<CaseModelFilter, CaseModel>>().Use(map));
 
 			var modelBuilder = Container.GetInstance<IModelBuilder<CaseModelFilter, CaseModel>>();
 
@@ -73,7 +73,7 @@ namespace Dovetail.SDK.ModelMap.Integration.NextGen
 	[TestFixture]
 	public class model_builder_filterable: MapFixture
 	{
-		private RootModelMapConfig<ModemModel, ModemModel> _map;
+		private IModelMapConfig<ModemModel, ModemModel> _map;
 		private IModelBuilder<ModemModel, ModemModel> _modelBuilder;
 		private int _modemCount;
 		private ModemModel _modemModel;
@@ -89,7 +89,7 @@ namespace Dovetail.SDK.ModelMap.Integration.NextGen
 					c.SelectField("device_name", s => s.DeviceName).FilterableBy(f=>f.DeviceName);
 				});
 
-			Container.Configure(c => c.For<ModelMapConfig<ModemModel, ModemModel>>().Use(_map));
+			Container.Configure(c => c.For<IModelMapConfig<ModemModel, ModemModel>>().Use(_map));
 
 			_modelBuilder = Container.GetInstance<IModelBuilder<ModemModel, ModemModel>>();
 
@@ -167,7 +167,7 @@ namespace Dovetail.SDK.ModelMap.Integration.NextGen
 
 		protected bool Equals(ModemModel other)
 		{
-			return ObjId == other.ObjId && String.Equals(DeviceName, (string)other.DeviceName) && String.Equals(HostName, (string)other.HostName);
+			return ObjId == other.ObjId && String.Equals(DeviceName, other.DeviceName) && String.Equals(HostName, other.HostName);
 		}
 
 		public override bool Equals(object obj)
