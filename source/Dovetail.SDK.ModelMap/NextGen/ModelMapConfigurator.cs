@@ -64,7 +64,7 @@ namespace Dovetail.SDK.ModelMap.NextGen
 		{
 			if (!_schemaCache.IsValidField(MapConfig.BaseTable.Name, fieldName))
 			{
-				throw new DovetailMappingException(2003, "Could not find the field {0} for base object {1} in the schema.", MapConfig.BaseTable.Name, fieldName);
+				throw new DovetailMappingException(2003, "Could not find the field {0} for base object {1} in the schema.", fieldName, MapConfig.BaseTable.Name);
 			}
 
 			return _schemaCache.GetField(MapConfig.BaseTable.Name, fieldName);
@@ -169,7 +169,7 @@ namespace Dovetail.SDK.ModelMap.NextGen
 
 			if (!_editableFilters.ContainsKey(propertyInfo))
 			{
-				throw new DovetailMappingException(2005, "Cannot override an undefined future filter model property {0}".ToFormat(propertyInfo.Name));
+				throw new DovetailMappingException(2005, "Cannot set a non filterable property named {0}".ToFormat(propertyInfo.Name));
 			}
 
 			return _editableFilters[propertyInfo];

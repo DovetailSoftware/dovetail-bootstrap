@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using FChoice.Foundation.Schema;
 using FubuCore;
 using StructureMap;
@@ -31,10 +32,18 @@ namespace Dovetail.SDK.ModelMap.NextGen
 			var configurator = new ModelMapConfigurator<FILTER, OUT>(_container, _schemaCache);
 			
 			var map = configurator.MapConfig;
-			var baseTable = _schemaCache.IsValidTable(objectName) ? _schemaCache.Tables[objectName] as ISchemaTableBase : _schemaCache.Views[objectName] as ISchemaTableBase;
+			ISchemaTableBase baseTable = _schemaCache.IsValidTable(objectName) ? _schemaCache.Tables[objectName] as ISchemaTableBase : _schemaCache.Views[objectName] as ISchemaTableBase;
 			map.BaseTable = baseTable;
 
 			config(configurator);
+
+			var editableFilters = map.Filters.Where(f => f.IsEditable);
+			map.Root.AddEditableFilters(editableFilters);
+
+			if(!map.Selects.Any())
+			{
+				throw new DovetailMappingException(2006, "No fields were selected by the '{0}' map", objectName);
+			}
 
 			return map as RootModelMapConfig<FILTER, OUT>;
 		}

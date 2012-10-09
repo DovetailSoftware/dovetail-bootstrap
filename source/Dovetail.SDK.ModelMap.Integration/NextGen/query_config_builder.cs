@@ -22,6 +22,26 @@ namespace Dovetail.SDK.ModelMap.Integration.NextGen
 	}
 
 	[TestFixture]
+	public class model_map_factory_no_selects : MapFixture
+	{
+		private ISchemaCache _schemaCache;
+		private ModelMapConfigFactory<FilterModel, TestModel> _mapFactory;
+
+		public override void beforeAll()
+		{
+			_schemaCache = Container.GetInstance<ISchemaCache>();
+			_mapFactory = new ModelMapConfigFactory<FilterModel, TestModel>(Container, _schemaCache);
+		}
+
+		[Test]
+		public void should_throw_when_no_fields_are_selected()
+		{
+			typeof (DovetailMappingException).ShouldBeThrownBy(() => _mapFactory.Create("case", c => c.Field("objid").FilterableBy(filter => filter.ObjId)));
+		}
+	}
+
+
+	[TestFixture]
 	public class model_map_factory_filterable_fields : MapFixture
 	{
 		private ISchemaCache _schemaCache;
@@ -147,7 +167,7 @@ namespace Dovetail.SDK.ModelMap.Integration.NextGen
 			var where = _query.Wheres.First(s => s.Field.Name == "name");
 			where.Alias.ShouldEqual("T0");
 			where.Field.ShouldEqual(_schemaCache.GetField("site", "name"));
-			where.Operator.ShouldEqual(_schemaCache.GetField("site", "name"));
+			where.Operator.ShouldBeOfType(typeof (EqualsFilterOperator));
 			where.Value.ShouldEqual(_filter.SiteName);
 		}
 

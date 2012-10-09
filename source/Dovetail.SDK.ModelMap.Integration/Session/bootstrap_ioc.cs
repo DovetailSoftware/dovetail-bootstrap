@@ -30,6 +30,7 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 					c.For<IClarifyApplication>().Singleton().Use(ctx=>ctx.GetInstance<IClarifyApplicationFactory>().Create());
 					c.For<ILogger>().AlwaysUnique().Use(s => s.ParentType == null ? new Log4NetLogger(s.BuildStack.Current.ConcreteType) : new Log4NetLogger(s.ParentType));
 					c.AddRegistry<SettingsProviderRegistry>();
+					c.AddRegistry<BootstrapRegistry>();
 					c.AddRegistry<ModelMapperRegistry>();
 					configAction(c);
 				});

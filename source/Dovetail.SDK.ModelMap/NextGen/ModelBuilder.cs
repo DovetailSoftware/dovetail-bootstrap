@@ -28,6 +28,7 @@ namespace Dovetail.SDK.ModelMap.NextGen
 
 			var sqlHelper = BuildSql(query);
 
+			//Console.WriteLine(sqlHelper.CommandText);
 			_logger.LogDebug("SQL Generated:", sqlHelper.CommandText);
 
 			var results = new List<OUT>();
@@ -54,11 +55,15 @@ namespace Dovetail.SDK.ModelMap.NextGen
 		{
 			var sqlHelper = new SqlHelper();
 
-			var selectClause = query.Selects.Select(s => "{0}.{1}".ToFormat(s.Alias, s.Field.Name)).Join(",");
+			var selectClause = query.Selects.OrderBy(s=>s.Index).Select(s => "{0}.{1}".ToFormat(s.Alias, s.Field.Name)).Join(",");
 
 			var joinClause = query.Joins.Select(j => j.JoinSql).Join(" ");
 
-			var whereClause = "WHERE " + query.Wheres.Select(w => w.Operator.Render(w, sqlHelper)).Join(" AND ");
+			var whereClause = "";
+			if(query.Wheres.Any())
+			{
+				whereClause = "WHERE " + query.Wheres.Select(w => w.Operator.Render(w, sqlHelper)).Join(" AND ");
+			}
 
 			var sql = "SELECT {0} {1} {2}".ToFormat(selectClause, joinClause, whereClause);
 
