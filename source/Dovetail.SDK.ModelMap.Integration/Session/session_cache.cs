@@ -172,7 +172,7 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 				_userSessionEndObserver.AssertWasNotCalled(a => a.SessionExpired(_session));
 			}
 			
-			[Test, Ignore("Figure out why this is breaking in nUnit but not Resharper")]
+			[Test]
 			public void should_close_session()
 			{
 				_session.AssertWasCalled(a => a.Close());
