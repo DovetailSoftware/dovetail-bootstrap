@@ -43,27 +43,30 @@ namespace Dovetail.SDK.Bootstrap.History
         }
 
 	    public static void PhoneLogActEntry(this ActEntryTemplatePolicyExpression dsl)
-        {
-            dsl.ActEntry(500).DisplayName("Phone log added")
-                .GetRelatedRecord("act_entry2phone_log")
-                .WithFields("notes", "internal", "x_is_internal")
-                .UpdateActivityDTOWith((row, dto) => setInternalLog(row, dto));
-        }
+      {
+        var noteField = "notes";
+        dsl.ActEntry(500).DisplayName("Phone log added")
+          .GetRelatedRecord("act_entry2phone_log")
+          .WithFields(noteField, "internal", "x_is_internal")
+          .UpdateActivityDTOWith((row, dto) => setInternalLog(row, dto, noteField));
+      }
 
 	    public static void NoteActEntry(this ActEntryTemplatePolicyExpression dsl)
 	    {
-		    dsl.ActEntry(1700).DisplayName("Note logged")
-			    .GetRelatedRecord("act_entry2notes_log").WithFields("description", "internal", "x_is_internal")
-			    .UpdateActivityDTOWith((row, dto) => setInternalLog(row, dto));
+	      var noteField = "description";
+	      dsl.ActEntry(1700).DisplayName("Note logged")
+			    .GetRelatedRecord("act_entry2notes_log")
+          .WithFields(noteField, "internal", "x_is_internal")
+			    .UpdateActivityDTOWith((row, dto) => setInternalLog(row, dto, noteField));
 	    }
 
-	    private static void setInternalLog(ClarifyDataRow row, HistoryItem dto)
+      private static void setInternalLog(ClarifyDataRow row, HistoryItem dto, string noteField)
 	    {
-			var isNewInternalNote = row.AsInt("x_is_internal") == 1;
-			var notes = row.AsString("notes");
-		    var @internal = row.AsString("internal");
+			  var isNewInternalNote = row.AsInt("x_is_internal") == 1;
+        var notes = row.AsString(noteField);
+	      var @internal = row.AsString("internal");
 			
-			dto.Detail = isNewInternalNote ? "" : notes;
+			  dto.Detail = isNewInternalNote ? "" : notes;
 		    dto.Internal = isNewInternalNote ? notes : @internal;
 	    }
 
