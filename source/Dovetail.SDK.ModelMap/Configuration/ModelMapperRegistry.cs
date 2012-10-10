@@ -1,5 +1,4 @@
 using Dovetail.SDK.Bootstrap.Configuration;
-using Dovetail.SDK.ModelMap.NextGen;
 using StructureMap.Configuration.DSL;
 
 namespace Dovetail.SDK.ModelMap.Configuration
@@ -20,10 +19,6 @@ namespace Dovetail.SDK.ModelMap.Configuration
 			For(typeof(IModelBuilder<>)).Use(typeof(ModelBuilder<>));
 			For<IModelBuilderResultEncoder>().Use<HttpAssemblerResultEncoder>();
 			For<IModelMapVisitor>().Use<DovetailGenericModelMapVisitor>();
-
-			For(typeof(IModelMapConfigFactory<,>)).Use(typeof(ModelMapConfigFactory<,>));
-			For(typeof(IMapQueryFactory<,>)).Use(typeof(MapQueryFactory<,>));
-			For(typeof(IModelBuilder<,>)).Use(typeof(ModelBuilder<,>));
 		}
 	}
 }

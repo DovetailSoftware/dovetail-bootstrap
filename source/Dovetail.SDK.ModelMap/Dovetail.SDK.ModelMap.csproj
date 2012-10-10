@@ -104,11 +104,6 @@
     <Compile Include="ModelBuilder.cs" />
     <Compile Include="ModelInspectorVisitor.cs" />
     <Compile Include="ModelMapSchemaValidationSource.cs" />
-    <Compile Include="NextGen\FilterConfig.cs" />
-    <Compile Include="NextGen\ModelBuilder.cs" />
-    <Compile Include="NextGen\ModelMapConfigurator.cs" />
-    <Compile Include="NextGen\ModelMapConfigFactory.cs" />
-    <Compile Include="NextGen\MapQueryFactory.cs" />
     <Compile Include="ObjectModel\ClarifyGenericMapEntry.cs" />
     <Compile Include="ObjectModel\FieldMap.cs" />
     <Compile Include="ObjectModel\FieldSortMap.cs" />

@@ -93,8 +93,6 @@
     <Compile Include="Mapping_from_view_to_table.cs" />
     <Compile Include="Mapping_many_dtos_to_a_field.cs" />
     <Compile Include="model_inspector.cs" />
-    <Compile Include="NextGen\model_builder.cs" />
-    <Compile Include="NextGen\query_config_builder.cs" />
     <Compile Include="ObjectMother.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Session\bootstrap_ioc.cs" />
