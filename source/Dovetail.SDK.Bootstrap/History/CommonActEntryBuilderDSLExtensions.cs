@@ -1,4 +1,5 @@
 using System;
+using Dovetail.SDK.Bootstrap.Clarify.Extensions;
 using Dovetail.SDK.Bootstrap.History.Configuration;
 using FChoice.Foundation.Clarify;
 using FubuCore;
@@ -41,19 +42,32 @@ namespace Dovetail.SDK.Bootstrap.History
                                            });
         }
 
-        public static void PhoneLogActEntry(this ActEntryTemplatePolicyExpression dsl)
+	    public static void PhoneLogActEntry(this ActEntryTemplatePolicyExpression dsl)
         {
             dsl.ActEntry(500).DisplayName("Phone log added")
                 .GetRelatedRecord("act_entry2phone_log")
                 .WithFields("notes", "internal", "x_is_internal")
-                .UpdateActivityDTOWith((row, dto) =>
-                                           {
-                                             dto.Detail = row["notes"].ToString();
-                                             dto.Internal = row["internal"].ToString();
-                                           });
+                .UpdateActivityDTOWith((row, dto) => setInternalLog(row, dto));
         }
 
-        public static void TimeAndExpenseLoggedActEntry(this ActEntryTemplatePolicyExpression dsl)
+	    public static void NoteActEntry(this ActEntryTemplatePolicyExpression dsl)
+	    {
+		    dsl.ActEntry(1700).DisplayName("Note logged")
+			    .GetRelatedRecord("act_entry2notes_log").WithFields("description", "internal", "x_is_internal")
+			    .UpdateActivityDTOWith((row, dto) => setInternalLog(row, dto));
+	    }
+
+	    private static void setInternalLog(ClarifyDataRow row, HistoryItem dto)
+	    {
+			var isNewInternalNote = row.AsInt("x_is_internal") == 1;
+			var notes = row.AsString("notes");
+		    var @internal = row.AsString("internal");
+			
+			dto.Detail = isNewInternalNote ? "" : notes;
+		    dto.Internal = isNewInternalNote ? notes : @internal;
+	    }
+
+	    public static void TimeAndExpenseLoggedActEntry(this ActEntryTemplatePolicyExpression dsl)
         {
             dsl.ActEntry(1800).DisplayName("Time and expense logged")
                 .GetRelatedRecord("act_entry2onsite_log")
@@ -106,17 +120,6 @@ namespace Dovetail.SDK.Bootstrap.History
             detail += record["message"].ToString();
 
             historyItem.Detail = detail;
-        }
-
-        public static void NoteActEntry(this ActEntryTemplatePolicyExpression dsl)
-        {
-            dsl.ActEntry(1700).DisplayName("Note logged")
-                .GetRelatedRecord("act_entry2notes_log").WithFields("description", "internal", "x_is_internal")
-                .UpdateActivityDTOWith((record, dto) =>
-                                           {
-                                               dto.Detail = record["description"].ToString();
-                                               dto.Internal = record["internal"].ToString();
-                                           });
         }
     }
 }
