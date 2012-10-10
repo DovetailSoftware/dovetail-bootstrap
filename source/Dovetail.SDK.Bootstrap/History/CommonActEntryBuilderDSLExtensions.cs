@@ -45,11 +45,11 @@ namespace Dovetail.SDK.Bootstrap.History
         {
             dsl.ActEntry(500).DisplayName("Phone log added")
                 .GetRelatedRecord("act_entry2phone_log")
-                .WithFields("notes", "internal")
+                .WithFields("notes", "internal", "x_is_internal")
                 .UpdateActivityDTOWith((row, dto) =>
                                            {
-                                               dto.Detail = row["notes"].ToString();
-                                               dto.Internal = row["internal"].ToString();
+                                             dto.Detail = row["notes"].ToString();
+                                             dto.Internal = row["internal"].ToString();
                                            });
         }
 
@@ -111,7 +111,7 @@ namespace Dovetail.SDK.Bootstrap.History
         public static void NoteActEntry(this ActEntryTemplatePolicyExpression dsl)
         {
             dsl.ActEntry(1700).DisplayName("Note logged")
-                .GetRelatedRecord("act_entry2notes_log").WithFields("description", "internal")
+                .GetRelatedRecord("act_entry2notes_log").WithFields("description", "internal", "x_is_internal")
                 .UpdateActivityDTOWith((record, dto) =>
                                            {
                                                dto.Detail = record["description"].ToString();

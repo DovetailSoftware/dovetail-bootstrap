@@ -62,7 +62,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 			var isSessionValid = _clarifyApplication.IsSessionValid(session.Id);
 			if(!isSessionValid)
 			{
-				_logger.LogDebug("Ejecting inactive session for user {0}.".ToFormat(session.UserName));
+				_logger.LogDebug("Ejecting inactive session {0} for user {1}.".ToFormat(session.Id, session.UserName));
 				_clarifySessionCache.EjectSession(session.UserName);
 			}
 			return isSessionValid;

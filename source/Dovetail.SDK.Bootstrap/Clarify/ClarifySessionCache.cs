@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Dovetail.SDK.Bootstrap.Authentication;
 using FChoice.Foundation.Clarify;
@@ -16,71 +15,88 @@ namespace Dovetail.SDK.Bootstrap.Clarify
     }
 
 	public class ClarifySessionCache : IClarifySessionCache
-    {
-		public const int MaximumAttempts = 3;
-		private readonly IClarifyApplication _clarifyApplication; 
+	{
+		private static readonly Dictionary<string, IClarifySession> _agentSessionCacheByUsername;
+
+		private readonly IClarifyApplication _clarifyApplication;
 		private readonly ILogger _logger;
-    	private readonly IUserClarifySessionConfigurator _sessionConfigurator;
+		private readonly IUserClarifySessionConfigurator _sessionConfigurator;
 		private readonly Func<IUserSessionEndObserver> _sessionEndObserver;
 		private readonly Func<IUserSessionStartObserver> _sessionStartObserver;
 		private readonly DovetailDatabaseSettings _settings;
 
-		private static readonly ConcurrentDictionary<string, IClarifySession> _agentSessionCacheByUsername = new ConcurrentDictionary<string, IClarifySession>();
-		
-        public ClarifySessionCache(IClarifyApplication clarifyApplication, ILogger logger, IUserClarifySessionConfigurator sessionConfigurator, Func<IUserSessionEndObserver> sessionEndObserver, Func<IUserSessionStartObserver> sessionStartObserver, DovetailDatabaseSettings settings)
-        {
-	        _clarifyApplication = clarifyApplication;
-	        _logger = logger;
-        	_sessionConfigurator = sessionConfigurator;
-	        _sessionEndObserver = sessionEndObserver;
-	        _sessionStartObserver = sessionStartObserver;
-	        _settings = settings;
-        }
+		static ClarifySessionCache()
+		{
+			_agentSessionCacheByUsername = new Dictionary<string, IClarifySession>();
+		}
+
+		public ClarifySessionCache(IClarifyApplication clarifyApplication, ILogger logger, IUserClarifySessionConfigurator sessionConfigurator, Func<IUserSessionEndObserver> sessionEndObserver, Func<IUserSessionStartObserver> sessionStartObserver, DovetailDatabaseSettings settings)
+		{
+			_clarifyApplication = clarifyApplication;
+			_logger = logger;
+			_sessionConfigurator = sessionConfigurator;
+			_sessionEndObserver = sessionEndObserver;
+			_sessionStartObserver = sessionStartObserver;
+			_settings = settings;
+		}
 
 		public IDictionary<string, IClarifySession> SessionsByUsername
 		{
 			get { return new Dictionary<string, IClarifySession>(_agentSessionCacheByUsername); }
 		}
 
-		private IClarifySession onAgentMissing(string username)
-        {
-            _logger.LogDebug("Creating missing session for agent {0}.".ToFormat(username));
-
-			var clarifySession = _clarifyApplication.CreateSession(username, ClarifyLoginType.User);
-			var wrappedSession = wrapSession(clarifySession);
-
-			if (!isApplicationUsername(username))
-			{
-				_sessionConfigurator.Configure(clarifySession);
-				_sessionStartObserver().SessionStarted(wrappedSession);
-			}
-			
-			_logger.LogInfo("Created and configured session {0} for agent {1}.".ToFormat(clarifySession.SessionID, username));
-
-			return wrappedSession;
-        }
-
-	    public IClarifySession GetSession(string username)
+		public IClarifySession GetSession(string username)
 		{
 			return getSession(username);
 		}
 
+		public void addSessionToCache(string username, IClarifySession session)
+		{
+			_agentSessionCacheByUsername.Add(username, session);
+		}
+
+		public void clear()
+		{
+			_agentSessionCacheByUsername.Clear();
+		}
+
 		public bool EjectSession(string username)
 		{
-			_logger.LogDebug("Ejecting session for {0}.", username);
-			IClarifySession value;
-			var success = _agentSessionCacheByUsername.TryRemove(username, out value);
 			var isApplicationUser = isApplicationUsername(username);
-			if (success && !isApplicationUser)
+
+			using (_logger.Push("Ejecting session for {0}.".ToFormat(username)))
 			{
-				_sessionEndObserver().SessionExpired(value);
+				if (!_agentSessionCacheByUsername.ContainsKey(username))
+				{
+					_logger.LogDebug("No session was found for the user.");
+					return false;
+				}
+
+				lock (_agentSessionCacheByUsername)
+				{
+					if (!_agentSessionCacheByUsername.ContainsKey(username))
+					{
+						_logger.LogDebug("Session was there when we started but someone else ejected it.");
+						return false;
+					}
+
+					var session = _agentSessionCacheByUsername[username];
+					_agentSessionCacheByUsername.Remove(username);
+
+					if (!isApplicationUser)
+					{
+						_logger.LogDebug("Expiring session {0}.", session.Id);
+						_sessionEndObserver().SessionExpired(session);
+					}
+
+					_logger.LogDebug("Closing session {0}.", session.Id);
+					session.Close();
+
+					_logger.LogDebug("{0} sessions are now in the cache.", _agentSessionCacheByUsername.Count);
+				}
 			}
-			else
-			{
-				var reason = String.Format("Username was{0} in the session cache. ", success ? "" :" not")  + String.Format("Username is{0} the application user.", isApplicationUser ? "" : " not");
-				_logger.LogInfo("Skipped ejecting session for {0}. Reason: {1}", username, reason);	
-			}
-			return success;
+
+			return true;
 		}
 
 		private bool isApplicationUsername(string username)
@@ -89,36 +105,69 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		}
 
 		public IClarifySession GetApplicationSession()
-        {
+		{
 			_logger.LogDebug("Getting application session.");
 			return getSession(_settings.ApplicationUsername);
-        }
+		}
 
-		private IClarifySession getSession(string username, int attempt = 1)
+		private IClarifySession getSession(string username)
 		{
-			if(attempt > MaximumAttempts)
+			IClarifySession session;
+
+			using (_logger.Push("Get session for {0}.".ToFormat(username)))
 			{
-				throw new ApplicationException("Giving up getting session after {0} attempts for user {1}".ToFormat(attempt, username));
+				var success = _agentSessionCacheByUsername.TryGetValue(username, out session);
+				if (success)
+				{
+					if (_clarifyApplication.IsSessionValid(session.Id))
+					{
+						_logger.LogDebug("Found valid session in cache.");
+						return session;
+					}
+					_logger.LogDebug("Ejecting invalid session.");
+					EjectSession(username);
+				}
+
+				lock (_agentSessionCacheByUsername)
+				{
+					if (_agentSessionCacheByUsername.ContainsKey(username))
+					{
+						_logger.LogDebug("Found session (within the lock). Assuming it is valid because it must be very recent.");
+						return _agentSessionCacheByUsername[username];
+					}
+
+					session = createSession(username);
+					_agentSessionCacheByUsername.Add(username, session);
+
+					_logger.LogDebug("{0} sessions are now in the cache.", _agentSessionCacheByUsername.Count);
+				}
 			}
 
-			_logger.LogDebug("Getting session for user {0}. Attempt {1}.".ToFormat(username, attempt));
+			return session;
+		}
 
-			var session = _agentSessionCacheByUsername.GetOrAdd(username, onAgentMissing);
+		private IClarifySession createSession(string username)
+		{
+			_logger.LogDebug("Creating missing session.");
 
-			if (_clarifyApplication.IsSessionValid(session.Id))
-		    {
-			    return session;
-		    }
+			var clarifySession = _clarifyApplication.CreateSession(username, ClarifyLoginType.User);
+			var wrappedSession = wrapSession(clarifySession);
 
-			EjectSession(username);
-			attempt += 1;
-		    
-			return getSession(username, attempt);
-	    }
+			if (!isApplicationUsername(username))
+			{
+				_sessionConfigurator.Configure(clarifySession);
+				_sessionStartObserver().SessionStarted(wrappedSession);
+				_logger.LogDebug("Configured created session.");
+			}
+
+			_logger.LogInfo("Created session {0}.".ToFormat(clarifySession.SessionID));
+
+			return wrappedSession;
+		}
 
 		private IClarifySession wrapSession(ClarifySession session)
-        {
-            return new ClarifySessionWrapper(session);
-        }
-    }
+		{
+			return new ClarifySessionWrapper(session);
+		}
+	}
 }

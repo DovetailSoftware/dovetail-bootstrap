@@ -2,10 +2,8 @@ using System;
 using FubuCore;
 using StructureMap;
 
-namespace Dovetail.SDK.ModelMap.Integration
+namespace Dovetail.SDK.Bootstrap.Configuration
 {
-
-	//TODO why is this required by this test container setup but not by the Web project?
 	public class StructureMapServiceLocator : IServiceLocator
 	{
 		private readonly IContainer _container;

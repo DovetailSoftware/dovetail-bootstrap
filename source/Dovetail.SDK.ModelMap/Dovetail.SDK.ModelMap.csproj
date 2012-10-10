@@ -33,25 +33,25 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FChoice.Common, Version=3.2.5.6, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+    <Reference Include="FChoice.Common, Version=3.2.6.8, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Dovetail.SDK.3.2.5.6\lib\net20\FChoice.Common.dll</HintPath>
+      <HintPath>..\packages\Dovetail.SDK.3.2.6.8\lib\net20\FChoice.Common.dll</HintPath>
     </Reference>
-    <Reference Include="FChoice.Foundation.Clarify.Compatibility, Version=3.2.5.6, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+    <Reference Include="FChoice.Foundation.Clarify.Compatibility, Version=3.2.6.8, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Dovetail.SDK.3.2.5.6\lib\net20\FChoice.Foundation.Clarify.Compatibility.dll</HintPath>
+      <HintPath>..\packages\Dovetail.SDK.3.2.6.8\lib\net20\FChoice.Foundation.Clarify.Compatibility.dll</HintPath>
     </Reference>
-    <Reference Include="FChoice.Foundation.Clarify.Compatibility.Toolkits, Version=3.2.5.6, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+    <Reference Include="FChoice.Foundation.Clarify.Compatibility.Toolkits, Version=3.2.6.8, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Dovetail.SDK.3.2.5.6\lib\net20\FChoice.Foundation.Clarify.Compatibility.Toolkits.dll</HintPath>
+      <HintPath>..\packages\Dovetail.SDK.3.2.6.8\lib\net20\FChoice.Foundation.Clarify.Compatibility.Toolkits.dll</HintPath>
     </Reference>
-    <Reference Include="FChoice.Toolkits.Clarify, Version=3.2.5.6, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+    <Reference Include="FChoice.Toolkits.Clarify, Version=3.2.6.8, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Dovetail.SDK.3.2.5.6\lib\net20\FChoice.Toolkits.Clarify.dll</HintPath>
+      <HintPath>..\packages\Dovetail.SDK.3.2.6.8\lib\net20\FChoice.Toolkits.Clarify.dll</HintPath>
     </Reference>
-    <Reference Include="fcSDK, Version=3.2.5.6, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+    <Reference Include="fcSDK, Version=3.2.6.8, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Dovetail.SDK.3.2.5.6\lib\net20\fcSDK.dll</HintPath>
+      <HintPath>..\packages\Dovetail.SDK.3.2.6.8\lib\net20\fcSDK.dll</HintPath>
     </Reference>
     <Reference Include="FubuCore, Version=0.9.9.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -104,6 +104,11 @@
     <Compile Include="ModelBuilder.cs" />
     <Compile Include="ModelInspectorVisitor.cs" />
     <Compile Include="ModelMapSchemaValidationSource.cs" />
+    <Compile Include="NextGen\FilterConfig.cs" />
+    <Compile Include="NextGen\ModelBuilder.cs" />
+    <Compile Include="NextGen\ModelMapConfigurator.cs" />
+    <Compile Include="NextGen\ModelMapConfigFactory.cs" />
+    <Compile Include="NextGen\MapQueryFactory.cs" />
     <Compile Include="ObjectModel\ClarifyGenericMapEntry.cs" />
     <Compile Include="ObjectModel\FieldMap.cs" />
     <Compile Include="ObjectModel\FieldSortMap.cs" />
@@ -145,6 +150,7 @@
       <Name>Dovetail.SDK.Bootstrap</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
