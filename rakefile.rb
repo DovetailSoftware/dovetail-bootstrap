@@ -2,7 +2,7 @@ require 'albacore'
 include REXML
 include Rake::DSL
 	
-BUILD_NUMBER_BASE = "0.3.2"
+BUILD_NUMBER_BASE = "0.4"
 PROJECT_NAME = "Bootstrap"
 SLN_PATH = "source/#{PROJECT_NAME}.sln"
 SLN_FILES = [SLN_PATH]
@@ -139,7 +139,7 @@ namespace :nuget do
 		}
 	end
 
-	desc "Deploy nuget packages. Expectes you to define your own 'deploy_nuget_packages' task in the buildsupport directory"
+	desc "Deploy nuget packages. Expects you to define your own 'deploy_nuget_packages' task in the buildsupport directory"
 	task :deploy => [:default,"nuget:build",:deploy_nuget_packages]
 end 
 
