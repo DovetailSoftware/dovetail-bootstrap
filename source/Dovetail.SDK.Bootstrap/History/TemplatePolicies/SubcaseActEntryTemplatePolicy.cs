@@ -1,17 +1,20 @@
 using Dovetail.SDK.Bootstrap.History.Configuration;
+using FChoice.Foundation.Schema;
 
 namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
 {
     public class SubcaseActEntryTemplatePolicy : ActEntryTemplatePolicyExpression
     {
         private readonly HistorySettings _settings;
+    	private readonly ISchemaCache _schemaCache;
 
-        public SubcaseActEntryTemplatePolicy(HistorySettings settings)
+    	public SubcaseActEntryTemplatePolicy(HistorySettings settings, ISchemaCache schemaCache)
         {
-            _settings = settings;
+        	_settings = settings;
+        	_schemaCache = schemaCache;
         }
 
-        protected override void DefineTemplate(WorkflowObject workflowObject)
+    	protected override void DefineTemplate(WorkflowObject workflowObject)
         {
             //kill subcase create and close for case objects when merging subcase history
             if (_settings.MergeCaseHistoryChildSubcases && workflowObject.Type == WorkflowObject.Case)
@@ -48,8 +51,8 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
             this.TimeAndExpenseEdittedActEntry();
             this.StatusChangedActEntry();
             this.LogResearchActEntry();
-            this.PhoneLogActEntry();
-            this.NoteActEntry();
+            this.PhoneLogActEntry(_schemaCache);
+			this.NoteActEntry(_schemaCache);
             this.TimeAndExpenseLoggedActEntry();
             this.TimeAndExpenseLoggedDeletedActEntry();
             this.EmailOutActEntry();

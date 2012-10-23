@@ -1,10 +1,18 @@
 using Dovetail.SDK.Bootstrap.History.Configuration;
+using FChoice.Foundation.Schema;
 
 namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
 {
     public class WorkflowActEntryTemplatePolicy : ActEntryTemplatePolicyExpression 
 	{
-        protected override void DefineTemplate(WorkflowObject workflowObject)
+    	private readonly ISchemaCache _schemaCache;
+
+    	public WorkflowActEntryTemplatePolicy(ISchemaCache schemaCache)
+		{
+			_schemaCache = schemaCache;
+		}
+
+    	protected override void DefineTemplate(WorkflowObject workflowObject)
 		{
             //child object histories are not a concern of this policy
             if (workflowObject.IsChild) return;
@@ -50,8 +58,8 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
             this.TimeAndExpenseEdittedActEntry();
             this.StatusChangedActEntry();
             this.LogResearchActEntry();
-            this.PhoneLogActEntry();
-            this.NoteActEntry();
+			this.PhoneLogActEntry(_schemaCache);
+			this.NoteActEntry(_schemaCache);
             this.TimeAndExpenseLoggedActEntry();
             this.TimeAndExpenseLoggedDeletedActEntry();
             this.EmailOutActEntry();
