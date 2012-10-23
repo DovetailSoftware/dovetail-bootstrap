@@ -2,6 +2,7 @@ using System;
 using Dovetail.SDK.Bootstrap.Clarify.Extensions;
 using Dovetail.SDK.Bootstrap.History.Configuration;
 using FChoice.Foundation.Clarify;
+using FChoice.Foundation.Schema;
 using FubuCore;
 
 namespace Dovetail.SDK.Bootstrap.History
@@ -42,22 +43,50 @@ namespace Dovetail.SDK.Bootstrap.History
                                            });
         }
 
-	    public static void PhoneLogActEntry(this ActEntryTemplatePolicyExpression dsl)
-      {
-        var noteField = "notes";
-        dsl.ActEntry(500).DisplayName("Phone log added")
-          .GetRelatedRecord("act_entry2phone_log")
-          .WithFields(noteField, "internal", "x_is_internal")
-          .UpdateActivityDTOWith((row, dto) => setInternalLog(row, dto, noteField));
-      }
+		public static void PhoneLogActEntry(this ActEntryTemplatePolicyExpression dsl, ISchemaCache schemaCache)
+		{
+			var noteField = "notes";
+		
+			if (schemaCache.IsValidField("phone_log", "x_is_internal"))
+			{
+				dsl.ActEntry(500).DisplayName("Phone log added")
+					.GetRelatedRecord("act_entry2phone_log")
+					.WithFields(noteField, "internal", "x_is_internal")
+					.UpdateActivityDTOWith((row, dto) => setInternalLog(row, dto, noteField));
+				return;
+			}
 
-	    public static void NoteActEntry(this ActEntryTemplatePolicyExpression dsl)
+			dsl.ActEntry(500).DisplayName("Phone log added")
+				.GetRelatedRecord("act_entry2phone_log")
+				.WithFields(noteField, "internal")
+				.UpdateActivityDTOWith((row, dto) =>
+				{
+					dto.Detail = row["notes"].ToString();
+					dto.Internal = row["internal"].ToString();
+				});
+		}
+
+		public static void NoteActEntry(this ActEntryTemplatePolicyExpression dsl, ISchemaCache schemaCache)
 	    {
-	      var noteField = "description";
-	      dsl.ActEntry(1700).DisplayName("Note logged")
-			    .GetRelatedRecord("act_entry2notes_log")
-          .WithFields(noteField, "internal", "x_is_internal")
-			    .UpdateActivityDTOWith((row, dto) => setInternalLog(row, dto, noteField));
+			var noteField = "description";
+
+			if (schemaCache.IsValidField("notes_log", "x_is_internal"))
+			{
+				dsl.ActEntry(1700).DisplayName("Note logged")
+					.GetRelatedRecord("act_entry2notes_log")
+					.WithFields(noteField, "internal", "x_is_internal")
+					.UpdateActivityDTOWith((row, dto) => setInternalLog(row, dto, noteField));
+				return;
+			}
+
+			dsl.ActEntry(1700).DisplayName("Note logged")
+				.GetRelatedRecord("act_entry2notes_log")
+				.WithFields(noteField, "internal")
+				.UpdateActivityDTOWith((row, dto) =>
+				{
+					dto.Detail = row[noteField].ToString();
+					dto.Internal = row["internal"].ToString();
+				});
 	    }
 
       private static void setInternalLog(ClarifyDataRow row, HistoryItem dto, string noteField)
