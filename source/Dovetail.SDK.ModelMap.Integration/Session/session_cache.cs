@@ -231,9 +231,9 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 			}
 
 			[Test]
-			public void should_not_be_configured()
+			public void should_be_configured()
 			{
-				_userClarifySessionConfigurator.AssertWasNotCalled(a=>a.Configure(_expectedSession));
+				_userClarifySessionConfigurator.AssertWasCalled(a=>a.Configure(_expectedSession));
 			}
 
 			[Test]
