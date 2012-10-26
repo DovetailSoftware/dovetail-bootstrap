@@ -20,7 +20,9 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 
 		public void Configure(ClarifySession session)
 		{
-			session.LocalTimeZone = _user().Timezone;
+			var currentSdkUser = _user();
+
+			session.LocalTimeZone = currentSdkUser.Timezone;
 		}
 	}
 
@@ -37,7 +39,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		{
 			var utcTimezone = _localeCache.TimeZones.FirstOrDefault(t => t.UtcOffsetSeconds == 0);
 
-			if(utcTimezone == null)
+			if (utcTimezone == null)
 				throw new ApplicationException("No timezone with a zero GMT offset was found.");
 
 			session.LocalTimeZone = utcTimezone;
