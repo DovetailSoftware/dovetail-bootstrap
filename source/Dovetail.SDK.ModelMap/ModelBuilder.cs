@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Dovetail.SDK.Bootstrap.Clarify.Extensions;
+using Dovetail.SDK.Bootstrap.Configuration;
 using Dovetail.SDK.ModelMap.Clarify;
 using Dovetail.SDK.ModelMap.ObjectModel;
 using Dovetail.SDK.ModelMap.Registration;
@@ -226,7 +227,7 @@ namespace Dovetail.SDK.ModelMap
 
             foreach (var record in records)
             {
-                var dto = Activator.CreateInstance(genericMap.Model.ModelType);
+				var dto = FastYetSimpleTypeActivator.CreateInstance(genericMap.Model.ModelType);
 
                 populateDTOForGenericRecord(genericMap, record, dto);
 
@@ -259,7 +260,7 @@ namespace Dovetail.SDK.ModelMap
                     var propertyDTOs = new ArrayList();
                     foreach (var childRecord in parentRecord.RelatedRows(childMap.ClarifyGeneric))
                     {
-                        var propertyDTO = Activator.CreateInstance(childModelType);
+						var propertyDTO = FastYetSimpleTypeActivator.CreateInstance(childModelType);
 
                         populateDTOForGenericRecord(childMap, childRecord, propertyDTO);
 
@@ -273,7 +274,7 @@ namespace Dovetail.SDK.ModelMap
                     var relatedChildRows = parentRecord.RelatedRows(childMap.ClarifyGeneric);
                     if (relatedChildRows.Any())
                     {
-                        var propertyDTO = Activator.CreateInstance(childModelType);
+						var propertyDTO = FastYetSimpleTypeActivator.CreateInstance(childModelType);
                         var childRecord = relatedChildRows.First();
                         populateDTOForGenericRecord(childMap, childRecord, propertyDTO);
                         parentProperty.SetValue(parentDto, propertyDTO);
