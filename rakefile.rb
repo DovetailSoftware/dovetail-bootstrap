@@ -30,7 +30,7 @@ buildsupportfiles.each { |ext|
 props = {:archive => "build", :testing => "results", :database => ""}
 
 desc "**Default**, compiles and runs unit tests"
-task :default => [:clean,:version,:compile,:test_assemblies,:unit_tests,:integration_tests]
+task :default => [:clean,:version,:compile,:test_assemblies,:unit_tests]
 
 desc "Run unit and integration tests. **Requires Database**"
 task :ci => [:default,:integration_tests]
