@@ -41,6 +41,10 @@ We also include a [simple Windows service](https://github.com/DovetailSoftware/d
 Setup
 ----
 
+### Internet Access
+
+Bootstrap build process downloads dependent components from the Internet, so Internet access is required. 
+
 ### Dovetail SDK 
 
 Bootstrap requires [.Net 4.0 Full](http://www.microsoft.com/download/en/details.aspx?id=17718) is dependant on the Dovetail SDK [nuget package](http://nuget.org) bundled with the Dovetail SDK starting with [version 3.2](http://support.dovetailsoftware.com/selfservice/products/show/Dovetail%20SDK) released January 19th 2012. We recommend that you use Visual Studio 2010 SP1 with IIS Express installed.
