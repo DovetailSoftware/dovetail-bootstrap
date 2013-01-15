@@ -153,5 +153,28 @@ namespace Dovetail.SDK.Bootstrap.History
 
             historyItem.Detail = detail;
         }
+
+		public static void ForwardActEntry(this ActEntryTemplatePolicyExpression dsl)
+		{
+			dsl.ActEntry(1100).DisplayName("Forwarded")
+				.GetRelatedRecord("act_entry2reject_msg")
+				.WithFields("description")
+				.UpdateActivityDTOWith((row, dto) =>
+				{
+					dto.Detail += Environment.NewLine + row["description"].ToString();
+				});
+		}
+
+		public static void RejectActEntry(this ActEntryTemplatePolicyExpression dsl)
+		{
+			dsl.ActEntry(2600).DisplayName("Returned to sender")
+				.GetRelatedRecord("act_entry2reject_msg")
+				.WithFields("description")
+				.UpdateActivityDTOWith((row, dto) =>
+				{
+					dto.Detail += Environment.NewLine + row["description"].ToString();
+				});
+		}
+
     }
 }

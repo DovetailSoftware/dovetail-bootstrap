@@ -34,11 +34,9 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
             ActEntry(600).DisplayName("Created");
 			ActEntry(900).DisplayName("Dispatched")
 				.EditActivityDTO(dto => { dto.Detail = "Dispatched " + dto.Detail; });
-			ActEntry(1100).DisplayName("Forwarded");
 			ActEntry(1600).DisplayName("Committment modified");
             ActEntry(2400).DisplayName("Reopened")
 				.EditActivityDTO(dto => { dto.Detail = "Reopened " + dto.Detail; });
-			ActEntry(2600).DisplayName("Returned to sender");
             ActEntry(4100).DisplayName("Yanked");
 			ActEntry(4200).DisplayName("Subcase reopened");
 			ActEntry(7200).DisplayName("Administrative subcase created");
@@ -64,6 +62,8 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
             this.TimeAndExpenseLoggedDeletedActEntry();
             this.EmailOutActEntry();
             this.EmailInActEntry();
+			this.ForwardActEntry();
+			this.RejectActEntry();
 		}
 	}
 }
