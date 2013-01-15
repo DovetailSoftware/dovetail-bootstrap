@@ -1,10 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dovetail.SDK.Bootstrap", "Dovetail.SDK.Bootstrap\Dovetail.SDK.Bootstrap.csproj", "{9947E369-AFF9-4911-AB0A-99B918A8F3CF}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "Web\Web.csproj", "{81BEBC91-46D5-4118-84AF-F85C2BEAE32C}"
-EndProject
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "automation", "automation", "{1E8F677D-96E1-413F-8810-BEBBBB358658}"
 	ProjectSection(SolutionItems) = preProject
 		..\rakefile.rb = ..\rakefile.rb
@@ -12,16 +8,20 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "automation", "automation", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{E66CD88A-C7DE-4F09-84D4-2894BD0CBC97}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dovetail.SDK.Bootstrap.Tests", "Dovetail.SDK.Bootstrap.Tests\Dovetail.SDK.Bootstrap.Tests.csproj", "{0EFB9B2A-CD04-4DED-A9EA-3F76DA349553}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "schema", "schema", "{49557427-0DED-45A9-A446-26349E81FA97}"
 	ProjectSection(SolutionItems) = preProject
 		..\schema\token.schemascript.xml = ..\schema\token.schemascript.xml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dovetail.SDK.ModelMap", "Dovetail.SDK.ModelMap\Dovetail.SDK.ModelMap.csproj", "{A6E31218-5C11-4656-9A53-0815D9F10E61}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{CAAA6C94-07B0-4743-AD4B-D0E1619507C7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dovetail.SDK.Bootstrap", "Dovetail.SDK.Bootstrap\Dovetail.SDK.Bootstrap.csproj", "{9947E369-AFF9-4911-AB0A-99B918A8F3CF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "Web\Web.csproj", "{81BEBC91-46D5-4118-84AF-F85C2BEAE32C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dovetail.SDK.Bootstrap.Tests", "Dovetail.SDK.Bootstrap.Tests\Dovetail.SDK.Bootstrap.Tests.csproj", "{0EFB9B2A-CD04-4DED-A9EA-3F76DA349553}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dovetail.SDK.ModelMap", "Dovetail.SDK.ModelMap\Dovetail.SDK.ModelMap.csproj", "{A6E31218-5C11-4656-9A53-0815D9F10E61}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dovetail.SDK.Fubu", "Dovetail.SDK.Fubu\Dovetail.SDK.Fubu.csproj", "{BDB6AD41-4C91-451F-B0EA-5858DFB5FB26}"
 EndProject
