@@ -46,7 +46,7 @@ task :build_release do
 end
 
 desc "build solution"
-task :compile => [:version, "nuget:install"] do |t, args|
+task :compile => [:version] do |t, args|
 	target = args[:target] || :DEBUG
  
 	puts "Doing #{target} build" 

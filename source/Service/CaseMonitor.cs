@@ -1,6 +1,7 @@
 using System;
 using System.Timers;
 using Dovetail.SDK.Bootstrap;
+using Dovetail.SDK.Bootstrap.Configuration;
 using Dovetail.SDK.ModelMap;
 using Dovetail.SDK.ModelMap.Configuration;
 using Dovetail.SDK.ModelMap.Registration;

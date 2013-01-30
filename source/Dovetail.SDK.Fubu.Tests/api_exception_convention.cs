@@ -40,7 +40,7 @@ namespace Dovetail.SDK.Fubu.Tests
         [Test]
         public void wraps_handled_actions_with_exception_wrapper()
         {
-            var registry = new FubuRegistry(r => r.ApplyConvention<APIExceptionConvention<Error500Request>>());
+			var registry = new FubuRegistry(r => r.Policies.Add<APIExceptionConvention<Error500Request>>());
             registry.Actions.IncludeType<Action>();
 
 			var graph = BehaviorGraph.BuildFrom(registry);
