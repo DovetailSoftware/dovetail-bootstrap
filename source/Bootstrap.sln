@@ -13,8 +13,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "schema", "schema", "{495574
 		..\schema\token.schemascript.xml = ..\schema\token.schemascript.xml
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{CAAA6C94-07B0-4743-AD4B-D0E1619507C7}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dovetail.SDK.Bootstrap", "Dovetail.SDK.Bootstrap\Dovetail.SDK.Bootstrap.csproj", "{9947E369-AFF9-4911-AB0A-99B918A8F3CF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "Web\Web.csproj", "{81BEBC91-46D5-4118-84AF-F85C2BEAE32C}"
