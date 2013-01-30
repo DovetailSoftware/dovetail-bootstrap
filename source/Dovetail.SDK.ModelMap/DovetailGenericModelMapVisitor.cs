@@ -159,7 +159,7 @@ namespace Dovetail.SDK.ModelMap
 
         public void Visit(FieldSortMap fieldSortMap)
         {
-			//verifyFields(new[] { fieldSortMap.FieldName });
+			//verifyFields(new[] { fieldSortMap.SchemaField });
 
             var currentGeneric = _genericStack.Peek();
             currentGeneric.ClarifyGeneric.AppendSort(fieldSortMap.FieldName, fieldSortMap.IsAscending);

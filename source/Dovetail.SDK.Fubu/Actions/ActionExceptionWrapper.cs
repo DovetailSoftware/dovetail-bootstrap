@@ -2,6 +2,7 @@
 using System.Net;
 using Dovetail.SDK.Bootstrap;
 using FubuMVC.Core.Behaviors;
+using FubuMVC.Core.Registration;
 using FubuMVC.Core.Runtime;
 
 namespace Dovetail.SDK.Fubu.Actions
@@ -22,14 +23,16 @@ namespace Dovetail.SDK.Fubu.Actions
         where T : class, IServerErrorRequest,  new()
     {
         private readonly IFubuRequest _request;
-        private readonly IPartialFactory _factory;
+	    private readonly BehaviorGraph _behaviorGraph;
+	    private readonly IPartialFactory _factory;
         private readonly IOutputWriter _writer;
         private readonly ILogger _logger;
 
-        public ActionExceptionWrapper(IFubuRequest request, IPartialFactory factory, IOutputWriter writer, ILogger logger)
+		public ActionExceptionWrapper(IFubuRequest request, BehaviorGraph behaviorGraph, IPartialFactory factory, IOutputWriter writer, ILogger logger)
         {
             _request = request;
-            _factory = factory;
+			_behaviorGraph = behaviorGraph;
+			_factory = factory;
             _writer = writer;
             _logger = logger;
         }
@@ -63,7 +66,10 @@ namespace Dovetail.SDK.Fubu.Actions
 
                 var request = new T {Exception = exception};
                 _request.Set(request);
-                var partial = _factory.BuildPartial(request.GetType());
+
+	            var chain = _behaviorGraph.BehaviorFor(typeof (T));
+
+                var partial = _factory.BuildPartial(chain);
                 partial.InvokePartial();
 
                 _writer.WriteResponseCode(HttpStatusCode.InternalServerError);

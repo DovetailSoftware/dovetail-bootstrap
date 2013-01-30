@@ -34,13 +34,15 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 				_userSessionStartObserver = MockRepository.GenerateStub<IUserSessionStartObserver>();
 				_userSessionEndObserver = MockRepository.GenerateStub<IUserSessionEndObserver>();
 
-				_container = bootstrap_ioc.getContainer(c =>
-				{
-					c.For<IUserClarifySessionConfigurator>().Use(_userClarifySessionConfigurator);
-					c.For<IClarifyApplication>().Use(_clarifyApplication);
-					c.For<IUserSessionStartObserver>().Use(_userSessionStartObserver);
-					c.For<IUserSessionEndObserver>().Use(_userSessionEndObserver);
-				});
+				_container = bootstrap_ioc.getContainer(c =>{});
+
+				_container.Configure(c=>
+					{
+						c.For<IUserClarifySessionConfigurator>().Use(_userClarifySessionConfigurator);
+						c.For<IClarifyApplication>().Use(_clarifyApplication);
+						c.For<IUserSessionStartObserver>().Use(_userSessionStartObserver);
+						c.For<IUserSessionEndObserver>().Use(_userSessionEndObserver);
+					});
 
 				_cut = _container.GetInstance<ClarifySessionCache>();
 
@@ -77,9 +79,10 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 
 			public override void setup()
 			{
-				_clarifyApplication.Stub(s => s.CreateSession(UserName, ClarifyLoginType.User)).Return(_expectedSession).Repeat.Once();
+				_clarifyApplication.Stub(s => s.CreateSession(UserName, ClarifyLoginType.User)).Return(_expectedSession);
 				_clarifyApplication.Stub(s => s.IsSessionValid(_expectedSession.SessionID)).Return(true);
 			}
+
 			[Test]
 			public void should_have_expected_id()
 			{
@@ -169,7 +172,7 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 				_userSessionEndObserver.AssertWasNotCalled(a => a.SessionExpired(_session));
 			}
 			
-			[Test, Ignore("Figure out why this is breaking in nUnit but not Resharper")]
+			[Test]
 			public void should_close_session()
 			{
 				_session.AssertWasCalled(a => a.Close());

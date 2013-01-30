@@ -66,22 +66,25 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Dovetail.SDK.Bootstrap\Dovetail.SDK.Bootstrap.csproj">
-      <Project>{9947E369-AFF9-4911-AB0A-99B918A8F3CF}</Project>
-      <Name>Dovetail.SDK.Bootstrap</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Dovetail.SDK.ModelMap\Dovetail.SDK.ModelMap.csproj">
-      <Project>{A6E31218-5C11-4656-9A53-0815D9F10E61}</Project>
-      <Name>Dovetail.SDK.ModelMap</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="..\Web\bootstrap.log4net">
       <Link>bootstrap.log4net</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Dovetail.SDK.Bootstrap\Dovetail.SDK.Bootstrap.csproj">
+      <Project>{9947e369-aff9-4911-ab0a-99b918a8f3cf}</Project>
+      <Name>Dovetail.SDK.Bootstrap</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Dovetail.SDK.ModelMap\Dovetail.SDK.ModelMap.csproj">
+      <Project>{a6e31218-5c11-4656-9a53-0815d9f10e61}</Project>
+      <Name>Dovetail.SDK.ModelMap</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

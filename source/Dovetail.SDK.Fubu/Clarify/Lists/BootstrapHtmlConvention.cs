@@ -6,8 +6,7 @@ namespace Dovetail.SDK.Fubu.Clarify.Lists
     {
         public BootstrapHtmlConvention()
         {
-            Editors.Builder<GbstListValueDropdownBuilder>();
+            Editors.BuilderPolicy<GbstListValueDropdownBuilder>();
         }
     }
-
 }

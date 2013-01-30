@@ -34,27 +34,28 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FChoice.Common, Version=3.2.9.7, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
       <HintPath>..\packages\Dovetail.SDK.3.2.9.7\lib\net20\FChoice.Common.dll</HintPath>
     </Reference>
     <Reference Include="FChoice.Foundation.Clarify.Compatibility, Version=3.2.9.7, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
       <HintPath>..\packages\Dovetail.SDK.3.2.9.7\lib\net20\FChoice.Foundation.Clarify.Compatibility.dll</HintPath>
     </Reference>
     <Reference Include="FChoice.Foundation.Clarify.Compatibility.Toolkits, Version=3.2.9.7, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
       <HintPath>..\packages\Dovetail.SDK.3.2.9.7\lib\net20\FChoice.Foundation.Clarify.Compatibility.Toolkits.dll</HintPath>
     </Reference>
     <Reference Include="FChoice.Toolkits.Clarify, Version=3.2.9.7, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
       <HintPath>..\packages\Dovetail.SDK.3.2.9.7\lib\net20\FChoice.Toolkits.Clarify.dll</HintPath>
     </Reference>
     <Reference Include="fcSDK, Version=3.2.9.7, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
       <HintPath>..\packages\Dovetail.SDK.3.2.9.7\lib\net20\fcSDK.dll</HintPath>
     </Reference>
-    <Reference Include="FubuCore">
-      <HintPath>..\packages\FubuCore.0.9.9.149\lib\FubuCore.dll</HintPath>
+    <Reference Include="FubuCore, Version=0.9.9.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\FubuCore.0.9.9.178\lib\FubuCore.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
@@ -148,7 +149,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Dovetail.SDK.Bootstrap.nuspec" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
