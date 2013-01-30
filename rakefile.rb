@@ -42,7 +42,7 @@ task :build_release do
 	#releaseDir = "#{props[:testing]}/release"
 	#puts "\nBuilt and copied release to: \n\n #{File.absolute_path(releaseDir)}\n"
 	#FileUtils::cp_r 'source/Web/.', releaseDir 
-	#FileUtils::rm_rf "#{releaseDir}/obj" 
+	#FileUtils::rm_rf "#{releaseDir}/obj" 	
 end
 
 desc "build solution"
@@ -126,10 +126,15 @@ namespace :nuget do
 	end
 
 	desc "Build nuget packages"
-	task :build => [:build_release] do 
+	task :build => [:clean, :build_release] do 
+		
+		puts 'removing packages and fubu-content to avoid finding their nuspecs - better to exclude them from a fileset'
+		FileUtils::rm_rf "source/Web/fubu-content" 
+		FileUtils::rm_rf "source/packages" 
+
 		FileUtils.mkdir_p("results/packages")
 		packagesDir = File.absolute_path("results/packages")
-		Dir.glob(File.join("**","*.nuspec")){ |file|
+		Dir.glob(File.join("source/**","*.nuspec")){ |file|
 			puts "Building nuget package for #{file}"
 			projectPath = File.dirname(file)
 			Dir.chdir(projectPath) do 
