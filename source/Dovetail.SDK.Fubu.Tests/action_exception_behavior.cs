@@ -84,7 +84,6 @@ namespace Dovetail.SDK.Fubu.Tests
         private IActionBehavior _insideBehavior;
         private Exception _exception;
         private IActionBehavior _partialBehavior;
-	    private BehaviorChain _behaviorChain;
 
 	    public override void Given()
         {
@@ -92,7 +91,6 @@ namespace Dovetail.SDK.Fubu.Tests
 
 			var graph = BehaviorGraph.BuildFrom(cfg =>
             {
-				
 				//cfg.Route(Guid.NewGuid().ToString()).Calls<ActionStatus500>(x => x.Execute(null));
             });
 

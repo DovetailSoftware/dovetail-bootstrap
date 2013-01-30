@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>$id$</id>
-    <version>$version$-fubumaster</version>
+    <version>$version$</version>
     <title>$title$</title>
     <authors>Kevin Miller, Gary Sherman</authors>
     <owners>Dovetail Software Inc.</owners>
