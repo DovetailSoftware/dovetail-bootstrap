@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Net;
 using Dovetail.SDK.Bootstrap;
+using Dovetail.SDK.Fubu.Configuration;
 using FubuMVC.Core.Behaviors;
-using FubuMVC.Core.Registration;
 using FubuMVC.Core.Runtime;
 
 namespace Dovetail.SDK.Fubu.Actions
 {
-    /// <summary>
+	/// <summary>
     /// The view you create to display friendly server error pages needs to implement this interface.
     /// </summary>
     public interface IServerErrorRequest
@@ -23,18 +23,16 @@ namespace Dovetail.SDK.Fubu.Actions
         where T : class, IServerErrorRequest,  new()
     {
         private readonly IFubuRequest _request;
-	    private readonly BehaviorGraph _behaviorGraph;
-	    private readonly IPartialFactory _factory;
-        private readonly IOutputWriter _writer;
-        private readonly ILogger _logger;
+	    private readonly IFubuPartialService _fubuPartialService;
+	    private readonly IOutputWriter _writer;
+	    private readonly ILogger _logger;
 
-		public ActionExceptionWrapper(IFubuRequest request, BehaviorGraph behaviorGraph, IPartialFactory factory, IOutputWriter writer, ILogger logger)
+		public ActionExceptionWrapper(IFubuRequest request, IFubuPartialService fubuPartialService, IOutputWriter writer, ILogger logger)
         {
             _request = request;
-			_behaviorGraph = behaviorGraph;
-			_factory = factory;
-            _writer = writer;
-            _logger = logger;
+			_fubuPartialService = fubuPartialService;
+			_writer = writer;
+			_logger = logger;
         }
 
         public IActionBehavior InsideBehavior { get; set; }
@@ -67,10 +65,7 @@ namespace Dovetail.SDK.Fubu.Actions
                 var request = new T {Exception = exception};
                 _request.Set(request);
 
-	            var chain = _behaviorGraph.BehaviorFor(typeof (T));
-
-                var partial = _factory.BuildPartial(chain);
-                partial.InvokePartial();
+	            _fubuPartialService.Invoke(typeof (T));
 
                 _writer.WriteResponseCode(HttpStatusCode.InternalServerError);
             }

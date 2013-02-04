@@ -3,16 +3,15 @@ using System.Net;
 using Dovetail.SDK.Bootstrap;
 using Dovetail.SDK.Bootstrap.Tests;
 using Dovetail.SDK.Fubu.Actions;
+using Dovetail.SDK.Fubu.Configuration;
 using FubuMVC.Core.Behaviors;
-using FubuMVC.Core.Registration;
-using FubuMVC.Core.Registration.Nodes;
 using FubuMVC.Core.Runtime;
 using NUnit.Framework;
 using Rhino.Mocks;
 
 namespace Dovetail.SDK.Fubu.Tests
 {
-    [TestFixture]
+	[TestFixture]
     public class action_exception_behavior : Context<ActionExceptionWrapper<Error500Request>>
     {
         private IActionBehavior _insideBehavior;
@@ -78,7 +77,7 @@ namespace Dovetail.SDK.Fubu.Tests
         }
     }
 
-    [TestFixture, Ignore("Fubu 1.0 made partial invocations difficult to test")]
+    [TestFixture]
     public class action_exception_behavior_for_exception : Context<ActionExceptionWrapper<Error500Request>>
     {
         private IActionBehavior _insideBehavior;
@@ -89,20 +88,13 @@ namespace Dovetail.SDK.Fubu.Tests
         {
             AspNetSettings.IsCustomErrorsEnabled = true;
 
-			var graph = BehaviorGraph.BuildFrom(cfg =>
-            {
-				//cfg.Route(Guid.NewGuid().ToString()).Calls<ActionStatus500>(x => x.Execute(null));
-            });
-
-		    graph.AddActionFor("wee", typeof (ActionStatus500));
-            _insideBehavior = MockFor<IActionBehavior>();
+			_insideBehavior = MockFor<IActionBehavior>();
             _cut.InsideBehavior = _insideBehavior;
 
             _exception = new Exception("bad things happened");
             _insideBehavior.Stub(s => s.Invoke()).Throw(_exception);
 
             _partialBehavior = MockFor<IActionBehavior>();
-            MockFor<IPartialFactory>().Stub(s => s.BuildPartial(null)).IgnoreArguments().Return(_partialBehavior);
             
             _cut.Invoke();
         }
@@ -116,7 +108,7 @@ namespace Dovetail.SDK.Fubu.Tests
         [Test]
         public void should_invoke_the_error_request_partial()
         {
-			_partialBehavior.AssertWasCalled(a => a.InvokePartial());
+	        MockFor<IFubuPartialService>().AssertWasCalled(s => s.Invoke(typeof (Error500Request)));
         }
 
         [Test]
