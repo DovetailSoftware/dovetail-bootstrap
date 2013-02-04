@@ -10,7 +10,7 @@ namespace Dovetail.SDK.Bootstrap.Configuration
     {
         public void Process(Type type, Registry graph)
         {
-            if (!type.Name.EndsWith("Settings") || type.IsInterface) return;
+            if (!type.Name.EndsWith("Settings") || type.IsInterface || type.IsAbstract) return;
 
             graph.For(type).LifecycleIs(InstanceScope.Singleton).Use(c => c.GetInstance<ISettingsProvider>().SettingsFor(type));
         }
