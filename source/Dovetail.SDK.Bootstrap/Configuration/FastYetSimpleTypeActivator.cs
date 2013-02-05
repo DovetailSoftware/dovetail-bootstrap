@@ -14,8 +14,11 @@ namespace Dovetail.SDK.Bootstrap.Configuration
 			{
 				var exp = Expression.New(type);
 				var d = Expression.Lambda<Func<object>>(exp).Compile();
-				_ctors.Add(type, d);
-
+				
+				if (!_ctors.ContainsKey(type))
+				{
+					_ctors.Add(type, d);
+				}
 			}
 
 			return _ctors[type]();
