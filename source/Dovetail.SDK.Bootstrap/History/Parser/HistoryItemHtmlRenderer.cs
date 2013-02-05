@@ -8,16 +8,14 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 	//TODO pull our renderers into a their own types
     public class HistoryItemHtmlRenderer
     {
-        private readonly StringBuilder _output;
-
-        public HistoryItemHtmlRenderer()
-        {
-            _output = new StringBuilder();
-        }
+        private StringBuilder _output;
 
         private static long _idIndex;
+
         public string Render(IEnumerable<IItem> items)
         {
+			_output = new StringBuilder();
+
             foreach (var item in items)
             {
                 if(item.GetType().CanBeCastTo<EmailHeader>())

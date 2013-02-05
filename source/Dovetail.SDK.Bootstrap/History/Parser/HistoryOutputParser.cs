@@ -12,11 +12,15 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 
 	public class HistoryOutputParser : IHistoryOutputParser
 	{
-		private readonly IOutputEncoder _outputEncoder;
+		private readonly HistoryItemParser _itemParser;
+		private readonly HistoryItemHtmlRenderer _itemHtmlRenderer;
+		private readonly HtmlEncodeOutputEncoder _encoder;
 
-		public HistoryOutputParser(IOutputEncoder outputEncoder)
+		public HistoryOutputParser(HistoryItemParser itemParser, HistoryItemHtmlRenderer itemHtmlRenderer, HtmlEncodeOutputEncoder encoder)
 		{
-			_outputEncoder = outputEncoder;
+			_itemParser = itemParser;
+			_itemHtmlRenderer = itemHtmlRenderer;
+			_encoder = encoder;
 		}
 
 		private static readonly Regex urlFinderRegEx = new Regex(@"(?<link>(?<protocol>ftp|http|https|mailto|file|webcal):(?:(?:[A-Za-z0-9$_.+!*(),;/?:@&~=-])|%[A-Fa-f0-9]{2}){2,}(?:#(?:[a-zA-Z0-9][a-zA-Z0-9$_.+!*(),;/?:@&~=%-]*))?(?:[A-Za-z0-9$_+!*();/?:~-]))");
@@ -25,10 +29,10 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 		{
 			if (input.IsEmpty()) return String.Empty;
 
-			var output = _outputEncoder.Encode(input);
+			var output = _encoder.Encode(input);
 
-			var items = new HistoryItemParser().Parse(output);
-			var result = new HistoryItemHtmlRenderer().Render(items);
+			var items = _itemParser.Parse(output);
+			var result = _itemHtmlRenderer.Render(items);
 			result = urlFinderRegEx.Replace(result, @"<a href=""${link}"">${link}</a>");
 
 			return result;
