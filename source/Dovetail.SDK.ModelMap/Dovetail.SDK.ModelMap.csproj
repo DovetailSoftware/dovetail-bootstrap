@@ -84,8 +84,6 @@
     <Compile Include="DovetailMappingException.cs" />
     <Compile Include="Extensions\MappingExtensions.cs" />
     <Compile Include="Extensions\TemporalExtensions.cs" />
-    <Compile Include="HttpAssemblerResultEncoder.cs" />
-    <Compile Include="IAssemblerResultEncoder.cs" />
     <Compile Include="IMapEntryBuilder.cs" />
     <Compile Include="IModelBuilder.cs" />
     <Compile Include="IModelMapVisitor.cs" />

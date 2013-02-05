@@ -1,4 +1,5 @@
 using Dovetail.SDK.Bootstrap.History.Configuration;
+using Dovetail.SDK.Bootstrap.History.Parser;
 using FChoice.Foundation.Schema;
 
 namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
@@ -7,7 +8,7 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
 	{
     	private readonly ISchemaCache _schemaCache;
 
-    	public WorkflowActEntryTemplatePolicy(ISchemaCache schemaCache)
+		public WorkflowActEntryTemplatePolicy(ISchemaCache schemaCache, IHistoryOutputParser parser) : base(parser)
 		{
 			_schemaCache = schemaCache;
 		}

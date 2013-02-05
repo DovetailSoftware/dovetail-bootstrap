@@ -5,7 +5,7 @@ using FubuCore;
 
 namespace Dovetail.SDK.Bootstrap.History.Parser
 {
-    //TODO pull our renderers into a their own types
+	//TODO pull our renderers into a their own types
     public class HistoryItemHtmlRenderer
     {
         private readonly StringBuilder _output;

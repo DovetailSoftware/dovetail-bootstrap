@@ -2,8 +2,10 @@
 using System.Net;
 using Dovetail.SDK.Bootstrap;
 using Dovetail.SDK.Fubu.Configuration;
+using FubuCore.Binding;
 using FubuMVC.Core.Behaviors;
 using FubuMVC.Core.Runtime;
+using FubuMVC.Core;
 
 namespace Dovetail.SDK.Fubu.Actions
 {
@@ -24,13 +26,15 @@ namespace Dovetail.SDK.Fubu.Actions
     {
         private readonly IFubuRequest _request;
 	    private readonly IFubuPartialService _fubuPartialService;
+	    private readonly IRequestData _requestData;
 	    private readonly IOutputWriter _writer;
 	    private readonly ILogger _logger;
 
-		public ActionExceptionWrapper(IFubuRequest request, IFubuPartialService fubuPartialService, IOutputWriter writer, ILogger logger)
+		public ActionExceptionWrapper(IFubuRequest request, IFubuPartialService fubuPartialService, IRequestData requestData, IOutputWriter writer, ILogger logger)
         {
             _request = request;
 			_fubuPartialService = fubuPartialService;
+			_requestData = requestData;
 			_writer = writer;
 			_logger = logger;
         }
@@ -59,7 +63,7 @@ namespace Dovetail.SDK.Fubu.Actions
             {
                 _logger.LogError("An API action threw an exception.", exception);
 
-                if (!AspNetSettings.IsCustomErrorsEnabled)
+                if (!AspNetSettings.IsCustomErrorsEnabled || _requestData.IsAjaxRequest())
                     throw;
 
                 var request = new T {Exception = exception};

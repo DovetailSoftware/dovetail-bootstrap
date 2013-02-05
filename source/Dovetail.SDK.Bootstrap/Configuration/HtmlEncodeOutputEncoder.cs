@@ -1,8 +1,8 @@
 ﻿using System.Web;
 
-namespace Dovetail.SDK.ModelMap
+namespace Dovetail.SDK.Bootstrap.Configuration
 {
-    public class HttpAssemblerResultEncoder : IModelBuilderResultEncoder
+	public class HtmlEncodeOutputEncoder : IOutputEncoder
     {
         public string Encode(string encodeMe)
         {

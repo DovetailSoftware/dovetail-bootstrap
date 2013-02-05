@@ -17,7 +17,7 @@ namespace Dovetail.SDK.ModelMap.Configuration
 		             });
 
 			For(typeof(IModelBuilder<>)).Use(typeof(ModelBuilder<>));
-			For<IModelBuilderResultEncoder>().Use<HttpAssemblerResultEncoder>();
+			For<IOutputEncoder>().Use<HtmlEncodeOutputEncoder>();
 			For<IModelMapVisitor>().Use<DovetailGenericModelMapVisitor>();
 		}
 	}

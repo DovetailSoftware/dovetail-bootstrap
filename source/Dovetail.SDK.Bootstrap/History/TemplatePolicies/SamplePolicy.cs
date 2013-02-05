@@ -1,10 +1,15 @@
 using Dovetail.SDK.Bootstrap.History.Configuration;
+using Dovetail.SDK.Bootstrap.History.Parser;
 
 namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
 {
     public class SamplePolicy : ActEntryTemplatePolicyExpression
     {
-        protected override void DefineTemplate(WorkflowObject workflowObject)
+		public SamplePolicy(IHistoryOutputParser historyOutputParser) : base(historyOutputParser)
+	    {
+	    }
+
+	    protected override void DefineTemplate(WorkflowObject workflowObject)
         {
             //you can remove templates created by other policies
             ActEntry(3000).Remove();

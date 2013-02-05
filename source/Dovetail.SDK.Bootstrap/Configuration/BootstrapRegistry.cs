@@ -61,6 +61,8 @@ namespace Dovetail.SDK.Bootstrap.Configuration
 
 	        ForSingletonOf<IRequestPathAuthenticationPolicy>().Use<RequestPathAuthenticationPolicy>();
 
+			For<IOutputEncoder>().Use<HtmlEncodeOutputEncoder>();
+
             //It is the responsibility of the applicationUrl using bootstrap to set the current sdk user's login 
             For<ICurrentSDKUser>().HybridHttpOrThreadLocalScoped().Use<CurrentSDKUser>();
         	For<IUserClarifySessionConfigurator>().Use<UTCTimezoneUserClarifySessionConfigurator>();

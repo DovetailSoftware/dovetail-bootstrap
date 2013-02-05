@@ -1,6 +1,5 @@
 using System.Net;
 using Bootstrap.Web.Handlers.user.signin;
-using FubuCore;
 using FubuCore.Binding;
 using FubuMVC.Core;
 using FubuMVC.Core.Http;

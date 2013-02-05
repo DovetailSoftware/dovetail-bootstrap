@@ -20,14 +20,14 @@ namespace Dovetail.SDK.ModelMap
         private readonly ModelMap<MODEL> _modelMap;
         private readonly IClarifyListCache _listCache;
         private readonly ISchemaCache _schemaCache;
-        private readonly IModelBuilderResultEncoder _assemblerResultEncoder;
+        private readonly IOutputEncoder _outputEncoder;
         private readonly IMapEntryBuilder _mapEntryBuilder;
 
-    	public ModelBuilder(ModelMap<MODEL> modelMap, IClarifyListCache listCache, ISchemaCache schemaCache, IModelBuilderResultEncoder assemblerResultEncoder, IMapEntryBuilder mapEntryBuilder)
+    	public ModelBuilder(ModelMap<MODEL> modelMap, IClarifyListCache listCache, ISchemaCache schemaCache, IOutputEncoder outputEncoder, IMapEntryBuilder mapEntryBuilder)
         {
             _modelMap = modelMap;
             _mapEntryBuilder = mapEntryBuilder;
-        	_assemblerResultEncoder = assemblerResultEncoder;
+        	_outputEncoder = outputEncoder;
             _schemaCache = schemaCache;
             _listCache = listCache;
 
@@ -347,7 +347,7 @@ namespace Dovetail.SDK.ModelMap
 
                 if (propertyValue is string && fieldMap.ShouldEncode)
                 {
-                    propertyValue = _assemblerResultEncoder.Encode((string)propertyValue);
+                    propertyValue = _outputEncoder.Encode((string)propertyValue);
                 }
 
                 if (fieldMap.Property.PropertyType == typeof(int))

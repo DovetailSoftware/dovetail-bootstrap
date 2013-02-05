@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Dovetail.SDK.Bootstrap.Extensions;
+using Dovetail.SDK.Bootstrap.History.Parser;
 using FChoice.Foundation.Clarify;
 using FubuCore;
 
@@ -8,14 +8,13 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
 {
     public class ActEntryTemplate
 	{
-		public ActEntryTemplate()
+		public ActEntryTemplate(IHistoryOutputParser encoder)
 		{
-            //TODO make this come from an injectable type? - kjm 10/2011
-		    HTMLizer = item =>
-		                   {
-		                       item.Detail = item.Detail.HtmlEncode().ToHtml();
-                               item.Internal = item.Internal.HtmlEncode().ToHtml();
-		                   };
+			HTMLizer = item =>
+				{
+					item.Detail = encoder.Encode(item.Detail);
+					item.Internal = encoder.Encode(item.Internal);
+				};
 		}
 
 		public int Code { get; set; }
@@ -109,7 +108,14 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
 
 	public abstract class ActEntryTemplatePolicyExpression : IAfterActEntryCode, IAfterDisplayName, IHasRelatedRow, IAfterRelatedFields, IAfterHtmlizer
 	{
-	    private ActEntryTemplate _currentActEntryTemplate;
+		private readonly IHistoryOutputParser _historyOutputParser;
+
+		protected ActEntryTemplatePolicyExpression(IHistoryOutputParser historyOutputParser)
+		{
+			_historyOutputParser = historyOutputParser;
+		}
+
+		private ActEntryTemplate _currentActEntryTemplate;
 
 	    protected abstract void DefineTemplate(WorkflowObject workflowObject);
 
@@ -135,7 +141,7 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
 		{
 			addCurrentActEntryTemplate();
 
-			_currentActEntryTemplate = new ActEntryTemplate {Code = code};
+			_currentActEntryTemplate = new ActEntryTemplate(_historyOutputParser) { Code = code };
 
 			return this;
 		}

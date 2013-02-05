@@ -91,11 +91,15 @@
     <Compile Include="Clarify\ClarifySessionUsageReporter.cs" />
     <Compile Include="Clarify\UserLocalTimezoneClarifySessionConfigurator.cs" />
     <Compile Include="Configuration\AspNetHttpRequest.cs" />
+    <Compile Include="Configuration\DoNothingOutputEncoder.cs" />
     <Compile Include="Configuration\FastYetSimpleTypeActivator.cs" />
+    <Compile Include="Configuration\HtmlEncodeOutputEncoder.cs" />
+    <Compile Include="Configuration\IOutputEncoder.cs" />
     <Compile Include="Configuration\LogRequestContextModule.cs" />
     <Compile Include="Configuration\SettingsProviderRegistry.cs" />
     <Compile Include="Configuration\StructureMapServiceLocator.cs" />
     <Compile Include="Configuration\WebsiteSettings.cs" />
+    <Compile Include="History\Parser\HistoryOutputParser.cs" />
     <Compile Include="History\Parser\Sprache\Failure.cs" />
     <Compile Include="History\Parser\Sprache\IFailure.cs" />
     <Compile Include="History\Parser\Sprache\Input.cs" />

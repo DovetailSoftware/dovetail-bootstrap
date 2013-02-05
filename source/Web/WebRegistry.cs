@@ -1,4 +1,5 @@
 ﻿using Dovetail.SDK.Bootstrap.Configuration;
+using Dovetail.SDK.Fubu.TokenAuthentication.Token;
 using Dovetail.SDK.ModelMap.Configuration;
 using Dovetail.SDK.ModelMap.Registration;
 using StructureMap.Configuration.DSL;
@@ -15,6 +16,7 @@ namespace Bootstrap.Web
                          scan.TheCallingAssembly();
                          //bootstrap assembly
 						 scan.AssemblyContainingType<WebsiteSettings>();
+	                     scan.AssemblyContainingType<AuthenticationTokenConvention>();
                          
                          //register model maps found in scanned assemblies
                          //this lets your classes take dependencies on 
@@ -30,6 +32,8 @@ namespace Bootstrap.Web
 			IncludeRegistry<SettingsProviderRegistry>();
             IncludeRegistry<BootstrapRegistry>();
             IncludeRegistry<ModelMapperRegistry>();
+
+			For<IOutputEncoder>().Use<DoNothingOutputEncoder>();
         }
     }
 }

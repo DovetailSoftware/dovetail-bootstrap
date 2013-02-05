@@ -1,4 +1,5 @@
 using Dovetail.SDK.Bootstrap.History.Configuration;
+using Dovetail.SDK.Bootstrap.History.Parser;
 using FChoice.Foundation.Schema;
 
 namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
@@ -8,8 +9,8 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
         private readonly HistorySettings _settings;
     	private readonly ISchemaCache _schemaCache;
 
-    	public SubcaseActEntryTemplatePolicy(HistorySettings settings, ISchemaCache schemaCache)
-        {
+		public SubcaseActEntryTemplatePolicy(HistorySettings settings, ISchemaCache schemaCache, IHistoryOutputParser parser) : base(parser)
+    	{
         	_settings = settings;
         	_schemaCache = schemaCache;
         }
