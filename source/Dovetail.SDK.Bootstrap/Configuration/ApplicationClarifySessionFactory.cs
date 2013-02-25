@@ -22,7 +22,7 @@ namespace Dovetail.SDK.Bootstrap.Configuration
 		{
 			var session = (ClarifySessionWrapper) _sessionCache.GetApplicationSession();
 
-			_sessionConfigurator.Configure(session.ClarifySession);
+			//_sessionConfigurator.Configure(session.ClarifySession);
 
 			return session;
 		}

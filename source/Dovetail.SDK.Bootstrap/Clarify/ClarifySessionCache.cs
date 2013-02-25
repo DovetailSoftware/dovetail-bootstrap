@@ -161,7 +161,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 				_sessionStartObserver().SessionStarted(wrappedSession);
 			}
 
-			_logger.LogInfo("Created session {0}.".ToFormat(clarifySession.SessionID));
+				_logger.LogInfo("Created session {0}.".ToFormat(clarifySession.SessionID));
 
 			return wrappedSession;
 		}
