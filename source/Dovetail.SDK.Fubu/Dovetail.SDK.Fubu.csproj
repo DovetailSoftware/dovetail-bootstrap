@@ -36,25 +36,25 @@
     <Reference Include="Bottles">
       <HintPath>..\packages\Bottles.1.0.0.443\lib\Bottles.dll</HintPath>
     </Reference>
-    <Reference Include="FChoice.Common, Version=3.2.9.7, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+    <Reference Include="FChoice.Common">
+      <HintPath>..\packages\Dovetail.SDK.3.2.10.21\lib\net20\FChoice.Common.dll</HintPath>
       <Private>True</Private>
-      <HintPath>..\packages\Dovetail.SDK.3.2.9.7\lib\net20\FChoice.Common.dll</HintPath>
     </Reference>
-    <Reference Include="FChoice.Foundation.Clarify.Compatibility, Version=3.2.9.7, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+    <Reference Include="FChoice.Foundation.Clarify.Compatibility">
+      <HintPath>..\packages\Dovetail.SDK.3.2.10.21\lib\net20\FChoice.Foundation.Clarify.Compatibility.dll</HintPath>
       <Private>True</Private>
-      <HintPath>..\packages\Dovetail.SDK.3.2.9.7\lib\net20\FChoice.Foundation.Clarify.Compatibility.dll</HintPath>
     </Reference>
-    <Reference Include="FChoice.Foundation.Clarify.Compatibility.Toolkits, Version=3.2.9.7, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+    <Reference Include="FChoice.Foundation.Clarify.Compatibility.Toolkits">
+      <HintPath>..\packages\Dovetail.SDK.3.2.10.21\lib\net20\FChoice.Foundation.Clarify.Compatibility.Toolkits.dll</HintPath>
       <Private>True</Private>
-      <HintPath>..\packages\Dovetail.SDK.3.2.9.7\lib\net20\FChoice.Foundation.Clarify.Compatibility.Toolkits.dll</HintPath>
     </Reference>
-    <Reference Include="FChoice.Toolkits.Clarify, Version=3.2.9.7, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+    <Reference Include="FChoice.Toolkits.Clarify">
+      <HintPath>..\packages\Dovetail.SDK.3.2.10.21\lib\net20\FChoice.Toolkits.Clarify.dll</HintPath>
       <Private>True</Private>
-      <HintPath>..\packages\Dovetail.SDK.3.2.9.7\lib\net20\FChoice.Toolkits.Clarify.dll</HintPath>
     </Reference>
-    <Reference Include="fcSDK, Version=3.2.9.7, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+    <Reference Include="fcSDK">
+      <HintPath>..\packages\Dovetail.SDK.3.2.10.21\lib\net20\fcSDK.dll</HintPath>
       <Private>True</Private>
-      <HintPath>..\packages\Dovetail.SDK.3.2.9.7\lib\net20\fcSDK.dll</HintPath>
     </Reference>
     <Reference Include="FubuCore, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -72,9 +72,9 @@
     <Reference Include="FubuMVC.Core.View">
       <HintPath>..\packages\FubuMVC.Core.View.1.0.0.383\lib\net40\FubuMVC.Core.View.dll</HintPath>
     </Reference>
-    <Reference Include="FubuMVC.StructureMap, Version=1.0.0.1401, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="FubuMVC.StructureMap, Version=1.0.1.1401, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\FubuMVC.StructureMap.1.0.0.1401\lib\net40\FubuMVC.StructureMap.dll</HintPath>
+      <HintPath>..\packages\FubuMVC.StructureMap.1.0.1.1401\lib\net40\FubuMVC.StructureMap.dll</HintPath>
     </Reference>
     <Reference Include="HtmlTags">
       <HintPath>..\packages\HtmlTags.1.2.0.145\lib\4.0\HtmlTags.dll</HintPath>
