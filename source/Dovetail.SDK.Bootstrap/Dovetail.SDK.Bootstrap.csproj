@@ -34,23 +34,23 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FChoice.Common">
-      <HintPath>..\packages\Dovetail.SDK.3.2.10.21\lib\net20\FChoice.Common.dll</HintPath>
+      <HintPath>..\packages\Dovetail.SDK.3.2.10.8\lib\net20\FChoice.Common.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FChoice.Foundation.Clarify.Compatibility">
-      <HintPath>..\packages\Dovetail.SDK.3.2.10.21\lib\net20\FChoice.Foundation.Clarify.Compatibility.dll</HintPath>
+      <HintPath>..\packages\Dovetail.SDK.3.2.10.8\lib\net20\FChoice.Foundation.Clarify.Compatibility.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FChoice.Foundation.Clarify.Compatibility.Toolkits">
-      <HintPath>..\packages\Dovetail.SDK.3.2.10.21\lib\net20\FChoice.Foundation.Clarify.Compatibility.Toolkits.dll</HintPath>
+      <HintPath>..\packages\Dovetail.SDK.3.2.10.8\lib\net20\FChoice.Foundation.Clarify.Compatibility.Toolkits.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FChoice.Toolkits.Clarify">
-      <HintPath>..\packages\Dovetail.SDK.3.2.10.21\lib\net20\FChoice.Toolkits.Clarify.dll</HintPath>
+      <HintPath>..\packages\Dovetail.SDK.3.2.10.8\lib\net20\FChoice.Toolkits.Clarify.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="fcSDK">
-      <HintPath>..\packages\Dovetail.SDK.3.2.10.21\lib\net20\fcSDK.dll</HintPath>
+      <HintPath>..\packages\Dovetail.SDK.3.2.10.8\lib\net20\fcSDK.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FubuCore, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
