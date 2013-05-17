@@ -11,6 +11,9 @@
     <iconUrl>http://www.dovetailsoftware.com/logo/logo.jpg</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
+    <dependencies>
+        <dependency id="Dovetail.SDK" version="3.2.10.8" />
+    </dependencies>
     <copyright>Copyright 2012</copyright>
     <tags>Clarify</tags>
   </metadata>
