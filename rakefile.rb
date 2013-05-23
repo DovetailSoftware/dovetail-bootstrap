@@ -1,3 +1,6 @@
+require 'bundler'
+require "rubygems/package"
+
 require 'albacore'
 include REXML
 include Rake::DSL
