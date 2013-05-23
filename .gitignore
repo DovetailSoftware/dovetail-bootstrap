@@ -28,3 +28,4 @@ libs/DovetailSDK/*.dll
 !source/Web/bootstrap.log4net
 .idea
 *.sublime-workspace
+bottles.cmd

@@ -114,16 +114,6 @@ namespace :nuget do
 			sh "#{NUGET_EXE} update #{file} -RepositoryPath source/packages"
 		}
 	end
-			
-	desc "Run nuget install on all projects"
-	task :install => [:clean] do 
-		Dir.glob(File.join("**","packages.config")){ |file|
-			packagesDir = File.absolute_path("source/packages").gsub('/','\\')
-			packagesConfig = File.absolute_path(file)
-			puts "Updating packages for #{packagesConfig}"
-			sh "#{NUGET_EXE} install #{packagesConfig} -OutputDirectory #{packagesDir} -Source \"#{NUGET_FEEDS.join(";")}\""
-		}
-	end
 
 	desc "Build nuget packages"
 	task :build => [:clean, :build_release] do 

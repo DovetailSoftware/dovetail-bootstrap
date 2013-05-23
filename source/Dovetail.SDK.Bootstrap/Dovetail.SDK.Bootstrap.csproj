@@ -12,8 +12,6 @@
     <AssemblyName>Dovetail.SDK.Bootstrap</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,44 +32,38 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FChoice.Common">
-      <HintPath>..\packages\Dovetail.SDK.3.2.10.8\lib\net20\FChoice.Common.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\Dovetail.SDK\lib\net20\FChoice.Common.dll</HintPath>
     </Reference>
     <Reference Include="FChoice.Foundation.Clarify.Compatibility">
-      <HintPath>..\packages\Dovetail.SDK.3.2.10.8\lib\net20\FChoice.Foundation.Clarify.Compatibility.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\Dovetail.SDK\lib\net20\FChoice.Foundation.Clarify.Compatibility.dll</HintPath>
     </Reference>
     <Reference Include="FChoice.Foundation.Clarify.Compatibility.Toolkits">
-      <HintPath>..\packages\Dovetail.SDK.3.2.10.8\lib\net20\FChoice.Foundation.Clarify.Compatibility.Toolkits.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\Dovetail.SDK\lib\net20\FChoice.Foundation.Clarify.Compatibility.Toolkits.dll</HintPath>
     </Reference>
     <Reference Include="FChoice.Toolkits.Clarify">
-      <HintPath>..\packages\Dovetail.SDK.3.2.10.8\lib\net20\FChoice.Toolkits.Clarify.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\Dovetail.SDK\lib\net20\FChoice.Toolkits.Clarify.dll</HintPath>
     </Reference>
     <Reference Include="fcSDK">
-      <HintPath>..\packages\Dovetail.SDK.3.2.10.8\lib\net20\fcSDK.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\Dovetail.SDK\lib\net20\fcSDK.dll</HintPath>
     </Reference>
-    <Reference Include="FubuCore, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\FubuCore.1.0.0.225\lib\FubuCore.dll</HintPath>
+    <Reference Include="FubuCore">
+      <HintPath>..\packages\FubuCore\lib\FubuCore.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
-      <HintPath>..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
+      <HintPath>..\packages\log4net\lib\net40-full\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="StructureMap">
-      <HintPath>..\packages\structuremap.2.6.4.1\lib\net40\StructureMap.dll</HintPath>
+      <HintPath>..\packages\structuremap\lib\net40\StructureMap.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Authentication\AspNetSecurityContext.cs" />
@@ -159,7 +151,6 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
