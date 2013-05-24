@@ -9,6 +9,7 @@ GEM
       bottles (~> 1.0)
       fubudocs (>= 0.5)
       ripple-cli (~> 2.0)
+    rake (10.0.4)
     ripple-cli (2.0.0.102)
     rubyzip (0.9.9)
 
@@ -18,4 +19,5 @@ PLATFORMS
 DEPENDENCIES
   albacore
   fuburake (~> 0.5)
+  rake (~> 10.0)
   ripple-cli
