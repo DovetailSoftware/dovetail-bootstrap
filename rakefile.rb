@@ -99,7 +99,7 @@ namespace :setup do
 		#SchemaEditor has different (more verbose) database type configuration than Dovetail SDK
 		databaseType = (DATABASE_TYPE == 'mssql') ? 'MsSqlServer2005' : 'Oracle9'
 
-		Dir.glob(File.join('schema', "*schemascript.xml")) do |schema_script|  
+		Dir.glob(File.join('packaging', 'schemascripts', "*schemascript.xml")) do |schema_script|  
  
 			File.open(seConfig) do |schema_editor_config_file|
 				doc = REXML::Document.new(schema_editor_config_file)
