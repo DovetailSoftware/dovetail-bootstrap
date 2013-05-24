@@ -6,8 +6,6 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Dovetail Model Map")]
-[assembly: AssemblyProduct("Dovetail.ModelMap")]
-[assembly: AssemblyDescription("Dovetail Model Map helps you easily do projections of data from your Clarify database into model objects used by your applications.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCulture("")]
 

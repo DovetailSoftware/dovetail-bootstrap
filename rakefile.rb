@@ -1,87 +1,47 @@
 require 'bundler'
 require "rubygems/package"
-
 require 'albacore'
-include REXML
-include Rake::DSL
-	
-BUILD_NUMBER_BASE = "0.4"
-PROJECT_NAME = "Bootstrap"
-SLN_PATH = "source/#{PROJECT_NAME}.sln"
-SLN_FILES = [SLN_PATH]
+
+require 'fuburake'
+
+@options = {:source => 'source', :results => 'results'}
+
+solution = FubuRake::Solution.new do |sln|
+	sln.compile = {
+		:solutionfile => 'source/Bootstrap.sln'
+	}
+				 
+	sln.assembly_info = {
+		:product_name => "Dovetail Bootstrap",
+		:copyright => 'Copyright Dovetail Software 2013',
+		:output_file => 'source/CommonAssemblyInfo.cs',
+		:description => 'Collection of common infrastrucure used by applications based on Dovetail SDK: Session Management, Workflow Object History'
+	}
+
+	sln.options = @options
+	sln.ripple_enabled = true	
+	sln.defaults = [:integration_test]
+	sln.ci_steps = ["ripple:package"]
+end
 
 ### Edit these settings 
 DATABASE = "mobilecl125"
 DATABASE_TYPE = "mssql"
 DATABASE_CONNECTION = "Data Source=localhost;Initial Catalog=mobilecl125;User Id=sa;Password=sa"
 
-COMPILE_TARGET = "Debug"
-
-DOVETAILSDK_PATH = "#{Rake::Win32::normalize(ENV['ProgramW6432'].nil? ? ENV['PROGRAMFILES']: ENV['ProgramW6432'])}/Dovetail Software/fcSDK".gsub('/','\\')
 SCHEMAEDITOR_PATH = "#{Rake::Win32::normalize(ENV['PROGRAMFILES'])}/Dovetail Software/SchemaEditor/SchemaEditor.exe"
-
-NUGET_EXE = File.absolute_path("nuget.exe")
-NUGET_FEEDS = ["#{DOVETAILSDK_PATH}", "https://go.microsoft.com/fwlink/?LinkID=230477"]
-
-puts "Loading scripts from build support directory..."
-buildsupportfiles = Dir["#{File.dirname(__FILE__)}/buildsupport/*.rb"]
-buildsupportfiles.each { |ext| 
-	puts "loading #{ext}" 
-	load ext 
-}
-
-props = {:archive => "build", :testing => "results", :database => ""}
-
-desc "**Default**, compiles and runs unit tests"
-task :default => [:clean,:version,:compile,:test_assemblies,:unit_tests]
-
-desc "Run unit and integration tests. **Requires Database**"
-task :ci => [:default,:integration_tests]
-
-desc "Build release version of web site"
-task :build_release do 
-	Rake::Task["compile"].execute(:target => :RELEASE)
-
-	#releaseDir = "#{props[:testing]}/release"
-	#puts "\nBuilt and copied release to: \n\n #{File.absolute_path(releaseDir)}\n"
-	#FileUtils::cp_r 'source/Web/.', releaseDir 
-	#FileUtils::rm_rf "#{releaseDir}/obj" 	
-end
-
-desc "build solution"
-task :compile => [:version] do |t, args|
-	target = args[:target] || :DEBUG
- 
-	puts "Doing #{target} build" 
-
-	SLN_FILES.each do |f|
-		msb = MSBuild.new
-		msb.properties :configuration => target
-		msb.targets :Clean, :Build
-		msb.verbosity = "minimal"
-		msb.solution = f
-		msb.execute
-	end
-end
 
 #desc "Copy archives to test folder in order to run unit tests"
 output :test_assemblies => [:compile] do |out|
 	out.from "#{File.dirname(__FILE__)}"
-	out.to "#{props[:testing]}"
+	out.to @options[:results]
 	Dir.glob("**/bin/Debug*/*.*"){ |file|
 		out.file file, :as => "assemblies/#{File.basename(file)}"
 	}	
 end
 
-desc "Run unit tests for any dlls that end with 'tests'"
-nunit :unit_tests do |nunit|	
-	nunit.command = findNunitConsoleExe()
-	nunit.assemblies = Dir.glob("results/assemblies/*{T,t}ests.dll").uniq
-	nunit.options '/xml=results/unit-test-results.xml'
-end
-
 desc "Run integration tests for any dlls that end with 'tests'"
-nunit :integration_tests do |nunit|	
+nunit :integration_test => [:test_assemblies] do |nunit|	
 
 	#update test assembly config files to have database connection details.
 	Dir.glob("results/assemblies/*{I,i}ntegration.dll.config") { |appConfig|
@@ -108,38 +68,16 @@ def findNunitConsoleExe
 	return File.join(nunitPackageDirectory, 'tools/nunit-console.exe')
 end
 
-namespace :nuget do
+#desc "Deploy nuget packages to local feed (share)"
+task :deploy_nuget_packages do 
+	DOVETAIL_FEED = "http://focus.dovetailsoftware.com/nuget"
 
-	desc "Run nuget update on all the projects"
-	task :update => [:clean] do 
-		Dir.glob(File.join("**","packages.config")){ |file|
-			puts "Updating packages for #{file}"
-			sh "#{NUGET_EXE} update #{file} -RepositoryPath source/packages"
-		}
-	end
-
-	desc "Build nuget packages"
-	task :build => [:clean, :build_release] do 
-		
-		puts 'removing packages and fubu-content to avoid finding their nuspecs - better to exclude them from a fileset'
-		FileUtils::rm_rf "source/Web/fubu-content" 
-		FileUtils::rm_rf "source/packages" 
-
-		FileUtils.mkdir_p("results/packages")
-		packagesDir = File.absolute_path("results/packages")
-		Dir.glob(File.join("source/**","*.nuspec")){ |file|
-			puts "Building nuget package for #{file}"
-			projectPath = File.dirname(file)
-			Dir.chdir(projectPath) do 
-				puts "in project path #{projectPath}"
-				sh "#{NUGET_EXE} pack -OutputDirectory #{packagesDir} -Prop Configuration=Release -Symbols"
-			end		
-		}
-	end
-
-	desc "Deploy nuget packages. Expects you to define your own 'deploy_nuget_packages' task in the buildsupport directory"
-	task :deploy => [:default,"nuget:build",:deploy_nuget_packages]
-end 
+	packagesDir = File.absolute_path("artifacts")
+	Dir.glob(File.join(packagesDir,"*.nupkg")){ |file|
+		puts "Deploying #{File.basename(file)} to #{DOVETAIL_FEED}"
+		sh "#{NUGET_EXE} push #{file.gsub(/\//,"\\\\")} -s #{DOVETAIL_FEED}"
+	}
+end
 
 namespace :setup do 
 
@@ -181,40 +119,6 @@ namespace :setup do
 		File.delete(seConfig)
 		File.delete seReport if File.exists? seReport
 	end
-end
-
-#desc "Prepares the working directory for a new build"
-task :clean do	
-
-	props.each do |key,val|
-		FileUtils.rm_r(Dir.glob("#{val}/*"), :force => true) if File.exists?val
-		FileUtils.rmdir(val) if File.exists?val  
-	end
-	# Clean up all bin folders in the source folder
-	FileUtils.rm_rf(Dir.glob("**/{obj,bin}"))
-
-end
-
-#desc "Update the version information for the build"
-assemblyinfo :version do |asm|
-	asm_version = BUILD_NUMBER_BASE + ".0"
-
-	begin
-		gittag = `git describe --long`.chomp 	# looks something like v0.1.0-63-g92228f4
-		gitnumberpart = /-(\d+)-/.match(gittag)
-		gitnumber = gitnumberpart.nil? ? '0' : gitnumberpart[1]
-		commit = `git log -1 --pretty=format:%H`
-	rescue
-		commit = "git unavailable"
-		gitnumber = "0"
-	end
-	build_number = "#{BUILD_NUMBER_BASE}.#{gitnumber}"
-	puts "Git based version is #{build_number}"
-	asm.trademark = commit
-	asm.version = build_number
-	asm.file_version = build_number
-	asm.custom_attributes :AssemblyInformationalVersion => build_number
-	asm.output_file = 'source/CommonAssemblyInfo.cs'
 end
 
 desc "Build and host the web application in iisexpress on port 7070"

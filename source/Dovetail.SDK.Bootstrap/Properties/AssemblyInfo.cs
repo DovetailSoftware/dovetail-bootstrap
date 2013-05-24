@@ -6,8 +6,6 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Dovetail Bootstrap")]
-[assembly: AssemblyProduct("Dovetail.SDK.Bootstrap")]
-[assembly: AssemblyDescription("Collection of common infrastrucure used by applications based on Dovetail SDK: Session Management, Workflow Object History")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCulture("")]
 

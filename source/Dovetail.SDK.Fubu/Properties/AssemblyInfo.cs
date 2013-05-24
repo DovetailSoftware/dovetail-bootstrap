@@ -6,10 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Dovetail Bootstrap + FubuMVC")]
-[assembly: AssemblyProduct("Dovetail.SDK.Fubu")]
-[assembly: AssemblyDescription("Collection of FubuMVC related infrastucture used by Dovetail Bootstrap based web applications: Authentication support (forms and authToken), Conventional list support.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCopyright("Copyright ©  2012")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 

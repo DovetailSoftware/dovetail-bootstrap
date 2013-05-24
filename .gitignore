@@ -29,3 +29,4 @@ libs/DovetailSDK/*.dll
 .idea
 *.sublime-workspace
 bottles.cmd
+artifacts
