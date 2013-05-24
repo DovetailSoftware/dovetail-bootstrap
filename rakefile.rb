@@ -21,7 +21,6 @@ solution = FubuRake::Solution.new do |sln|
 	sln.options = @options
 	sln.ripple_enabled = true	
 	sln.defaults = [:integration_test]
-	sln.ci_steps = ["ripple:package"]
 end
 
 ### Edit these settings 
@@ -68,9 +67,10 @@ def findNunitConsoleExe
 	return File.join(nunitPackageDirectory, 'tools/nunit-console.exe')
 end
 
-#desc "Deploy nuget packages to local feed (share)"
-task :deploy_nuget_packages do 
+desc "Deploy nuget packages to local feed"
+task :deploy_nugets => [:compile, "ripple:package"] do 
 	DOVETAIL_FEED = "http://focus.dovetailsoftware.com/nuget"
+	NUGET_EXE = File.absolute_path(File.join('packaging','nuget', 'nuget.exe'))
 
 	packagesDir = File.absolute_path("artifacts")
 	Dir.glob(File.join(packagesDir,"*.nupkg")){ |file|
