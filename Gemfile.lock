@@ -9,7 +9,7 @@ GEM
       bottles (~> 1.0)
       fubudocs (>= 0.5)
       ripple-cli (~> 2.0)
-    ripple-cli (2.0.0.51419)
+    ripple-cli (2.0.0.102)
     rubyzip (0.9.9)
 
 PLATFORMS
