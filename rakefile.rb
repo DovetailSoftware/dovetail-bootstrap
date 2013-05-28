@@ -71,7 +71,7 @@ task :nuget_deploy => [:compile, "ripple:package"] do
 	DOVETAIL_FEED = "http://focus.dovetailsoftware.com/nuget"
 	DOVETAIL_NUGET_APIKEY = ENV['DT_NUGET_API_KEY'] || ''
 	
-	fail 'You need to define an environment variable "DT_NUGET_API_KEY" with the Dovetail Nuget feed api key' if(DOVETAIL_NUGET_APIKEY.empty?)
+	fail 'You need to define an environment variable "DT_NUGET_API_KEY" with the Dovetail Nuget feed api key as committing credentials is BAD.' if(DOVETAIL_NUGET_APIKEY.empty?)
 
 	sh "ripple publish #{solution.options[:build_number]} #{DOVETAIL_NUGET_APIKEY} --server #{DOVETAIL_FEED}"
 end

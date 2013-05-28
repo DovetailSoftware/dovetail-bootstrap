@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
-    <id>Dovtail.SDK.ModelMap</id>
+    <id>Dovetail.SDK.ModelMap</id>
     <version>0.0.0</version>
     <title>Dovetail Model Map</title>
     <authors>Kevin Miller, Gary Sherman</authors>
