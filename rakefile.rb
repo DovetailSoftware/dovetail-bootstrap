@@ -67,16 +67,13 @@ def findNunitConsoleExe
 	return File.join(nunitPackageDirectory, 'tools/nunit-console.exe')
 end
 
-desc "Deploy nuget packages to local feed"
-task :deploy_nugets => [:compile, "ripple:package"] do 
+task :nuget_deploy => [:compile, "ripple:package"] do 
 	DOVETAIL_FEED = "http://focus.dovetailsoftware.com/nuget"
-	NUGET_EXE = File.absolute_path(File.join('packaging','nuget', 'nuget.exe'))
+	DOVETAIL_NUGET_APIKEY = ENV['DT_NUGET_API_KEY'] || ''
+	
+	fail 'You need to define an environment variable "DT_NUGET_API_KEY" with the Dovetail Nuget feed api key' if(DOVETAIL_NUGET_APIKEY.empty?)
 
-	packagesDir = File.absolute_path("artifacts")
-	Dir.glob(File.join(packagesDir,"*.nupkg")){ |file|
-		puts "Deploying #{File.basename(file)} to #{DOVETAIL_FEED}"
-		sh "#{NUGET_EXE} push #{file.gsub(/\//,"\\\\")} -s #{DOVETAIL_FEED}"
-	}
+	sh "ripple publish #{solution.options[:build_number]} #{DOVETAIL_NUGET_APIKEY} --server #{DOVETAIL_FEED}"
 end
 
 namespace :setup do 
