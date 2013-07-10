@@ -54,7 +54,7 @@
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="StructureMap">
-      <HintPath>..\packages\structuremap\lib\net40\StructureMap.dll</HintPath>
+      <HintPath>..\packages\structuremap\lib\StructureMap.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -146,7 +146,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Dovetail.SDK.Bootstrap.nuspec" />
-    <None Include="packages.config">
+    <None Include="ripple.dependencies.config">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
