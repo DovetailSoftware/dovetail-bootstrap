@@ -12,11 +12,13 @@ namespace Dovetail.SDK.Bootstrap.History
     {
         private readonly IDictionary<int, ActEntryTemplate> _templatesByCode;
         private readonly WorkflowObject _workflowObject;
+	    private readonly ILogger _logger;
 
-        public HistoryItemAssembler(IDictionary<int, ActEntryTemplate> templatesByCode, WorkflowObject workflowObject)
+	    public HistoryItemAssembler(IDictionary<int, ActEntryTemplate> templatesByCode, WorkflowObject workflowObject, ILogger logger)
         {
             _templatesByCode = templatesByCode;
             _workflowObject = workflowObject;
+	        _logger = logger;
         }
 
         public IEnumerable<HistoryItem> Assemble(ClarifyGeneric actEntryGeneric)
@@ -61,11 +63,10 @@ namespace Dovetail.SDK.Bootstrap.History
         private IDictionary<ActEntryTemplate, ClarifyGeneric> traverseRelatedGenerics(ClarifyGeneric actEntryGeneric)
         {
             var relatedGenericByTemplate = new Dictionary<ActEntryTemplate, ClarifyGeneric>();
-            foreach (var actEntryTemplate in _templatesByCode.Values.Where(t => t.RelatedGenericRelationName.IsNotEmpty()))
+            foreach (var template in _templatesByCode.Values.Where(t => t.RelatedGenericRelationName.IsNotEmpty()))
             {
-                var relatedGeneric = actEntryGeneric.TraverseWithFields(actEntryTemplate.RelatedGenericRelationName,
-                                                                        actEntryTemplate.RelatedGenericFields);
-                relatedGenericByTemplate.Add(actEntryTemplate, relatedGeneric);
+	            var relatedGeneric = actEntryGeneric.TraverseWithFields(template.RelatedGenericRelationName, template.RelatedGenericFields);
+                relatedGenericByTemplate.Add(template, relatedGeneric);
             }
 
             return relatedGenericByTemplate;
@@ -117,10 +118,17 @@ namespace Dovetail.SDK.Bootstrap.History
                 var relatedRows = actEntry.ActEntryRecord.RelatedRows(templateRelatedGenerics[actEntryTemplate]);
 
                 relatedRow = relatedRows.Length > 0 ? relatedRows[0] : null;
+
+	            if (relatedRow == null)
+	            {
+		            _logger.LogWarn("Activity updater for code {0} against object {1}-{2} did not work because no related row for relation {3} was found.".ToFormat(actEntryTemplate.Code, dto.Type, dto.Id, actEntryTemplate.RelatedGenericRelationName));
+	            }
             }
 
-            if (relatedRow != null)
-                actEntryTemplate.ActivityDTOUpdater(relatedRow, dto);
+	        if (relatedRow != null)
+	        {
+		        actEntryTemplate.ActivityDTOUpdater(relatedRow, dto);
+	        }
         }
 
         private HistoryItem defaultActivityDTOAssembler(ActEntry actEntry)
