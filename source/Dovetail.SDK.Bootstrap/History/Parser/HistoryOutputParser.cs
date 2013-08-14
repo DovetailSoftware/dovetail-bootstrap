@@ -11,12 +11,12 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 
 	public class HistoryOutputParser : IHistoryOutputParser
 	{
-		private readonly HistoryItemParser _itemParser;
-		private readonly HistoryItemHtmlRenderer _itemHtmlRenderer;
+		private readonly IHistoryItemParser _itemParser;
+		private readonly IHistoryItemHtmlRenderer _itemHtmlRenderer;
 		private readonly HtmlEncodeOutputEncoder _encoder;
 		private readonly IUrlLinkifier _linkifier;
 
-		public HistoryOutputParser(HistoryItemParser itemParser, HistoryItemHtmlRenderer itemHtmlRenderer, HtmlEncodeOutputEncoder encoder, IUrlLinkifier linkifier)
+		public HistoryOutputParser(IHistoryItemParser itemParser, IHistoryItemHtmlRenderer itemHtmlRenderer, HtmlEncodeOutputEncoder encoder, IUrlLinkifier linkifier)
 		{
 			_itemParser = itemParser;
 			_itemHtmlRenderer = itemHtmlRenderer;

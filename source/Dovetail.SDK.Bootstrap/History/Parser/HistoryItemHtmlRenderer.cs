@@ -6,8 +6,13 @@ using FubuCore;
 namespace Dovetail.SDK.Bootstrap.History.Parser
 {
 	//TODO pull our renderers into a their own types
-    public class HistoryItemHtmlRenderer
-    {
+	public interface IHistoryItemHtmlRenderer
+	{
+		string Render(IEnumerable<IItem> items);
+	}
+
+	public class HistoryItemHtmlRenderer : IHistoryItemHtmlRenderer
+	{
         private StringBuilder _output;
 
         private static long _idIndex;
