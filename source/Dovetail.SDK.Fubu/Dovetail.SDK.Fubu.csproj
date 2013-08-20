@@ -113,7 +113,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Dovetail.SDK.Fubu.nuspec" />
     <None Include="ripple.dependencies.config" />
   </ItemGroup>
   <ItemGroup />

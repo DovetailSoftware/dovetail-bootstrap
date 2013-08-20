@@ -148,7 +148,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Dovetail.SDK.Bootstrap.nuspec" />
     <None Include="ripple.dependencies.config">
       <SubType>Designer</SubType>
     </None>

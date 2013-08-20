@@ -123,7 +123,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Dovetail.SDK.ModelMap.nuspec" />
     <None Include="ripple.dependencies.config">
       <SubType>Designer</SubType>
     </None>
