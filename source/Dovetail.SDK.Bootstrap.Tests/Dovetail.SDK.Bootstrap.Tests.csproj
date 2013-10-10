@@ -107,7 +107,6 @@
     <Compile Include="principal_factory.cs" />
     <Compile Include="request_path_authentication_policy.cs" />
     <Compile Include="session_usage_reporter.cs" />
-    <Compile Include="string_to_html.cs" />
     <Compile Include="Token\authenticate_token_authorization_policy.cs" />
     <Compile Include="Context.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

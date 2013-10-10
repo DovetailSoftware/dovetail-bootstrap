@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Dovetail.SDK.Bootstrap.Clarify.Extensions;
 using Dovetail.SDK.Bootstrap.History.Configuration;
+using Dovetail.SDK.Bootstrap.History.Parser;
 using FChoice.Foundation.Clarify;
 using FChoice.Foundation.Schema;
 using FubuCore;
@@ -171,20 +172,16 @@ namespace Dovetail.SDK.Bootstrap.History
 			var cclist = record.AsString("cc_list");
 			var subject = doesEmailLogSubjectExist(schemaCache) ? record.AsString("x_subject") : "";
 			var message = record.AsString("message");
+
+			log.AppendLine(HistoryParsers.BEGIN_EMAIL_LOG_HEADER);
 			
 			log.AppendLine(HistoryBuilderTokens.LOG_EMAIL_FROM.ToFormat(from));
 			log.AppendLine(HistoryBuilderTokens.LOG_EMAIL_DATE.ToFormat(date));
 			log.AppendLine(HistoryBuilderTokens.LOG_EMAIL_TO.ToFormat(to));
+			if (cclist.IsNotEmpty()) log.AppendLine(HistoryBuilderTokens.LOG_EMAIL_CC.ToFormat(cclist));
+			if (subject.IsNotEmpty()) log.AppendLine(HistoryBuilderTokens.LOG_EMAIL_SUBJECT.ToFormat(subject));
 
-			if (cclist.IsNotEmpty())
-			{
-				log.AppendLine(HistoryBuilderTokens.LOG_EMAIL_CC.ToFormat(cclist));
-			}
-
-			if (subject.IsNotEmpty())
-			{
-				log.AppendLine(HistoryBuilderTokens.LOG_EMAIL_SUBJECT.ToFormat(subject));
-			}
+			log.AppendLine(HistoryParsers.END_EMAIL_LOG_HEADER);
 
 			log.AppendLine(message);
 

@@ -10,9 +10,16 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 
 	public class HistoryItemParser : IHistoryItemParser
 	{
-        public IEnumerable<IItem> Parse(string input)
+		private readonly HistoryParsers _historyParser;
+
+		public HistoryItemParser(HistoryParsers historyParser)
+		{
+			_historyParser = historyParser;
+		}
+
+		public IEnumerable<IItem> Parse(string input)
         {
-            return HistoryParsers.Item.Many().End().Parse(input);
+	        return _historyParser.Item().Many().End().Parse(input);
         }
-    }
+	}
 }
