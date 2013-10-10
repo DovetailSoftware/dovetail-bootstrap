@@ -97,6 +97,7 @@
     <Compile Include="Configuration\SettingsProviderRegistry.cs" />
     <Compile Include="Configuration\StructureMapServiceLocator.cs" />
     <Compile Include="Configuration\WebsiteSettings.cs" />
+    <Compile Include="History\HistoryBuilderTokens.cs" />
     <Compile Include="History\Parser\HistoryOutputParser.cs" />
     <Compile Include="History\Parser\Sprache\Failure.cs" />
     <Compile Include="History\Parser\Sprache\IFailure.cs" />
