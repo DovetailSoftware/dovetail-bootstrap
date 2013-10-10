@@ -2,6 +2,7 @@ using System.Linq;
 using Dovetail.SDK.Bootstrap.History.Configuration;
 using Dovetail.SDK.Bootstrap.History.Parser;
 using NUnit.Framework;
+using FubuCore;
 
 namespace Dovetail.SDK.Bootstrap.Tests
 {
@@ -41,6 +42,21 @@ namespace Dovetail.SDK.Bootstrap.Tests
 			emailHeaderItem.Text.ShouldEqual("kmiller@dovetailsoftware.com");
 
 			items[2].ToString().ShouldEqual("item3");
+		}
+
+		[Test]
+		public void finds_original_messages_mixed_with_items()
+		{
+			const string input = "to: kmiller@dovetailsoftware.com\nitem1\rOn some day Kevin Miller wrote:\r\noriginal item 1\r\nto: adude@needs.com\r\nfrom: kmiller@dt.com";
+
+			var items = _itemParser.Parse(input).ToArray();
+			items[0].GetType().CanBeCastTo<EmailHeader>().ShouldBeTrue();
+			items[1].GetType().CanBeCastTo<Content>().ShouldBeTrue();
+			items[2].GetType().CanBeCastTo<OriginalMessage>().ShouldBeTrue();
+
+			var original = (OriginalMessage)items[2];
+			original.Header.ShouldContain("Kevin Miller wrote");
+			original.Items.Count().ShouldEqual(2);
 		}
 	}
 }

@@ -87,10 +87,12 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			from rest in Parse.AnyChar.Until(Parse.String("wrote:")).Text()
 			select "On " + rest + "wrote:";
 
-		public static readonly Parser<OriginalMessage> OriginalMessage =
-			from header in OriginalMessageHeader
-			from items in Parse.Ref(() => Content).Many().End()
-			select new OriginalMessage {Header = header, Items = items};
+		public Parser<OriginalMessage> OriginalMessage()
+		{
+			return from header in OriginalMessageHeader
+				from items in Item().Many()
+				select new OriginalMessage {Header = header, Items = items};
+		}
 
 		public Parser<EmailHeaderItem> EmailHeaderItem()
 		{
@@ -118,7 +120,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 
 		public Parser<IItem> Item()
 		{
-			return from items in Parse.Ref(() => OriginalMessage).Select(n => (IItem) n)
+			return from items in Parse.Ref(OriginalMessage).Select(n => (IItem) n)
 				.Or(EmailHeader())
 				.Or(BlockQuote)
 				.Or(Content)

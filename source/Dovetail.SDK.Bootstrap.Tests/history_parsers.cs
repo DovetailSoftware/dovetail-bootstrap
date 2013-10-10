@@ -145,14 +145,11 @@ test received
 &gt; Test
 &gt; A Guy";
 
-			var originalMessage = HistoryParsers.OriginalMessage.Parse(input);
+			var originalMessage = _parser.OriginalMessage().Parse(input);
 			originalMessage.Header.ShouldContain("dude@gmail.com");
 
 			var originalMessageItems = originalMessage.Items.ToArray();
-			originalMessageItems.Length.ShouldEqual(15);
-
-			//TODO Make original message parser use Item not Content for items.
-			//originalMessageItems.Length.ShouldEqual(4);
+			originalMessageItems.Length.ShouldEqual(4);
 		}
 
 		[Test]
