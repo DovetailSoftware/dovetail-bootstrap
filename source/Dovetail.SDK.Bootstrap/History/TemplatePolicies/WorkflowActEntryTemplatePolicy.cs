@@ -1,68 +1,66 @@
 using Dovetail.SDK.Bootstrap.History.Configuration;
 using Dovetail.SDK.Bootstrap.History.Parser;
 using FChoice.Foundation.Schema;
+using FubuCore;
 
 namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
 {
-    public class WorkflowActEntryTemplatePolicy : ActEntryTemplatePolicyExpression 
+	public class WorkflowActEntryTemplatePolicy : ActEntryTemplatePolicyExpression
 	{
-    	private readonly ISchemaCache _schemaCache;
+		private readonly ISchemaCache _schemaCache;
 
 		public WorkflowActEntryTemplatePolicy(ISchemaCache schemaCache, IHistoryOutputParser parser) : base(parser)
 		{
 			_schemaCache = schemaCache;
 		}
 
-    	protected override void DefineTemplate(WorkflowObject workflowObject)
+		protected override void DefineTemplate(WorkflowObject workflowObject)
 		{
-            //child object histories are not a concern of this policy
-            if (workflowObject.IsChild) return;
+			//child object histories are not a concern of this policy
+			if (workflowObject.IsChild) return;
 
-            //typical workflow object policies
+			//typical workflow object policies
 
-			ActEntry(10500).DisplayName("Assigned")
-				.EditActivityDTO(dto => { dto.Detail = "Assigned " + dto.Detail; });
-			ActEntry(100).DisplayName("Accepted")
-				.EditActivityDTO(dto => { dto.Detail = "Accepted " + dto.Detail; });
-			ActEntry(200).DisplayName("Closed")
+			ActEntry(10500).DisplayName(HistoryBuilderTokens.ASSIGNED)
+				.EditActivityDTO(dto => { dto.Detail = "{0} {1}".ToFormat(HistoryBuilderTokens.ASSIGNED, dto.Detail); });
+			ActEntry(100).DisplayName(HistoryBuilderTokens.ACCEPTED)
+				.EditActivityDTO(dto => { dto.Detail = "{0} {1}".ToFormat(HistoryBuilderTokens.ACCEPTED, dto.Detail); });
+			ActEntry(200).DisplayName(HistoryBuilderTokens.CLOSED)
 				.GetRelatedRecord("act_entry2close_case")
 				.WithFields("summary")
-				.UpdateActivityDTOWith((row, dto) =>
-				{
-					dto.Detail = row["summary"].ToString();
-				});
-			ActEntry(400).DisplayName("Committment created");
-            ActEntry(600).DisplayName("Created");
-			ActEntry(900).DisplayName("Dispatched")
-				.EditActivityDTO(dto => { dto.Detail = "Dispatched " + dto.Detail; });
-			ActEntry(1600).DisplayName("Committment modified");
-            ActEntry(2400).DisplayName("Reopened")
-				.EditActivityDTO(dto => { dto.Detail = "Reopened " + dto.Detail; });
-            ActEntry(4100).DisplayName("Yanked");
-			ActEntry(4200).DisplayName("Subcase reopened");
-			ActEntry(7200).DisplayName("Administrative subcase created");
+				.UpdateActivityDTOWith((row, dto) => { dto.Detail = row["summary"].ToString(); });
+			ActEntry(400).DisplayName(HistoryBuilderTokens.COMMITTMENT_CREATED);
+			ActEntry(600).DisplayName(HistoryBuilderTokens.CREATED);
+			ActEntry(900).DisplayName(HistoryBuilderTokens.DISPATCHED)
+				.EditActivityDTO(dto => { dto.Detail = "{0} {1}".ToFormat(HistoryBuilderTokens.DISPATCHED, dto.Detail); });
+			ActEntry(1600).DisplayName(HistoryBuilderTokens.COMMITTMENT_MODIFED);
+			ActEntry(2400).DisplayName(HistoryBuilderTokens.REOPENED)
+				.EditActivityDTO(dto => { dto.Detail = "{0} {1}".ToFormat(HistoryBuilderTokens.REOPENED, dto.Detail); });
+			ActEntry(4100).DisplayName(HistoryBuilderTokens.YANKED);
+			ActEntry(4200).DisplayName(HistoryBuilderTokens.SUBCASE_REOPENED);
+			ActEntry(7200).DisplayName(HistoryBuilderTokens.SUBCASE_CREATED_ADMINISTRATIVE);
 
-            //TODO add policy for attachment adds for: Seeker attachment downloads, url rewriting, plain
-            ActEntry(8900).DisplayName("Attachment added"); //.HtmlizeWith(item => { }).UpdateActivityDTOWith((row, item) => _attachmentPathHistoryItemUpdater.Update(row["addnl_info"].ToString(), item));
+			//TODO add policy for attachment adds for: Seeker attachment downloads, url rewriting, plain
+			ActEntry(8900).DisplayName(HistoryBuilderTokens.ATTACHMENT_ADDED); //.HtmlizeWith(item => { }).UpdateActivityDTOWith((row, item) => _attachmentPathHistoryItemUpdater.Update(row["addnl_info"].ToString(), item));
 
-            ActEntry(9100).DisplayName("Attachment deleted");
-            ActEntry(9800).DisplayName("Contact changed");
-            ActEntry(1400).DisplayName("Linked to a solution");
-            ActEntry(4000).DisplayName("Unlinked from the solution");
-            ActEntry(9200).DisplayName("Initial response");
+			ActEntry(9100).DisplayName(HistoryBuilderTokens.ATTACHMENT_DELETED);
+			ActEntry(9800).DisplayName(HistoryBuilderTokens.CONTACT_CHANGED);
+			ActEntry(1400).DisplayName(HistoryBuilderTokens.SOLUTION_LINKED);
+			ActEntry(4000).DisplayName(HistoryBuilderTokens.SOLUTION_UNLINKED);
+			ActEntry(9200).DisplayName(HistoryBuilderTokens.INITIAL_RESPONSE);
 
-            ActEntry(3000).DisplayName("Subcase created");
-            ActEntry(3100).DisplayName("Subcase closed");
-                
-            this.TimeAndExpenseEdittedActEntry();
-            this.StatusChangedActEntry();
-            this.LogResearchActEntry();
+			ActEntry(3000).DisplayName(HistoryBuilderTokens.SUBCASE_CREATED);
+			ActEntry(3100).DisplayName(HistoryBuilderTokens.SUBCASE_CLOSED);
+
+			this.TimeAndExpenseEdittedActEntry();
+			this.StatusChangedActEntry();
+			this.LogResearchActEntry();
 			this.PhoneLogActEntry(_schemaCache);
 			this.NoteActEntry(_schemaCache);
-            this.TimeAndExpenseLoggedActEntry();
-            this.TimeAndExpenseLoggedDeletedActEntry();
-            this.EmailOutActEntry();
-            this.EmailInActEntry();
+			this.TimeAndExpenseLoggedActEntry();
+			this.TimeAndExpenseLoggedDeletedActEntry();
+			this.EmailOutActEntry();
+			this.EmailInActEntry();
 			this.ForwardActEntry();
 			this.RejectActEntry();
 		}
