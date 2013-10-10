@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Dovetail.SDK.Bootstrap.Clarify.Extensions;
 using Dovetail.SDK.Bootstrap.History.Configuration;
@@ -125,33 +127,66 @@ namespace Dovetail.SDK.Bootstrap.History
 				.UpdateActivityDTOWith(timeAndExpensesUpdater);
 		}
 
-		public static void EmailInActEntry(this ActEntryTemplatePolicyExpression dsl)
+
+		public static void EmailInActEntry(this ActEntryTemplatePolicyExpression dsl, ISchemaCache schemaCache)
 		{
 			dsl.ActEntry(3500).DisplayName(HistoryBuilderTokens.LOG_EMAIL_IN)
 				.GetRelatedRecord("act_entry2email_log")
-				.WithFields("message", "recipient", "cc_list")
-				.UpdateActivityDTOWith(emailLogUpdater);
+				.WithFields(getEmailLogFields(schemaCache))
+				.UpdateActivityDTOWith((record, historyItem) => emailLogUpdater(record, historyItem, schemaCache));
 		}
 
-		public static void EmailOutActEntry(this ActEntryTemplatePolicyExpression dsl)
+		public static void EmailOutActEntry(this ActEntryTemplatePolicyExpression dsl, ISchemaCache schemaCache)
 		{
 			dsl.ActEntry(3400).DisplayName(HistoryBuilderTokens.LOG_EMAIL_OUT)
 				.GetRelatedRecord("act_entry2email_log")
-				.WithFields("message", "recipient", "cc_list")
-				.UpdateActivityDTOWith(emailLogUpdater);
+				.WithFields(getEmailLogFields(schemaCache))
+				.UpdateActivityDTOWith((record, historyItem) => emailLogUpdater(record, historyItem, schemaCache));
 		}
 
-		private static void emailLogUpdater(ClarifyDataRow record, HistoryItem historyItem)
+		private static string[] getEmailLogFields(ISchemaCache schemaCache)
+		{
+			string[] emailLogFields = {"message", "sender", "recipient", "cc_list", "creation_time"};
+			
+			if (doesEmailLogSubjectExist(schemaCache))
+			{
+				emailLogFields = emailLogFields.Concat(new [] {"x_subject"}).ToArray();
+			}
+
+			return emailLogFields;
+		}
+
+		private static bool doesEmailLogSubjectExist(ISchemaCache schemaCache)
+		{
+			return schemaCache.IsValidField("email_log", "x_subject");
+		}
+
+		private static void emailLogUpdater(ClarifyDataRow record, HistoryItem historyItem, ISchemaCache schemaCache)
 		{
 			var log = new StringBuilder();
-			log.AppendLine(HistoryBuilderTokens.LOG_EMAIL_TO.ToFormat(record.AsString("recipient")));
 
+			var from = record.AsString("sender");
+			var date = record.AsDateTime("creation_time");
+			var to = record.AsString("recipient");
 			var cclist = record.AsString("cc_list");
+			var subject = doesEmailLogSubjectExist(schemaCache) ? record.AsString("x_subject") : "";
+			var message = record.AsString("message");
+			
+			log.AppendLine(HistoryBuilderTokens.LOG_EMAIL_FROM.ToFormat(from));
+			log.AppendLine(HistoryBuilderTokens.LOG_EMAIL_DATE.ToFormat(date));
+			log.AppendLine(HistoryBuilderTokens.LOG_EMAIL_TO.ToFormat(to));
+
 			if (cclist.IsNotEmpty())
 			{
 				log.AppendLine(HistoryBuilderTokens.LOG_EMAIL_CC.ToFormat(cclist));
 			}
-			log.AppendLine(record.AsString("message"));
+
+			if (subject.IsNotEmpty())
+			{
+				log.AppendLine(HistoryBuilderTokens.LOG_EMAIL_SUBJECT.ToFormat(subject));
+			}
+
+			log.AppendLine(message);
 
 			historyItem.Detail = log.ToString();
 		}
@@ -169,7 +204,7 @@ namespace Dovetail.SDK.Bootstrap.History
 
 		public static void RejectActEntry(this ActEntryTemplatePolicyExpression dsl)
 		{
-			dsl.ActEntry(2600).DisplayName("Returned to sender")
+			dsl.ActEntry(2600).DisplayName(HistoryBuilderTokens.REJECTED)
 				.GetRelatedRecord("act_entry2reject_msg")
 				.WithFields("description")
 				.UpdateActivityDTOWith((row, dto) =>

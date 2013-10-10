@@ -51,8 +51,8 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
 			this.NoteActEntry(_schemaCache);
 			this.TimeAndExpenseLoggedActEntry();
 			this.TimeAndExpenseLoggedDeletedActEntry();
-			this.EmailOutActEntry();
-			this.EmailInActEntry();
+			this.EmailOutActEntry(_schemaCache);
+			this.EmailInActEntry(_schemaCache);
 		}
 	}
 }
