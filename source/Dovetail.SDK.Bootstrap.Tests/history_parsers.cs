@@ -152,6 +152,34 @@ test received
 			originalMessageItems.Length.ShouldEqual(4);
 		}
 
+//		[Test]
+//		public void nested_original_messages()
+//		{
+//			const string input = @"---- Original Message ----
+//Here are the config files. Please let me know what else I can get you.
+//
+//From: Dude Wee [mailto:dude@gmail.com]
+//Sent: Tuesday, November 03, 2009 12:12 PM
+//To: A Guy
+//Subject: Re: test
+//
+//---- Original Message ----
+//
+//From: Original Dude [mailto:original@gmail.com]
+//Sent: Tuesday, November 02, 2009 12:12 PM
+//To: Dude!
+//Subject: test
+//
+//Test this
+//";
+//			var originalMessage = _parser.OriginalMessage.Parse(input);
+//			originalMessage.Header.ShouldContain("Original Message");
+
+//			var originalMessageItems = originalMessage.Items.ToArray();
+//			originalMessageItems.Length.ShouldEqual(3);
+//		}
+
+
 		[Test]
 		[Ignore("Would like to have original messages return non Content IItems")]
 		public void original_message_from_item_parser()

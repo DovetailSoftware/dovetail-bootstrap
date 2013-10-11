@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Dovetail.SDK.Bootstrap.History.Configuration
 {
@@ -9,6 +10,21 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
 		/// Comma separated Titles to detect in email headers (e.g. to, from, subject)
 		/// </summary>
 		public string LogEmailHeaderTitles { get; set; }
+
+
+		public Regex[] OriginalMessageDetectionExpressions
+		{
+			get
+			{
+				return new[]
+				{
+					new Regex(@"-+\s*Original Message\s*-+", RegexOptions.IgnoreCase), 
+					new Regex(@"On .*,.*wrote:", RegexOptions.IgnoreCase), 
+					new Regex(@"<div style=3D'border:none;border-top:solid #B5C4DF 1.0pt;padding:3.0pt 0in =0in 0in'>", RegexOptions.IgnoreCase),
+					new Regex(@"-+\s*Ursprüngliche Nachricht\s*-+", RegexOptions.IgnoreCase)
+				};
+			}
+		}
 
 		public string[] LogEmailHeaders
 		{

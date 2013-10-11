@@ -92,11 +92,16 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 					select new Content {Text = text.TrimEnd()};
 			}
 		}
-
-		public static readonly Parser<string> OriginalMessageHeader =
-			from o in Parse.String("On")
-			from rest in Parse.AnyChar.Until(Parse.String("wrote:")).Text()
-			select "On " + rest + "wrote:";
+		
+		public Parser<string> OriginalMessageHeader
+		{
+			get
+			{
+				return from text in UntilEndOfLine.Many().Token().Text()
+					   where _settings.OriginalMessageDetectionExpressions.Any(h => h.IsMatch(text))
+				select text;
+			}
+		}
 
 		public Parser<OriginalMessage> OriginalMessage
 		{
