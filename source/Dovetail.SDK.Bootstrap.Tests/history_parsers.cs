@@ -145,7 +145,7 @@ test received
 &gt; Test
 &gt; A Guy";
 
-			var originalMessage = _parser.OriginalMessage().Parse(input);
+			var originalMessage = _parser.OriginalMessage.Parse(input);
 			originalMessage.Header.ShouldContain("dude@gmail.com");
 
 			var originalMessageItems = originalMessage.Items.ToArray();

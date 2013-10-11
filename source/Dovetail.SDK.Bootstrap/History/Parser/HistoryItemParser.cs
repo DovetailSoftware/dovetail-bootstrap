@@ -5,7 +5,8 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 {
 	public interface IHistoryItemParser
 	{
-		IEnumerable<IItem> Parse(string input);
+		EmailLog ParseEmailLog(string input);
+		IEnumerable<Content> ParseContent(string input);
 	}
 
 	public class HistoryItemParser : IHistoryItemParser
@@ -16,10 +17,15 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 		{
 			_historyParser = historyParser;
 		}
+		
+		public IEnumerable<Content> ParseContent(string input)
+		{
+			return _historyParser.Content.Many().End().Parse(input);
+		}
 
-		public IEnumerable<IItem> Parse(string input)
-        {
-	        return _historyParser.Item().Many().End().Parse(input);
-        }
+		public EmailLog ParseEmailLog(string input)
+		{
+			return _historyParser.LogEmail.Parse(input);
+		}
 	}
 }

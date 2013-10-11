@@ -8,10 +8,12 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
 	public class WorkflowActEntryTemplatePolicy : ActEntryTemplatePolicyExpression
 	{
 		private readonly ISchemaCache _schemaCache;
+		private readonly IHistoryOutputParser _parser;
 
 		public WorkflowActEntryTemplatePolicy(ISchemaCache schemaCache, IHistoryOutputParser parser) : base(parser)
 		{
 			_schemaCache = schemaCache;
+			_parser = parser;
 		}
 
 		protected override void DefineTemplate(WorkflowObject workflowObject)
@@ -59,8 +61,8 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
 			this.NoteActEntry(_schemaCache);
 			this.TimeAndExpenseLoggedActEntry();
 			this.TimeAndExpenseLoggedDeletedActEntry();
-			this.EmailOutActEntry(_schemaCache);
-			this.EmailInActEntry(_schemaCache);
+			this.EmailOutActEntry(_schemaCache, _parser);
+			this.EmailInActEntry(_schemaCache, _parser);
 			this.ForwardActEntry();
 			this.RejectActEntry();
 		}

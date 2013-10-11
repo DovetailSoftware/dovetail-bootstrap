@@ -26,6 +26,12 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 		public string Text { get; set; }
 	}
 
+	public class EmailLog
+	{
+		public EmailHeader Header { get; set; }
+		public IEnumerable<IItem> Items { get; set; }
+	}
+
 	public class EmailHeader : IItem
 	{
 		public bool IsLogHeader { get; set; }
@@ -58,8 +64,8 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			_settings = settings;
 		}
 
-		public const string BEGIN_EMAIL_LOG_HEADER = ">BEGIN EMAIL_HEADER";
-		public const string END_EMAIL_LOG_HEADER = ">END EMAIL_HEADER";
+		public const string BEGIN_EMAIL_LOG_HEADER = "__BEGIN EMAIL_HEADER\r\n";
+		public const string END_EMAIL_LOG_HEADER = "__END EMAIL_HEADER\r\n";
 
 		public static readonly Parser<string> HardRule =
 			from text in Parse.Char('-').Many().Text().Token()
@@ -77,51 +83,78 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			from lines in BlockQuoteLine.Many()
 			select new BlockQuote {Lines = lines};
 
-		public static readonly Parser<Content> Content =
-			from _1 in WhiteSpace
-			from text in UntilEndOfLine.Many().Text().Token()
-			select new Content {Text = text.TrimEnd()};
+		public Parser<Content> Content
+		{
+			get
+			{
+				return from _1 in WhiteSpace
+					from text in UntilEndOfLine.Many().Text().Token()
+					select new Content {Text = text.TrimEnd()};
+			}
+		}
 
 		public static readonly Parser<string> OriginalMessageHeader =
 			from o in Parse.String("On")
 			from rest in Parse.AnyChar.Until(Parse.String("wrote:")).Text()
 			select "On " + rest + "wrote:";
 
-		public Parser<OriginalMessage> OriginalMessage()
+		public Parser<OriginalMessage> OriginalMessage
 		{
-			return from header in OriginalMessageHeader
-				from items in Item().Many()
-				select new OriginalMessage {Header = header, Items = items};
+			get
+			{
+				return from header in OriginalMessageHeader
+					from items in Item().Many()
+					select new OriginalMessage {Header = header, Items = items};
+			}
 		}
 
-		public Parser<EmailHeaderItem> EmailHeaderItem()
+		public Parser<EmailHeaderItem> EmailHeaderItem
 		{
-			return from title in Parse.CharExcept(':').Many().Text().Token()
-				where _settings.LogEmailHeaders.Any(h => h.Equals(title, StringComparison.InvariantCultureIgnoreCase))
-				from _1 in Parse.Char(':')
-				from text in UntilEndOfLine.Many().Token().Text()
-				from rest in HardRule.Or(WhiteSpace)
-				select new EmailHeaderItem {Title = title, Text = text};
+			get
+			{
+				return from title in Parse.CharExcept(':').Many().Text().Token()
+					where _settings.LogEmailHeaders.Any(h => h.Equals(title, StringComparison.InvariantCultureIgnoreCase))
+					from _1 in Parse.Char(':')
+					from text in UntilEndOfLine.Many().Token().Text()
+					from rest in HardRule.Or(WhiteSpace)
+					select new EmailHeaderItem {Title = title, Text = text};
+			}
 		}
 
-		public Parser<EmailHeader> LogEmailHeader()
+		public Parser<EmailHeader> LogEmailHeader
 		{
-			return from _start in Parse.String(BEGIN_EMAIL_LOG_HEADER)
-				from items in EmailHeaderItem().Many()
-				from _end in Parse.String(END_EMAIL_LOG_HEADER)
-				select new EmailHeader {Headers = items, IsLogHeader = true};
+			get
+			{
+				return from _start in Parse.String(BEGIN_EMAIL_LOG_HEADER)
+					from items in EmailHeaderItem.Many()
+					from _end in Parse.String(END_EMAIL_LOG_HEADER)
+					select new EmailHeader {Headers = items, IsLogHeader = true};
+			}
 		}
 
-		public Parser<EmailHeader> EmailHeader()
+		public Parser<EmailHeader> EmailHeader
 		{
-			return from items in EmailHeaderItem().Many()
-				select new EmailHeader {Headers = items};
+			get
+			{
+				return from items in EmailHeaderItem.Many()
+					select new EmailHeader {Headers = items};
+			}
+		}
+
+		public Parser<EmailLog> LogEmail
+		{
+			get
+			{
+				return from header in LogEmailHeader
+					from items in Item().Many()
+					select new EmailLog {Header = header, Items = items};
+			}
 		}
 
 		public Parser<IItem> Item()
 		{
-			return from items in Parse.Ref(OriginalMessage).Select(n => (IItem) n)
-				.Or(EmailHeader())
+			return from items in Parse.Ref(() =>OriginalMessage).Select(n => (IItem) n)
+				.Or(EmailHeader)
 				.Or(BlockQuote)
 				.Or(Content)
 				select items;

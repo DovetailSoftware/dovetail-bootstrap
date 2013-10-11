@@ -129,17 +129,25 @@ namespace Dovetail.SDK.Bootstrap.History
 		}
 
 
-		public static void EmailInActEntry(this ActEntryTemplatePolicyExpression dsl, ISchemaCache schemaCache)
+		public static void EmailInActEntry(this ActEntryTemplatePolicyExpression dsl, ISchemaCache schemaCache, IHistoryOutputParser historyOutputParser)
 		{
 			dsl.ActEntry(3500).DisplayName(HistoryBuilderTokens.LOG_EMAIL_IN)
+				.HtmlizeWith(item => EncodeEmail(historyOutputParser, item))
 				.GetRelatedRecord("act_entry2email_log")
 				.WithFields(getEmailLogFields(schemaCache))
 				.UpdateActivityDTOWith((record, historyItem) => emailLogUpdater(record, historyItem, schemaCache));
 		}
 
-		public static void EmailOutActEntry(this ActEntryTemplatePolicyExpression dsl, ISchemaCache schemaCache)
+		private static void EncodeEmail(IHistoryOutputParser historyOutputParser, HistoryItem item)
+		{
+			item.Detail = historyOutputParser.EncodeEmailLog(item.Detail);
+			item.Internal = historyOutputParser.Encode(item.Internal);
+		}
+
+		public static void EmailOutActEntry(this ActEntryTemplatePolicyExpression dsl, ISchemaCache schemaCache, IHistoryOutputParser historyOutputParser)
 		{
 			dsl.ActEntry(3400).DisplayName(HistoryBuilderTokens.LOG_EMAIL_OUT)
+				.HtmlizeWith(item => EncodeEmail(historyOutputParser, item))
 				.GetRelatedRecord("act_entry2email_log")
 				.WithFields(getEmailLogFields(schemaCache))
 				.UpdateActivityDTOWith((record, historyItem) => emailLogUpdater(record, historyItem, schemaCache));
@@ -173,7 +181,7 @@ namespace Dovetail.SDK.Bootstrap.History
 			var subject = doesEmailLogSubjectExist(schemaCache) ? record.AsString("x_subject") : "";
 			var message = record.AsString("message");
 
-			log.AppendLine(HistoryParsers.BEGIN_EMAIL_LOG_HEADER);
+			log.Append(HistoryParsers.BEGIN_EMAIL_LOG_HEADER);
 			
 			log.AppendLine(HistoryBuilderTokens.LOG_EMAIL_FROM.ToFormat(from));
 			log.AppendLine(HistoryBuilderTokens.LOG_EMAIL_DATE.ToFormat(date));
@@ -181,7 +189,7 @@ namespace Dovetail.SDK.Bootstrap.History
 			if (cclist.IsNotEmpty()) log.AppendLine(HistoryBuilderTokens.LOG_EMAIL_CC.ToFormat(cclist));
 			if (subject.IsNotEmpty()) log.AppendLine(HistoryBuilderTokens.LOG_EMAIL_SUBJECT.ToFormat(subject));
 
-			log.AppendLine(HistoryParsers.END_EMAIL_LOG_HEADER);
+			log.Append(HistoryParsers.END_EMAIL_LOG_HEADER);
 
 			log.AppendLine(message);
 

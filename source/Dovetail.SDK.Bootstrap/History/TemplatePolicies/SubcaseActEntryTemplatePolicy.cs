@@ -9,11 +9,13 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
 	{
 		private readonly HistorySettings _settings;
 		private readonly ISchemaCache _schemaCache;
+		private readonly IHistoryOutputParser _parser;
 
 		public SubcaseActEntryTemplatePolicy(HistorySettings settings, ISchemaCache schemaCache, IHistoryOutputParser parser) : base(parser)
 		{
 			_settings = settings;
 			_schemaCache = schemaCache;
+			_parser = parser;
 		}
 
 		protected override void DefineTemplate(WorkflowObject workflowObject)
@@ -51,8 +53,8 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
 			this.NoteActEntry(_schemaCache);
 			this.TimeAndExpenseLoggedActEntry();
 			this.TimeAndExpenseLoggedDeletedActEntry();
-			this.EmailOutActEntry(_schemaCache);
-			this.EmailInActEntry(_schemaCache);
+			this.EmailOutActEntry(_schemaCache, _parser);
+			this.EmailInActEntry(_schemaCache, _parser);
 		}
 	}
 }
