@@ -13,7 +13,8 @@
 	          <span class="date-ago" data-time="${item.When}">${item.When.ToString("yyyy-MM-ddTHH:mm:ssZ")}</span>
             </h3>
             <div class="history-item-description">
-              <span class="agent-name">By ${item.Who.Name}</span>
+              <span if='item.Who.PerformedByContact == null' class="agent-name">By ${item.Who.Name}</span>
+              <span if='item.Who.PerformedByContact != null' class="agent-name">By ${item.Who.PerformedByContact.Name} via ${item.Who.Login}</span>
               <span class="at-on-date" data-time="${item.When}">${item.When.ToString("yyyy-MM-ddTHH:mm:ssZ")}</span>
             </div>
 

@@ -46,8 +46,16 @@ namespace Dovetail.SDK.Bootstrap.History
 		public HistoryItemEmployee Who { get; set; }
 	}
 
+	public class HistoryItemContact
+	{
+		public int Id { get; set; }
+		public string Email { get; set; }
+		public string Name { get; set; }
+	}
+
 	public class HistoryItemEmployee
 	{
+		public HistoryItemContact PerformedByContact { get; set; }
 		public int Id { get; set; }
 		public string Login { get; set; }
 		public string Email { get; set; }

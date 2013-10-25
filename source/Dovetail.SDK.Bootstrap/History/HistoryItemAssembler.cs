@@ -8,151 +8,173 @@ using FubuCore;
 
 namespace Dovetail.SDK.Bootstrap.History
 {
-    public class HistoryItemAssembler
-    {
-        private readonly IDictionary<int, ActEntryTemplate> _templatesByCode;
-        private readonly WorkflowObject _workflowObject;
-	    private readonly ILogger _logger;
+	public class HistoryItemAssembler
+	{
+		private readonly IDictionary<int, ActEntryTemplate> _templatesByCode;
+		private readonly WorkflowObject _workflowObject;
+		private readonly ILogger _logger;
 
-	    public HistoryItemAssembler(IDictionary<int, ActEntryTemplate> templatesByCode, WorkflowObject workflowObject, ILogger logger)
-        {
-            _templatesByCode = templatesByCode;
-            _workflowObject = workflowObject;
-	        _logger = logger;
-        }
+		public HistoryItemAssembler(IDictionary<int, ActEntryTemplate> templatesByCode, WorkflowObject workflowObject, ILogger logger)
+		{
+			_templatesByCode = templatesByCode;
+			_workflowObject = workflowObject;
+			_logger = logger;
+		}
 
-        public IEnumerable<HistoryItem> Assemble(ClarifyGeneric actEntryGeneric)
-        {
-            var codes = _templatesByCode.Values.Select(d => d.Code).ToArray();
-            actEntryGeneric.DataFields.AddRange("act_code", "entry_time", "addnl_info");
-            actEntryGeneric.Filter(f => f.IsIn("act_code", codes));
+		public IEnumerable<HistoryItem> Assemble(ClarifyGeneric actEntryGeneric)
+		{
+			var codes = _templatesByCode.Values.Select(d => d.Code).ToArray();
+			actEntryGeneric.DataFields.AddRange("act_code", "entry_time", "addnl_info");
+			actEntryGeneric.Filter(f => f.IsIn("act_code", codes));
 
-            var actEntryUserGeneric = actEntryGeneric.TraverseWithFields("act_entry2user", "objid", "login_name");
-            var actEntryEmployeeGeneric = actEntryUserGeneric.TraverseWithFields("user2employee", "first_name", "last_name", "e_mail");
+			//adding related generics expected by any fancy act entry templates
+			var templateRelatedGenerics = traverseRelatedGenerics(actEntryGeneric);
 
-            //adding related generics expected by any fancy act entry templates
-            var templateRelatedGenerics = traverseRelatedGenerics(actEntryGeneric);
+			var actEntryContactGeneric = actEntryGeneric.TraverseWithFields("act_entry2contact", "first_name", "last_name", "e_mail");
 
-            actEntryGeneric.Query();
-			
-            Func<ClarifyDataRow, HistoryItemEmployee> employeeAssembler = actEntryRecord =>
-            {
-                var userRows = actEntryRecord.RelatedRows(actEntryUserGeneric);
-                if (userRows.Length == 0)
-                    return new HistoryItemEmployee();
+			Func<ClarifyDataRow, HistoryItemContact> contactAssembler = actEntryRecord =>
+			{
+				var contactRows = actEntryRecord.RelatedRows(actEntryContactGeneric);
+				if (contactRows.Length == 0)
+					return null;
 
-                var userRecord = userRows[0];
-                var login = userRecord.AsString("login_name");
-                var employeeRows = userRecord.RelatedRows(actEntryEmployeeGeneric);
-                if (employeeRows.Length == 0)
-                    return new HistoryItemEmployee {Login = login};
+				var contactRecord = contactRows[0];
+				var name = "{0} {1}".ToFormat(contactRecord.AsString("first_name"), contactRecord.AsString("last_name"));
+				var email = contactRecord.AsString("e_mail");
+				var id = contactRecord.DatabaseIdentifier();
 
-                var employeeRecord = employeeRows[0];
-                var name = "{0} {1}".ToFormat(employeeRecord.AsString("first_name"), employeeRecord.AsString("last_name"));
-	            var email = employeeRecord.AsString("e_mail");
-                var id = employeeRecord.DatabaseIdentifier();
+				return new HistoryItemContact {Name = name, Id = id, Email = email};
+			};
 
-	            return new HistoryItemEmployee {Name = name, Id = id, Login = login, Email = email};
-            };
+			var actEntryUserGeneric = actEntryGeneric.TraverseWithFields("act_entry2user", "objid", "login_name");
+			var actEntryEmployeeGeneric = actEntryUserGeneric.TraverseWithFields("user2employee", "first_name", "last_name", "e_mail");
 
-            var actEntryDTOS = assembleActEntryDTOs(actEntryGeneric, _templatesByCode, employeeAssembler);
+			Func<ClarifyDataRow, HistoryItemEmployee> employeeAssembler = actEntryRecord =>
+			{
+				var userRows = actEntryRecord.RelatedRows(actEntryUserGeneric);
+				if (userRows.Length == 0)
+					return new HistoryItemEmployee();
 
-            return actEntryDTOS.Select(dto => createActivityDTOFromMapper(dto, templateRelatedGenerics)).ToArray();
-        }
+				var userRecord = userRows[0];
+				var login = userRecord.AsString("login_name");
+				var employeeRows = userRecord.RelatedRows(actEntryEmployeeGeneric);
+				if (employeeRows.Length == 0)
+					return new HistoryItemEmployee {Login = login};
 
-        private IDictionary<ActEntryTemplate, ClarifyGeneric> traverseRelatedGenerics(ClarifyGeneric actEntryGeneric)
-        {
-            var relatedGenericByTemplate = new Dictionary<ActEntryTemplate, ClarifyGeneric>();
-            foreach (var template in _templatesByCode.Values.Where(t => t.RelatedGenericRelationName.IsNotEmpty()))
-            {
-	            var relatedGeneric = actEntryGeneric.TraverseWithFields(template.RelatedGenericRelationName, template.RelatedGenericFields);
-                relatedGenericByTemplate.Add(template, relatedGeneric);
-            }
+				var employeeRecord = employeeRows[0];
+				var name = "{0} {1}".ToFormat(employeeRecord.AsString("first_name"), employeeRecord.AsString("last_name"));
+				var email = employeeRecord.AsString("e_mail");
+				var id = employeeRecord.DatabaseIdentifier();
 
-            return relatedGenericByTemplate;
-        }
+				return new HistoryItemEmployee
+				{
+					Name = name,
+					Id = id,
+					Login = login,
+					Email = email,
+					PerformedByContact = contactAssembler(actEntryRecord)
+				};
+			};
 
-        private IEnumerable<ActEntry> assembleActEntryDTOs(ClarifyGeneric actEntryGeneric, IDictionary<int, ActEntryTemplate> actEntryTemplatesByCode, Func<ClarifyDataRow, HistoryItemEmployee> employeeAssembler)
-        {
-            return actEntryGeneric.DataRows().Select(actEntryRecord =>
-                                                         {
-                                                             var code = actEntryRecord.AsInt("act_code");
-                                                             var template = actEntryTemplatesByCode[code];
+			actEntryGeneric.Query();
 
-                                                             var when = actEntryRecord.AsDateTime("entry_time");
-                                                             
-                                                             var detail = actEntryRecord.AsString("addnl_info");
-                                                             var who = employeeAssembler(actEntryRecord);
+			var actEntryDTOS = assembleActEntryDTOs(actEntryGeneric, _templatesByCode, employeeAssembler);
 
-                                                             return new ActEntry { Template = template, When = when, Who = who, AdditionalInfo = detail, ActEntryRecord = actEntryRecord, Type = _workflowObject.Type };
-                                                         }).ToArray();
-        }
+			return actEntryDTOS.Select(dto => createActivityDTOFromMapper(dto, templateRelatedGenerics)).ToArray();
+		}
 
-        private HistoryItem createActivityDTOFromMapper(ActEntry actEntry, IDictionary<ActEntryTemplate, ClarifyGeneric> templateRelatedGenerics)
-        {
-            var dto = defaultActivityDTOAssembler(actEntry);
+		private IDictionary<ActEntryTemplate, ClarifyGeneric> traverseRelatedGenerics(ClarifyGeneric actEntryGeneric)
+		{
+			var relatedGenericByTemplate = new Dictionary<ActEntryTemplate, ClarifyGeneric>();
+			foreach (var template in _templatesByCode.Values.Where(t => t.RelatedGenericRelationName.IsNotEmpty()))
+			{
+				var relatedGeneric = actEntryGeneric.TraverseWithFields(template.RelatedGenericRelationName, template.RelatedGenericFields);
+				relatedGenericByTemplate.Add(template, relatedGeneric);
+			}
 
-            var actEntryTemplate = actEntry.Template;
+			return relatedGenericByTemplate;
+		}
 
-            updateActivityDto(actEntry, dto, templateRelatedGenerics);
+		private IEnumerable<ActEntry> assembleActEntryDTOs(ClarifyGeneric actEntryGeneric, IDictionary<int, ActEntryTemplate> actEntryTemplatesByCode, Func<ClarifyDataRow, HistoryItemEmployee> employeeAssembler)
+		{
+			return actEntryGeneric.DataRows().Select(actEntryRecord =>
+			{
+				var code = actEntryRecord.AsInt("act_code");
+				var template = actEntryTemplatesByCode[code];
 
-            if (isActivityDTOEditorPresent(actEntry))
-            {
-                actEntryTemplate.ActivityDTOEditor(dto);
-            }
+				var when = actEntryRecord.AsDateTime("entry_time");
 
-            actEntryTemplate.HTMLizer(dto);
+				var detail = actEntryRecord.AsString("addnl_info");
+				var who = employeeAssembler(actEntryRecord);
 
-            return dto;
-        }
+				return new ActEntry {Template = template, When = when, Who = who, AdditionalInfo = detail, ActEntryRecord = actEntryRecord, Type = _workflowObject.Type};
+			}).ToArray();
+		}
 
-        private void updateActivityDto(ActEntry actEntry, HistoryItem dto, IDictionary<ActEntryTemplate, ClarifyGeneric> templateRelatedGenerics)
-        {
-            if (!isActivityDTOUpdaterPresent(actEntry)) return;
+		private HistoryItem createActivityDTOFromMapper(ActEntry actEntry, IDictionary<ActEntryTemplate, ClarifyGeneric> templateRelatedGenerics)
+		{
+			var dto = defaultActivityDTOAssembler(actEntry);
 
-            var actEntryTemplate = actEntry.Template;
-            var relatedRow = actEntry.ActEntryRecord;
+			var actEntryTemplate = actEntry.Template;
 
-            if (templateRelatedGenerics.ContainsKey(actEntryTemplate))
-            {
-                var relatedRows = actEntry.ActEntryRecord.RelatedRows(templateRelatedGenerics[actEntryTemplate]);
+			updateActivityDto(actEntry, dto, templateRelatedGenerics);
 
-                relatedRow = relatedRows.Length > 0 ? relatedRows[0] : null;
+			if (isActivityDTOEditorPresent(actEntry))
+			{
+				actEntryTemplate.ActivityDTOEditor(dto);
+			}
 
-	            if (relatedRow == null)
-	            {
-		            _logger.LogWarn("Activity updater for code {0} against object {1}-{2} did not work because no related row for relation {3} was found.".ToFormat(actEntryTemplate.Code, dto.Type, dto.Id, actEntryTemplate.RelatedGenericRelationName));
-	            }
-            }
+			actEntryTemplate.HTMLizer(dto);
 
-	        if (relatedRow != null)
-	        {
-		        actEntryTemplate.ActivityDTOUpdater(relatedRow, dto);
-	        }
-        }
+			return dto;
+		}
 
-        private HistoryItem defaultActivityDTOAssembler(ActEntry actEntry)
-        {
-            return new HistoryItem
-                       {
-                           Id = _workflowObject.Id,
-                           Type = actEntry.Type,
-                           Title = actEntry.Template.DisplayName,
-                           Who = actEntry.Who,
-                           When = actEntry.When,
-                           Detail = actEntry.AdditionalInfo
-                       };
-        }
+		private void updateActivityDto(ActEntry actEntry, HistoryItem dto, IDictionary<ActEntryTemplate, ClarifyGeneric> templateRelatedGenerics)
+		{
+			if (!isActivityDTOUpdaterPresent(actEntry)) return;
 
-        private static bool isActivityDTOUpdaterPresent(ActEntry actEntry)
-        {
-            return actEntry.Template.ActivityDTOUpdater != null;
-        }
+			var actEntryTemplate = actEntry.Template;
+			var relatedRow = actEntry.ActEntryRecord;
 
-        private static bool isActivityDTOEditorPresent(ActEntry actEntry)
-        {
-            return actEntry.Template.ActivityDTOEditor != null;
-        }
+			if (templateRelatedGenerics.ContainsKey(actEntryTemplate))
+			{
+				var relatedRows = actEntry.ActEntryRecord.RelatedRows(templateRelatedGenerics[actEntryTemplate]);
 
-    }
+				relatedRow = relatedRows.Length > 0 ? relatedRows[0] : null;
+
+				if (relatedRow == null)
+				{
+					_logger.LogWarn("Activity updater for code {0} against object {1}-{2} did not work because no related row for relation {3} was found.".ToFormat(actEntryTemplate.Code, dto.Type, dto.Id, actEntryTemplate.RelatedGenericRelationName));
+				}
+			}
+
+			if (relatedRow != null)
+			{
+				actEntryTemplate.ActivityDTOUpdater(relatedRow, dto);
+			}
+		}
+
+		private HistoryItem defaultActivityDTOAssembler(ActEntry actEntry)
+		{
+			return new HistoryItem
+			{
+				Id = _workflowObject.Id,
+				Type = actEntry.Type,
+				Title = actEntry.Template.DisplayName,
+				Who = actEntry.Who,
+				When = actEntry.When,
+				Detail = actEntry.AdditionalInfo
+			};
+		}
+
+		private static bool isActivityDTOUpdaterPresent(ActEntry actEntry)
+		{
+			return actEntry.Template.ActivityDTOUpdater != null;
+		}
+
+		private static bool isActivityDTOEditorPresent(ActEntry actEntry)
+		{
+			return actEntry.Template.ActivityDTOEditor != null;
+		}
+	}
 }
