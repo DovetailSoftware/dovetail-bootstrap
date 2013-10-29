@@ -50,14 +50,10 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			var id = "emailHeader" + _idIndex;
 			output.AppendLine(@"<div id=""{0}"" class=""history-email-header"">".ToFormat(id));
 
-			var emailHeaderItem = emailHeader.Headers.First();
-			output.AppendLine(@"<h5 class=""history-inline-header"">{0} : {1}</h5>".ToFormat(emailHeaderItem.Title.ToLower().Capitalize(), emailHeaderItem.Text));
-
-			var rest = emailHeader.Headers.Skip(1).ToArray();
-			if (rest.Any())
+			if (emailHeader.Headers.Any())
 			{
 				output.AppendLine(@"<div class=""history-inline-content""><ul>");
-				foreach (var header in rest)
+				foreach (var header in emailHeader.Headers)
 				{
 					output.AppendLine(@"<li><span class=""email-header-name"">{0}</span> <span class=""email-header-text"">{1}</span></li>".ToFormat(header.Title.ToLower().Capitalize(), header.Text));
 				}
