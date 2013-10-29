@@ -23,6 +23,8 @@ namespace Bootstrap.Web
                          //IModelBuilder<VIEWMODEL> when doing model projections from the database
                          scan.ConnectImplementationsToTypesClosing(typeof(ModelMap<>));
 
+						 scan.Convention<SettingsScanner>();
+
                          //register any class named similarily to its interface 
                          //effectively contentionally: For<I{classname}>().Use<{classname}>();
                          //e.g. IAuthenticationService is registered to use AuthenticationService;

@@ -6,45 +6,54 @@ using Bootstrap.Web.Security;
 using Dovetail.SDK.Fubu.Clarify.Lists;
 using Dovetail.SDK.Fubu.TokenAuthentication.Token;
 using FubuCore;
+using FubuLocalization;
 using FubuMVC.Core;
 using FubuMVC.Core.Registration.Nodes;
 using FubuMVC.Core.Security;
+using FubuMVC.Localization;
 using FubuMVC.Swagger;
 using FubuMVC.Swagger.Configuration;
 
 namespace Bootstrap.Web
 {
-    public class ConfigureFubuMVC : FubuRegistry
-    {
-        public ConfigureFubuMVC()
-        {
-            Import<HandlerConvention>(x => x.MarkerType<HandlerMarker>());
-            
+	public class ConfigureFubuMVC : FubuRegistry
+	{
+		public ConfigureFubuMVC()
+		{
+			Import<HandlerConvention>(x => x.MarkerType<HandlerMarker>());
+
 			Routes.HomeIs<HomeRequest>();
 
-            Policies.Add<AuthenticationTokenConvention>();
-            
-            //convention to transfer exceptions to the view for an input model given via generic argument
+			Policies.Add<AuthenticationTokenConvention>();
+
+			//convention to transfer exceptions to the view for an input model given via generic argument
 			Policies.Add<APIExceptionConvention<Error500Request>>();
 
 			Import<BootstrapHtmlConvention>();
 
-            //TODO replace this with Swagger Bottle
-            Policies.Add<SwaggerConvention>();
+			//TODO replace this with Swagger Bottle
+			Policies.Add<SwaggerConvention>();
 
-            Services(s=>
-                         {
-                             s.ReplaceService<IAuthorizationFailureHandler, BootstrapAuthorizationFailureHandler>();
+			Services(s =>
+			{
+				s.ReplaceService<IAuthorizationFailureHandler, BootstrapAuthorizationFailureHandler>();
 
-                             s.AddService<IActionGrouper, APIRouteGrouper>();
-							 s.AddService<IActionFinder, BootstrapActionFinder>();
-                         });
-        }
-    }
+				s.AddService<IActionGrouper, APIRouteGrouper>();
+				s.AddService<IActionFinder, BootstrapActionFinder>();
+				s.AddService<ICurrentCultureContext, CurrentCultureContext>();
+			});
+
+			Import<BasicLocalizationSupport>();
+			Policies.WrapWith<LocalizationBehavior>();
+		}
+	}
 
 	public class BootstrapActionFinder : IActionFinder
 	{
-		public Func<ActionCall, bool> Matches { get { return IsApiCall;} }
+		public Func<ActionCall, bool> Matches
+		{
+			get { return IsApiCall; }
+		}
 
 		private static bool IsApiCall(ActionCall actionCall)
 		{
