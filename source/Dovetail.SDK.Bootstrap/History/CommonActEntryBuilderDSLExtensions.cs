@@ -183,13 +183,14 @@ namespace Dovetail.SDK.Bootstrap.History
 			var isoDate = record.AsDateTime("creation_time").ToUniversalTime().ToString("s", CultureInfo.InvariantCulture);
 			
 			log.Append(HistoryParsers.BEGIN_EMAIL_LOG_HEADER);
-			
-			log.AppendLine(HistoryBuilderTokens.LOG_EMAIL_FROM.ToFormat(from));
-			log.AppendLine(HistoryBuilderTokens.LOG_EMAIL_DATE.ToFormat(@"{0}{1}".ToFormat(HistoryParsers.BEGIN_ISODATE_HEADER, isoDate)));
-			log.AppendLine(HistoryBuilderTokens.LOG_EMAIL_TO.ToFormat(to));
-			if (cclist.IsNotEmpty()) log.AppendLine(HistoryBuilderTokens.LOG_EMAIL_CC.ToFormat(cclist));
-			if (subject.IsNotEmpty()) log.AppendLine(HistoryBuilderTokens.LOG_EMAIL_SUBJECT.ToFormat(subject));
 
+			log.AppendLine("{0}: {1}{2}".ToFormat(HistoryBuilderTokens.LOG_EMAIL_DATE, HistoryParsers.BEGIN_ISODATE_HEADER, isoDate));
+			const string headerFormat = "{0}: {1}";
+			log.AppendLine(headerFormat.ToFormat(HistoryBuilderTokens.LOG_EMAIL_FROM, from));
+			log.AppendLine(headerFormat.ToFormat(HistoryBuilderTokens.LOG_EMAIL_TO, to));
+			if (cclist.IsNotEmpty()) log.AppendLine(headerFormat.ToFormat(HistoryBuilderTokens.LOG_EMAIL_CC, cclist));
+			if (subject.IsNotEmpty()) log.AppendLine(headerFormat.ToFormat(HistoryBuilderTokens.LOG_EMAIL_SUBJECT, subject));
+			
 			log.Append(HistoryParsers.END_EMAIL_LOG_HEADER);
 
 			log.AppendLine(message);

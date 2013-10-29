@@ -17,13 +17,17 @@ namespace Dovetail.SDK.Bootstrap.History
 		public static readonly StringToken CREATED = new HistoryBuilderTokens("CREATED", "Created");
 		public static readonly StringToken DISPATCHED = new HistoryBuilderTokens("DISPATCHED", "Dispatched");
 		public static readonly StringToken FORWARDED = new HistoryBuilderTokens("FORWARDED", "Forwarded");
-		public static readonly StringToken LOG_EMAIL_DATE = new HistoryBuilderTokens("LOG_EMAIL_DATE", "Date: {0}");
 		public static readonly StringToken LOG_EMAIL_IN = new HistoryBuilderTokens("LOG_EMAIL_IN", "Received email");
-		public static readonly StringToken LOG_EMAIL_FROM = new HistoryBuilderTokens("LOG_EMAIL_FROM", "From: {0}");
 		public static readonly StringToken LOG_EMAIL_OUT = new HistoryBuilderTokens("LOG_EMAIL_OUT", "Sent email");
-		public static readonly StringToken LOG_EMAIL_TO = new HistoryBuilderTokens("LOG_EMAIL_TO", "To: {0}");
-		public static readonly StringToken LOG_EMAIL_CC = new HistoryBuilderTokens("LOG_EMAIL_CC", "CC: {0}");
-		public static readonly StringToken LOG_EMAIL_SUBJECT = new HistoryBuilderTokens("LOG_EMAIL_SUBJECT", "Subject: {0}");
+	
+		public static readonly StringToken LOG_EMAIL_DATE = new HistoryBuilderTokens("LOG_EMAIL_DATE", "Date");
+		public static readonly StringToken LOG_EMAIL_FROM = new HistoryBuilderTokens("LOG_EMAIL_FROM", "From");
+		public static readonly StringToken LOG_EMAIL_TO = new HistoryBuilderTokens("LOG_EMAIL_TO", "To");
+		public static readonly StringToken LOG_EMAIL_CC = new HistoryBuilderTokens("LOG_EMAIL_CC", "CC");
+		public static readonly StringToken LOG_EMAIL_SUBJECT = new HistoryBuilderTokens("LOG_EMAIL_SUBJECT", "Subject");
+		public static readonly StringToken LOG_EMAIL_SENDTO = new HistoryBuilderTokens("LOG_EMAIL_SENDTO", "Send To");
+		public static readonly StringToken LOG_EMAIL_SENT = new HistoryBuilderTokens("LOG_EMAIL_SENT", "Sent");
+
 		public static readonly StringToken INITIAL_RESPONSE = new HistoryBuilderTokens("INITIAL_RESPONSE", "Initial response");
 		public static readonly StringToken LOG_EXPENSES = new HistoryBuilderTokens("LOG_EXPENSES", "Time and expenses logged");
 		public static readonly StringToken LOG_EXPENSES_DETAIL = new HistoryBuilderTokens("LOG_EXPENSES_DETAIL", "Time: {1}{0}Expense: {2}{0}Notes: {3}");

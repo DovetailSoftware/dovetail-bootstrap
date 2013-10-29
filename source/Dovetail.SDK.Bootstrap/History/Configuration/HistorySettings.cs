@@ -1,16 +1,32 @@
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
+using FubuLocalization;
 
 namespace Dovetail.SDK.Bootstrap.History.Configuration
 {
 	public class HistorySettings
 	{
-		/// <summary>
-		/// Comma separated Titles to detect in email headers (e.g. to, from, subject)
-		/// </summary>
-		public string LogEmailHeaderTitles { get; set; }
+		private StringToken[] _logEmailHeaderTokens;
+		
+		public HistorySettings()
+		{
+			_logEmailHeaderTokens = new[]
+			{
+				HistoryBuilderTokens.LOG_EMAIL_DATE,
+				HistoryBuilderTokens.LOG_EMAIL_FROM,
+				HistoryBuilderTokens.LOG_EMAIL_TO,
+				HistoryBuilderTokens.LOG_EMAIL_CC,
+				HistoryBuilderTokens.LOG_EMAIL_SUBJECT,
+				HistoryBuilderTokens.LOG_EMAIL_SENDTO,
+				HistoryBuilderTokens.LOG_EMAIL_SENT
+			};
+		}
 
+		public StringToken[] GetLogEmailHeaderTokens()
+		{
+			return _logEmailHeaderTokens;
+		}
 
 		public Regex[] OriginalMessageDetectionExpressions
 		{
@@ -26,11 +42,16 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
 			}
 		}
 
-		public string[] LogEmailHeaders
+		public string LogEmailHeaderKeys
 		{
 			get
 			{
-				return LogEmailHeaderTitles.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries).Select(s=>s.Trim()).ToArray();
+				return String.Join(",", _logEmailHeaderTokens.Select(t => t.Key));
+			}
+			set
+			{
+				var keys = value.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToArray();
+				_logEmailHeaderTokens = keys.Select(StringToken.FromKeyString).ToArray();
 			}
 		}
 
@@ -38,10 +59,5 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
 		/// Should history events concerning a case's subcases show up in case history
 		/// </summary>
 		public bool MergeCaseHistoryChildSubcases { get; set; }
-
-		public HistorySettings()
-		{
-			LogEmailHeaderTitles = "date, from, to, send to, cc, subject, sent";
-		}
 	}
 }

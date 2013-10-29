@@ -121,7 +121,12 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			get
 			{
 				return from title in Parse.CharExcept(':').Many().Text().Token()
-					where _settings.LogEmailHeaders.Any(h => h.Equals(title, StringComparison.InvariantCultureIgnoreCase))
+					where _settings.GetLogEmailHeaderTokens().Any(h =>
+					{
+						var key = h.ToString();
+						var isMatch = key.Equals(title, StringComparison.InvariantCultureIgnoreCase);
+						return isMatch;
+					})
 					from _1 in Parse.Char(':')
 					from text in IsoDate.Or(UntilEndOfLine.Many().Token().Text())
 					from rest in HardRule.Or(WhiteSpace)
