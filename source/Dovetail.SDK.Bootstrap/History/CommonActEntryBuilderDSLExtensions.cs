@@ -180,7 +180,7 @@ namespace Dovetail.SDK.Bootstrap.History
 			var cclist = record.AsString("cc_list");
 			var subject = doesEmailLogSubjectExist(schemaCache) ? record.AsString("x_subject") : "";
 			var message = record.AsString("message");
-			var isoDate = record.AsDateTime("creation_time").ToUniversalTime().ToString("s", CultureInfo.InvariantCulture);
+			var isoDate = record.AsDateTime("creation_time").ToString("s", CultureInfo.InvariantCulture);
 			
 			log.Append(HistoryParsers.BEGIN_EMAIL_LOG_HEADER);
 
