@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using Dovetail.SDK.Bootstrap.Clarify.Extensions;
@@ -175,16 +176,16 @@ namespace Dovetail.SDK.Bootstrap.History
 			var log = new StringBuilder();
 
 			var from = record.AsString("sender");
-			var date = record.AsDateTime("creation_time");
 			var to = record.AsString("recipient");
 			var cclist = record.AsString("cc_list");
 			var subject = doesEmailLogSubjectExist(schemaCache) ? record.AsString("x_subject") : "";
 			var message = record.AsString("message");
-
+			var isoDate = record.AsDateTime("creation_time").ToUniversalTime().ToString("s", CultureInfo.InvariantCulture);
+			
 			log.Append(HistoryParsers.BEGIN_EMAIL_LOG_HEADER);
 			
 			log.AppendLine(HistoryBuilderTokens.LOG_EMAIL_FROM.ToFormat(from));
-			log.AppendLine(HistoryBuilderTokens.LOG_EMAIL_DATE.ToFormat(date));
+			log.AppendLine(HistoryBuilderTokens.LOG_EMAIL_DATE.ToFormat(@"{0}{1}".ToFormat(HistoryParsers.BEGIN_ISODATE_HEADER, isoDate)));
 			log.AppendLine(HistoryBuilderTokens.LOG_EMAIL_TO.ToFormat(to));
 			if (cclist.IsNotEmpty()) log.AppendLine(HistoryBuilderTokens.LOG_EMAIL_CC.ToFormat(cclist));
 			if (subject.IsNotEmpty()) log.AppendLine(HistoryBuilderTokens.LOG_EMAIL_SUBJECT.ToFormat(subject));

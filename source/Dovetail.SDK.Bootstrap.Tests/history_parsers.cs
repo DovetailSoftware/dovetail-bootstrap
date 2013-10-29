@@ -1,6 +1,10 @@
+using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Dovetail.SDK.Bootstrap.History.Configuration;
 using Dovetail.SDK.Bootstrap.History.Parser;
+using FubuCore;
 using NUnit.Framework;
 using Sprache;
 
@@ -152,34 +156,6 @@ test received
 			originalMessageItems.Length.ShouldEqual(4);
 		}
 
-//		[Test]
-//		public void nested_original_messages()
-//		{
-//			const string input = @"---- Original Message ----
-//Here are the config files. Please let me know what else I can get you.
-//
-//From: Dude Wee [mailto:dude@gmail.com]
-//Sent: Tuesday, November 03, 2009 12:12 PM
-//To: A Guy
-//Subject: Re: test
-//
-//---- Original Message ----
-//
-//From: Original Dude [mailto:original@gmail.com]
-//Sent: Tuesday, November 02, 2009 12:12 PM
-//To: Dude!
-//Subject: test
-//
-//Test this
-//";
-//			var originalMessage = _parser.OriginalMessage.Parse(input);
-//			originalMessage.Header.ShouldContain("Original Message");
-
-//			var originalMessageItems = originalMessage.Items.ToArray();
-//			originalMessageItems.Length.ShouldEqual(3);
-//		}
-
-
 		[Test]
 		[Ignore("Would like to have original messages return non Content IItems")]
 		public void original_message_from_item_parser()
@@ -214,5 +190,45 @@ test received
 			var originalMessageItems = originalMessage.Items.ToArray();
 			originalMessageItems.Length.ShouldEqual(4);
 		}
+
+		[Test]
+		public void iso_date()
+		{
+			var isoDate = DateTime.UtcNow.ToString("s", CultureInfo.InvariantCulture);
+			var input = @"Date:{0}{1}".ToFormat(HistoryParsers.BEGIN_ISODATE_HEADER, isoDate);
+
+			var emailHeaderItem = _parser.EmailHeaderItem.Parse(input);
+
+			emailHeaderItem.Title.ShouldEqual("Date");
+			emailHeaderItem.Text.ShouldContain("time-format");
+			emailHeaderItem.Text.ShouldContain(isoDate);
+		}
+
+		[Test]
+		public void email_header_with_iso_date()
+		{
+			var isoDate = DateTime.UtcNow.ToString("s", CultureInfo.InvariantCulture);
+			var input = @"__BEGIN EMAIL_HEADER
+From: annie
+Date: __BEGIN_ISODATE_HEADER__    2013-10-29T14:56:12
+To: mmiller@anotherexample.com
+__END EMAIL_HEADER
+
+fsdafasdfsafsaf
+new sig".ToFormat(HistoryParsers.BEGIN_ISODATE_HEADER, isoDate);
+
+			var header = _parser.LogEmailHeader.Parse(input);
+
+			var headers = header.Headers.ToArray();
+
+			headers.Each(h => { Console.WriteLine("Header: {0} Text : {1}", h.Title, h.Text); });
+
+			headers.Count().ShouldEqual(3);
+			headers[1].Text.ShouldContain("time-format");
+
+			Console.WriteLine(headers[1].Text);
+		}
+
+
 	}
 }

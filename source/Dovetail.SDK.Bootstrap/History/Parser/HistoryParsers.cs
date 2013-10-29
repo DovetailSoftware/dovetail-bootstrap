@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Dovetail.SDK.Bootstrap.History.Configuration;
+using FubuCore;
+using Microsoft.SqlServer.Server;
 using Sprache;
 
 namespace Dovetail.SDK.Bootstrap.History.Parser
@@ -66,6 +68,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 
 		public const string BEGIN_EMAIL_LOG_HEADER = "__BEGIN EMAIL_HEADER\r\n";
 		public const string END_EMAIL_LOG_HEADER = "__END EMAIL_HEADER\r\n";
+		public const string BEGIN_ISODATE_HEADER = "__BEGIN_ISODATE_HEADER__";
 
 		public static readonly Parser<string> HardRule =
 			from text in Parse.Char('-').Many().Text().Token()
@@ -120,7 +123,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 				return from title in Parse.CharExcept(':').Many().Text().Token()
 					where _settings.LogEmailHeaders.Any(h => h.Equals(title, StringComparison.InvariantCultureIgnoreCase))
 					from _1 in Parse.Char(':')
-					from text in UntilEndOfLine.Many().Token().Text()
+					from text in IsoDate.Or(UntilEndOfLine.Many().Token().Text())
 					from rest in HardRule.Or(WhiteSpace)
 					select new EmailHeaderItem {Title = title, Text = text};
 			}
@@ -134,6 +137,17 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 					from items in EmailHeaderItem.Many()
 					from _end in Parse.String(END_EMAIL_LOG_HEADER)
 					select new EmailHeader {Headers = items, IsLogHeader = true};
+			}
+		}
+
+		public Parser<string> IsoDate
+		{
+			get
+			{
+				return
+					from _start in Parse.String(BEGIN_ISODATE_HEADER).Token()
+					from date in UntilEndOfLine.Many().Token().Text()
+					select @"<span class=""time-format"">{0}</span>".ToFormat(date);
 			}
 		}
 
