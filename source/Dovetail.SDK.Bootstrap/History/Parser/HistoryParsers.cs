@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Dovetail.SDK.Bootstrap.History.Configuration;
 using FubuCore;
-using Microsoft.SqlServer.Server;
 using Sprache;
 
 namespace Dovetail.SDK.Bootstrap.History.Parser
@@ -18,7 +18,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 
 		public override string ToString()
 		{
-			return Text;
+			return "Content: " + Text;
 		}
 	}
 
@@ -32,23 +32,53 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 	{
 		public EmailHeader Header { get; set; }
 		public IEnumerable<IItem> Items { get; set; }
+
+		public override string ToString()
+		{
+			var builder = new StringBuilder("Email Log");
+			builder.AppendLine(Header.ToString());
+			Items.Each(item => builder.AppendLine(item.ToString()));
+			return builder.ToString();
+		}
 	}
 
 	public class EmailHeader : IItem
 	{
 		public bool IsLogHeader { get; set; }
 		public IEnumerable<EmailHeaderItem> Headers { get; set; }
+
+		public override string ToString()
+		{
+			var builder = new StringBuilder("Email Header\n");
+			Headers.Each(h => builder.AppendFormat("{0}: {1}\r\n", h.Title, h.Text));
+			return builder.ToString();
+		}
 	}
 
 	public class BlockQuote : IItem
 	{
 		public IEnumerable<string> Lines { get; set; }
+
+		public override string ToString()
+		{
+			var builder = new StringBuilder();
+			Lines.Each(l => builder.AppendFormat("> {0}\r\n", l));
+			return builder.ToString();
+		}
 	}
 
 	public class OriginalMessage : IItem
 	{
 		public string Header { get; set; }
 		public IEnumerable<IItem> Items { get; set; }
+
+		public override string ToString()
+		{
+			var builder = new StringBuilder("Original Message\n");
+			builder.AppendLine(Header);
+			Items.Each(item => builder.AppendLine(item.ToString()));
+			return builder.ToString();
+		}
 	}
 
 	/// <summary>
