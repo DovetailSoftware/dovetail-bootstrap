@@ -18,7 +18,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 
 		public override string ToString()
 		{
-			return "Content: " + Text;
+			return Text;
 		}
 	}
 

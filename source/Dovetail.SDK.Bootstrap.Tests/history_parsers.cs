@@ -221,12 +221,8 @@ new sig".ToFormat(HistoryParsers.BEGIN_ISODATE_HEADER, isoDate);
 
 			var headers = header.Headers.ToArray();
 
-			headers.Each(h => { Console.WriteLine("Header: {0} Text : {1}", h.Title, h.Text); });
-
 			headers.Count().ShouldEqual(3);
 			headers[1].Text.ShouldContain("time-format");
-
-			Console.WriteLine(headers[1].Text);
 		}
 
 		[Test]
