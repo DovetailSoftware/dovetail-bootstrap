@@ -19,7 +19,7 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
 		}
 
 		public int Code { get; set; }
-		public string DisplayName { get; set; }
+		public StringToken DisplayName { get; set; }
 		public Action<ClarifyDataRow, HistoryItem> ActivityDTOUpdater;
 
 		public string RelatedGenericRelationName { get; set; }
@@ -44,8 +44,6 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
 		/// <summary>
 		/// Define the display name of the act entry 
 		/// </summary>
-		IAfterDisplayName DisplayName(string displayName);
-
 		IAfterDisplayName DisplayName(StringToken token);
 
 		/// <summary>
@@ -150,16 +148,9 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
 			return this;
 		}
 
-		public IAfterDisplayName DisplayName(string displayName)
-		{
-			_currentActEntryTemplate.DisplayName = displayName;
-
-			return this;
-		}
-
 		public IAfterDisplayName DisplayName(StringToken token)
 		{
-			_currentActEntryTemplate.DisplayName = token.ToString();
+			_currentActEntryTemplate.DisplayName = token;
 
 			return this;
 		}
