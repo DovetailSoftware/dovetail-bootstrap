@@ -44,7 +44,7 @@ namespace Bootstrap.Web
 			});
 
 			Import<BasicLocalizationSupport>();
-			Policies.WrapWith<LocalizationBehavior>();
+			Policies.WrapWith<BasicLocalizationBehavior>();
 		}
 	}
 

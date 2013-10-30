@@ -18,12 +18,12 @@ namespace Bootstrap.Web.Security
 	/// <summary>
 	/// Sets the current culture context based on the user's preference 
 	/// </summary>
-	public class LocalizationBehavior : BasicBehavior, DescribesItself
+	public class BasicLocalizationBehavior : BasicBehavior, DescribesItself
 	{
 		private readonly ICurrentCultureContext _cultureContext;
 		private readonly LocalizationSettings _settings;
 
-		public LocalizationBehavior(ICurrentCultureContext cultureContext, LocalizationSettings settings)
+		public BasicLocalizationBehavior(ICurrentCultureContext cultureContext, LocalizationSettings settings)
 			: base(PartialBehavior.Ignored)
 		{
 			_cultureContext = cultureContext;
