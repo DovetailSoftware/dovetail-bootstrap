@@ -120,14 +120,15 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 		{
 			get
 			{
-				return from title in Parse.CharExcept(':').Many().Text().Token()
+				return from _1 in WhiteSpace
+					from title in Parse.CharExcept(':').Many().Text().Token()
 					where _settings.GetLogEmailHeaderTokens().Any(h =>
 					{
 						var key = h.ToString();
-						var isMatch = key.Equals(title, StringComparison.InvariantCultureIgnoreCase);
+						var isMatch = key.Equals(title, StringComparison.CurrentCultureIgnoreCase);
 						return isMatch;
 					})
-					from _1 in Parse.Char(':')
+					from _2 in Parse.Char(':')
 					from text in IsoDate.Or(UntilEndOfLine.Many().Token().Text())
 					from rest in HardRule.Or(WhiteSpace)
 					select new EmailHeaderItem {Title = title, Text = text};

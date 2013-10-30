@@ -229,6 +229,24 @@ new sig".ToFormat(HistoryParsers.BEGIN_ISODATE_HEADER, isoDate);
 			Console.WriteLine(headers[1].Text);
 		}
 
+		[Test]
+		public void email_logs_with_non_breaking_spaces_should_work()
+		{
+			const string input = @"__BEGIN EMAIL_HEADER
+Date: __BEGIN_ISODATE_HEADER__2013-10-30T13:09:58
+From: annie@localhost.fcs.local
+To: support@dovetailsoftware.com
+__END EMAIL_HEADER
+Those kittens are adorable.&#160;&#160;&#160;
+&#160;
+SUBJECT: Re: Please create a case - About Case 30822
+TO: admin@localhost.fcs.local
+SENT: Wednesday, October 30, 2013 10:43 AM";
 
+			var email = _parser.LogEmail.Parse(input);
+			var items = email.Items.ToArray();
+			items[0].ShouldBeOfType<Content>();
+			items[1].ShouldBeOfType<EmailHeader>();
+		}
 	}
 }
