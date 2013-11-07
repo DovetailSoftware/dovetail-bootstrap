@@ -68,6 +68,7 @@ namespace Dovetail.SDK.Bootstrap.Configuration
             //It is the responsibility of the applicationUrl using bootstrap to set the current sdk user's login 
             For<ICurrentSDKUser>().HybridHttpOrThreadLocalScoped().Use<CurrentSDKUser>();
         	For<IUserClarifySessionConfigurator>().Use<UTCTimezoneUserClarifySessionConfigurator>();
+			For<IDatabaseTime>().HybridHttpOrThreadLocalScoped().Use<DatabaseTime>();
 
 	        For<IWebApplicationUrl>().Use<AspNetWebApplicationUrl>();
 
