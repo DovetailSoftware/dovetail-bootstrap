@@ -55,7 +55,6 @@ namespace Dovetail.SDK.Bootstrap.Configuration
 			For<IApplicationClarifySession>().HybridHttpOrThreadLocalScoped().Use(ctx => ctx.GetInstance<IApplicationClarifySessionFactory>().Create());
 
 			//Make Dovetail SDK caches directly available for DI.
-			For<IListCache>().Use(c => c.GetInstance<IClarifyApplication>().ListCache);
 			For<ISchemaCache>().Use(c => c.GetInstance<IClarifyApplication>().SchemaCache);
 			For<IStringCache>().Use(c => c.GetInstance<IClarifyApplication>().StringCache);
 			For<ILocaleCache>().Use(c => c.GetInstance<IClarifyApplication>().LocaleCache);
