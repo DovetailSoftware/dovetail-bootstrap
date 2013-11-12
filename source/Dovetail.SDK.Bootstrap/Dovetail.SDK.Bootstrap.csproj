@@ -89,6 +89,7 @@
     <Compile Include="Clarify\UserLocalTimezoneClarifySessionConfigurator.cs" />
     <Compile Include="Configuration\ApplicationClarifySessionFactory.cs" />
     <Compile Include="Configuration\AspNetHttpRequest.cs" />
+    <Compile Include="Configuration\BootstrapLocalizationMissing.cs" />
     <Compile Include="Configuration\DoNothingOutputEncoder.cs" />
     <Compile Include="Configuration\FastYetSimpleTypeActivator.cs" />
     <Compile Include="Configuration\HtmlEncodeOutputEncoder.cs" />

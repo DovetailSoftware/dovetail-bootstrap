@@ -6,7 +6,9 @@ using Dovetail.SDK.Bootstrap.History.Configuration;
 using Dovetail.SDK.Bootstrap.History.TemplatePolicies;
 using FChoice.Foundation.Clarify;
 using FChoice.Foundation.Schema;
+using FubuLocalization;
 using StructureMap.Configuration.DSL;
+using ILocaleCache = FChoice.Foundation.Clarify.ILocaleCache;
 
 namespace Dovetail.SDK.Bootstrap.Configuration
 {
@@ -68,6 +70,8 @@ namespace Dovetail.SDK.Bootstrap.Configuration
             For<ICurrentSDKUser>().HybridHttpOrThreadLocalScoped().Use<CurrentSDKUser>();
         	For<IUserClarifySessionConfigurator>().Use<UTCTimezoneUserClarifySessionConfigurator>();
 			For<IDatabaseTime>().HybridHttpOrThreadLocalScoped().Use<DatabaseTime>();
+
+	        For<ILocalizationMissingHandler>().Use<BootstrapLocalizationMissingHandler>();
 
 	        For<IWebApplicationUrl>().Use<AspNetWebApplicationUrl>();
 
