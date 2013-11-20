@@ -153,15 +153,15 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 			var clarifySession = _clarifyApplication.CreateSession(username, ClarifyLoginType.User);
 			var wrappedSession = wrapSession(clarifySession);
 
+			_sessionConfigurator.Configure(clarifySession);
+			_logger.LogDebug("Configured created session.");
+
 			if (!isApplicationUsername(username))
 			{
-				_sessionConfigurator.Configure(clarifySession);
-				_logger.LogDebug("Configured created session.");
-
 				_sessionStartObserver().SessionStarted(wrappedSession);
 			}
 
-				_logger.LogInfo("Created session {0}.".ToFormat(clarifySession.SessionID));
+			_logger.LogInfo("Created session {0}.".ToFormat(clarifySession.SessionID));
 
 			return wrappedSession;
 		}
