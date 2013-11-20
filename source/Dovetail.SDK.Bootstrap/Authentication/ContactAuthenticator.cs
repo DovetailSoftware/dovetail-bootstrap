@@ -1,80 +1,77 @@
-using Dovetail.SDK.Bootstrap.Clarify;
 using FChoice.Foundation.Clarify;
 using FubuCore;
 
 namespace Dovetail.SDK.Bootstrap.Authentication
 {
-    public class ContactAuthenticator : IUserAuthenticator
-    {
-        private readonly ILogger _logger;
-        private readonly IClarifyApplication _clarifyApplication;
+	public interface IContactAuthenticator
+	{
+		bool Authenticate(string username, string password);
+	}
 
-        public ContactAuthenticator(ILogger logger, IClarifyApplication clarifyApplication)
-        {
-            _logger = logger;
-			
-			//HACK to make sure SDK is spun up. ICK
-			_clarifyApplication = clarifyApplication;
-        }
+	public class ContactAuthenticator : IContactAuthenticator
+	{
+		private readonly ILogger _logger;
+		//private readonly IClarifyApplication _clarifyApplication;
 
-        public bool Authenticate(string username, string password)
-        {
-            var success = ClarifySession.AuthenticateContact(username, password);
+		public ContactAuthenticator(ILogger logger) //, IClarifyApplication clarifyApplication)
+		{
+			_logger = logger;
 
-            _logger.LogDebug("Authentication for contact {0} was {1}successful.".ToFormat(username, success ? "" : "not "));
+			////HACK to make sure SDK is spun up. ICK
+			//_clarifyApplication = clarifyApplication;
+		}
 
-            return success;
-        }
-    }
+		public bool Authenticate(string username, string password)
+		{
+			var success = ClarifySession.AuthenticateContact(username, password);
 
-    public class ContactAuthenticationService : IAuthenticationService
-    {
-        private readonly IFormsAuthenticationService _formsAuthentication;
-        private readonly IUserAuthenticator _agentAuthenticator;
-	    private readonly IAuthenticationSignOutService _signOutService;
+			_logger.LogDebug("Authentication for contact {0} was {1}successful.".ToFormat(username, success ? "" : "not "));
 
-	    public ContactAuthenticationService(IFormsAuthenticationService formsAuthentication, ContactAuthenticator agentAuthenticator, IAuthenticationSignOutService signOutService)
-        {
-            _formsAuthentication = formsAuthentication;
-            _agentAuthenticator = agentAuthenticator;
-	        _signOutService = signOutService;
-        }
+			return success;
+		}
+	}
 
-        public bool SignIn(string username, string password, bool rememberMe)
-        {
-            var authenticated = _agentAuthenticator.Authenticate(username, password);
+	public class ContactAuthenticationService : IAuthenticationService
+	{
+		private readonly IFormsAuthenticationService _formsAuthentication;
+		private readonly IContactAuthenticator _authenticator;
 
-            if (!authenticated) return false;
+		public ContactAuthenticationService(IFormsAuthenticationService formsAuthentication, IContactAuthenticator authenticator)
+		{
+			_formsAuthentication = formsAuthentication;
+			_authenticator = authenticator;
+		}
 
-            _formsAuthentication.SetAuthCookie(username, rememberMe);
+		public bool SignIn(string username, string password, bool rememberMe)
+		{
+			var authenticated = _authenticator.Authenticate(username, password);
 
-            return true;
-        }
+			if (!authenticated) return false;
 
-        public void SignOut()
-        {
-            _signOutService.SignOut();
-        }
-    }
+			_formsAuthentication.SetAuthCookie(username, rememberMe);
 
-    public class ContactAuthenticationContextService : IAuthenticationContextService
-    {
-        private readonly ISecurityContext _securityContext;
-        private readonly IPrincipalFactory _principalFactory;
+			return true;
+		}
+	}
 
-        public ContactAuthenticationContextService(ISecurityContext securityContext, IPrincipalFactory principalFactory)
-        {
-            _securityContext = securityContext;
-            _principalFactory = principalFactory;
-        }
+	public class ContactAuthenticationContextService : IAuthenticationContextService
+	{
+		private readonly ISecurityContext _securityContext;
+		private readonly IPrincipalFactory _principalFactory;
 
-        public void SetupAuthenticationContext()
-        {
-            var identity = _securityContext.CurrentIdentity;
+		public ContactAuthenticationContextService(ISecurityContext securityContext, IPrincipalFactory principalFactory)
+		{
+			_securityContext = securityContext;
+			_principalFactory = principalFactory;
+		}
 
-            var principal = _principalFactory.CreatePrincipal(identity);
+		public void SetupAuthenticationContext()
+		{
+			var identity = _securityContext.CurrentIdentity;
 
-            _securityContext.CurrentUser = principal;
-        }
-    }
+			var principal = _principalFactory.CreatePrincipal(identity);
+
+			_securityContext.CurrentUser = principal;
+		}
+	}
 }
