@@ -14,6 +14,7 @@
     <dependencies>
         <dependency id="Dovetail.SDK" version="3.2.10.8" />
         <dependency id="FubuCore" version="1.0.0.225" />
+        <dependency id="FubuLocalization" version="0.9.5.126" />
         <dependency id="log4net" version="2.0.0" />
         <dependency id="structuremap" version="2.6.3.0" />
     </dependencies>
