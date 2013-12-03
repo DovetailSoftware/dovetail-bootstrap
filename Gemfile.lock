@@ -11,7 +11,7 @@ GEM
       ripple-cli (~> 2.0)
     rake (10.1.0)
     ripple-cli (2.3.4.151)
-    rubyzip (1.1.0)
+    rubyzip (0.9.9)
 
 PLATFORMS
   x86-mingw32
@@ -21,3 +21,4 @@ DEPENDENCIES
   fuburake (~> 0.5)
   rake (~> 10.0)
   ripple-cli
+  rubyzip (= 0.9.9)
