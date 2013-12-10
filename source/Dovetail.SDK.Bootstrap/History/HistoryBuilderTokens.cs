@@ -43,11 +43,9 @@ namespace Dovetail.SDK.Bootstrap.History
 		public static readonly StringToken REOPENED = new HistoryBuilderTokens("REOPENED", "Reopened");
 		public static readonly StringToken REJECTED = new HistoryBuilderTokens("REJECTED", "Returned to sender");
 		public static readonly StringToken SUBCASE_CLOSED = new HistoryBuilderTokens("SUBCASE_CLOSED", "Subcase closed");
-		public static readonly StringToken SUBCASE_CREATED = new HistoryBuilderTokens("SUBCASE_REOPENED", "Subcase created");
+      public static readonly StringToken SUBCASE_CREATED = new HistoryBuilderTokens("SUBCASE_CREATED", "Subcase created");
 		public static readonly StringToken SUBCASE_CREATED_ADMINISTRATIVE = new HistoryBuilderTokens("SUBCASE_CREATED_ADMINISTRATIVE", "Administrative subcase created");
 		public static readonly StringToken SUBCASE_REOPENED = new HistoryBuilderTokens("SUBCASE_REOPENED", "Subcase reopened");
 		public static readonly StringToken YANKED = new HistoryBuilderTokens("YANKED", "Yanked");
-
-		
 	}
 }
