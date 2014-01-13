@@ -104,6 +104,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			from text in Parse.Char('-').Many().Text().Token()
 			select text;
 
+		//public static readonly Parser<string> EndOfLine = Parse.CharExcept(c => c == '\r' || c == '\n', "start of line ending");
 		public static readonly Parser<char> UntilEndOfLine = Parse.CharExcept(c => c == '\r' || c == '\n', "start of line ending");
 		public static readonly Parser<IEnumerable<char>> WhiteSpace = Parse.WhiteSpace.Many().Or(Parse.String("&#160;"));
 
@@ -214,5 +215,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 				.Or(Content)
 				select items;
 		}
+
 	}
+
 }

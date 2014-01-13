@@ -83,8 +83,11 @@
     <Reference Include="Rhino.Mocks">
       <HintPath>..\packages\RhinoMocks\lib\net\Rhino.Mocks.dll</HintPath>
     </Reference>
+    <Reference Include="Sprache">
+      <HintPath>..\packages\Sprache\lib\net40\Sprache.dll</HintPath>
+    </Reference>
     <Reference Include="StructureMap">
-      <HintPath>..\packages\structuremap\lib\\StructureMap.dll</HintPath>
+      <HintPath>..\packages\structuremap\lib\StructureMap.dll</HintPath>
     </Reference>
     <Reference Include="StructureMap.AutoMocking">
       <HintPath>..\packages\structuremap.automocking\lib\StructureMap.AutoMocking.dll</HintPath>

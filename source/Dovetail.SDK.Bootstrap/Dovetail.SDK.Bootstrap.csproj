@@ -59,6 +59,9 @@
     <Reference Include="Oracle.ManagedDataAccess">
       <HintPath>..\packages\odp.net.managed\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
     </Reference>
+    <Reference Include="Sprache">
+      <HintPath>..\packages\Sprache\lib\net40\Sprache.dll</HintPath>
+    </Reference>
     <Reference Include="StructureMap">
       <HintPath>..\packages\structuremap\lib\StructureMap.dll</HintPath>
     </Reference>
@@ -101,16 +104,6 @@
     <Compile Include="DatabaseTime.cs" />
     <Compile Include="History\HistoryBuilderTokens.cs" />
     <Compile Include="History\Parser\HistoryOutputParser.cs" />
-    <Compile Include="History\Parser\Sprache\Failure.cs" />
-    <Compile Include="History\Parser\Sprache\IFailure.cs" />
-    <Compile Include="History\Parser\Sprache\Input.cs" />
-    <Compile Include="History\Parser\Sprache\IResultOfT.cs" />
-    <Compile Include="History\Parser\Sprache\ISuccess.cs" />
-    <Compile Include="History\Parser\Sprache\Parse.cs" />
-    <Compile Include="History\Parser\Sprache\ParseException.cs" />
-    <Compile Include="History\Parser\Sprache\ParserOfT.cs" />
-    <Compile Include="History\Parser\Sprache\ResultHelper.cs" />
-    <Compile Include="History\Parser\Sprache\Success.cs" />
     <Compile Include="Clarify\UserDataAccess.cs" />
     <Compile Include="Configuration\BootstrapRegistry.cs" />
     <Compile Include="Configuration\DovetailAppSettingsSource.cs" />
