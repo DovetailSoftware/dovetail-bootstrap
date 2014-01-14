@@ -209,6 +209,43 @@ test received
 		}
 
 		[Test]
+		public void log_email_should_find_header_and_items()
+		{
+			var isoDate = DateTime.UtcNow.ToString("s", CultureInfo.InvariantCulture);
+			var input = @"{0}
+From: annie
+Date: {1} {2}
+To: mmiller@anotherexample.com
+{3}
+
+FYI..
+
+On Tue, Nov 3, 2009 at 12:34 PM, Sam Tyson <dude@gmail.com> wrote:
+
+Here are the config files. Please let me know what else I can get you.
+
+From: Dude Wee [mailto:dude@gmail.com]
+Sent: Tuesday, November 03, 2009 12:12 PM
+To: A Guy
+Subject: Re: test
+
+test received
+".ToFormat(HistoryParsers.BEGIN_EMAIL_LOG_HEADER, HistoryParsers.BEGIN_ISODATE_HEADER, isoDate, HistoryParsers.END_EMAIL_LOG_HEADER, ParagraphEndLocator.ENDOFPARAGRAPHTOKEN);
+
+			var emailLog = _parser.LogEmail.Parse(input);
+
+			var emailHeaderItems = emailLog.Header.Headers.ToArray();
+			emailHeaderItems.Count().ShouldEqual(3);
+			emailHeaderItems[1].Text.ShouldContain("time-format");
+
+			var logItems = emailLog.Items.ToArray();
+
+			logItems.WriteToConsole();
+
+			logItems.Length.ShouldEqual(2);
+		}
+
+		[Test]
 		public void email_header_with_iso_date()
 		{
 			var isoDate = DateTime.UtcNow.ToString("s", CultureInfo.InvariantCulture);
