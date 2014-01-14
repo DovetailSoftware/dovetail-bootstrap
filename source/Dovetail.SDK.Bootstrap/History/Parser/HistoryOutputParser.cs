@@ -51,7 +51,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 
 			var items = _itemParser.ParseContent(output).ToArray();
 
-			items.WriteToConsole();
+			//items.WriteToConsole();
 
 			var paragraphedItems = _paragraphAggregator.CollapseContentItems(items);
 
@@ -71,8 +71,8 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			var emailLog = _itemParser.ParseEmailLog(output);
 			var items = new List<IItem> {emailLog.Header};
 
-			var paragraphedItems = _paragraphAggregator.CollapseContentItems(items);
-			items.AddRange(paragraphedItems);
+			var paragraphedEmailLogItems = _paragraphAggregator.CollapseContentItems(emailLog.Items);
+			items.AddRange(paragraphedEmailLogItems);
 
 			var result = _itemHtmlRenderer.Render(items);
 
