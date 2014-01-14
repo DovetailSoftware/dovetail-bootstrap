@@ -47,8 +47,6 @@ namespace Dovetail.SDK.Bootstrap.Tests
 
 			var items = _parser.EmailItem.Many().Parse(input).ToArray();
 
-			items.WriteToConsole();
-
 			items[0].ToString().ShouldEqual("line1");
 			items[1].ShouldBeOfType<ParagraphEnd>();
 			items[2].ToString().ShouldEqual("line2");
@@ -83,7 +81,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 
 			var item = _parser.EmailItem.Parse(input);
 
-			var emailHeader = (item as EmailHeader);
+			var emailHeader = (EmailHeader) item;
 			emailHeader.ShouldNotBeNull();
 			emailHeader.Headers.Count().ShouldEqual(3);
 		}
@@ -148,66 +146,49 @@ namespace Dovetail.SDK.Bootstrap.Tests
 			blockQuote.Lines.Count().ShouldEqual(3);
 		}
 
+		const string originalMessageInput = @"On Tue, Nov 3, 2009 at 12:34 PM, Sam Tyson <dude@gmail.com> wrote:
+
+Here are the config files. Please let me know what else I can get you.
+
+From: Dude Wee [mailto:dude@gmail.com]
+Sent: Tuesday, November 03, 2009 12:12 PM
+To: A Guy
+Subject: Re: test
+
+test received
+
+&gt; Thanks,
+&gt;
+&gt;  Dude Wee
+&gt;
+&gt;  On Tue, Nov 3, 2009 at 11:09 AM, A Guy <guy@place.com&gt;
+&gt; wrote:
+&gt;
+&gt; Test
+&gt; A Guy";
+
 		[Test]
 		public void original_message()
 		{
-			const string input = @"On Tue, Nov 3, 2009 at 12:34 PM, Sam Tyson <dude@gmail.com> wrote:
-
-Here are the config files. Please let me know what else I can get you.
-
-From: Dude Wee [mailto:dude@gmail.com]
-Sent: Tuesday, November 03, 2009 12:12 PM
-To: A Guy
-Subject: Re: test
-
-test received
-
-&gt; Thanks,
-&gt;
-&gt;  Dude Wee
-&gt;
-&gt;  On Tue, Nov 3, 2009 at 11:09 AM, A Guy <guy@place.com&gt;
-&gt; wrote:
-&gt;
-&gt; Test
-&gt; A Guy";
-
-			var originalMessage = _parser.OriginalMessage.Parse(input);
+			var originalMessage = _parser.OriginalMessage.Parse(originalMessageInput);
 			originalMessage.Header.ShouldContain("dude@gmail.com");
 
-			var originalMessageItems = originalMessage.Items.ToArray();
-			originalMessageItems.Length.ShouldEqual(4);
+			verifyOriginalMessage(originalMessage);
 		}
 
 		[Test]
-		[Ignore("Would like to have original messages return non Line IItems")]
-		public void original_message_from_item_parser()
+		public void email_item_parser_should_return_original_messages()
 		{
-			const string input = @"On Tue, Nov 3, 2009 at 12:34 PM, Sam Tyson <dude@gmail.com> wrote:
-
-Here are the config files. Please let me know what else I can get you.
-
-From: Dude Wee [mailto:dude@gmail.com]
-Sent: Tuesday, November 03, 2009 12:12 PM
-To: A Guy
-Subject: Re: test
-
-test received
-
-&gt; Thanks,
-&gt;
-&gt;  Dude Wee
-&gt;
-&gt;  On Tue, Nov 3, 2009 at 11:09 AM, A Guy <guy@place.com&gt;
-&gt; wrote:
-&gt;
-&gt; Test
-&gt; A Guy";
-
-			var items = _parser.EmailItem.Many().Parse(input).ToArray();
+			var items = _parser.EmailItem.Many().Parse(originalMessageInput).ToArray();
 			items.Length.ShouldEqual(1);
 
-			var originalMessage = (OriginalMessage) items[1];
+			var originalMessage = (OriginalMessage) items[0];
+
+			verifyOriginalMessage(originalMessage);
+		}
+
+		public void verifyOriginalMessage(OriginalMessage originalMessage)
+		{
 			originalMessage.Header.ShouldContain("dude@gmail.com");
 
 			var originalMessageItems = originalMessage.Items.ToArray();
