@@ -118,6 +118,7 @@
     <Compile Include="History\Parser\HistoryItemHtmlRenderer.cs" />
     <Compile Include="History\Parser\HistoryItemParser.cs" />
     <Compile Include="History\Parser\HistoryParsers.cs" />
+    <Compile Include="History\Parser\ParagraphAggregator.cs" />
     <Compile Include="History\Parser\ParagraphEndLocator.cs" />
     <Compile Include="UrlLinkifier.cs" />
     <Compile Include="History\TemplatePolicies\DefaultActEntryTemplatePolicyRegistry.cs" />

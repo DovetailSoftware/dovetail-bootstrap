@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Threading;
 using Dovetail.SDK.Bootstrap.Configuration;
 using Dovetail.SDK.Bootstrap.History.Configuration;
@@ -25,14 +24,32 @@ namespace Dovetail.SDK.Bootstrap.Tests
 			var historyItemParser = new HistoryItemParser(new HistoryParsers(new HistorySettings()), _logger);
 			_cut = new HistoryOutputParser(new ParagraphEndLocator(), new ParagraphAggregator(), historyItemParser, new HistoryItemHtmlRenderer(), new HtmlEncodeOutputEncoder(), new UrlLinkifier());
 		}
-//
+
 //		[Test]
 //		public void should_find_paragraph_ends()
 //		{
-//			const string input = "para1line1\npara1line2\n   \npara2line1\npara2line2";
-////			const string input = "line1\nline2\n        \n\n\n\nline3";
-//			var output = _cut.Encode(input);
+//			var emailHeader = "{0}From: kdog@albatross.net{1}".ToFormat(HistoryParsers.BEGIN_EMAIL_LOG_HEADER, HistoryParsers.END_EMAIL_LOG_HEADER); 
+
+//			const string input =  @"Thanks, 
 //
+//Bye
+//
+//kevin Miller
+//Foo@coo.com
+//
+//On Tue, Nov 3, 2009 at 12:34 PM, Sam Tyson <dude@gmail.com> wrote:
+//
+//Here are the config files. Please let me know what else I can get you.
+//
+//From: Dude Wee [mailto:dude@gmail.com]
+//Sent: Tuesday, November 03, 2009 12:12 PM
+//To: A Guy
+//Subject: Re: test
+//
+//test received";
+
+//			var output = _cut.EncodeEmailLog(emailHeader + "\n" + input);
+
 //			Console.WriteLine(output);
 //		}
 
