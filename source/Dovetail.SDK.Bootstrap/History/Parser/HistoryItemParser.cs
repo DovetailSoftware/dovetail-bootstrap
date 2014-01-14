@@ -26,7 +26,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 		{
 			try
 			{
-				return _historyParser.Content.Many().End().Parse(input);
+				return (IEnumerable<Content>) _historyParser.Content.Many().End().Parse(input);
 			}
 			catch (Exception e)
 			{

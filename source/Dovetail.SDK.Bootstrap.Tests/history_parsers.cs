@@ -10,6 +10,16 @@ using Sprache;
 
 namespace Dovetail.SDK.Bootstrap.Tests
 {
+	public static class ItemArrayExtension
+	{
+		public static void WriteToConsole(this IItem[] items)
+		{
+			var cnt = 0;
+
+			items.Each(i => Console.WriteLine("{0}: {1}", ++cnt, i));
+		}
+	}
+
 	[TestFixture]
 	public class history_parsers
 	{
@@ -29,6 +39,28 @@ namespace Dovetail.SDK.Bootstrap.Tests
 			var item = _parser.Item().Parse(input);
 
 			item.ToString().ShouldEqual("line1");
+		}
+
+		[Test]
+		public void detect_paragraph_end()
+		{
+			const string input = HistoryParsers.END_OF_PARAGRAPH;
+
+			var p = _parser.Paragraph.Parse(input);
+
+			p.ShouldBeOfType<ParagraphEnd>();
+		}
+
+		[Test]
+		public void detect_items_having_paragraph_end()
+		{
+			const string input = "line1\n" + HistoryParsers.END_OF_PARAGRAPH + "\nline2";
+
+			var items = _parser.Item().Many().Parse(input).ToArray();
+
+			items[0].ToString().ShouldEqual("line1");
+			items[1].ShouldBeOfType<ParagraphEnd>();
+			items[2].ToString().ShouldEqual("line2");
 		}
 
 		[Test]

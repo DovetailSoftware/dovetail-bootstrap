@@ -22,6 +22,8 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 		}
 	}
 
+	public class ParagraphEnd : IItem { }
+
 	public class EmailHeaderItem
 	{
 		public string Title { get; set; }
@@ -99,6 +101,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 		public const string BEGIN_EMAIL_LOG_HEADER = "__BEGIN EMAIL_HEADER\r\n";
 		public const string END_EMAIL_LOG_HEADER = "__END EMAIL_HEADER\r\n";
 		public const string BEGIN_ISODATE_HEADER = "__BEGIN_ISODATE_HEADER__";
+		public const string END_OF_PARAGRAPH = "__EOP__";
 
 		public static readonly Parser<string> HardRule =
 			from text in Parse.Char('-').Many().Text().Token()
@@ -117,13 +120,21 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			from lines in BlockQuoteLine.Many()
 			select new BlockQuote {Lines = lines};
 
-		public Parser<Content> Content
+		public Parser<IItem> Content
 		{
 			get
 			{
 				return from _1 in WhiteSpace
 					from text in UntilEndOfLine.Many().Text().Token()
 					select new Content {Text = text.TrimEnd()};
+			}
+		}
+
+		public Parser<IItem> Paragraph
+		{
+			get
+			{
+				return Parse.String(END_OF_PARAGRAPH).Select(p=>(IItem)new ParagraphEnd());
 			}
 		}
 		
@@ -212,6 +223,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			return from items in Parse.Ref(() =>OriginalMessage).Select(n => (IItem) n)
 				.Or(EmailHeader)
 				.Or(BlockQuote)
+				.Or(Paragraph)
 				.Or(Content)
 				select items;
 		}
