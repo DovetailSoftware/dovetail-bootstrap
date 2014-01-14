@@ -38,8 +38,8 @@ namespace Bootstrap.Web
 
 			For<IOutputEncoder>().Use<DoNothingOutputEncoder>();
 
-			For<IAuthenticationService>().Use<ContactAuthenticationService>();
-			For<IAuthenticationContextService>().Use<ContactAuthenticationContextService>();
+			//For<IAuthenticationService>().Use<ContactAuthenticationService>();
+			//For<IAuthenticationContextService>().Use<ContactAuthenticationContextService>();
 		}
 	}
 }
