@@ -109,6 +109,7 @@
     <Compile Include="history_parsers.cs" />
     <Compile Include="linkifier.cs" />
     <Compile Include="paragraph_aggregator.cs" />
+    <Compile Include="paragraph_end_locator.cs" />
     <Compile Include="principal_factory.cs" />
     <Compile Include="request_path_authentication_policy.cs" />
     <Compile Include="session_usage_reporter.cs" />
