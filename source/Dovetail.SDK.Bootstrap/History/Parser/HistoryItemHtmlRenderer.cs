@@ -47,16 +47,23 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 
 		private static void renderEmailHeader(EmailHeader emailHeader, StringBuilder output)
 		{
+			if (!emailHeader.Headers.Any()) return;
+			output.Append(@"<div class=""history-email-wrapper"">");
 			_idIndex += 1;
 			var id = "emailHeader" + _idIndex;
 			output.AppendLine(@"<div id=""{0}"" class=""history-email-header"">".ToFormat(id));
 
-			if (emailHeader.Headers.Any())
+			var rest = emailHeader.Headers.ToArray();
+			if (rest.Any())
 			{
-				output.AppendLine(@"<div class=""history-inline-content""><ul>");
-				foreach (var header in emailHeader.Headers)
+				output.AppendLine(@"<div class=""history-inline-content""><ul class=""unstyled"">");
+				foreach (var header in rest)
 				{
-					output.AppendLine(@"<li><span class=""email-header-name"">{0}</span> <span class=""email-header-text"">{1}</span></li>".ToFormat(header.Title.ToLower().Capitalize(), header.Text));
+					var headerText = header.Text;
+
+					var headerTitle = header.Title.ToLower().Capitalize();
+
+					output.AppendLine(@"<li><span class=""email-header-name"">{0}</span> <span class=""email-header-text"">{1}</span></li>".ToFormat(headerTitle, headerText));
 				}
 				output.Append(@"</ul></div>");
 			}
@@ -80,11 +87,16 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 		{
 			_idIndex += 1;
 			var id = "originalMessage" + _idIndex;
-			output.AppendLine(@"<div id=""{0}"" class=""history-inline-message""></i>".ToFormat(id));
 
-			output.AppendLine(@"<h5 class=""history-inline-header"">{0}</h5><div class=""history-inline-content"">".ToFormat(message.Header));
+			output.AppendLine(@"<div id=""{0}"" class=""original-message-wrapper"">".ToFormat(id));
+			output.AppendLine(@"<div class=""accordion""><div class=""accordion-group"">");
 
+			output.AppendLine(@"<div class=""accordion-heading""><a class=""accordion-toggle collapsed"" data-toggle=""collapse"" href=""#collapse{0}"">".ToFormat(id));
+			output.AppendLine(@"<h5>Original Message <span class=""caret arrow-down""></span></h5></a></div>".ToFormat(message.Header));
+
+			output.AppendLine(@"<div id=""collapse{0}"" class=""accordion-body collapse""><div class=""accordion-inner"">".ToFormat(id));
 			output.Append(Render(message.Items));
+			output.AppendLine(@"</div></div>");
 
 			output.AppendLine(@"</div></div>");
 		}
