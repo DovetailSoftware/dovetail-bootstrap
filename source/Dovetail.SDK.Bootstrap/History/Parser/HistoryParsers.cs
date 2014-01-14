@@ -8,8 +8,11 @@ using Sprache;
 
 namespace Dovetail.SDK.Bootstrap.History.Parser
 {
-	public interface IItem
+	public interface IItem { }
+
+	public interface IHasNestedItems
 	{
+		IEnumerable<IItem> Items { get; set; }
 	}
 
 	public interface IRenderHtml
@@ -79,7 +82,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 		}
 	}
 
-	public class OriginalMessage : IItem
+	public class OriginalMessage : IItem, IHasNestedItems
 	{
 		public string Header { get; set; }
 		public IEnumerable<IItem> Items { get; set; }

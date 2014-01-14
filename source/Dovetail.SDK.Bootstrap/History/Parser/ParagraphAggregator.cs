@@ -60,6 +60,13 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 					content.Clear();
 				}
 
+				//when the item has nested items we need to collapse those too
+				if (itemType.CanBeCastTo<IHasNestedItems>())
+				{
+					var originalMessage = (IHasNestedItems)i;
+					originalMessage.Items = CollapseContentItems(originalMessage.Items);
+				}
+
 				output.Add(i);
 			});
 

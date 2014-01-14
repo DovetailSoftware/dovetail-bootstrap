@@ -31,11 +31,11 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		{
 			var items = new IItem[]
 			{
-				new OriginalMessage(), 
+				new OriginalMessage {Items = new IItem[0]}, 
 				new Line {Text = "p1l1"}, 
-				new OriginalMessage(), 
+				new OriginalMessage {Items = new IItem[0]}, 
 				new Line {Text = "p1l2"}, 
-				new OriginalMessage()
+				new OriginalMessage {Items = new IItem[0]} 
 			};
 
 			var results = _cut.CollapseContentItems(items).ToArray();
@@ -103,6 +103,33 @@ namespace Dovetail.SDK.Bootstrap.Tests
 			results.Length.ShouldEqual(2);
 			results[0].ShouldBeOfType<Line>();
 			results[1].ShouldBeOfType<Line>();
+		}
+
+		[Test]
+		public void should_collapse_items_which_have_nested_items()
+		{
+			var items = new IItem[]
+			{
+				new OriginalMessage { Header = "original header", Items = new IItem[]
+				{
+					new Line(),
+					new Line(),
+					new ParagraphEnd(),
+					new Line()
+				}}
+			};
+
+			var results = _cut.CollapseContentItems(items).ToArray();
+
+			results.Length.ShouldEqual(1);
+			results[0].ShouldBeOfType<OriginalMessage>();
+
+			var originalMessage = (OriginalMessage) results[0];
+			var originalMessageItems = originalMessage.Items.ToArray();
+
+			originalMessageItems.Length.ShouldEqual(2);
+			originalMessageItems[0].ShouldBeOfType<Paragraph>();
+			originalMessageItems[1].ShouldBeOfType<Line>();
 		}
 	}
 }
