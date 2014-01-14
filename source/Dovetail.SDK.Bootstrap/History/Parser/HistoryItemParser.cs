@@ -8,7 +8,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 	public interface IHistoryItemParser
 	{
 		EmailLog ParseEmailLog(string input);
-		IEnumerable<Content> ParseContent(string input);
+		IEnumerable<IItem> ParseContent(string input);
 	}
 
 	public class HistoryItemParser : IHistoryItemParser
@@ -22,11 +22,11 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			_logger = logger;
 		}
 
-		public IEnumerable<Content> ParseContent(string input)
+		public IEnumerable<IItem> ParseContent(string input)
 		{
 			try
 			{
-				return (IEnumerable<Content>) _historyParser.Content.Many().End().Parse(input);
+				return _historyParser.ContentItem.Many().End().Parse(input);
 			}
 			catch (Exception e)
 			{
@@ -48,9 +48,9 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			}
 		}
 
-		private static IEnumerable<Content> fakeContent(string input)
+		private static IEnumerable<Line> fakeContent(string input)
 		{
-			return new[] {new Content {Text = input}};
+			return new[] {new Line {Text = input}};
 		}
 
 		private static EmailLog fakeEmailLog(string input)
@@ -58,7 +58,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			return new EmailLog
 			{
 				Header = new EmailHeader { Headers = new EmailHeaderItem[0] },
-				Items = new[] {new Content {Text = input}}
+				Items = new[] {new Line {Text = input}}
 			};
 		}
 	}

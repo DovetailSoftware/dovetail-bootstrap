@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -90,7 +91,13 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 
 		private static void renderItem(IItem item, StringBuilder output)
 		{
-			output.AppendLine("<p>{0}</p>".ToFormat(item));
+			if (!item.GetType().CanBeCastTo<IRenderHtml>())
+			{
+				throw new ArgumentException("IItem {0} type has no HTML rendering mechanism".ToFormat(item.GetType()));
+			}
+		
+			var htmlRenderer = (IRenderHtml) item;
+			output.AppendLine(htmlRenderer.RenderHtml());
 		}
 	}
 }

@@ -57,7 +57,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 			const string input = HistoryParsers.BEGIN_EMAIL_LOG_HEADER + "to: kmiller@dovetailsoftware.com\r\n" + HistoryParsers.END_EMAIL_LOG_HEADER + "item1\rOn some day, Kevin Miller wrote:\r\noriginal item 1\r\nto: adude@needs.com\r\nfrom: kmiller@dt.com";
 			
 			var items = _itemParser.ParseEmailLog(input).Items.ToArray();
-			items[0].GetType().CanBeCastTo<Content>().ShouldBeTrue();
+			items[0].GetType().CanBeCastTo<Line>().ShouldBeTrue();
 			items[1].GetType().CanBeCastTo<OriginalMessage>().ShouldBeTrue();
 
 			var original = (OriginalMessage)items[1];
@@ -76,7 +76,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 			emailLog.Header.Headers.Count().ShouldEqual(0);
 			emailLog.Items.Count().ShouldEqual(1);
 			var item = emailLog.Items.First();
-			((Content) item).Text.ShouldEqual(input);
+			((Line) item).Text.ShouldEqual(input);
 		}
 
 		[Test]

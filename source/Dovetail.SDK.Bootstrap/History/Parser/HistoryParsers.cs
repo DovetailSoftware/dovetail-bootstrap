@@ -12,13 +12,23 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 	{
 	}
 
-	public class Content : IItem
+	public interface IRenderHtml
+	{
+		string RenderHtml();
+	}
+
+	public class Line : IItem, IRenderHtml
 	{
 		public string Text { get; set; }
 
 		public override string ToString()
 		{
 			return Text;
+		}
+
+		public string RenderHtml()
+		{
+			return Text + "<br/>";
 		}
 	}
 
@@ -101,13 +111,11 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 		public const string BEGIN_EMAIL_LOG_HEADER = "__BEGIN EMAIL_HEADER\r\n";
 		public const string END_EMAIL_LOG_HEADER = "__END EMAIL_HEADER\r\n";
 		public const string BEGIN_ISODATE_HEADER = "__BEGIN_ISODATE_HEADER__";
-		public const string END_OF_PARAGRAPH = "__EOP__";
 
 		public static readonly Parser<string> HardRule =
 			from text in Parse.Char('-').Many().Text().Token()
 			select text;
 
-		//public static readonly Parser<string> EndOfLine = Parse.CharExcept(c => c == '\r' || c == '\n', "start of line ending");
 		public static readonly Parser<char> UntilEndOfLine = Parse.CharExcept(c => c == '\r' || c == '\n', "start of line ending");
 		public static readonly Parser<IEnumerable<char>> WhiteSpace = Parse.WhiteSpace.Many().Or(Parse.String("&#160;"));
 
@@ -120,21 +128,21 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			from lines in BlockQuoteLine.Many()
 			select new BlockQuote {Lines = lines};
 
-		public Parser<IItem> Content
+		public Parser<IItem> Line
 		{
 			get
 			{
 				return from _1 in WhiteSpace
 					from text in UntilEndOfLine.Many().Text().Token()
-					select new Content {Text = text.TrimEnd()};
+					select new Line {Text = text.TrimEnd()};
 			}
 		}
 
-		public Parser<IItem> Paragraph
+		public Parser<IItem> ParagraphEnd
 		{
 			get
 			{
-				return Parse.String(END_OF_PARAGRAPH).Select(p=>(IItem)new ParagraphEnd());
+				return Parse.String(ParagraphEndLocator.ENDOFPARAGRAPHTOKEN).Select(p=>(IItem)new ParagraphEnd());
 			}
 		}
 		
@@ -153,7 +161,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			get
 			{
 				return from header in OriginalMessageHeader
-					from items in Item().Many()
+					from items in EmailItem.Many()
 					select new OriginalMessage {Header = header, Items = items};
 			}
 		}
@@ -208,26 +216,31 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			}
 		}
 
+		public Parser<IItem> ContentItem
+		{
+			get { return from items in ParagraphEnd.Or(Line) select items; }
+		}
+
+		public Parser<IItem> EmailItem
+		{
+			get
+			{
+				return from items in Parse.Ref(() => OriginalMessage).Select(n => (IItem) n)
+					.Or(EmailHeader)
+					.Or(BlockQuote)
+					.Or(ContentItem)
+					select items;
+			}
+		}
+
 		public Parser<EmailLog> LogEmail
 		{
 			get
 			{
 				return from header in LogEmailHeader
-					from items in Item().Many()
-					select new EmailLog {Header = header, Items = items};
+					   from items in EmailItem.Many()
+					   select new EmailLog { Header = header, Items = items };
 			}
 		}
-
-		public Parser<IItem> Item()
-		{
-			return from items in Parse.Ref(() =>OriginalMessage).Select(n => (IItem) n)
-				.Or(EmailHeader)
-				.Or(BlockQuote)
-				.Or(Paragraph)
-				.Or(Content)
-				select items;
-		}
-
 	}
-
 }

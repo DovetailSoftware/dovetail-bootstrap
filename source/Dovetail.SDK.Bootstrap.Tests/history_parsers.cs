@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Dovetail.SDK.Bootstrap.History.Configuration;
@@ -10,16 +9,6 @@ using Sprache;
 
 namespace Dovetail.SDK.Bootstrap.Tests
 {
-	public static class ItemArrayExtension
-	{
-		public static void WriteToConsole(this IItem[] items)
-		{
-			var cnt = 0;
-
-			items.Each(i => Console.WriteLine("{0}: {1}", ++cnt, i));
-		}
-	}
-
 	[TestFixture]
 	public class history_parsers
 	{
@@ -36,7 +25,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		{
 			const string input = "line1\nline2";
 
-			var item = _parser.Item().Parse(input);
+			var item = _parser.EmailItem.Parse(input);
 
 			item.ToString().ShouldEqual("line1");
 		}
@@ -44,9 +33,9 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		[Test]
 		public void detect_paragraph_end()
 		{
-			const string input = HistoryParsers.END_OF_PARAGRAPH;
+			const string input = ParagraphEndLocator.ENDOFPARAGRAPHTOKEN;
 
-			var p = _parser.Paragraph.Parse(input);
+			var p = _parser.ParagraphEnd.Parse(input);
 
 			p.ShouldBeOfType<ParagraphEnd>();
 		}
@@ -54,9 +43,11 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		[Test]
 		public void detect_items_having_paragraph_end()
 		{
-			const string input = "line1\n" + HistoryParsers.END_OF_PARAGRAPH + "\nline2";
+			const string input = "line1\n" + ParagraphEndLocator.ENDOFPARAGRAPHTOKEN + "\nline2";
 
-			var items = _parser.Item().Many().Parse(input).ToArray();
+			var items = _parser.EmailItem.Many().Parse(input).ToArray();
+
+			items.WriteToConsole();
 
 			items[0].ToString().ShouldEqual("line1");
 			items[1].ShouldBeOfType<ParagraphEnd>();
@@ -68,7 +59,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		{
 			const string input = "line1\r\n&#160;\r\nline2";
 
-			var items = _parser.Item().Many().Parse(input).ToArray();
+			var items = _parser.EmailItem.Many().Parse(input).ToArray();
 
 			items[0].ToString().ShouldEqual("line1");
 			items[1].ToString().ShouldEqual("line2");
@@ -79,7 +70,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		{
 			const string input = "   line1 \r\n   line2    ";
 
-			var items = _parser.Item().Many().Parse(input).ToArray();
+			var items = _parser.EmailItem.Many().Parse(input).ToArray();
 
 			items[0].ToString().ShouldEqual("line1");
 			items[1].ToString().ShouldEqual("line2");
@@ -90,7 +81,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		{
 			const string input = "send to: yadda\nto:email@example.com\nsubject:math";
 
-			var item = _parser.Item().Parse(input);
+			var item = _parser.EmailItem.Parse(input);
 
 			var emailHeader = (item as EmailHeader);
 			emailHeader.ShouldNotBeNull();
@@ -102,7 +93,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		{
 			const string input = "from: yadda\r\nan item";
 
-			var item = _parser.Item().Parse(input);
+			var item = _parser.EmailItem.Parse(input);
 
 			var emailHeaderItem = ((EmailHeader) item).Headers.First();
 			emailHeaderItem.Title.ShouldEqual("from");
@@ -114,7 +105,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		{
 			const string input = "FROM: other content\r\nan item";
 
-			var item = _parser.Item().Parse(input);
+			var item = _parser.EmailItem.Parse(input);
 
 			var emailHeaderItem = ((EmailHeader) item).Headers.First();
 			emailHeaderItem.Title.ShouldEqual("FROM");
@@ -126,7 +117,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		{
 			const string input = "FROM: other content\n----------------------\nTo: a gal";
 
-			var item = _parser.Item().Parse(input);
+			var item = _parser.EmailItem.Parse(input);
 
 			var emailHeaders = ((EmailHeader) item).Headers.ToArray();
 
@@ -140,7 +131,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		{
 			const string input = "notaheader: yadda\r\nan item";
 
-			var item = _parser.Item().Parse(input);
+			var item = _parser.EmailItem.Parse(input);
 
 			(item as EmailHeader).ShouldBeNull();
 		}
@@ -150,7 +141,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		{
 			const string input = "line1\n&gt; quote line1\n&gt; quote line2\n&gt; quote line3";
 
-			var items = _parser.Item().Many().End().Parse(input).ToArray();
+			var items = _parser.EmailItem.Many().End().Parse(input).ToArray();
 
 			items.Length.ShouldEqual(2);
 			var blockQuote = (BlockQuote) items[1];
@@ -189,7 +180,7 @@ test received
 		}
 
 		[Test]
-		[Ignore("Would like to have original messages return non Content IItems")]
+		[Ignore("Would like to have original messages return non Line IItems")]
 		public void original_message_from_item_parser()
 		{
 			const string input = @"On Tue, Nov 3, 2009 at 12:34 PM, Sam Tyson <dude@gmail.com> wrote:
@@ -213,7 +204,7 @@ test received
 &gt; Test
 &gt; A Guy";
 
-			var items = _parser.Item().Many().Parse(input).ToArray();
+			var items = _parser.EmailItem.Many().Parse(input).ToArray();
 			items.Length.ShouldEqual(1);
 
 			var originalMessage = (OriginalMessage) items[1];
@@ -273,7 +264,7 @@ SENT: Wednesday, October 30, 2013 10:43 AM";
 
 			var email = _parser.LogEmail.Parse(input);
 			var items = email.Items.ToArray();
-			items[0].ShouldBeOfType<Content>();
+			items[0].ShouldBeOfType<Line>();
 			items[1].ShouldBeOfType<EmailHeader>();
 		}
 	}
