@@ -145,7 +145,9 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 		{
 			get
 			{
-				return Parse.String(ParagraphEndLocator.ENDOFPARAGRAPHTOKEN).Select(p=>(IItem)new ParagraphEnd());
+				return 
+					from eop in Parse.String(ParagraphEndLocator.ENDOFPARAGRAPHTOKEN).Token()
+					select new ParagraphEnd();
 			}
 		}
 		
@@ -241,8 +243,8 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			get
 			{
 				return from header in LogEmailHeader
-					   from items in EmailItem.Many()
-					   select new EmailLog { Header = header, Items = items };
+					from items in EmailItem.Many()
+					select new EmailLog {Header = header, Items = items};
 			}
 		}
 	}
