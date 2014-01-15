@@ -27,7 +27,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		}
 
 		[Test]
-		public void lines_seperated_by_non_paragraph_items_should_be_standalone()
+		public void lines_seperated_by_non_paragraph_items_should_be_collapsed_into_paragraphs()
 		{
 			var items = new IItem[]
 			{
@@ -42,9 +42,9 @@ namespace Dovetail.SDK.Bootstrap.Tests
 
 			results.Length.ShouldEqual(5);
 			results[0].ShouldBeOfType<OriginalMessage>();
-			results[1].ShouldBeOfType<Line>();
+			results[1].ShouldBeOfType<Paragraph>();
 			results[2].ShouldBeOfType<OriginalMessage>();
-			results[3].ShouldBeOfType<Line>();
+			results[3].ShouldBeOfType<Paragraph>();
 			results[4].ShouldBeOfType<OriginalMessage>();
 		}
 
@@ -84,13 +84,11 @@ namespace Dovetail.SDK.Bootstrap.Tests
 			var results = _cut.CollapseContentItems(items).ToArray();
 
 			results.Length.ShouldEqual(1);
-			results.First().ShouldBeOfType<Line>();
-			var line = (Line)results.First();
-			line.Text.ShouldEqual(items[2].ToString());
+			results.First().ShouldBeOfType<Paragraph>();
 		}
 
 		[Test]
-		public void should_leave_lines_without_trailing_paragraph_end_alone()
+		public void should_convert_trailing_lines_into_a_paragraph()
 		{
 			var items = new IItem[]
 			{
@@ -100,9 +98,8 @@ namespace Dovetail.SDK.Bootstrap.Tests
 
 			var results = _cut.CollapseContentItems(items).ToArray();
 
-			results.Length.ShouldEqual(2);
-			results[0].ShouldBeOfType<Line>();
-			results[1].ShouldBeOfType<Line>();
+			results.Length.ShouldEqual(1);
+			results[0].ShouldBeOfType<Paragraph>();
 		}
 
 		[Test]
@@ -114,8 +111,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 				{
 					new Line(),
 					new Line(),
-					new ParagraphEnd(),
-					new Line()
+					new ParagraphEnd()
 				}}
 			};
 
@@ -127,9 +123,8 @@ namespace Dovetail.SDK.Bootstrap.Tests
 			var originalMessage = (OriginalMessage) results[0];
 			var originalMessageItems = originalMessage.Items.ToArray();
 
-			originalMessageItems.Length.ShouldEqual(2);
+			originalMessageItems.Length.ShouldEqual(1);
 			originalMessageItems[0].ShouldBeOfType<Paragraph>();
-			originalMessageItems[1].ShouldBeOfType<Line>();
 		}
 	}
 }

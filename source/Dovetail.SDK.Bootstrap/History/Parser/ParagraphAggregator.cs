@@ -30,7 +30,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 		public IEnumerable<IItem> CollapseContentItems(IEnumerable<IItem> items)
 		{
 			var output = new List<IItem>();
-			var content = new List<Line>();
+			var lines = new List<Line>();
 
 			items.Each(i =>
 			{
@@ -39,27 +39,15 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 				//collect line items for possible collapsing into a paragraph
 				if (itemType.CanBeCastTo<Line>())
 				{
-					content.Add(i as Line);
+					lines.Add(i as Line);
 					return;
 				}
 
-				if (itemType.CanBeCastTo<ParagraphEnd>())
-				{
-					if (content.Count == 0) return; //ignore paragraph ends when there is no leading lines
+				createParagraphIfPossible(output, lines);
 
-					//collapse collected lines when a paragraph end is found
-					output.Add(new Paragraph {Lines = content.ToArray()});
-					content.Clear();
-					return;
-				}
-
-				// before adding non paragraph items clear out the collected content
-				if (content.Count > 0) 
-				{
-					output.AddRange(content);
-					content.Clear();
-				}
-
+				//paragraph ends should be added to the output stream
+				if (itemType.CanBeCastTo<ParagraphEnd>()) return;
+				
 				//when the item has nested items we need to collapse those too
 				if (itemType.CanBeCastTo<IHasNestedItems>())
 				{
@@ -67,12 +55,23 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 					originalMessage.Items = CollapseContentItems(originalMessage.Items);
 				}
 
+				//add item to the non Line item to output
 				output.Add(i);
 			});
 
-			output.AddRange(content);
+			//make sure any collected lines get added to the output
+			createParagraphIfPossible(output, lines);
 
 			return output;
+		}
+
+		private void createParagraphIfPossible(List<IItem> output, List<Line> lines)
+		{
+			if (lines.Count == 0) return; //do nothing when there are no llines collected
+
+			//collapse collected lines into a paragraph
+			output.Add(new Paragraph { Lines = lines.ToArray() });
+			lines.Clear();
 		}
 	}
 }
