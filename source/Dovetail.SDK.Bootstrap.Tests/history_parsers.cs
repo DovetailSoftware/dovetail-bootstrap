@@ -249,11 +249,11 @@ test received
 		public void email_header_with_iso_date()
 		{
 			var isoDate = DateTime.UtcNow.ToString("s", CultureInfo.InvariantCulture);
-			var input = @"__BEGIN EMAIL_HEADER
+			var input = @"__BEGIN EMAIL_HEADER__
 From: annie
 Date: __BEGIN_ISODATE_HEADER__    2013-10-29T14:56:12
 To: mmiller@anotherexample.com
-__END EMAIL_HEADER
+__END EMAIL_HEADER__
 
 fsdafasdfsafsaf
 new sig".ToFormat(HistoryParsers.BEGIN_ISODATE_HEADER, isoDate);
@@ -269,11 +269,11 @@ new sig".ToFormat(HistoryParsers.BEGIN_ISODATE_HEADER, isoDate);
 		[Test]
 		public void email_logs_with_non_breaking_spaces_should_work()
 		{
-			const string input = @"__BEGIN EMAIL_HEADER
+			const string input = @"__BEGIN EMAIL_HEADER__
 Date: __BEGIN_ISODATE_HEADER__2013-10-30T13:09:58
 From: annie@localhost.fcs.local
 To: support@dovetailsoftware.com
-__END EMAIL_HEADER
+__END EMAIL_HEADER__
 Those kittens are adorable.&#160;&#160;&#160;
 &#160;
 SUBJECT: Re: Please create a case - About Case 30822

@@ -111,8 +111,8 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			_settings = settings;
 		}
 
-		public const string BEGIN_EMAIL_LOG_HEADER = "__BEGIN EMAIL_HEADER\r\n";
-		public const string END_EMAIL_LOG_HEADER = "__END EMAIL_HEADER\r\n";
+		public const string BEGIN_EMAIL_LOG_HEADER = "__BEGIN EMAIL_HEADER__";
+		public const string END_EMAIL_LOG_HEADER = "__END EMAIL_HEADER__";
 		public const string BEGIN_ISODATE_HEADER = "__BEGIN_ISODATE_HEADER__";
 
 		public static readonly Parser<string> HardRule =
