@@ -20,7 +20,6 @@ solution = FubuRake::Solution.new do |sln|
 
 	sln.options = @options
 	sln.ripple_enabled = true	
-	sln.defaults = [:integration_test]
 end
 
 ### Edit these settings 
@@ -37,27 +36,6 @@ output :test_assemblies => [:compile] do |out|
 	Dir.glob("**/bin/Debug*/*.*"){ |file|
 		out.file file, :as => "assemblies/#{File.basename(file)}"
 	}	
-end
-
-desc "Run integration tests for any dlls that end with 'tests'"
-nunit :integration_test => [:test_assemblies] do |nunit|	
-
-	#update test assembly config files to have database connection details.
-	Dir.glob("results/assemblies/*{I,i}ntegration.dll.config") { |appConfig|
-		File.open(appConfig) { |c|
-			doc = REXML::Document.new(c)
-			doc.root.elements["/configuration/appSettings/add[@key='DovetailDatabaseSettings.Type']"].attributes['value'] = DATABASE_TYPE
-			doc.root.elements["/configuration/appSettings/add[@key='DovetailDatabaseSettings.ConnectionString']"].attributes['value'] = DATABASE_CONNECTION
-			formatter = REXML::Formatters::Default.new
-			File.open(c, 'w') do |result|
-				formatter.write(doc, result)
-			end
-		}
-	}
-
-	nunit.command = findNunitConsoleExe()
-	nunit.assemblies = Dir.glob("results/assemblies/*{I,i}ntegration.dll").uniq
-	nunit.options '/xml=results/integration-test-results.xml'
 end
 
 def findNunitConsoleExe
