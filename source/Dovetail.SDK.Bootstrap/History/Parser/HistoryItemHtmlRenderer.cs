@@ -21,6 +21,13 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 
 			foreach (var item in items)
 			{
+				if (item.GetType().CanBeCastTo<EmailLog>())
+				{
+					var emailLog = (EmailLog) item;
+					renderEmailLog(emailLog, output);
+					continue;
+				}
+
 				if (item.GetType().CanBeCastTo<EmailHeader>())
 				{
 					renderEmailHeader(item as EmailHeader, output);
@@ -45,28 +52,34 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			return output.ToString();
 		}
 
+		private void renderEmailLog(EmailLog emailLog, StringBuilder output)
+		{
+			output.Append(@"<div class=""history-email-wrapper"">");
+
+			renderEmailHeader(emailLog.Header, output);
+			output.Append(Render(emailLog.Items));
+
+			output.AppendLine("</div>");
+		}
+
 		private static void renderEmailHeader(EmailHeader emailHeader, StringBuilder output)
 		{
 			if (!emailHeader.Headers.Any()) return;
-			output.Append(@"<div class=""history-email-wrapper"">");
+
 			_idIndex += 1;
 			var id = "emailHeader" + _idIndex;
 			output.AppendLine(@"<div id=""{0}"" class=""history-email-header"">".ToFormat(id));
 
-			var rest = emailHeader.Headers.ToArray();
-			if (rest.Any())
+			var headers = emailHeader.Headers.ToArray();
+			output.AppendLine(@"<div class=""history-inline-content""><ul class=""unstyled"">");
+			foreach (var header in headers)
 			{
-				output.AppendLine(@"<div class=""history-inline-content""><ul class=""unstyled"">");
-				foreach (var header in rest)
-				{
-					var headerText = header.Text;
+				var headerText = header.Text;
+				var headerTitle = header.Title.ToLower().Capitalize();
 
-					var headerTitle = header.Title.ToLower().Capitalize();
-
-					output.AppendLine(@"<li><span class=""email-header-name"">{0}</span> <span class=""email-header-text"">{1}</span></li>".ToFormat(headerTitle, headerText));
-				}
-				output.Append(@"</ul></div>");
+				output.AppendLine(@"<li><span class=""email-header-name"">{0}</span> <span class=""email-header-text"">{1}</span></li>".ToFormat(headerTitle, headerText));
 			}
+			output.Append(@"</ul></div>");
 
 			output.AppendLine("</div>");
 		}
@@ -96,9 +109,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 
 			output.AppendLine(@"<div id=""collapse{0}"" class=""accordion-body collapse""><div class=""accordion-inner"">".ToFormat(id));
 			output.Append(Render(message.Items));
-			output.AppendLine(@"</div></div>");
-
-			output.AppendLine(@"</div></div>");
+			output.AppendLine(@"</div></div></div></div>");
 		}
 
 		private static void renderItem(IItem item, StringBuilder output)

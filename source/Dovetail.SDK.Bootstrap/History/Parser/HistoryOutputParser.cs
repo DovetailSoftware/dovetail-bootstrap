@@ -69,11 +69,9 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			output = _paragraphEndLocator.LocateAndReplace(output);
 
 			var emailLog = _itemParser.ParseEmailLog(output);
-			var items = new List<IItem> {emailLog.Header};
-
-			var paragraphedEmailLogItems = _paragraphAggregator.CollapseContentItems(emailLog.Items);
-			items.AddRange(paragraphedEmailLogItems);
-
+			
+			var items = _paragraphAggregator.CollapseContentItems(new IItem[] { emailLog });
+			
 			var result = _itemHtmlRenderer.Render(items);
 
 			return _linkifier.Linkify(result);

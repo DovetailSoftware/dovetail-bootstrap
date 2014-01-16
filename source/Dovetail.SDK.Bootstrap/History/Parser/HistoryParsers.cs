@@ -43,7 +43,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 		public string Text { get; set; }
 	}
 
-	public class EmailLog
+	public class EmailLog : IItem, IHasNestedItems
 	{
 		public EmailHeader Header { get; set; }
 		public IEnumerable<IItem> Items { get; set; }
