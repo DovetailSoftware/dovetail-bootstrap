@@ -193,10 +193,12 @@ namespace Dovetail.SDK.Bootstrap.Tests
             }
         }
 
-        public static void ShouldHaveMatchingContents<T>(this IEnumerable<T> actual, IEnumerable<T> expected)
-        {
-            actual.Except(expected).Any().ShouldBeFalse();
-        }
+		public static void ShouldMatch<T>(this IEnumerable<T> actual, IEnumerable<T> expected)
+		{
+			var differences = actual.Except(expected).ToList();
+
+			Assert.IsFalse(differences.Any(), "Enumerables have differences: {0}".ToFormat(String.Join(",", differences)));
+		}
 
         public static IComparable ShouldBeGreaterThan(this IComparable arg1, IComparable arg2)
         {

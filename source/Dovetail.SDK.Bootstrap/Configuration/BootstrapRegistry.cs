@@ -74,6 +74,7 @@ namespace Dovetail.SDK.Bootstrap.Configuration
 	        For<ILocalizationMissingHandler>().Use<BootstrapLocalizationMissingHandler>();
 
 	        For<IWebApplicationUrl>().Use<AspNetWebApplicationUrl>();
+	        For<IHistoryOriginalMessageConfiguration>().Singleton().Use<HistoryOriginalMessageConfiguration>();
 
             this.ActEntryTemplatePolicies<DefaultActEntryTemplatePolicyRegistry>();
         }

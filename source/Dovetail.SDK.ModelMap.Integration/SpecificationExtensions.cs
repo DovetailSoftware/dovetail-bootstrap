@@ -98,6 +98,13 @@ namespace Dovetail.SDK.ModelMap.Integration
 			return child;
 		}
 
+		public static void ShouldMatch<T>(this IEnumerable<T> actual, IEnumerable<T> expected)
+		{
+			var differences = actual.Except(expected).ToList();
+
+			Assert.IsFalse(differences.Any(), "Enumerables have differences: {0}".ToFormat(String.Join(",", differences)));
+		}
+
 		public static XmlElement DoesNotHaveAttribute(this XmlElement element, string attributeName)
 		{
 			Assert.IsNotNull(element, "The Element is null");

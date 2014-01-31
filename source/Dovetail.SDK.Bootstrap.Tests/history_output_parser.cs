@@ -16,7 +16,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		public void beforeEach()
 		{
 			_logger = MockRepository.GenerateStub<ILogger>();
-			var historyItemParser = new HistoryItemParser(new HistoryParsers(new HistorySettings()), _logger);
+			var historyItemParser = new HistoryItemParser(new HistoryParsers(new HistorySettings(), new HistoryOriginalMessageConfiguration(_logger)), _logger);
 			_cut = new HistoryOutputParser(new ParagraphEndLocator(), new ParagraphAggregator(), historyItemParser, new HistoryItemHtmlRenderer(), new HtmlEncodeOutputEncoder(), new UrlLinkifier());
 		}
 

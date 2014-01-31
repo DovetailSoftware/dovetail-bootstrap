@@ -104,6 +104,7 @@
     <Compile Include="Authentication\current_sdk_user.cs" />
     <Compile Include="clarify_application_factory.cs" />
     <Compile Include="Configuration\fast_type_activator.cs" />
+    <Compile Include="history_original_message_config.cs" />
     <Compile Include="history_output_parser.cs" />
     <Compile Include="history_item_parser.cs" />
     <Compile Include="history_parsers.cs" />

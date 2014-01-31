@@ -82,5 +82,4 @@ namespace Dovetail.SDK.Bootstrap
             return NDC.Push(context);
         }
     }
-
 }

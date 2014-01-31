@@ -11,16 +11,15 @@ using Rhino.Mocks;
 namespace Dovetail.SDK.Bootstrap.Tests
 {
 	[TestFixture]
-	public class history_item_parser
+	public class history_item_parser : Context<HistoryItemParser>
 	{
-		private HistoryItemParser _itemParser;
 		private ILogger _logger;
 
-		[SetUp]
-		public void beforeEach()
+		public override void OverrideMocks()
 		{
 			_logger = MockRepository.GenerateStub<ILogger>();
-			_itemParser = new HistoryItemParser(new HistoryParsers(new HistorySettings()), _logger);
+			var historyParser = new HistoryParsers(new HistorySettings(), new HistoryOriginalMessageConfiguration(_logger));
+			Override(historyParser);
 		}
 
 		[Test]
@@ -28,7 +27,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		{
 			const string input = "item1\r\nitem2\nitem3";
 
-			var items = _itemParser.ParseContent(input).ToArray();
+			var items = _cut.ParseContent(input).ToArray();
 
 			items[0].ToString().ShouldEqual("item1");
 			items[1].ToString().ShouldEqual("item2");
@@ -40,7 +39,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		{
 			const string input = HistoryParsers.BEGIN_EMAIL_LOG_HEADER + "to: kmiller@dovetailsoftware.com\r\n" + HistoryParsers.END_EMAIL_LOG_HEADER + "item2\r\nitem3";
 
-			var emailHeader = _itemParser.ParseEmailLog(input);
+			var emailHeader = _cut.ParseEmailLog(input);
 
 			var emailHeaderItem = emailHeader.Header.Headers.First();
 			emailHeaderItem.Title.ShouldEqual("to");
@@ -56,7 +55,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		{
 			const string input = HistoryParsers.BEGIN_EMAIL_LOG_HEADER + "to: kmiller@dovetailsoftware.com\r\n" + HistoryParsers.END_EMAIL_LOG_HEADER + "item1\rOn some day, Kevin Miller wrote:\r\noriginal item 1\r\nto: adude@needs.com\r\nfrom: kmiller@dt.com";
 			
-			var items = _itemParser.ParseEmailLog(input).Items.ToArray();
+			var items = _cut.ParseEmailLog(input).Items.ToArray();
 			items[0].GetType().CanBeCastTo<Line>().ShouldBeTrue();
 			items[1].GetType().CanBeCastTo<OriginalMessage>().ShouldBeTrue();
 
@@ -71,7 +70,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 			const string input = "__BEGIN EMAIL_HEADER\r\npl-PL_HistoryBuilderTokens:LOG_EMAIL_FROM\r\npl-PL_HistoryBuilderTokens:LOG_EMAIL_DATE\r\npl-PL_HistoryBuilderTokens:LOG_EMAIL_TO\r\n__END EMAIL_HEADER\r\n\n\nThanks, Hank\r\n";
 			_logger.Expect(e => e.LogError(Arg<string>.Matches(s => s.Contains(input)), Arg<Exception>.Is.Anything));
 
-			var emailLog = _itemParser.ParseEmailLog(input);
+			var emailLog = _cut.ParseEmailLog(input);
 
 			emailLog.Header.Headers.Count().ShouldEqual(0);
 			emailLog.Items.Count().ShouldEqual(1);
@@ -86,7 +85,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 
 			_logger.Expect(e => e.LogError(Arg<string>.Matches(s => s.Contains(input)), Arg<Exception>.Is.Anything));
 
-			_itemParser.ParseEmailLog(input);
+			_cut.ParseEmailLog(input);
 
 			_logger.VerifyAllExpectations();
 		}

@@ -10,14 +10,14 @@ using Sprache;
 namespace Dovetail.SDK.Bootstrap.Tests
 {
 	[TestFixture]
-	public class history_parsers
+	public class history_parsers : Context<HistoryParsers>
 	{
-		private HistoryParsers _parser;
-
-		[SetUp]
-		public void beforeEach()
+		public override void OverrideMocks()
 		{
-			_parser = new HistoryParsers(new HistorySettings());
+			var settings = new HistorySettings();
+			Override(settings);
+			var historyOriginalMessageConfiguration = new HistoryOriginalMessageConfiguration(MockFor<ILogger>());
+			Override(historyOriginalMessageConfiguration);
 		}
 
 		[Test]
@@ -25,7 +25,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		{
 			const string input = "line1\nline2";
 
-			var item = _parser.EmailItem.Parse(input);
+			var item = _cut.EmailItem.Parse(input);
 
 			item.ToString().ShouldEqual("line1");
 		}
@@ -35,7 +35,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		{
 			const string input = ParagraphEndLocator.ENDOFPARAGRAPHTOKEN;
 
-			var p = _parser.ParagraphEnd.Parse(input);
+			var p = _cut.ParagraphEnd.Parse(input);
 
 			p.ShouldBeOfType<ParagraphEnd>();
 		}
@@ -45,7 +45,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		{
 			const string input = "\r\n  \n" + ParagraphEndLocator.ENDOFPARAGRAPHTOKEN + "\r\n  \n";
 
-			var p = _parser.ParagraphEnd.Parse(input);
+			var p = _cut.ParagraphEnd.Parse(input);
 
 			p.ShouldBeOfType<ParagraphEnd>();
 		}
@@ -55,10 +55,10 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		{
 			const string input = "&#160; " + ParagraphEndLocator.ENDOFPARAGRAPHTOKEN + "&#160;  ";
 
-			var p = _parser.ParagraphEnd.Parse(input);
+			var p = _cut.ParagraphEnd.Parse(input);
 			p.ShouldBeOfType<ParagraphEnd>();
 
-			var c = _parser.ContentItem.Parse(input);
+			var c = _cut.ContentItem.Parse(input);
 			c.ShouldBeOfType<ParagraphEnd>();
 		}
 
@@ -67,7 +67,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		{
 			const string input = "line1\n" + ParagraphEndLocator.ENDOFPARAGRAPHTOKEN + "\nline2";
 
-			var items = _parser.EmailItem.Many().Parse(input).ToArray();
+			var items = _cut.EmailItem.Many().Parse(input).ToArray();
 
 			items[0].ToString().ShouldEqual("line1");
 			items[1].ShouldBeOfType<ParagraphEnd>();
@@ -79,7 +79,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		{
 			const string input = "line1\r\n&#160;\r\nline2";
 
-			var items = _parser.EmailItem.Many().Parse(input).ToArray();
+			var items = _cut.EmailItem.Many().Parse(input).ToArray();
 
 			items[0].ToString().ShouldEqual("line1");
 			items[1].ToString().ShouldEqual("line2");
@@ -90,7 +90,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		{
 			const string input = "   line1 \r\n   line2    ";
 
-			var items = _parser.EmailItem.Many().Parse(input).ToArray();
+			var items = _cut.EmailItem.Many().Parse(input).ToArray();
 
 			items[0].ToString().ShouldEqual("line1");
 			items[1].ToString().ShouldEqual("line2");
@@ -101,7 +101,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		{
 			const string input = "send to: yadda\nto:email@example.com\nsubject:math";
 
-			var item = _parser.EmailItem.Parse(input);
+			var item = _cut.EmailItem.Parse(input);
 
 			var emailHeader = (EmailHeader) item;
 			emailHeader.ShouldNotBeNull();
@@ -113,7 +113,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		{
 			const string input = "from: yadda\r\nan item";
 
-			var item = _parser.EmailItem.Parse(input);
+			var item = _cut.EmailItem.Parse(input);
 
 			var emailHeaderItem = ((EmailHeader) item).Headers.First();
 			emailHeaderItem.Title.ShouldEqual("from");
@@ -125,7 +125,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		{
 			const string input = "FROM: other content\r\nan item";
 
-			var item = _parser.EmailItem.Parse(input);
+			var item = _cut.EmailItem.Parse(input);
 
 			var emailHeaderItem = ((EmailHeader) item).Headers.First();
 			emailHeaderItem.Title.ShouldEqual("FROM");
@@ -137,7 +137,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		{
 			const string input = "FROM: other content\n----------------------\nTo: a gal";
 
-			var item = _parser.EmailItem.Parse(input);
+			var item = _cut.EmailItem.Parse(input);
 
 			var emailHeaders = ((EmailHeader) item).Headers.ToArray();
 
@@ -151,7 +151,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		{
 			const string input = "notaheader: yadda\r\nan item";
 
-			var item = _parser.EmailItem.Parse(input);
+			var item = _cut.EmailItem.Parse(input);
 
 			(item as EmailHeader).ShouldBeNull();
 		}
@@ -161,7 +161,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		{
 			const string input = "line1\n&gt; quote line1\n&gt; quote line2\n&gt; quote line3";
 
-			var items = _parser.EmailItem.Many().End().Parse(input).ToArray();
+			var items = _cut.EmailItem.Many().End().Parse(input).ToArray();
 
 			items.Length.ShouldEqual(2);
 			var blockQuote = (BlockQuote) items[1];
@@ -192,7 +192,7 @@ test received
 		[Test]
 		public void original_message()
 		{
-			var originalMessage = _parser.OriginalMessage.Parse(originalMessageInput);
+			var originalMessage = _cut.OriginalMessage.Parse(originalMessageInput);
 			originalMessage.Header.ShouldContain("dude@gmail.com");
 
 			verifyOriginalMessage(originalMessage);
@@ -201,7 +201,7 @@ test received
 		[Test]
 		public void email_item_parser_should_return_original_messages()
 		{
-			var items = _parser.EmailItem.Many().Parse(originalMessageInput).ToArray();
+			var items = _cut.EmailItem.Many().Parse(originalMessageInput).ToArray();
 			items.Length.ShouldEqual(1);
 
 			var originalMessage = (OriginalMessage) items[0];
@@ -223,7 +223,7 @@ test received
 			var isoDate = DateTime.UtcNow.ToString("s", CultureInfo.InvariantCulture);
 			var input = @"Date:{0}{1}".ToFormat(HistoryParsers.BEGIN_ISODATE_HEADER, isoDate);
 
-			var emailHeaderItem = _parser.EmailHeaderItem.Parse(input);
+			var emailHeaderItem = _cut.EmailHeaderItem.Parse(input);
 
 			emailHeaderItem.Title.ShouldEqual("Date");
 			emailHeaderItem.Text.ShouldContain("time-format");
@@ -254,7 +254,7 @@ Subject: Re: test
 test received
 ".ToFormat(HistoryParsers.BEGIN_EMAIL_LOG_HEADER, HistoryParsers.BEGIN_ISODATE_HEADER, isoDate, HistoryParsers.END_EMAIL_LOG_HEADER, ParagraphEndLocator.ENDOFPARAGRAPHTOKEN);
 
-			var emailLog = _parser.LogEmail.Parse(input);
+			var emailLog = _cut.LogEmail.Parse(input);
 
 			var emailHeaderItems = emailLog.Header.Headers.ToArray();
 			emailHeaderItems.Count().ShouldEqual(3);
@@ -280,7 +280,7 @@ __END EMAIL_HEADER__
 fsdafasdfsafsaf
 new sig".ToFormat(HistoryParsers.BEGIN_ISODATE_HEADER, isoDate);
 
-			var header = _parser.LogEmailHeader.Parse(input);
+			var header = _cut.LogEmailHeader.Parse(input);
 
 			var headers = header.Headers.ToArray();
 
@@ -302,7 +302,7 @@ SUBJECT: Re: Please create a case - About Case 30822
 TO: admin@localhost.fcs.local
 SENT: Wednesday, October 30, 2013 10:43 AM";
 
-			var email = _parser.LogEmail.Parse(input);
+			var email = _cut.LogEmail.Parse(input);
 			var items = email.Items.ToArray();
 			items[0].ShouldBeOfType<Line>();
 			items[1].ShouldBeOfType<EmailHeader>();

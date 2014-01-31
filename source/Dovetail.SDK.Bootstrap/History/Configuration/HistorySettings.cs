@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Text.RegularExpressions;
 using FubuLocalization;
 
 namespace Dovetail.SDK.Bootstrap.History.Configuration
@@ -8,7 +7,7 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
 	public class HistorySettings
 	{
 		private StringToken[] _logEmailHeaderTokens;
-		
+
 		public HistorySettings()
 		{
 			_logEmailHeaderTokens = new[]
@@ -26,20 +25,6 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
 		public StringToken[] GetLogEmailHeaderTokens()
 		{
 			return _logEmailHeaderTokens;
-		}
-
-		public Regex[] OriginalMessageDetectionExpressions
-		{
-			get
-			{
-				return new[]
-				{
-					new Regex(@"-+\s*Original Message\s*-+", RegexOptions.IgnoreCase), 
-					new Regex(@"On .*,.*wrote:", RegexOptions.IgnoreCase), 
-					new Regex(@"<div style=3D'border:none;border-top:solid #B5C4DF 1.0pt;padding:3.0pt 0in =0in 0in'>", RegexOptions.IgnoreCase),
-					new Regex(@"-+\s*Ursprüngliche Nachricht\s*-+", RegexOptions.IgnoreCase)
-				};
-			}
 		}
 
 		public string LogEmailHeaderKeys

@@ -52,7 +52,7 @@ namespace Dovetail.SDK.Bootstrap.Tests.Authentication
 			[Test]
 			public void queues_are_based_on_sdk_user_model()
 			{
-				_cut.Queues.ShouldHaveMatchingContents(_sdkUser.Queues);
+				_cut.Queues.ShouldMatch(_sdkUser.Queues);
 			}
 
 			[Test]

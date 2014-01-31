@@ -102,6 +102,7 @@
     <Compile Include="Configuration\StructureMapServiceLocator.cs" />
     <Compile Include="Configuration\WebsiteSettings.cs" />
     <Compile Include="DatabaseTime.cs" />
+    <Compile Include="History\Configuration\HistoryOriginalMessageConfiguration.cs" />
     <Compile Include="History\HistoryBuilderTokens.cs" />
     <Compile Include="History\Parser\HistoryOutputParser.cs" />
     <Compile Include="Clarify\UserDataAccess.cs" />

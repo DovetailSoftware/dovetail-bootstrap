@@ -105,10 +105,12 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 	public class HistoryParsers
 	{
 		private readonly HistorySettings _settings;
+		private readonly HistoryOriginalMessageConfiguration _originalMessageConfiguration;
 
-		public HistoryParsers(HistorySettings settings)
+		public HistoryParsers(HistorySettings settings, HistoryOriginalMessageConfiguration originalMessageConfiguration)
 		{
 			_settings = settings;
+			_originalMessageConfiguration = originalMessageConfiguration;
 		}
 
 		public const string BEGIN_EMAIL_LOG_HEADER = "__BEGIN EMAIL_HEADER__";
@@ -158,7 +160,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			get
 			{
 				return from text in UntilEndOfLine.Many().Token().Text()
-					   where _settings.OriginalMessageDetectionExpressions.Any(h => h.IsMatch(text))
+					   where _originalMessageConfiguration.Expressions.Any(h => h.IsMatch(text))
 				select text;
 			}
 		}
