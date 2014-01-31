@@ -40,18 +40,30 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
 		private IEnumerable<Regex> getExpressions()
 		{
 			var configSection = getConfiguationSection();
-
+			IEnumerable<Regex> result;
 			if (configSection == null)
 			{
 				_logger.LogDebug("Could not find a configuration section named '{0}'. Using default original message expressions.".ToFormat(ConfigSectionName));
-				return DefaultOriginalMessageExpressions;
+				result = DefaultOriginalMessageExpressions;
 			}
-
-			return configSection.AllKeys.Select(k =>
+			else
 			{
-				var expression = configSection[k];
-				return new Regex(expression);
-			});
+				result = configSection.AllKeys.Select(k =>
+				{
+					var expression = configSection[k];
+					return new Regex(expression);
+				}).ToArray();
+			}
+			logExpressions(result);
+			return result;
+		}
+
+		private void logExpressions(IEnumerable<Regex> expressions)
+		{
+			var list = expressions.ToList();
+			var expressionText = list.Select(e => e.ToString()).Join("\n");
+
+			_logger.LogDebug("Found {0} regular expressions for original message delimitter detection. Expressions:\n".ToFormat(list.Count, expressionText));
 		}
 
 		public virtual NameValueCollection getConfiguationSection()
