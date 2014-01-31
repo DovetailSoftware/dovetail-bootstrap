@@ -63,7 +63,7 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
 			var list = expressions.ToList();
 			var expressionText = list.Select(e => e.ToString()).Join("\n");
 
-			_logger.LogDebug("Found {0} regular expressions for original message delimitter detection. Expressions:\n".ToFormat(list.Count, expressionText));
+			_logger.LogDebug("Found {0} regular expressions for original message delimitter detection. Expressions:\n{1}".ToFormat(list.Count, expressionText));
 		}
 
 		public virtual NameValueCollection getConfiguationSection()
