@@ -18,14 +18,27 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
 			};
 		}
 
+		public ActEntryTemplate(ActEntryTemplate input)
+		{
+			Code = input.Code;
+			DisplayName = input.DisplayName;
+			ActivityDTOUpdater = input.ActivityDTOUpdater;
+			ActivityDTOEditor = input.ActivityDTOEditor;
+
+			RelatedGenericFields = input.RelatedGenericFields;
+			RelatedGenericRelationName = input.RelatedGenericRelationName;
+
+			HTMLizer = input.HTMLizer;
+		}
+
 		public int Code { get; set; }
 		public StringToken DisplayName { get; set; }
-		public Action<ClarifyDataRow, HistoryItem> ActivityDTOUpdater;
+		public Action<ClarifyDataRow, HistoryItem, ActEntryTemplate> ActivityDTOUpdater;
+		public Action<HistoryItem> ActivityDTOEditor { get; set; }
 
 		public string RelatedGenericRelationName { get; set; }
 		public string[] RelatedGenericFields { get; set; }
 
-		public Action<HistoryItem> ActivityDTOEditor { get; set; }
 		public Action<HistoryItem> HTMLizer { get; set; }
 	}
 
@@ -67,6 +80,7 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
 		/// </summary>
 		/// <param name="mapper">Action which will pull fields off the row related to the act entry and use them to modify the history item.</param>
 		void UpdateActivityDTOWith(Action<ClarifyDataRow, HistoryItem> mapper);
+		void UpdateActivityDTOWith(Action<ClarifyDataRow, HistoryItem, ActEntryTemplate> mapper);
 
 		/// <summary>
 		/// Define an action which will modify the resulting history item.
@@ -88,6 +102,7 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
 		/// </summary>
 		/// <param name="mapper">Action which will pull fields off the row related to the act entry and use them to modify the history item.</param>
 		void UpdateActivityDTOWith(Action<ClarifyDataRow, HistoryItem> mapper);
+		void UpdateActivityDTOWith(Action<ClarifyDataRow, HistoryItem, ActEntryTemplate> mapper);
 
 		/// <summary>
 		/// Define an action which will modify the resulting history item.
@@ -106,6 +121,7 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
 	public interface IAfterRelatedFields
 	{
 		void UpdateActivityDTOWith(Action<ClarifyDataRow, HistoryItem> mapper);
+		void UpdateActivityDTOWith(Action<ClarifyDataRow, HistoryItem, ActEntryTemplate> mapper);
 	}
 
 	public abstract class ActEntryTemplatePolicyExpression : IAfterActEntryCode, IAfterDisplayName, IHasRelatedRow, IAfterRelatedFields, IAfterHtmlizer
@@ -188,6 +204,13 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
 		}
 
 		public void UpdateActivityDTOWith(Action<ClarifyDataRow, HistoryItem> mapper)
+		{
+			var wrappedAction = new Action<ClarifyDataRow, HistoryItem, ActEntryTemplate>((row, item, template) => mapper(row, item));
+
+			_currentActEntryTemplate.ActivityDTOUpdater = wrappedAction;
+		}
+
+		public void UpdateActivityDTOWith(Action<ClarifyDataRow, HistoryItem, ActEntryTemplate> mapper)
 		{
 			_currentActEntryTemplate.ActivityDTOUpdater = mapper;
 		}

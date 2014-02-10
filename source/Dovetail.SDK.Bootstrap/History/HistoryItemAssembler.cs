@@ -115,43 +115,50 @@ namespace Dovetail.SDK.Bootstrap.History
 		{
 			var dto = defaultActivityDTOAssembler(actEntry);
 
-			var actEntryTemplate = actEntry.Template;
+			var template = new ActEntryTemplate(actEntry.Template);
 
-			updateActivityDto(actEntry, dto, templateRelatedGenerics);
+			updateActivityDto(actEntry, dto, template, templateRelatedGenerics);
 
-			if (isActivityDTOEditorPresent(actEntry))
+			if (isActivityDTOEditorPresent(template))
 			{
-				actEntryTemplate.ActivityDTOEditor(dto);
+				template.ActivityDTOEditor(dto);
 			}
 
-			actEntryTemplate.HTMLizer(dto);
+			template.HTMLizer(dto);
 
 			return dto;
 		}
 
-		private void updateActivityDto(ActEntry actEntry, HistoryItem dto, IDictionary<ActEntryTemplate, ClarifyGeneric> templateRelatedGenerics)
+		private bool updateActivityDto(ActEntry actEntry, HistoryItem dto, ActEntryTemplate template,
+			IDictionary<ActEntryTemplate, ClarifyGeneric> templateRelatedGenerics)
 		{
-			if (!isActivityDTOUpdaterPresent(actEntry)) return;
+			if (!isActivityDTOUpdaterPresent(template)) return false;
 
-			var actEntryTemplate = actEntry.Template;
 			var relatedRow = actEntry.ActEntryRecord;
-
-			if (templateRelatedGenerics.ContainsKey(actEntryTemplate))
+			var relatedGenericKey = actEntry.Template;
+			
+			if (templateRelatedGenerics.ContainsKey(relatedGenericKey))
 			{
-				var relatedRows = actEntry.ActEntryRecord.RelatedRows(templateRelatedGenerics[actEntryTemplate]);
+				var relatedRows = actEntry.ActEntryRecord.RelatedRows(templateRelatedGenerics[relatedGenericKey]);
 
+				//when a row related to the act entry was retrieved give that row to the updater.
 				relatedRow = relatedRows.Length > 0 ? relatedRows[0] : null;
 
 				if (relatedRow == null)
 				{
-					_logger.LogWarn("Activity updater for code {0} against object {1}-{2} did not work because no related row for relation {3} was found.".ToFormat(actEntryTemplate.Code, dto.Type, dto.Id, actEntryTemplate.RelatedGenericRelationName));
+					_logger.LogDebug("Activity updater for code {0} against object {1}-{2} did not work because no related row for relation {3} was found."
+							.ToFormat(template.Code, dto.Type, dto.Id, template.RelatedGenericRelationName));
+					return false;
 				}
 			}
 
 			if (relatedRow != null)
 			{
-				actEntryTemplate.ActivityDTOUpdater(relatedRow, dto);
+				template.ActivityDTOUpdater(relatedRow, dto, template);
+				return true;
 			}
+
+			return false;
 		}
 
 		private HistoryItem defaultActivityDTOAssembler(ActEntry actEntry)
@@ -167,14 +174,14 @@ namespace Dovetail.SDK.Bootstrap.History
 			};
 		}
 
-		private static bool isActivityDTOUpdaterPresent(ActEntry actEntry)
+		private static bool isActivityDTOUpdaterPresent(ActEntryTemplate template)
 		{
-			return actEntry.Template.ActivityDTOUpdater != null;
+			return template.ActivityDTOUpdater != null;
 		}
 
-		private static bool isActivityDTOEditorPresent(ActEntry actEntry)
+		private static bool isActivityDTOEditorPresent(ActEntryTemplate template)
 		{
-			return actEntry.Template.ActivityDTOEditor != null;
+			return template.ActivityDTOEditor != null;
 		}
 	}
 }
