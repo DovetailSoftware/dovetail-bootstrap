@@ -121,6 +121,7 @@
     <Compile Include="History\Parser\HistoryParsers.cs" />
     <Compile Include="History\Parser\ParagraphAggregator.cs" />
     <Compile Include="History\Parser\ParagraphEndLocator.cs" />
+    <Compile Include="History\TemplatePolicies\SeekerAttachmentPolicy.cs" />
     <Compile Include="UrlLinkifier.cs" />
     <Compile Include="History\TemplatePolicies\DefaultActEntryTemplatePolicyRegistry.cs" />
     <Compile Include="History\Configuration\HistorySettings.cs" />

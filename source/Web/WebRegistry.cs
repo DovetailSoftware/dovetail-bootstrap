@@ -1,5 +1,4 @@
-﻿using Dovetail.SDK.Bootstrap.Authentication;
-using Dovetail.SDK.Bootstrap.Configuration;
+﻿using Dovetail.SDK.Bootstrap.Configuration;
 using Dovetail.SDK.Fubu.TokenAuthentication.Token;
 using Dovetail.SDK.ModelMap.Configuration;
 using Dovetail.SDK.ModelMap.Registration;

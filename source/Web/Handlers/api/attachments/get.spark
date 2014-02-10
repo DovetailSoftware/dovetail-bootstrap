@@ -1,0 +1,13 @@
+﻿<viewdata model="Bootstrap.Web.Handlers.api.attachments.Attachment" />
+<content:pagehead>
+<h1>Attachment ${Model.Id}</h1>
+</content:pagehead>
+
+<h2>${Model.Title}</h2>
+<p>
+  This attachment is saved at path ${Model.Path}
+</p>
+
+<h3>Not that useful?</h3>
+<p>The action for this page would normally search <strong>Dovetail Seeker</strong> with a query like such <strong>domain:attachment AND id:${Model.Id}</strong>. The result of this search would include a download link. The action would then redirect the user to the download link for the attachment.</p>
+

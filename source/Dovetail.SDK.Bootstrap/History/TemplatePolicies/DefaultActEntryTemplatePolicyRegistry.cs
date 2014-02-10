@@ -8,7 +8,8 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
         {
             DefaultIs<WorkflowActEntryTemplatePolicy>();
             Add<SubcaseActEntryTemplatePolicy>();
-            //Add<SamplePolicy>();
+	        Add<SeekerAttachmentPolicy>();
+	        //Add<SamplePolicy>();
         }
     }
 }
