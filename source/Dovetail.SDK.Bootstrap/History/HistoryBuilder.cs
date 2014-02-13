@@ -7,7 +7,6 @@ using FChoice.Foundation.Clarify;
 using FChoice.Foundation.Filters;
 using FChoice.Foundation.Schema;
 using FubuCore;
-using StructureMap;
 
 namespace Dovetail.SDK.Bootstrap.History
 {
@@ -16,15 +15,14 @@ namespace Dovetail.SDK.Bootstrap.History
 		private readonly IClarifySession _session;
 		private readonly ISchemaCache _schemaCache;
 		private readonly IActEntryTemplatePolicyConfiguration _templatePolicyConfiguration;
-		private readonly IContainer _container;
+		private readonly IHistoryItemAssembler _historyItemAssembler;
 
-		public HistoryBuilder(IClarifySession session, ISchemaCache schemaCache,
-			IActEntryTemplatePolicyConfiguration templatePolicyConfiguration, IContainer container)
+		public HistoryBuilder(IClarifySession session, ISchemaCache schemaCache, IActEntryTemplatePolicyConfiguration templatePolicyConfiguration, IHistoryItemAssembler historyItemAssembler)
 		{
 			_session = session;
 			_schemaCache = schemaCache;
 			_templatePolicyConfiguration = templatePolicyConfiguration;
-			_container = container;
+			_historyItemAssembler = historyItemAssembler;
 		}
 
 		public IEnumerable<HistoryItem> Build(WorkflowObject workflowObject, Filter actEntryFilter)
@@ -57,8 +55,7 @@ namespace Dovetail.SDK.Bootstrap.History
 			var templateDictionary = _templatePolicyConfiguration.RenderPolicies(workflowObject);
 
 			//query generic hierarchy and while using act entry templates transform the results into HistoryItems
-			var assembler = _container.With(templateDictionary).With(workflowObject).GetInstance<HistoryItemAssembler>();
-			return assembler.Assemble(actEntryGeneric);
+			return _historyItemAssembler.Assemble(actEntryGeneric, templateDictionary, workflowObject);
 		}
 	}
 }

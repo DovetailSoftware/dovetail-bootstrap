@@ -51,6 +51,7 @@ namespace Dovetail.SDK.Bootstrap.History
 		public int Id { get; set; }
 		public string Email { get; set; }
 		public string Name { get; set; }
+		public dynamic Custom { get; set; }
 	}
 
 	public class HistoryItemEmployee
@@ -60,6 +61,7 @@ namespace Dovetail.SDK.Bootstrap.History
 		public string Login { get; set; }
 		public string Email { get; set; }
 		public string Name { get; set; }
+		public dynamic Custom { get; set; }
 	}
 
 	public class HistoryViewModel 

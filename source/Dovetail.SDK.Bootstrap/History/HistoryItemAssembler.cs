@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Dovetail.SDK.Bootstrap.Clarify.Extensions;
@@ -8,85 +7,57 @@ using FubuCore;
 
 namespace Dovetail.SDK.Bootstrap.History
 {
-	public class HistoryItemAssembler
+	public interface IHistoryItemAssembler
 	{
-		private readonly IDictionary<int, ActEntryTemplate> _templatesByCode;
-		private readonly WorkflowObject _workflowObject;
-		private readonly ILogger _logger;
+		IEnumerable<HistoryItem> Assemble(ClarifyGeneric actEntryGeneric, IDictionary<int, ActEntryTemplate> templatesByCode, WorkflowObject workflowObject);
+	}
 
-		public HistoryItemAssembler(IDictionary<int, ActEntryTemplate> templatesByCode, WorkflowObject workflowObject, ILogger logger)
+	public class HistoryItemAssembler : IHistoryItemAssembler
+	{
+		private readonly ILogger _logger;
+		private readonly IHistoryEmployeeAssembler _employeeAssembler;
+		private readonly IHistoryContactAssembler _contactAssembler;
+
+		public HistoryItemAssembler(ILogger logger, IHistoryEmployeeAssembler employeeAssembler, IHistoryContactAssembler contactAssembler)
 		{
-			_templatesByCode = templatesByCode;
-			_workflowObject = workflowObject;
 			_logger = logger;
+			_employeeAssembler = employeeAssembler;
+			_contactAssembler = contactAssembler;
 		}
 
-		public IEnumerable<HistoryItem> Assemble(ClarifyGeneric actEntryGeneric)
+		public IEnumerable<HistoryItem> Assemble(ClarifyGeneric actEntryGeneric, IDictionary<int, ActEntryTemplate> templatesByCode, WorkflowObject workflowObject)
 		{
-			var codes = _templatesByCode.Values.Select(d => d.Code).ToArray();
+			var codes = templatesByCode.Values.Select(d => d.Code).ToArray();
 			actEntryGeneric.DataFields.AddRange("act_code", "entry_time", "addnl_info");
 			actEntryGeneric.Filter(f => f.IsIn("act_code", codes));
 
 			//adding related generics expected by any fancy act entry templates
-			var templateRelatedGenerics = traverseRelatedGenerics(actEntryGeneric);
+			var templateRelatedGenerics = traverseRelatedGenerics(actEntryGeneric, templatesByCode);
 
-			var actEntryContactGeneric = actEntryGeneric.TraverseWithFields("act_entry2contact", "first_name", "last_name", "e_mail");
-
-			Func<ClarifyDataRow, HistoryItemContact> contactAssembler = actEntryRecord =>
-			{
-				var contactRows = actEntryRecord.RelatedRows(actEntryContactGeneric);
-				if (contactRows.Length == 0)
-					return null;
-
-				var contactRecord = contactRows[0];
-				var name = "{0} {1}".ToFormat(contactRecord.AsString("first_name"), contactRecord.AsString("last_name"));
-				var email = contactRecord.AsString("e_mail");
-				var id = contactRecord.DatabaseIdentifier();
-
-				return new HistoryItemContact {Name = name, Id = id, Email = email};
-			};
-
-			var actEntryUserGeneric = actEntryGeneric.TraverseWithFields("act_entry2user", "objid", "login_name");
-			var actEntryEmployeeGeneric = actEntryUserGeneric.TraverseWithFields("user2employee", "first_name", "last_name", "e_mail");
-
-			Func<ClarifyDataRow, HistoryItemEmployee> employeeAssembler = actEntryRecord =>
-			{
-				var userRows = actEntryRecord.RelatedRows(actEntryUserGeneric);
-				if (userRows.Length == 0)
-					return new HistoryItemEmployee();
-
-				var userRecord = userRows[0];
-				var login = userRecord.AsString("login_name");
-				var employeeRows = userRecord.RelatedRows(actEntryEmployeeGeneric);
-				if (employeeRows.Length == 0)
-					return new HistoryItemEmployee {Login = login};
-
-				var employeeRecord = employeeRows[0];
-				var name = "{0} {1}".ToFormat(employeeRecord.AsString("first_name"), employeeRecord.AsString("last_name"));
-				var email = employeeRecord.AsString("e_mail");
-				var id = employeeRecord.DatabaseIdentifier();
-
-				return new HistoryItemEmployee
-				{
-					Name = name,
-					Id = id,
-					Login = login,
-					Email = email,
-					PerformedByContact = contactAssembler(actEntryRecord)
-				};
-			};
-
+			_employeeAssembler.TraverseEmployee(actEntryGeneric);
+			_contactAssembler.TraverseContact(actEntryGeneric);
 			actEntryGeneric.Query();
 
-			var actEntryDTOS = assembleActEntryDTOs(actEntryGeneric, _templatesByCode, employeeAssembler);
+			var actEntryDTOS = actEntryGeneric.DataRows().Select(actEntryRecord =>
+			{
+				var code = actEntryRecord.AsInt("act_code");
+				var template = templatesByCode[code];
 
-			return actEntryDTOS.Select(dto => createActivityDTOFromMapper(dto, templateRelatedGenerics)).ToArray();
+				var when = actEntryRecord.AsDateTime("entry_time");
+
+				var detail = actEntryRecord.AsString("addnl_info");
+				var who = _employeeAssembler.Assemble(actEntryRecord, _contactAssembler);
+
+				return new ActEntry { Template = template, When = when, Who = who, AdditionalInfo = detail, ActEntryRecord = actEntryRecord, Type = workflowObject.Type };
+			}).ToList();
+
+			return actEntryDTOS.Select(dto => createActivityDTOFromMapper(dto, workflowObject, templateRelatedGenerics)).ToList();
 		}
 
-		private IDictionary<ActEntryTemplate, ClarifyGeneric> traverseRelatedGenerics(ClarifyGeneric actEntryGeneric)
+		private IDictionary<ActEntryTemplate, ClarifyGeneric> traverseRelatedGenerics(ClarifyGeneric actEntryGeneric, IDictionary<int, ActEntryTemplate> templatesByCode)
 		{
 			var relatedGenericByTemplate = new Dictionary<ActEntryTemplate, ClarifyGeneric>();
-			foreach (var template in _templatesByCode.Values.Where(t => t.RelatedGenericRelationName.IsNotEmpty()))
+			foreach (var template in templatesByCode.Values.Where(t => t.RelatedGenericRelationName.IsNotEmpty()))
 			{
 				var relatedGeneric = actEntryGeneric.TraverseWithFields(template.RelatedGenericRelationName, template.RelatedGenericFields);
 				relatedGenericByTemplate.Add(template, relatedGeneric);
@@ -95,25 +66,9 @@ namespace Dovetail.SDK.Bootstrap.History
 			return relatedGenericByTemplate;
 		}
 
-		private IEnumerable<ActEntry> assembleActEntryDTOs(ClarifyGeneric actEntryGeneric, IDictionary<int, ActEntryTemplate> actEntryTemplatesByCode, Func<ClarifyDataRow, HistoryItemEmployee> employeeAssembler)
+		private HistoryItem createActivityDTOFromMapper(ActEntry actEntry, WorkflowObject workflowObject, IDictionary<ActEntryTemplate, ClarifyGeneric> templateRelatedGenerics)
 		{
-			return actEntryGeneric.DataRows().Select(actEntryRecord =>
-			{
-				var code = actEntryRecord.AsInt("act_code");
-				var template = actEntryTemplatesByCode[code];
-
-				var when = actEntryRecord.AsDateTime("entry_time");
-
-				var detail = actEntryRecord.AsString("addnl_info");
-				var who = employeeAssembler(actEntryRecord);
-
-				return new ActEntry {Template = template, When = when, Who = who, AdditionalInfo = detail, ActEntryRecord = actEntryRecord, Type = _workflowObject.Type};
-			}).ToArray();
-		}
-
-		private HistoryItem createActivityDTOFromMapper(ActEntry actEntry, IDictionary<ActEntryTemplate, ClarifyGeneric> templateRelatedGenerics)
-		{
-			var dto = defaultActivityDTOAssembler(actEntry);
+			var dto = defaultActivityDTOAssembler(actEntry, workflowObject);
 
 			var template = new ActEntryTemplate(actEntry.Template);
 
@@ -129,14 +84,13 @@ namespace Dovetail.SDK.Bootstrap.History
 			return dto;
 		}
 
-		private bool updateActivityDto(ActEntry actEntry, HistoryItem dto, ActEntryTemplate template,
-			IDictionary<ActEntryTemplate, ClarifyGeneric> templateRelatedGenerics)
+		private bool updateActivityDto(ActEntry actEntry, HistoryItem dto, ActEntryTemplate template, IDictionary<ActEntryTemplate, ClarifyGeneric> templateRelatedGenerics)
 		{
 			if (!isActivityDTOUpdaterPresent(template)) return false;
 
 			var relatedRow = actEntry.ActEntryRecord;
 			var relatedGenericKey = actEntry.Template;
-			
+
 			if (templateRelatedGenerics.ContainsKey(relatedGenericKey))
 			{
 				var relatedRows = actEntry.ActEntryRecord.RelatedRows(templateRelatedGenerics[relatedGenericKey]);
@@ -161,11 +115,11 @@ namespace Dovetail.SDK.Bootstrap.History
 			return false;
 		}
 
-		private HistoryItem defaultActivityDTOAssembler(ActEntry actEntry)
+		private HistoryItem defaultActivityDTOAssembler(ActEntry actEntry, WorkflowObject workflowObject)
 		{
 			return new HistoryItem
 			{
-				Id = _workflowObject.Id,
+				Id = workflowObject.Id,
 				Type = actEntry.Type,
 				Title = actEntry.Template.DisplayName,
 				Who = actEntry.Who,

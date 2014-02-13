@@ -104,6 +104,8 @@
     <Compile Include="DatabaseTime.cs" />
     <Compile Include="History\Configuration\HistoryOriginalMessageConfiguration.cs" />
     <Compile Include="History\HistoryBuilderTokens.cs" />
+    <Compile Include="History\HistoryContactAssembler.cs" />
+    <Compile Include="History\HistoryEmployeeAssembler.cs" />
     <Compile Include="History\Parser\HistoryOutputParser.cs" />
     <Compile Include="Clarify\UserDataAccess.cs" />
     <Compile Include="Configuration\BootstrapRegistry.cs" />
