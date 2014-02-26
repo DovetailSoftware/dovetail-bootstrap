@@ -51,7 +51,7 @@ namespace Dovetail.SDK.Bootstrap.History
 				return new ActEntry { Template = template, When = when, Who = who, AdditionalInfo = detail, ActEntryRecord = actEntryRecord, Type = workflowObject.Type };
 			}).ToList();
 
-			return actEntryDTOS.Select(dto => createActivityDTOFromMapper(dto, workflowObject, templateRelatedGenerics)).ToList();
+			return actEntryDTOS.Select(dto => createActivityDTOFromMapper(dto, workflowObject, templateRelatedGenerics)).Where(i=>!i.IsCancelled).ToList();
 		}
 
 		private IDictionary<ActEntryTemplate, ClarifyGeneric> traverseRelatedGenerics(ClarifyGeneric actEntryGeneric, IDictionary<int, ActEntryTemplate> templatesByCode)

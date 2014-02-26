@@ -4,6 +4,8 @@ namespace Dovetail.SDK.Bootstrap.History
 {
     public class HistoryItem
 	{
+	    public bool IsCancelled { get; set; }
+
         /// <summary>
         /// Object Id of the item.
         /// </summary>
