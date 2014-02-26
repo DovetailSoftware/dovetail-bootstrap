@@ -25,8 +25,8 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
 			ActivityDTOUpdater = input.ActivityDTOUpdater;
 			ActivityDTOEditor = input.ActivityDTOEditor;
 
-			RelatedGenericFields = input.RelatedGenericFields;
 			RelatedGenericRelationName = input.RelatedGenericRelationName;
+			RelatedGenericAction = input.RelatedGenericAction;
 
 			HTMLizer = input.HTMLizer;
 		}
@@ -37,7 +37,7 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
 		public Action<HistoryItem> ActivityDTOEditor { get; set; }
 
 		public string RelatedGenericRelationName { get; set; }
-		public string[] RelatedGenericFields { get; set; }
+		public Action<ClarifyGeneric> RelatedGenericAction { get; set; }
 
 		public Action<HistoryItem> HTMLizer { get; set; }
 	}
@@ -68,6 +68,7 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
 	public interface IAfterDisplayName
 	{
 		IHasRelatedRow GetRelatedRecord(string relationName);
+		IAfterRelatedFields GetRelatedRecord(string relationName, Action<ClarifyGeneric> action);
 
 		/// <summary>
 		/// If you wish to customize how the resulting contents of the activity entry get converted to HTML add your own Action here.
@@ -187,6 +188,14 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
 			return this;
 		}
 
+		public IAfterRelatedFields GetRelatedRecord(string relationName, Action<ClarifyGeneric> action)
+		{
+			_currentActEntryTemplate.RelatedGenericAction = action;
+			GetRelatedRecord(relationName);
+
+			return this;
+		}
+
 		public IAfterHtmlizer HtmlizeWith(Action<HistoryItem> htmlizer)
 		{
 			_currentActEntryTemplate.HTMLizer = htmlizer;
@@ -198,7 +207,7 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
 		{
 			validateThereIsARelatedRecord();
 
-			_currentActEntryTemplate.RelatedGenericFields = fieldNames;
+			_currentActEntryTemplate.RelatedGenericAction = g => g.DataFields.AddRange(fieldNames);
 
 			return this;
 		}

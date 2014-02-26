@@ -59,7 +59,8 @@ namespace Dovetail.SDK.Bootstrap.History
 			var relatedGenericByTemplate = new Dictionary<ActEntryTemplate, ClarifyGeneric>();
 			foreach (var template in templatesByCode.Values.Where(t => t.RelatedGenericRelationName.IsNotEmpty()))
 			{
-				var relatedGeneric = actEntryGeneric.TraverseWithFields(template.RelatedGenericRelationName, template.RelatedGenericFields);
+				var relatedGeneric = actEntryGeneric.TraverseWithFields(template.RelatedGenericRelationName);
+				template.RelatedGenericAction(relatedGeneric);
 				relatedGenericByTemplate.Add(template, relatedGeneric);
 			}
 
