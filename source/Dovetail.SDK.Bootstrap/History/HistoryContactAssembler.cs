@@ -21,7 +21,7 @@ namespace Dovetail.SDK.Bootstrap.History
 				return null;
 
 			var contactRecord = contactRows[0];
-			var name = "{0} {1}".ToFormat(contactRecord.AsString("first_namRe"), contactRecord.AsString("last_name"));
+			var name = "{0} {1}".ToFormat(contactRecord.AsString("first_name"), contactRecord.AsString("last_name"));
 			var email = contactRecord.AsString("e_mail");
 			var id = contactRecord.DatabaseIdentifier();
 
