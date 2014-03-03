@@ -5,6 +5,6 @@ namespace Dovetail.SDK.Bootstrap.Configuration
 		public string ApplicationName { get; set; }
 		public string AnonymousAccessFileExtensions { get; set; }
 		public string PublicRootUrl { get; set; }
-		public bool IsPublicRootAVi { get; set; }
+		public bool IsPublicRootVirtual { get; set; }
 	}
 }
