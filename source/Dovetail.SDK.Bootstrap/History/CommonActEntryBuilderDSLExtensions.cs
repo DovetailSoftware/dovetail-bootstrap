@@ -177,8 +177,8 @@ namespace Dovetail.SDK.Bootstrap.History
 
 			var from = record.AsString("sender");
 			var to = record.AsString("recipient");
-			var cclist = record.AsString("cc_list");
-			var subject = doesEmailLogSubjectExist(schemaCache) ? record.AsString("x_subject") : "";
+			var cclist = record.AsString("cc_list").Trim();
+			var subject = doesEmailLogSubjectExist(schemaCache) ? record.AsString("x_subject").Trim() : "";
 			var message = record.AsString("message");
 			var isoDate = record.AsDateTime("creation_time").ToString("s", CultureInfo.InvariantCulture);
 			
