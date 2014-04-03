@@ -8,84 +8,40 @@ namespace Dovetail.SDK.Bootstrap.History
 {
 	public interface IHistoryAssembler
 	{
-		HistoryItem[] GetHistories(string type, string[] ids);
-		HistoryItem[] GetHistoriesSince(string type, string[] ids, DateTime sinceDate);
-
-		HistoryViewModel GetHistory(WorkflowObject workflowObject);
-		HistoryViewModel GetHistoryTop(WorkflowObject workflowObject, int numberOfMostRecentEntries);
-	    HistoryViewModel GetHistorySince(WorkflowObject workflowObject, DateTime sinceDate);
+		HistoryViewModel GetHistory(HistoryRequest request);
 	}
 
-    public class HistoryAssembler : IHistoryAssembler
+	public class HistoryAssembler : IHistoryAssembler
 	{
-	    private readonly IEnumerable<IHistoryAssemblerPolicy> _entityHistoryBuilders;
+		private readonly IEnumerable<IHistoryAssemblerPolicy> _entityHistoryBuilders;
 
-	    public HistoryAssembler(IEnumerable<IHistoryAssemblerPolicy> entityHistoryBuilders)
+		public HistoryAssembler(IEnumerable<IHistoryAssemblerPolicy> entityHistoryBuilders)
 		{
-		    _entityHistoryBuilders = entityHistoryBuilders;
+			_entityHistoryBuilders = entityHistoryBuilders;
 		}
 
-		public HistoryItem[] GetHistoriesSince(string type, string[] ids, DateTime sinceDate)
-    	{
-			return getHistories(type, ids, ()=> new FilterExpression().MoreThan("entry_time", sinceDate));
-    	}
-
-		public HistoryItem[] GetHistories(string type, string[] ids)
+		public HistoryViewModel GetHistory(HistoryRequest request)
 		{
-			return getHistories(type, ids, null);
+			return getHistoryWithConstraint(request);
 		}
 
-		private HistoryItem[] getHistories(string type, string[] ids, Func<Filter> filterFunc)
+		private HistoryViewModel getHistoryWithConstraint(HistoryRequest request)
 		{
-			var workflowObject = WorkflowObject.Create(type, ids.FirstOrDefault());
-			var historyBuilderPolicy = _entityHistoryBuilders.First(policy => policy.Handles(workflowObject));
+			var historyItems = getHistoryItems(request);
 
-			Filter filter = null;
-			if(filterFunc != null)
-			{
-				filter = filterFunc();
-			}
-
-			return historyBuilderPolicy.BuildHistories(type, ids, filter).ToArray();
+			return CreateHistoryModel(request, historyItems);
 		}
 
-
-    	public HistoryViewModel GetHistory(WorkflowObject workflowObject)
+		private IEnumerable<HistoryItem> getHistoryItems(HistoryRequest request)
 		{
-			return getHistoryWithConstraint(workflowObject, null);
+			var historyBuilderPolicy = _entityHistoryBuilders.First(policy => policy.Handles(request.WorkflowObject));
+
+			return historyBuilderPolicy.BuildHistory(request);
 		}
 
-        public HistoryViewModel GetHistorySince(WorkflowObject workflowObject, DateTime sinceDate)
-        {
-            var filter = new FilterExpression().MoreThan("entry_time", sinceDate);
-
-            return getHistoryWithConstraint(workflowObject, filter);
-        }
-
-		public HistoryViewModel GetHistoryTop(WorkflowObject workflowObject, int numberOfMostRecentEntries)
+		private static HistoryViewModel CreateHistoryModel(HistoryRequest request, IEnumerable<HistoryItem> historyItems)
 		{
-            return getHistoryForFirst(workflowObject, null, numberOfMostRecentEntries);
-		}
-
-		private HistoryViewModel getHistoryWithConstraint(WorkflowObject workflowObject, Filter actEntryFilter)
-		{
-            var historyItems = getHistoryItems(workflowObject, actEntryFilter);
-
-            return new HistoryViewModel { WorkflowObject= workflowObject, HistoryItems = historyItems.ToArray() };
-		}
-
-	    private IEnumerable<HistoryItem> getHistoryItems(WorkflowObject workflowObject, Filter actEntryFilter)
-	    {
-	        var historyBuilderPolicy = _entityHistoryBuilders.First(policy => policy.Handles(workflowObject));
-
-            return historyBuilderPolicy.BuildHistory(workflowObject, actEntryFilter);
-	    }
-
-        private HistoryViewModel getHistoryForFirst(WorkflowObject workflowObject, Filter actEntryFilter, int numberOfEntries)
-		{
-            var historyItems = getHistoryItems(workflowObject, actEntryFilter).Take(numberOfEntries);
-
-            return new HistoryViewModel { WorkflowObject = workflowObject, HistoryItems = historyItems.ToArray() };
+			return new HistoryViewModel {WorkflowObject = request.WorkflowObject, AllActivitiesShown = request.ShowAllActivities, HistoryItems = historyItems.ToArray()};
 		}
 	}
 }

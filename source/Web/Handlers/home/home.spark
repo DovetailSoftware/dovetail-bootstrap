@@ -20,7 +20,7 @@ h4 {
       <dl class="listing">
         <for each="var c in Model.Cases">
           <dt>
-            <a class="btn" href="${this.Urls.UrlFor(new Bootstrap.Web.Handlers.api.history.HistoryRequest {Type = 'case', Id = c.Id})}">${c.Id}</a>
+            <a class="btn" href="${this.Urls.UrlFor(new Bootstrap.Web.Handlers.api.history.GETHistoryRequest {Type = 'case', Id = c.Id})}">${c.Id}</a>
             for ${c.ContactName} at ${c.SiteName}
           </dt>
           <dd>${c.Title}</dd>

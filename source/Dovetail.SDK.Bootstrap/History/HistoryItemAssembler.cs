@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Dovetail.SDK.Bootstrap.Clarify.Extensions;
@@ -7,9 +8,17 @@ using FubuCore;
 
 namespace Dovetail.SDK.Bootstrap.History
 {
+	public class HistoryRequest
+	{
+		public WorkflowObject WorkflowObject { get; set; }
+		public bool ShowAllActivities { get; set; }
+		public int? HistoryItemLimit { get; set; }
+		public DateTime? Since { get; set; }
+	}
+
 	public interface IHistoryItemAssembler
 	{
-		IEnumerable<HistoryItem> Assemble(ClarifyGeneric actEntryGeneric, IDictionary<int, ActEntryTemplate> templatesByCode, WorkflowObject workflowObject);
+		IEnumerable<HistoryItem> Assemble(ClarifyGeneric actEntryGeneric, IDictionary<int, ActEntryTemplate> templatesByCode, HistoryRequest historyRequest);
 	}
 
 	public class HistoryItemAssembler : IHistoryItemAssembler
@@ -25,18 +34,27 @@ namespace Dovetail.SDK.Bootstrap.History
 			_contactAssembler = contactAssembler;
 		}
 
-		public IEnumerable<HistoryItem> Assemble(ClarifyGeneric actEntryGeneric, IDictionary<int, ActEntryTemplate> templatesByCode, WorkflowObject workflowObject)
+		public IEnumerable<HistoryItem> Assemble(ClarifyGeneric actEntryGeneric, IDictionary<int, ActEntryTemplate> templatesByCode, HistoryRequest historyRequest)
 		{
 			var codes = templatesByCode.Values.Select(d => d.Code).ToArray();
 			actEntryGeneric.DataFields.AddRange("act_code", "entry_time", "addnl_info");
-			actEntryGeneric.Filter(f => f.IsIn("act_code", codes));
+
+			if (!historyRequest.ShowAllActivities)
+			{
+				actEntryGeneric.Filter(f => f.IsIn("act_code", codes));
+			}
 
 			//adding related generics expected by any fancy act entry templates
 			var templateRelatedGenerics = traverseRelatedGenerics(actEntryGeneric, templatesByCode);
 
 			_employeeAssembler.TraverseEmployee(actEntryGeneric);
 			_contactAssembler.TraverseContact(actEntryGeneric);
+			if (historyRequest.HistoryItemLimit.HasValue)
+			{
+				actEntryGeneric.MaximumRows = historyRequest.HistoryItemLimit.Value;
+			}
 			actEntryGeneric.Query();
+
 
 			var actEntryDTOS = actEntryGeneric.DataRows().Select(actEntryRecord =>
 			{
@@ -48,10 +66,10 @@ namespace Dovetail.SDK.Bootstrap.History
 				var detail = actEntryRecord.AsString("addnl_info");
 				var who = _employeeAssembler.Assemble(actEntryRecord, _contactAssembler);
 
-				return new ActEntry { Template = template, When = when, Who = who, AdditionalInfo = detail, ActEntryRecord = actEntryRecord, Type = workflowObject.Type };
+				return new ActEntry { Template = template, When = when, Who = who, AdditionalInfo = detail, ActEntryRecord = actEntryRecord, Type = historyRequest.WorkflowObject.Type };
 			}).ToList();
 
-			return actEntryDTOS.Select(dto => createActivityDTOFromMapper(dto, workflowObject, templateRelatedGenerics)).Where(i=>!i.IsCancelled).ToList();
+			return actEntryDTOS.Select(dto => createActivityDTOFromMapper(dto, historyRequest.WorkflowObject, templateRelatedGenerics)).Where(i=>!i.IsCancelled).ToList();
 		}
 
 		private IDictionary<ActEntryTemplate, ClarifyGeneric> traverseRelatedGenerics(ClarifyGeneric actEntryGeneric, IDictionary<int, ActEntryTemplate> templatesByCode)

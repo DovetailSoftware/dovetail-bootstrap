@@ -10,39 +10,42 @@ namespace Bootstrap.Web.Handlers.api.history
 {
 	public class get_Type_Id_handler
 	{
-        private readonly IHistoryAssembler _historyAssembler;
-	    private readonly ISystemTime _systemTime;
+		private readonly IHistoryAssembler _historyAssembler;
+		private readonly ISystemTime _systemTime;
 
-	    public get_Type_Id_handler(IHistoryAssembler historyAssembler, ISystemTime systemTime)
-        {
-            _historyAssembler = historyAssembler;
-            _systemTime = systemTime;
-        }
+		public get_Type_Id_handler(IHistoryAssembler historyAssembler, ISystemTime systemTime)
+		{
+			_historyAssembler = historyAssembler;
+			_systemTime = systemTime;
+		}
 
-	    public HistoryViewModel Execute(HistoryRequest request)
-        {
-			var workflowObject = WorkflowObject.Create(request.Type, request.Id); 
-			
-			if (request.DaysOfHistory> 0)
+		public HistoryViewModel Execute(GETHistoryRequest request)
+		{
+			var workflowObject = WorkflowObject.Create(request.Type, request.Id);
+
+			var historyRequest = new HistoryRequest {WorkflowObject = workflowObject};
+
+			if (request.DaysOfHistory > 0)
 			{
-			    var since = _systemTime.Now.Subtract(TimeSpan.FromDays(request.DaysOfHistory));
-            	return _historyAssembler.GetHistorySince(workflowObject, since);
-            }
+				var since = _systemTime.Now.Subtract(TimeSpan.FromDays(request.DaysOfHistory));
+				historyRequest.Since = since;
+			}
 
-        	return _historyAssembler.GetHistory(workflowObject);
-        }
-    }
+			return _historyAssembler.GetHistory(historyRequest);
+		}
+	}
 
-    [Description("Workflow object history")]
-	public class HistoryRequest : IApi 
-    {
-        [Required, Description("Type of workflow object. Typically this is 'case'.")]
-        [AllowableValues("case", "subcase", "solution", "<any workflow object name>")]
-        public string Type { get; set; }
-        [Required, Description("Id of the workflow object.")]
-        public string Id { get; set; }
+	[Description("Workflow object history")]
+	public class GETHistoryRequest : IApi
+	{
+		[Required, Description("Type of workflow object. Typically this is 'case'.")]
+		[AllowableValues("case", "subcase", "solution", "<any workflow object name>")]
+		public string Type { get; set; }
 
-        [Description("Limit the amout of history returned the given number of days. When this parameter is not specified. All history items will be returned.")]
+		[Required, Description("Id of the workflow object.")]
+		public string Id { get; set; }
+
+		[Description("Limit the amout of history returned the given number of days. When this parameter is not specified. All history items will be returned.")]
 		public int DaysOfHistory { get; set; }
-    }
+	}
 }

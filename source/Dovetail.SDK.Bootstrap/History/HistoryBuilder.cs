@@ -25,20 +25,20 @@ namespace Dovetail.SDK.Bootstrap.History
 			_historyItemAssembler = historyItemAssembler;
 		}
 
-		public IEnumerable<HistoryItem> Build(WorkflowObject workflowObject, Filter actEntryFilter)
+		public IEnumerable<HistoryItem> Build(HistoryRequest request)
 		{
 			var clarifyDataSet = _session.CreateDataSet();
 
-			var workflowObjectInfo = WorkflowObjectInfo.GetObjectInfo(workflowObject.Type);
+			var workflowObjectInfo = WorkflowObjectInfo.GetObjectInfo(request.WorkflowObject.Type);
 			var workflowGeneric = clarifyDataSet.CreateGenericWithFields(workflowObjectInfo.ObjectName);
 
 			if (workflowObjectInfo.IDFieldName.IsEmpty() || workflowObjectInfo.IDFieldName == "objid")
 			{
-				workflowGeneric.Filter(f => f.Equals("objid", Convert.ToInt32(workflowObject.Id)));
+				workflowGeneric.Filter(f => f.Equals("objid", Convert.ToInt32(request.WorkflowObject.Id)));
 			}
 			else
 			{
-				workflowGeneric.Filter(f => f.Equals(workflowObjectInfo.IDFieldName, workflowObject.Id));
+				workflowGeneric.Filter(f => f.Equals(workflowObjectInfo.IDFieldName, request.WorkflowObject.Id));
 			}
 
 			var inverseActivityRelation = workflowObjectInfo.ActivityRelation;
@@ -47,15 +47,16 @@ namespace Dovetail.SDK.Bootstrap.History
 			var actEntryGeneric = workflowGeneric.Traverse(activityRelation.Name);
 			actEntryGeneric.AppendSort("entry_time", false);
 
-			if (actEntryFilter != null)
+			if (request.Since.HasValue)
 			{
-				actEntryGeneric.Filter.AddFilter(actEntryFilter);
+				var filter = new FilterExpression().MoreThan("entry_time", request.Since.Value);
+				actEntryGeneric.Filter.AddFilter(filter);
 			}
 
-			var templateDictionary = _templatePolicyConfiguration.RenderPolicies(workflowObject);
+			var templateDictionary = _templatePolicyConfiguration.RenderPolicies(request.WorkflowObject);
 
 			//query generic hierarchy and while using act entry templates transform the results into HistoryItems
-			return _historyItemAssembler.Assemble(actEntryGeneric, templateDictionary, workflowObject);
+			return _historyItemAssembler.Assemble(actEntryGeneric, templateDictionary, request);
 		}
 	}
 }

@@ -4,7 +4,6 @@ using Dovetail.SDK.Bootstrap.Clarify;
 using Dovetail.SDK.Bootstrap.Clarify.Extensions;
 using Dovetail.SDK.Bootstrap.History.Configuration;
 using FChoice.Foundation;
-using FChoice.Foundation.Filters;
 
 namespace Dovetail.SDK.Bootstrap.History.AssemblerPolicies
 {
@@ -27,35 +26,27 @@ namespace Dovetail.SDK.Bootstrap.History.AssemblerPolicies
 			return workflowObject.Type == WorkflowObject.Case;
 		}
 
-		public IEnumerable<HistoryItem> BuildHistory(WorkflowObject workflowObject, Filter actEntryFilter)
+		public IEnumerable<HistoryItem> BuildHistory(HistoryRequest request)
 		{
 			if (!_historySettings.MergeCaseHistoryChildSubcases)
 			{
-				return _historyBuilder.Build(workflowObject, actEntryFilter);
+				return _historyBuilder.Build(request);
 			}
 
-			var subcaseIds = GetSubcaseIds(workflowObject);
+			var subcaseIds = GetSubcaseIds(request.WorkflowObject);
 
-			var caseHistory = _historyBuilder.Build(workflowObject, actEntryFilter);
+			var caseHistory = _historyBuilder.Build(request);
 
 			var subcaseHistories = subcaseIds.Select(id =>
 			{
 				var subcaseWorkflowObject = new WorkflowObject {Type = WorkflowObject.Subcase, Id = id, IsChild = true};
-				return _historyBuilder.Build(subcaseWorkflowObject, actEntryFilter);
-			});
+				var subcaseHistoryRequest = new HistoryRequest {WorkflowObject = subcaseWorkflowObject};
+				return _historyBuilder.Build(subcaseHistoryRequest);
+			}).ToList();
 
 			var results = subcaseHistories.SelectMany(result => result).Concat(caseHistory);
 
 			return results.OrderByDescending(r => r.When);
-		}
-
-		public IEnumerable<HistoryItem> BuildHistories(string type, string[] ids, Filter actEntryFilter)
-		{
-			return ids.SelectMany(id =>
-			{
-				var workflowObject = WorkflowObject.Create(type, id);
-				return BuildHistory(workflowObject, actEntryFilter);
-			});
 		}
 
 		private IEnumerable<string> GetSubcaseIds(WorkflowObject workflowObject)
