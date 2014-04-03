@@ -59,6 +59,8 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
 		/// </summary>
 		IAfterDisplayName DisplayName(StringToken token);
 
+		void UseDefaultPolicy();
+
 		/// <summary>
 		/// Remove this act entry code from the current set of act entry templates
 		/// </summary>
@@ -170,6 +172,14 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
 			_currentActEntryTemplate.DisplayName = token;
 
 			return this;
+		}
+
+		/// <summary>
+		/// This activity code should simply use the default policy. 
+		/// The main reason this is here is to make explicty when policies are defining act codes that should always be part of the history yet have no fancy special handling.
+		/// </summary>
+		public void UseDefaultPolicy()
+		{
 		}
 
 		public void Remove()
