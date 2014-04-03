@@ -27,19 +27,32 @@ namespace Dovetail.SDK.Bootstrap.History
 
 		public IEnumerable<HistoryItem> Build(HistoryRequest request)
 		{
+			return Build(request, (generic, workflowObjectInfo) =>
+			{
+				if (workflowObjectInfo.IDFieldName.IsEmpty() || workflowObjectInfo.IDFieldName == "objid")
+				{
+					generic.Filter(f => f.Equals("objid", Convert.ToInt32(request.WorkflowObject.Id)));
+				}
+				else
+				{
+					generic.Filter(f => f.Equals(workflowObjectInfo.IDFieldName, request.WorkflowObject.Id));
+				}
+			});
+		}
+
+		public IEnumerable<HistoryItem> Build(HistoryRequest request, string[] ids)
+		{
+			return Build(request, (generic,workflowObjectInfo) => generic.Filter(f => f.IsIn(workflowObjectInfo.IDFieldName, ids)));
+		}
+
+		private IEnumerable<HistoryItem> Build(HistoryRequest request, Action<ClarifyGeneric, WorkflowObjectInfo> genericAction)
+		{
 			var clarifyDataSet = _session.CreateDataSet();
 
 			var workflowObjectInfo = WorkflowObjectInfo.GetObjectInfo(request.WorkflowObject.Type);
 			var workflowGeneric = clarifyDataSet.CreateGenericWithFields(workflowObjectInfo.ObjectName);
 
-			if (workflowObjectInfo.IDFieldName.IsEmpty() || workflowObjectInfo.IDFieldName == "objid")
-			{
-				workflowGeneric.Filter(f => f.Equals("objid", Convert.ToInt32(request.WorkflowObject.Id)));
-			}
-			else
-			{
-				workflowGeneric.Filter(f => f.Equals(workflowObjectInfo.IDFieldName, request.WorkflowObject.Id));
-			}
+			genericAction(workflowGeneric, workflowObjectInfo);
 
 			var inverseActivityRelation = workflowObjectInfo.ActivityRelation;
 			var activityRelation = _schemaCache.GetRelation("act_entry", inverseActivityRelation).InverseRelation;
@@ -56,7 +69,7 @@ namespace Dovetail.SDK.Bootstrap.History
 			var templateDictionary = _templatePolicyConfiguration.RenderPolicies(request.WorkflowObject);
 
 			//query generic hierarchy and while using act entry templates transform the results into HistoryItems
-			return _historyItemAssembler.Assemble(actEntryGeneric, templateDictionary, request);
+			return _historyItemAssembler.Assemble(actEntryGeneric, templateDictionary, request);						
 		}
 	}
 }

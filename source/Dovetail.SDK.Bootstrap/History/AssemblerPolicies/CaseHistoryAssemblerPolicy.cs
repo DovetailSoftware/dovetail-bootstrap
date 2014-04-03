@@ -33,18 +33,20 @@ namespace Dovetail.SDK.Bootstrap.History.AssemblerPolicies
 				return _historyBuilder.Build(request);
 			}
 
-			var subcaseIds = GetSubcaseIds(request.WorkflowObject);
+			var subcaseIds = GetSubcaseIds(request.WorkflowObject).ToArray();
 
 			var caseHistory = _historyBuilder.Build(request);
 
-			var subcaseHistories = subcaseIds.Select(id =>
+			if (!subcaseIds.Any())
 			{
-				var subcaseWorkflowObject = new WorkflowObject {Type = WorkflowObject.Subcase, Id = id, IsChild = true};
-				var subcaseHistoryRequest = new HistoryRequest {WorkflowObject = subcaseWorkflowObject};
-				return _historyBuilder.Build(subcaseHistoryRequest);
-			}).ToList();
+				return caseHistory;
+			}
 
-			var results = subcaseHistories.SelectMany(result => result).Concat(caseHistory);
+			var subcaseWorkflowObject = new WorkflowObject {Type = WorkflowObject.Subcase, Id = subcaseIds.First(), IsChild = true};
+			request.WorkflowObject = subcaseWorkflowObject;
+			var subcaseHistories = _historyBuilder.Build(request, subcaseIds);
+
+			var results = subcaseHistories.Concat(caseHistory);
 
 			return results.OrderByDescending(r => r.When);
 		}
