@@ -170,15 +170,15 @@ namespace Dovetail.SDK.Bootstrap.History
 		{
 			return schemaCache.IsValidField("email_log", "x_subject");
 		}
-
+	
 		private static void emailLogUpdater(ClarifyDataRow record, HistoryItem historyItem, ISchemaCache schemaCache)
 		{
 			var log = new StringBuilder();
 
 			var from = record.AsString("sender");
 			var to = record.AsString("recipient");
-			var cclist = record.AsString("cc_list").Trim();
-			var subject = doesEmailLogSubjectExist(schemaCache) ? record.AsString("x_subject").Trim() : "";
+			var cclist = record.AsTrimmedString("cc_list");
+			var subject = doesEmailLogSubjectExist(schemaCache) ? record.AsTrimmedString("x_subject") : "";
 			var message = record.AsString("message");
 			var isoDate = record.AsDateTime("creation_time").ToString("s", CultureInfo.InvariantCulture);
 			

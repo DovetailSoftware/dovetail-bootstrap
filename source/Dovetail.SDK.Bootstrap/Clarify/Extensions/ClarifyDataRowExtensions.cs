@@ -18,6 +18,13 @@ namespace Dovetail.SDK.Bootstrap.Clarify.Extensions
 			return row[fieldName] == DBNull.Value ? null : row[fieldName].ToString();
 		}
 
+		public static string AsTrimmedString(this ClarifyDataRow row, string fieldName)
+		{
+			var result = AsString(row, fieldName);
+
+			return (result ?? "").Trim();
+		}
+
 		public static int AsInt(this ClarifyDataRow row, string fieldName)
 		{
 			return row[fieldName] == DBNull.Value ? 0 : Convert.ToInt32(row[fieldName]);
