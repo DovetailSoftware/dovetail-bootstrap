@@ -51,8 +51,8 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 				//when the item has nested items we need to collapse those too
 				if (itemType.CanBeCastTo<IHasNestedItems>())
 				{
-					var originalMessage = (IHasNestedItems)i;
-					originalMessage.Items = CollapseContentItems(originalMessage.Items);
+					var hasNestedItems = (IHasNestedItems)i;
+					hasNestedItems.Items = CollapseContentItems(hasNestedItems.Items);
 				}
 
 				//add item to the non Line item to output
