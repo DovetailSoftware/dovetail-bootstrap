@@ -9,11 +9,16 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
 	{
 		private readonly ISchemaCache _schemaCache;
 		private readonly IHistoryOutputParser _parser;
+		private readonly HistorySettings _historySettings;
 
-		public WorkflowActEntryTemplatePolicy(ISchemaCache schemaCache, IHistoryOutputParser parser) : base(parser)
+		public WorkflowActEntryTemplatePolicy(ISchemaCache schemaCache, 
+			IHistoryOutputParser parser, 
+			HistorySettings historySettings) 
+			: base(parser)
 		{
 			_schemaCache = schemaCache;
 			_parser = parser;
+			_historySettings = historySettings;
 		}
 
 		protected override void DefineTemplate(WorkflowObject workflowObject)
@@ -39,7 +44,6 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
 			ActEntry(2400).DisplayName(HistoryBuilderTokens.REOPENED)
 				.EditActivityDTO(dto => { dto.Detail = "{0} {1}".ToFormat(HistoryBuilderTokens.REOPENED, dto.Detail); });
 			ActEntry(4100).DisplayName(HistoryBuilderTokens.YANKED);
-			ActEntry(4200).DisplayName(HistoryBuilderTokens.SUBCASE_REOPENED);
 			ActEntry(7200).DisplayName(HistoryBuilderTokens.SUBCASE_CREATED_ADMINISTRATIVE);
 
 			//TODO add policy for attachment adds for: Seeker attachment downloads, url rewriting, plain
@@ -51,8 +55,12 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
 			ActEntry(4000).DisplayName(HistoryBuilderTokens.SOLUTION_UNLINKED);
 			ActEntry(9200).DisplayName(HistoryBuilderTokens.INITIAL_RESPONSE);
 
-			ActEntry(3000).DisplayName(HistoryBuilderTokens.SUBCASE_CREATED);
-			ActEntry(3100).DisplayName(HistoryBuilderTokens.SUBCASE_CLOSED);
+			if (_historySettings.MergeCaseHistoryChildSubcases == false)
+			{
+				ActEntry(3000).DisplayName(HistoryBuilderTokens.SUBCASE_CREATED);
+				ActEntry(3100).DisplayName(HistoryBuilderTokens.SUBCASE_CLOSED);
+				ActEntry(4200).DisplayName(HistoryBuilderTokens.SUBCASE_REOPENED);
+			}
 
 			this.TimeAndExpenseEdittedActEntry();
 			this.StatusChangedActEntry();
