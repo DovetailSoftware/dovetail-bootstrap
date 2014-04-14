@@ -170,8 +170,8 @@ namespace Dovetail.SDK.Bootstrap.History
 		{
 			return schemaCache.IsValidField("email_log", "x_subject");
 		}
-	
-		private static void emailLogUpdater(ClarifyDataRow record, HistoryItem historyItem, ISchemaCache schemaCache)
+
+		public static void emailLogUpdater(ClarifyDataRow record, HistoryItem historyItem, ISchemaCache schemaCache)
 		{
 			var log = new StringBuilder();
 

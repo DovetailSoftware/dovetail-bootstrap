@@ -17,22 +17,22 @@ namespace Dovetail.SDK.ModelMap.Integration
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
-		    Container = new Container(cfg =>
-		                                  {
-		                                      cfg.Scan(x =>
-		                                                   {
-		                                                       x.TheCallingAssembly();
-															   x.AssemblyContainingType<DovetailDatabaseSettings>();
-															   x.AssemblyContainingType<DovetailMappingException>();
-		                                                       x.ConnectImplementationsToTypesClosing(typeof (ModelMap<>));
-															   x.Convention<SettingsScanner>();
-															   x.WithDefaultConventions();
-		                                                   });
+			Container = new Container(cfg =>
+			{
+				cfg.Scan(x =>
+				{
+					x.TheCallingAssembly();
+					x.AssemblyContainingType<DovetailDatabaseSettings>();
+					x.AssemblyContainingType<DovetailMappingException>();
+					x.ConnectImplementationsToTypesClosing(typeof (ModelMap<>));
+					x.Convention<SettingsScanner>();
+					x.WithDefaultConventions();
+				});
 
-											  cfg.AddRegistry<BootstrapRegistry>();
-											  cfg.AddRegistry<ModelMapperRegistry>();
-											  cfg.AddRegistry<SettingsProviderRegistry>();
-		                                  });
+				cfg.AddRegistry<BootstrapRegistry>();
+				cfg.AddRegistry<ModelMapperRegistry>();
+				cfg.AddRegistry<SettingsProviderRegistry>();
+			});
 
 			AdministratorClarifySession = Container.GetInstance<IApplicationClarifySession>();
 

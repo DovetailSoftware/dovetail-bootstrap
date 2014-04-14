@@ -80,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assembling_dtos.cs" />
+    <Compile Include="email_log_updater.cs" />
     <Compile Include="List_values_from_hgbst_list.cs" />
     <Compile Include="MapFixture.cs" />
     <Compile Include="Mapping_from_table.cs" />
