@@ -41,10 +41,15 @@ namespace Dovetail.SDK.Bootstrap.History.AssemblerPolicies
 			{
 				return caseHistory;
 			}
-
 			var subcaseWorkflowObject = new WorkflowObject {Type = WorkflowObject.Subcase, Id = subcaseIds.First(), IsChild = true};
-			request.WorkflowObject = subcaseWorkflowObject;
-			var subcaseHistories = _historyBuilder.Build(request, subcaseIds);
+			var subcaseHistoryRequest = new HistoryRequest
+			{
+				HistoryItemLimit = request.HistoryItemLimit,
+				WorkflowObject = subcaseWorkflowObject,
+				Since = request.Since,
+				ShowAllActivities = request.ShowAllActivities
+			};
+			var subcaseHistories = _historyBuilder.Build(subcaseHistoryRequest, subcaseIds);
 
 			var results = subcaseHistories.Concat(caseHistory);
 
