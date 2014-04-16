@@ -23,7 +23,7 @@ namespace Bootstrap.Web.Handlers.api.history
 		{
 			var workflowObject = WorkflowObject.Create(request.Type, request.Id);
 
-			var historyRequest = new HistoryRequest {WorkflowObject = workflowObject};
+			var historyRequest = new HistoryRequest {WorkflowObject = workflowObject, ShowAllActivities = request.IsVerbose};
 
 			if (request.DaysOfHistory > 0)
 			{
@@ -47,5 +47,7 @@ namespace Bootstrap.Web.Handlers.api.history
 
 		[Description("Limit the amout of history returned the given number of days. When this parameter is not specified. All history items will be returned.")]
 		public int DaysOfHistory { get; set; }
+
+		public bool IsVerbose { get; set; }
 	}
 }

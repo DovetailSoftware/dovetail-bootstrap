@@ -4,7 +4,9 @@ using System.Linq;
 using Dovetail.SDK.Bootstrap.Clarify.Extensions;
 using Dovetail.SDK.Bootstrap.History.Configuration;
 using FChoice.Foundation.Clarify;
+using FChoice.Foundation.Clarify.DataObjects;
 using FubuCore;
+using FubuLocalization;
 
 namespace Dovetail.SDK.Bootstrap.History
 {
@@ -26,12 +28,14 @@ namespace Dovetail.SDK.Bootstrap.History
 		private readonly ILogger _logger;
 		private readonly IHistoryEmployeeAssembler _employeeAssembler;
 		private readonly IHistoryContactAssembler _contactAssembler;
+		private readonly IListCache _listCache;
 
-		public HistoryItemAssembler(ILogger logger, IHistoryEmployeeAssembler employeeAssembler, IHistoryContactAssembler contactAssembler)
+		public HistoryItemAssembler(ILogger logger, IHistoryEmployeeAssembler employeeAssembler, IHistoryContactAssembler contactAssembler, IListCache listCache)
 		{
 			_logger = logger;
 			_employeeAssembler = employeeAssembler;
 			_contactAssembler = contactAssembler;
+			_listCache = listCache;
 		}
 
 		public IEnumerable<HistoryItem> Assemble(ClarifyGeneric actEntryGeneric, IDictionary<int, ActEntryTemplate> templatesByCode, HistoryRequest historyRequest)
@@ -55,11 +59,11 @@ namespace Dovetail.SDK.Bootstrap.History
 			}
 			actEntryGeneric.Query();
 
-
 			var actEntryDTOS = actEntryGeneric.DataRows().Select(actEntryRecord =>
 			{
 				var code = actEntryRecord.AsInt("act_code");
-				var template = templatesByCode[code];
+
+				var template = findTemplateByActCode(code, templatesByCode);
 
 				var when = actEntryRecord.AsDateTime("entry_time");
 
@@ -70,6 +74,23 @@ namespace Dovetail.SDK.Bootstrap.History
 			}).ToList();
 
 			return actEntryDTOS.Select(dto => createActivityDTOFromMapper(dto, historyRequest.WorkflowObject, templateRelatedGenerics)).Where(i=>!i.IsCancelled).ToList();
+		}
+
+		private ActEntryTemplate findTemplateByActCode(int code, IDictionary<int, ActEntryTemplate> templatesByCode)
+		{
+			if (templatesByCode.ContainsKey(code))
+			{
+				return templatesByCode[code];
+			}
+
+			_logger.LogDebug("No template found for act_code {0}. Using default act entry template.", code);
+			
+			//create a copy of the default template with the code and display name set correctly.
+			var template = new ActEntryTemplate(templatesByCode[ActEntryTemplatePolicyConfiguration.DefaultActEntryTemplateMagicCode])
+			{
+				Code = code,
+			};
+			return template;
 		}
 
 		private IDictionary<ActEntryTemplate, ClarifyGeneric> traverseRelatedGenerics(ClarifyGeneric actEntryGeneric, IDictionary<int, ActEntryTemplate> templatesByCode)
@@ -136,6 +157,25 @@ namespace Dovetail.SDK.Bootstrap.History
 
 		private HistoryItem defaultActivityDTOAssembler(ActEntry actEntry, WorkflowObject workflowObject)
 		{
+			//When the display name is not set use the GBST list to get a localized
+			if (actEntry.Template.DisplayName == null)
+			{
+				var actEntryNameElement = _listCache.GetGbstListElements("Activity Name", false).FirstOrDefault(e=>e.Rank == actEntry.Template.Code);
+
+				string displayName;
+				if (actEntryNameElement == null)
+				{
+					_logger.LogWarn("No entry was found in GBST 'Activity Name' for code {0} (by rank). Using code value as a display name so there is something to show.", actEntry.Template.Code);
+					displayName = Convert.ToString(actEntry.Template.Code);
+				}
+				else
+				{
+					displayName = actEntryNameElement.Title;
+				}
+
+				actEntry.Template.DisplayName = StringToken.FromKeyString("HISTORY_ACTIVITY_NAME_{0}".ToFormat(actEntry.Template.Code), displayName);
+			}
+
 			return new HistoryItem
 			{
 				Id = workflowObject.Id,

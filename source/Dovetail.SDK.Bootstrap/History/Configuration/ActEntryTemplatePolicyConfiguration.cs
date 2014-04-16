@@ -19,6 +19,7 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
         private readonly Type _defaultPolicyType;
         private readonly IContainer _container;
         private readonly Cache<WorkflowObject, IDictionary<int, ActEntryTemplate>> _resultCache = new Cache<WorkflowObject, IDictionary<int, ActEntryTemplate>>();
+	    public const int DefaultActEntryTemplateMagicCode = -999;
 
         public ActEntryTemplatePolicyConfiguration(IEnumerable<Type> policieTypes, Type defaultPolicyType, IContainer container)
         {
@@ -31,6 +32,12 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
         private IDictionary<int, ActEntryTemplate> buildResultsFor(WorkflowObject workflowObject)
         {
             var results = new Dictionary<int, ActEntryTemplate>();
+
+			//Setup default template to be used when act_entries with no template are found in the results
+			//TODO allow better customization of how the default template is defined
+	        var defaultTemplate = _container.GetInstance<ActEntryTemplate>();
+	        defaultTemplate.Code = DefaultActEntryTemplateMagicCode;
+			results.Add(DefaultActEntryTemplateMagicCode, defaultTemplate);
 
             DefaultPolicy.RenderTemplate(workflowObject, results);
 
