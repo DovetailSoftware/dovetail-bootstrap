@@ -96,10 +96,23 @@ namespace Dovetail.SDK.Bootstrap.History
 		private IDictionary<ActEntryTemplate, ClarifyGeneric> traverseRelatedGenerics(ClarifyGeneric actEntryGeneric, IDictionary<int, ActEntryTemplate> templatesByCode)
 		{
 			var relatedGenericByTemplate = new Dictionary<ActEntryTemplate, ClarifyGeneric>();
+			var genericsByRelation = new Dictionary<string, ClarifyGeneric>();
+
 			foreach (var template in templatesByCode.Values.Where(t => t.RelatedGenericRelationName.IsNotEmpty()))
 			{
-				var relatedGeneric = actEntryGeneric.TraverseWithFields(template.RelatedGenericRelationName);
-				template.RelatedGenericAction(relatedGeneric);
+				//avoid traversing the same relation (from actentry) twice.
+				ClarifyGeneric relatedGeneric;
+				if (genericsByRelation.ContainsKey(template.RelatedGenericRelationName))
+				{
+					relatedGeneric = genericsByRelation[template.RelatedGenericRelationName];
+				}
+				else
+				{
+					relatedGeneric = actEntryGeneric.TraverseWithFields(template.RelatedGenericRelationName);
+					template.RelatedGenericAction(relatedGeneric);
+					genericsByRelation.Add(template.RelatedGenericRelationName, relatedGeneric);
+				}
+
 				relatedGenericByTemplate.Add(template, relatedGeneric);
 			}
 
