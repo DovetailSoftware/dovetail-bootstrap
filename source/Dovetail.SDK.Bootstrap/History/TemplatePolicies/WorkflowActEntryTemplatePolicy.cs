@@ -36,11 +36,11 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
 				.GetRelatedRecord("act_entry2close_case")
 				.WithFields("summary")
 				.UpdateActivityDTOWith((row, dto) => { dto.Detail = row["summary"].ToString(); });
-			ActEntry(400).DisplayName(HistoryBuilderTokens.COMMITTMENT_CREATED);
+			ActEntry(400).DisplayName(HistoryBuilderTokens.COMMITMENT_CREATED);
 			ActEntry(600).DisplayName(HistoryBuilderTokens.CREATED);
 			ActEntry(900).DisplayName(HistoryBuilderTokens.DISPATCHED)
 				.EditActivityDTO(dto => { dto.Detail = "{0} {1}".ToFormat(HistoryBuilderTokens.DISPATCHED, dto.Detail); });
-			ActEntry(1600).DisplayName(HistoryBuilderTokens.COMMITTMENT_MODIFED);
+			//ActEntry(1600).DisplayName(HistoryBuilderTokens.COMMITMENT_MODIFED);
 			ActEntry(2400).DisplayName(HistoryBuilderTokens.REOPENED)
 				.EditActivityDTO(dto => { dto.Detail = "{0} {1}".ToFormat(HistoryBuilderTokens.REOPENED, dto.Detail); });
 			ActEntry(4100).DisplayName(HistoryBuilderTokens.YANKED);

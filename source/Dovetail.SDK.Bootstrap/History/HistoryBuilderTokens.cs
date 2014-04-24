@@ -11,8 +11,8 @@ namespace Dovetail.SDK.Bootstrap.History
 		public static readonly StringToken ATTACHMENT_ADDED = new HistoryBuilderTokens("ATTACHMENT_ADDED", "Attachment added");
 		public static readonly StringToken ATTACHMENT_DELETED = new HistoryBuilderTokens("ATTACHMENT_DELETED", "Attachment deleted");
 		public static readonly StringToken CLOSED = new HistoryBuilderTokens("CLOSED", "Closed");
-		public static readonly StringToken COMMITTMENT_CREATED = new HistoryBuilderTokens("COMMITTMENT_CREATED", "Committment created");
-		public static readonly StringToken COMMITTMENT_MODIFED = new HistoryBuilderTokens("COMMITTMENT_MODIFED", "Committment modified");
+		public static readonly StringToken COMMITMENT_CREATED = new HistoryBuilderTokens("COMMITMENT_CREATED", "Commitment created");
+		public static readonly StringToken COMMITMENT_MODIFED = new HistoryBuilderTokens("COMMITMENT_MODIFED", "Commitment modified");
 		public static readonly StringToken CONTACT_CHANGED = new HistoryBuilderTokens("CONTACT_CHANGED", "Contact changed");
 		public static readonly StringToken CREATED = new HistoryBuilderTokens("CREATED", "Created");
 		public static readonly StringToken DISPATCHED = new HistoryBuilderTokens("DISPATCHED", "Dispatched");
