@@ -12,13 +12,15 @@ namespace Dovetail.SDK.Bootstrap.History.AssemblerPolicies
 		private readonly IClarifySession _session;
 		private readonly HistoryBuilder _historyBuilder;
 		private readonly HistorySettings _historySettings;
+		private readonly ILogger _logger;
 
 		public CaseHistoryAssemblerPolicy(IClarifySession session, HistoryBuilder historyBuilder,
-			HistorySettings historySettings)
+			HistorySettings historySettings, ILogger logger)
 		{
 			_session = session;
 			_historyBuilder = historyBuilder;
 			_historySettings = historySettings;
+			_logger = logger;
 		}
 
 		public bool Handles(WorkflowObject workflowObject)
@@ -32,6 +34,8 @@ namespace Dovetail.SDK.Bootstrap.History.AssemblerPolicies
 			{
 				return _historyBuilder.Build(request);
 			}
+
+			_logger.LogDebug("Build merged history for case {0}", request.WorkflowObject.Id);
 
 			var subcaseIds = GetSubcaseIds(request.WorkflowObject).ToArray();
 
@@ -49,6 +53,9 @@ namespace Dovetail.SDK.Bootstrap.History.AssemblerPolicies
 				Since = request.Since,
 				ShowAllActivities = request.ShowAllActivities
 			};
+
+			_logger.LogDebug("Build and merge subcase history for case {0} subcases: {1}", request.WorkflowObject.Id, subcaseIds.Join(","));
+
 			var subcaseHistories = _historyBuilder.Build(subcaseHistoryRequest, subcaseIds);
 
 			var results = subcaseHistories.Concat(caseHistory);

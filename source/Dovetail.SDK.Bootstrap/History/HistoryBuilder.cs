@@ -51,7 +51,11 @@ namespace Dovetail.SDK.Bootstrap.History
 
 			var workflowObjectInfo = WorkflowObjectInfo.GetObjectInfo(request.WorkflowObject.Type);
 			var workflowGeneric = clarifyDataSet.CreateGenericWithFields(workflowObjectInfo.ObjectName);
-
+			if (workflowObjectInfo.HasIDFieldName)
+			{
+				workflowGeneric.DataFields.Add(workflowObjectInfo.IDFieldName);
+			}
+			
 			genericAction(workflowGeneric, workflowObjectInfo);
 
 			var inverseActivityRelation = workflowObjectInfo.ActivityRelation;

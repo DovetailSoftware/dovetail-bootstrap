@@ -44,6 +44,7 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
 
 	public class ActEntry
 	{
+		public string Id { get; set; }
 		public string Type { get; set; }
 		public ClarifyDataRow ActEntryRecord { get; set; }
 		public ActEntryTemplate Template { get; set; }

@@ -4,7 +4,7 @@ using System.Linq;
 using Dovetail.SDK.Bootstrap.Clarify.Extensions;
 using Dovetail.SDK.Bootstrap.History.Configuration;
 using FChoice.Foundation.Clarify;
-using FChoice.Foundation.Clarify.DataObjects;
+using Dovetail.SDK.Bootstrap.Clarify.Extensions;
 using FubuCore;
 using FubuLocalization;
 
@@ -58,22 +58,36 @@ namespace Dovetail.SDK.Bootstrap.History
 				actEntryGeneric.MaximumRows = historyRequest.HistoryItemLimit.Value;
 			}
 			actEntryGeneric.Query();
-
+			
 			var actEntryDTOS = actEntryGeneric.DataRows().Select(actEntryRecord =>
 			{
+				var id = historyRequest.WorkflowObject.Id;
+				if (historyRequest.WorkflowObject.IsChild) 
+				{
+					//child objects are loaded in bulk so historyRequest.WorkflowObject.Id is not the correct id
+					//find the act_entry's parent generic id field value 
+					var info = WorkflowObjectInfo.GetObjectInfo(actEntryGeneric.ParentRelation.TargetName);
+					var parentId = actEntryRecord.AsInt(actEntryGeneric.ParentRelation.Name);
+					var parentRow = actEntryGeneric.ParentGeneric.DataRows().First(r => r.DatabaseIdentifier() == parentId);
+					id = (info.HasIDFieldName) ? parentRow[info.IDFieldName].ToString() : Convert.ToString(parentRow.DatabaseIdentifier());
+				}
+
 				var code = actEntryRecord.AsInt("act_code");
 
-				var template = findTemplateByActCode(code, templatesByCode);
+				return new ActEntry
+				{
+					Id = id,
+					Type = historyRequest.WorkflowObject.Type,
+					Template = findTemplateByActCode(code, templatesByCode),
+					When = actEntryRecord.AsDateTime("entry_time"),
+					Who = _employeeAssembler.Assemble(actEntryRecord, _contactAssembler),
+					AdditionalInfo = actEntryRecord.AsString("addnl_info"),
+					ActEntryRecord = actEntryRecord
+				};
 
-				var when = actEntryRecord.AsDateTime("entry_time");
-
-				var detail = actEntryRecord.AsString("addnl_info");
-				var who = _employeeAssembler.Assemble(actEntryRecord, _contactAssembler);
-
-				return new ActEntry { Template = template, When = when, Who = who, AdditionalInfo = detail, ActEntryRecord = actEntryRecord, Type = historyRequest.WorkflowObject.Type };
 			}).ToList();
 
-			return actEntryDTOS.Select(dto => createActivityDTOFromMapper(dto, historyRequest.WorkflowObject, templateRelatedGenerics)).Where(i=>!i.IsCancelled).ToList();
+			return actEntryDTOS.Select(dto => createActivityDTOFromMapper(dto, templateRelatedGenerics)).Where(i=>!i.IsCancelled).ToList();
 		}
 
 		private ActEntryTemplate findTemplateByActCode(int code, IDictionary<int, ActEntryTemplate> templatesByCode)
@@ -119,9 +133,9 @@ namespace Dovetail.SDK.Bootstrap.History
 			return relatedGenericByTemplate;
 		}
 
-		private HistoryItem createActivityDTOFromMapper(ActEntry actEntry, WorkflowObject workflowObject, IDictionary<ActEntryTemplate, ClarifyGeneric> templateRelatedGenerics)
+		private HistoryItem createActivityDTOFromMapper(ActEntry actEntry, IDictionary<ActEntryTemplate, ClarifyGeneric> templateRelatedGenerics)
 		{
-			var dto = defaultActivityDTOAssembler(actEntry, workflowObject);
+			var dto = defaultActivityDTOAssembler(actEntry);
 
 			var template = new ActEntryTemplate(actEntry.Template);
 
@@ -168,7 +182,7 @@ namespace Dovetail.SDK.Bootstrap.History
 			return false;
 		}
 
-		private HistoryItem defaultActivityDTOAssembler(ActEntry actEntry, WorkflowObject workflowObject)
+		private HistoryItem defaultActivityDTOAssembler(ActEntry actEntry)
 		{
 			//When the display name is not set use the GBST list to get a localized
 			if (actEntry.Template.DisplayName == null)
@@ -191,7 +205,7 @@ namespace Dovetail.SDK.Bootstrap.History
 
 			return new HistoryItem
 			{
-				Id = workflowObject.Id,
+				Id = actEntry.Id,
 				Type = actEntry.Type,
 				Title = actEntry.Template.DisplayName,
 				Who = actEntry.Who,
