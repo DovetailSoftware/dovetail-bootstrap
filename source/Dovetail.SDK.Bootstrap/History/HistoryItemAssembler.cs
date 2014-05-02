@@ -123,10 +123,14 @@ namespace Dovetail.SDK.Bootstrap.History
 				else
 				{
 					relatedGeneric = actEntryGeneric.TraverseWithFields(template.RelatedGenericRelationName);
-					template.RelatedGenericAction(relatedGeneric);
+					if (template.RelatedGenericAction != null)
+					{
+						template.RelatedGenericAction(relatedGeneric);
+					}
 					genericsByRelation.Add(template.RelatedGenericRelationName, relatedGeneric);
 				}
 
+				relatedGeneric.DataFields.AddRange(template.RelatedGenericFields);
 				relatedGenericByTemplate.Add(template, relatedGeneric);
 			}
 

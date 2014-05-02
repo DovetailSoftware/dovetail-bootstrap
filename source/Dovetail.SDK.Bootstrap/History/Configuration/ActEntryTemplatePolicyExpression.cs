@@ -16,6 +16,7 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
 				item.Detail = encoder.Encode(item.Detail);
 				item.Internal = encoder.Encode(item.Internal);
 			};
+			RelatedGenericFields = new string[0];
 		}
 
 		public ActEntryTemplate(ActEntryTemplate input)
@@ -27,7 +28,7 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
 
 			RelatedGenericRelationName = input.RelatedGenericRelationName;
 			RelatedGenericAction = input.RelatedGenericAction;
-
+			RelatedGenericFields = input.RelatedGenericFields;
 			HTMLizer = input.HTMLizer;
 		}
 
@@ -38,8 +39,21 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
 
 		public string RelatedGenericRelationName { get; set; }
 		public Action<ClarifyGeneric> RelatedGenericAction { get; set; }
+		public string[] RelatedGenericFields { get; set; }
 
 		public Action<HistoryItem> HTMLizer { get; set; }
+
+		public override string ToString()
+		{
+			var header = "{0} : {1} ".ToFormat(Code, DisplayName);
+			var relatedGenericAction = "Related Generic Realation : {0}".ToFormat(RelatedGenericRelationName) + ((RelatedGenericAction == null) ? "" : " (has related generic action)");
+			var therest = @"Related Generic:{0}
+Has Updater: {1}
+Has Editor: {2}
+".ToFormat(ActivityDTOUpdater != null, ActivityDTOEditor != null);
+
+			return header + relatedGenericAction + therest;
+		}
 	}
 
 	public class ActEntry
@@ -218,7 +232,7 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
 		{
 			validateThereIsARelatedRecord();
 
-			_currentActEntryTemplate.RelatedGenericAction = g => g.DataFields.AddRange(fieldNames);
+			_currentActEntryTemplate.RelatedGenericFields = fieldNames;
 
 			return this;
 		}
