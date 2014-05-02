@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using FubuCore.Util;
 using StructureMap;
 
 namespace Dovetail.SDK.Bootstrap.History.Configuration
@@ -18,7 +17,6 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
         private readonly IEnumerable<Type> _policieTypes;
         private readonly Type _defaultPolicyType;
         private readonly IContainer _container;
-        private readonly Cache<WorkflowObject, IDictionary<int, ActEntryTemplate>> _resultCache = new Cache<WorkflowObject, IDictionary<int, ActEntryTemplate>>();
 	    public const int DefaultActEntryTemplateMagicCode = -999;
 
         public ActEntryTemplatePolicyConfiguration(IEnumerable<Type> policieTypes, Type defaultPolicyType, IContainer container)
@@ -26,10 +24,9 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
             _policieTypes = policieTypes;
             _defaultPolicyType = defaultPolicyType;
             _container = container;
-            _resultCache.OnMissing = buildResultsFor;
         }
 
-        private IDictionary<int, ActEntryTemplate> buildResultsFor(WorkflowObject workflowObject)
+        private IDictionary<int, ActEntryTemplate> buildTemplatesFor(WorkflowObject workflowObject)
         {
             var results = new Dictionary<int, ActEntryTemplate>();
 
@@ -55,10 +52,12 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
         {
             get { return _container.GetInstance(_defaultPolicyType) as ActEntryTemplatePolicyExpression; }
         }
-
+  
         public IDictionary<int, ActEntryTemplate> RenderPolicies(WorkflowObject workflowObject)
         {
-            return _resultCache[workflowObject];
+	        var templates = buildTemplatesFor(workflowObject);
+
+	        return templates;
         }
     }
 }
