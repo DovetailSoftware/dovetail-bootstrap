@@ -4,7 +4,6 @@ using Dovetail.SDK.Bootstrap.Extensions;
 using Dovetail.SDK.Bootstrap.History.Configuration;
 using Dovetail.SDK.Bootstrap.History.Parser;
 using FChoice.Foundation.Clarify;
-using FChoice.Foundation.Clarify.Workflow;
 using FChoice.Foundation.Schema;
 
 namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
@@ -35,6 +34,14 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
 
 		protected override void DefineTemplate(WorkflowObject workflowObject)
 		{
+			//remove add attachments for merged history
+			if (workflowObject.IsChild)
+			{
+				ActEntry(8900).Remove();
+				ActEntry(9100).Remove();
+				return;
+			}
+
 			//When the workflow object itself has a relation to doc_inst.
 			//Attempt to match the attachment navigating from the act entry to the workflow object and from there down to the doc_path
 			//we look for the attachment whose doc_path.path matches the act_entry_addln_info details.
