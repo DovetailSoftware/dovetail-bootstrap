@@ -6,6 +6,8 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
 {
 	public class HistorySettings
 	{
+		public bool UseDovetailSDKCompatibileAttachmentFinder { get; set; }
+
 		private StringToken[] _logEmailHeaderTokens;
 
 		public HistorySettings()

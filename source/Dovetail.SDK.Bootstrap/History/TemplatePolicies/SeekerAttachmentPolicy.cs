@@ -23,13 +23,19 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
 		private readonly IAttachmentHistoryItemUpdater _attachmentHistoryItemUpdater;
 		private readonly ILogger _logger;
 		private readonly ISchemaCache _schemaCache;
+		private readonly HistorySettings _settings;
 
-		public SeekerAttachmentPolicy(IAttachmentHistoryItemUpdater attachmentHistoryItemUpdater, IHistoryOutputParser historyOutputParser, ILogger logger, ISchemaCache schemaCache)
+		public SeekerAttachmentPolicy(IAttachmentHistoryItemUpdater attachmentHistoryItemUpdater, 
+			IHistoryOutputParser historyOutputParser, 
+			ILogger logger, 
+			ISchemaCache schemaCache, 
+			HistorySettings settings)
 			: base(historyOutputParser)
 		{
 			_attachmentHistoryItemUpdater = attachmentHistoryItemUpdater;
 			_logger = logger;
 			_schemaCache = schemaCache;
+			_settings = settings;
 		}
 
 		protected override void DefineTemplate(WorkflowObject workflowObject)
@@ -48,7 +54,8 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
 			
 			var objectInfo = WorkflowObjectInfo.GetObjectInfo(workflowObject.Type);
 			var table = _schemaCache.Tables[objectInfo.ObjectName];
-			if (table.Relationships.Cast<ISchemaRelation>().Any(r => r.TargetTable.Name == "doc_inst"))
+			if (_settings.UseDovetailSDKCompatibileAttachmentFinder == false 
+				&& table.Relationships.Cast<ISchemaRelation>().Any(r => r.TargetTable.Name == "doc_inst"))
 			{
 				//use the work object info to get the object's relation to actentry
 				//unfortunately the object info doesn't have the relation from the workflow object to doc_inst.
@@ -88,7 +95,7 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
 				return;
 			}
 
-			//This workflow object does not support our fancy attachment history item updater so we use the old navigation via act_entry to doc_inst
+			//Settings dictate or this workflow object does not support our fancy attachment history item updater so we use the old navigation via act_entry to doc_inst
 			//The mechanism only works well when recent versions of Dovetail SDK to create attachments.
 			ActEntry(8900).DisplayName(HistoryBuilderTokens.ATTACHMENT_ADDED)
 				.GetRelatedRecord("act_entry2doc_inst")
