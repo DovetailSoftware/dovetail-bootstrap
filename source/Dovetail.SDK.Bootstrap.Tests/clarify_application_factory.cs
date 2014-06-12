@@ -98,6 +98,8 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		{
 			public static readonly WorkflowObjectInfo Info = new WorkflowObjectInfo("custom1") {IDFieldName = "custom1_id"};
 
+			public string Alias { get; set; }
+
 			public WorkflowObjectInfo Register()
 			{
 				return Info;
@@ -107,6 +109,8 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		public class Custom2MetaData : IWorkflowObjectMetadata
 		{
 			public static readonly WorkflowObjectInfo Info = new WorkflowObjectInfo("custom2") { IDFieldName = "custom2_id" };
+
+			public string Alias { get { return "customAlias"; } set { } }
 
 			public WorkflowObjectInfo Register()
 			{
@@ -120,13 +124,25 @@ namespace Dovetail.SDK.Bootstrap.Tests
 			[Test]
 			public void should_add_info_objects_returned_by_register()
 			{
-				var metadatas = new IWorkflowObjectMetadata[] { new Custom1MetaData(), new Custom2MetaData() };
+				var metadata1 = new Custom1MetaData();
+				var metadatas = new IWorkflowObjectMetadata[] {metadata1};
 				var logger = MockRepository.GenerateMock<ILogger>();
 
 				ClarifyApplicationFactory.RegisterWorkflowMetadata(metadatas, logger);
 
-				WorkflowObjectInfo.GetObjectInfo(Custom1MetaData.Info.ObjectName).ShouldBeTheSameAs(Custom1MetaData.Info);
-				WorkflowObjectInfo.GetObjectInfo(Custom2MetaData.Info.ObjectName).ShouldBeTheSameAs(Custom2MetaData.Info);
+				WorkflowObjectInfo.GetObjectInfo(metadata1.Register().ObjectName).ShouldBeTheSameAs(metadata1.Register());
+			}
+
+			[Test]
+			public void should_add_info_objects_registered_by_alias_when_present()
+			{
+				var metadata2 = new Custom2MetaData();
+				var metadatas = new IWorkflowObjectMetadata[] { metadata2 };
+				var logger = MockRepository.GenerateMock<ILogger>();
+
+				ClarifyApplicationFactory.RegisterWorkflowMetadata(metadatas, logger);
+
+				WorkflowObjectInfo.GetObjectInfo(metadata2.Alias).ShouldBeTheSameAs(metadata2.Register());
 			}
 		}
 	}

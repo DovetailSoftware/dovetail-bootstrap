@@ -6,6 +6,7 @@ using System.Linq;
 using FChoice.Common.State;
 using FChoice.Foundation;
 using FChoice.Foundation.Clarify;
+using FubuCore;
 
 namespace Dovetail.SDK.Bootstrap.Clarify
 {
@@ -77,10 +78,10 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		/// </summary>
 		public static void RegisterWorkflowMetadata(IEnumerable<IWorkflowObjectMetadata> metadatas, ILogger logger)
 		{
-			foreach (var info in metadatas.Select(metadata => metadata.Register()))
+			foreach (var metadata in metadatas)
 			{
-				logger.LogDebug("Registering workflow metadata for object {0}.", info.ObjectName);
-				WorkflowObjectInfo.AddToCache(info);
+				var info = metadata.Register();
+				WorkflowObjectInfo.AddToCache(info, metadata.Alias.IsNotEmpty() ? metadata.Alias : info.ObjectName);
 			}
 		}
 
