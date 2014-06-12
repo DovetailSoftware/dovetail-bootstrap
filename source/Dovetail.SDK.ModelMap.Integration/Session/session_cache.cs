@@ -61,7 +61,11 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 
 			protected ClarifySession CreateRealSession()
 			{
-				return new ClarifyApplicationFactory(_settings, MockRepository.GenerateStub<ILogger>()).Create().CreateSession();
+				var logger = MockRepository.GenerateStub<ILogger>();
+				var metadata = MockRepository.GenerateMock<IWorkflowObjectMetadata>();
+				metadata.Stub(s => s.Register()).Return(new WorkflowObjectInfo("info_to_register"));
+
+				return new ClarifyApplicationFactory(_settings, new [] {metadata}, logger).Create().CreateSession();
 			}
 
 			[SetUp]

@@ -89,6 +89,7 @@
     <Compile Include="Authentication\UserSessionEndObserver.cs" />
     <Compile Include="Clarify\ClarifySessionUsage.cs" />
     <Compile Include="Clarify\ClarifySessionUsageReporter.cs" />
+    <Compile Include="Clarify\IWorkflowObjectMetadata.cs" />
     <Compile Include="Clarify\UserLocalTimezoneClarifySessionConfigurator.cs" />
     <Compile Include="Configuration\ApplicationClarifySessionFactory.cs" />
     <Compile Include="Configuration\AspNetHttpRequest.cs" />
