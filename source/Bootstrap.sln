@@ -1,17 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "automation", "automation", "{1E8F677D-96E1-413F-8810-BEBBBB358658}"
 	ProjectSection(SolutionItems) = preProject
 		..\rakefile.rb = ..\rakefile.rb
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{E66CD88A-C7DE-4F09-84D4-2894BD0CBC97}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "schema", "schema", "{49557427-0DED-45A9-A446-26349E81FA97}"
-	ProjectSection(SolutionItems) = preProject
-		..\schema\token.schemascript.xml = ..\schema\token.schemascript.xml
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dovetail.SDK.Bootstrap", "Dovetail.SDK.Bootstrap\Dovetail.SDK.Bootstrap.csproj", "{9947E369-AFF9-4911-AB0A-99B918A8F3CF}"
 EndProject

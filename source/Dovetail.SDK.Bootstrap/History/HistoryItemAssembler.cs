@@ -4,7 +4,6 @@ using System.Linq;
 using Dovetail.SDK.Bootstrap.Clarify.Extensions;
 using Dovetail.SDK.Bootstrap.History.Configuration;
 using FChoice.Foundation.Clarify;
-using Dovetail.SDK.Bootstrap.Clarify.Extensions;
 using FubuCore;
 using FubuLocalization;
 

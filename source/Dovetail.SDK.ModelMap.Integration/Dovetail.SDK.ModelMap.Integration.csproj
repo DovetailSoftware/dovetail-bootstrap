@@ -81,6 +81,7 @@
   <ItemGroup>
     <Compile Include="Assembling_dtos.cs" />
     <Compile Include="email_log_updater.cs" />
+    <Compile Include="Filtering_a_child_generic.cs" />
     <Compile Include="List_values_from_hgbst_list.cs" />
     <Compile Include="MapFixture.cs" />
     <Compile Include="Mapping_from_table.cs" />
@@ -111,6 +112,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Web\bootstrap.log4net">
+      <Link>bootstrap.log4net</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="App.config" />
     <None Include="ripple.dependencies.config">
       <SubType>Designer</SubType>
