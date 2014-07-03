@@ -10,39 +10,48 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 	}
 
 	public class AuthenticationService : IAuthenticationService
-    {
-        private readonly ICurrentSDKUser  _currentSdkUser;
-        private readonly IFormsAuthenticationService _formsAuthentication;
-        private readonly IUserAuthenticator _agentAuthenticator;
-        private readonly IPrincipalFactory _principalFactory;
+	{
+		private readonly ICurrentSDKUser _currentSdkUser;
+		private readonly IFormsAuthenticationService _formsAuthentication;
+		private readonly IUserAuthenticator _agentAuthenticator;
+		private readonly IPrincipalFactory _principalFactory;
+		private readonly IUserProxyService _proxyService;
 		private readonly ILogger _logger;
 
-		public AuthenticationService(ICurrentSDKUser currentSdkUser, IFormsAuthenticationService formsAuthentication, IUserAuthenticator agentAuthenticator, IPrincipalFactory principalFactory, ILogger logger)
-        {
-            _currentSdkUser = currentSdkUser;
-            _formsAuthentication = formsAuthentication;
-            _agentAuthenticator = agentAuthenticator;
-            _principalFactory = principalFactory;
+		public AuthenticationService(ICurrentSDKUser currentSdkUser,
+			IFormsAuthenticationService formsAuthentication,
+			IUserAuthenticator agentAuthenticator,
+			IPrincipalFactory principalFactory,
+			IUserProxyService proxyService,
+			ILogger logger)
+		{
+			_currentSdkUser = currentSdkUser;
+			_formsAuthentication = formsAuthentication;
+			_agentAuthenticator = agentAuthenticator;
+			_principalFactory = principalFactory;
+			_proxyService = proxyService;
 			_logger = logger;
-        }
+		}
 
-        public bool SignIn(string username, string password, bool rememberMe)
-        {
+		public bool SignIn(string username, string password, bool rememberMe)
+		{
 			_logger.LogDebug("Authenticating session {0}.".ToFormat(username));
 
-            var authenticated = _agentAuthenticator.Authenticate(username, password);
+			var isAuthenticated = _agentAuthenticator.Authenticate(username, password);
 
-            if (!authenticated)
-            {
+			if (!isAuthenticated)
+			{
 				return false;
-            }
-            
-            var identity = new GenericIdentity(username);
-            _currentSdkUser.SetUser(_principalFactory.CreatePrincipal(identity));
+			}
 
-            _formsAuthentication.SetAuthCookie(username, rememberMe);
+			_proxyService.CancelProxy(username);
 
-            return true;
-        }
-    }
+			var identity = new GenericIdentity(username);
+			_currentSdkUser.SetUser(_principalFactory.CreatePrincipal(identity));
+
+			_formsAuthentication.SetAuthCookie(username, rememberMe);
+
+			return true;
+		}
+	}
 }
