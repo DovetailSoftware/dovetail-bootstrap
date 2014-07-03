@@ -8,64 +8,67 @@ using FChoice.Toolkits.Clarify.Support;
 
 namespace Dovetail.SDK.Bootstrap.Clarify
 {
-    public interface IApplicationClarifySession : IClarifySession {
-    }
+	public interface IApplicationClarifySession : IClarifySession
+	{
+	}
 
-    public interface IClarifySession
-    {
-        Guid Id { get; }
-        string UserName { get; }
-        int SessionEmployeeID { get; }
-        int SessionUserID { get; }
-        string SessionEmployeeSiteID { get; }
-        ClarifyDataSet CreateDataSet();
-        SupportToolkit CreateSupportToolkit();
-        FieldOpsToolkit CreateFieldOpsToolkit();
-        InterfacesToolkit CreateInterfacesToolkit();
-        SqlHelper CreateSqlHelper(string sql);
-        string[] Permissions { get; }
-    	IEnumerable<string> DataRestriction { get; }
-    	void Close();
-    }
+	public interface IClarifySession
+	{
+		Guid Id { get; }
+		string UserName { get; }
+		int SessionEmployeeID { get; }
+		int SessionUserID { get; }
+		string SessionEmployeeSiteID { get; }
+		ClarifyDataSet CreateDataSet();
+		SupportToolkit CreateSupportToolkit();
+		FieldOpsToolkit CreateFieldOpsToolkit();
+		InterfacesToolkit CreateInterfacesToolkit();
+		SqlHelper CreateSqlHelper(string sql);
+		string[] Permissions { get; }
+		IEnumerable<string> DataRestriction { get; }
+		string ProxyUserName { get; }
+		int ProxyUserId { get; }
+		void Close();
+	}
 
-    public class ClarifySessionWrapper : IApplicationClarifySession
-    {
-        public ClarifySessionWrapper(ClarifySession clarifySession)
-        {
-            ClarifySession = clarifySession;
-        }
+	public class ClarifySessionWrapper : IApplicationClarifySession
+	{
+		public ClarifySessionWrapper(ClarifySession clarifySession)
+		{
+			ClarifySession = clarifySession;
+		}
 
-        public ClarifySession ClarifySession { get; set; }
+		public ClarifySession ClarifySession { get; set; }
 
-        public string SessionEmployeeSiteID
-        {
-            get { return Convert.ToString(ClarifySession["employee.site.site_id"]); }
-        }
+		public string SessionEmployeeSiteID
+		{
+			get { return Convert.ToString(ClarifySession["employee.site.site_id"]); }
+		}
 
-        public string[] Permissions
-        {
-            get { return ClarifySession.GetAssignedPermissions(); }
-        }
+		public string[] Permissions
+		{
+			get { return ClarifySession.GetAssignedPermissions(); }
+		}
 
-        public Guid Id
-        {
-            get { return ClarifySession.SessionID; }
-        }
-        
-        public string UserName
-        {
-            get { return ClarifySession.UserName; }
-        }
+		public Guid Id
+		{
+			get { return ClarifySession.SessionID; }
+		}
 
-        public int SessionEmployeeID
-        {
-            get { return Convert.ToInt32(ClarifySession["employee.id"]); }
-        }
+		public string UserName
+		{
+			get { return ClarifySession.UserName; }
+		}
 
-        public int SessionUserID
-        {
-            get { return Convert.ToInt32(ClarifySession["user.id"]); }
-        }
+		public int SessionEmployeeID
+		{
+			get { return Convert.ToInt32(ClarifySession["employee.id"]); }
+		}
+
+		public int SessionUserID
+		{
+			get { return Convert.ToInt32(ClarifySession["user.id"]); }
+		}
 
 		public IEnumerable<string> DataRestriction
 		{
@@ -77,36 +80,54 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 			}
 		}
 
-        public ClarifyDataSet CreateDataSet()
-        {
-            var clarifyDataSet = new ClarifyDataSet(ClarifySession);
+		public string ProxyUserName
+		{
+			get
+			{
+				var proxy = ClarifySession["proxy.login_name"];
+				return proxy == null ? null : Convert.ToString(proxy);
+			}
+		}
 
-            return clarifyDataSet;
-        }
+		public int ProxyUserId
+		{
+			get
+			{
+				var proxy = ClarifySession["proxy.userid"];
+				return proxy == null ? -1 : Convert.ToInt32(proxy);
+			}
+		}
 
-        public SupportToolkit CreateSupportToolkit()
-        {
-            return new SupportToolkit(ClarifySession);
-        }
+		public ClarifyDataSet CreateDataSet()
+		{
+			var clarifyDataSet = new ClarifyDataSet(ClarifySession);
 
-        public FieldOpsToolkit CreateFieldOpsToolkit()
-        {
-            return new FieldOpsToolkit(ClarifySession);
-        }
+			return clarifyDataSet;
+		}
 
-        public InterfacesToolkit CreateInterfacesToolkit()
-        {
-            return new InterfacesToolkit(ClarifySession);
-        }
+		public SupportToolkit CreateSupportToolkit()
+		{
+			return new SupportToolkit(ClarifySession);
+		}
 
-        public SqlHelper CreateSqlHelper(string sql)
-        {
-            return new SqlHelper(sql);
-        }
+		public FieldOpsToolkit CreateFieldOpsToolkit()
+		{
+			return new FieldOpsToolkit(ClarifySession);
+		}
 
-        public void Close()
-        {
-            ClarifySession.CloseSession();
-        }
-    }
+		public InterfacesToolkit CreateInterfacesToolkit()
+		{
+			return new InterfacesToolkit(ClarifySession);
+		}
+
+		public SqlHelper CreateSqlHelper(string sql)
+		{
+			return new SqlHelper(sql);
+		}
+
+		public void Close()
+		{
+			ClarifySession.CloseSession();
+		}
+	}
 }

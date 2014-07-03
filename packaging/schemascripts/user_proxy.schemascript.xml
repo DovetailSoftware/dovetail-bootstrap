@@ -1,0 +1,7 @@
+<schemaScript xmlns="http://www.dovetailsoftware.com/2006/10/SchemaScript.xsd">
+  
+  <addRelation table="user" inverseTable="user" name="proxy_user2user" inverseRelationName="user2proxy_user" type="OneToMany" >
+    <description>Relate proxy_user to the user they are proxying. This is used for user impersonation.</description>
+  </addRelation>
+    
+</schemaScript>

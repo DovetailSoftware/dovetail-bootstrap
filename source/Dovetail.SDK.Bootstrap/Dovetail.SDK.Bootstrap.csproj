@@ -78,6 +78,7 @@
     <Compile Include="Authentication\AspNetSecurityContext.cs" />
     <Compile Include="Authentication\AuthenticationContextService.cs" />
     <Compile Include="Authentication\RequestPathAuthenticationPolicy.cs" />
+    <Compile Include="Authentication\UserProxyService.cs" />
     <Compile Include="Authentication\UserSessionStartObserver.cs" />
     <Compile Include="Authentication\AuthenticationService.cs" />
     <Compile Include="Authentication\AuthenticationSignOutService.cs" />

@@ -94,6 +94,7 @@
     <Compile Include="Session\bootstrap_ioc.cs" />
     <Compile Include="Session\session_cache.cs" />
     <Compile Include="Session\session_load.cs" />
+    <Compile Include="Session\user_proxy_service.cs" />
     <Compile Include="SpecificationExtensions.cs" />
     <Compile Include="Temporal_extension.cs" />
   </ItemGroup>
