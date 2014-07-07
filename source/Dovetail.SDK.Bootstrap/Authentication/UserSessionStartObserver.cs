@@ -58,7 +58,7 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 			monitorRow["application"] = _settings.ApplicationName;
 			monitorRow["login_time"] = FCGeneric.NOW_DATE;
 			monitorRow["logout_time"] = FCGeneric.MIN_DATE;
-			monitorRow["login_name"] = session.ProxyUserName ?? session.UserName;
+			monitorRow["login_name"] = session.UserName;
 			monitorRow["fcsessionid"] = session.Id.ToString();
 			monitorRow["num_sessions"] = _sessionUsageReporter.GetActiveSessionCount();
 

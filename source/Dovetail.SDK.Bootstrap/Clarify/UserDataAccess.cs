@@ -13,6 +13,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 	{
 		public string Login { get; set; }
 		public string ProxyLogin { get; set; }
+		public string ProxyUserId { get; set; }
 		public string FirstName { get; set; }
 		public string LastName { get; set; }
 
@@ -36,23 +37,23 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 	{
 		private readonly IApplicationClarifySession _session;
 		private readonly ILocaleCache _localeCache;
-		private readonly IUserProxyService _userProxyService;
+		private readonly IUserImpersonationService _userImpersonationService;
 		private readonly ILogger _logger;
 
 		public UserDataAccess(IApplicationClarifySession session, 
 			ILocaleCache localeCache, 
-			IUserProxyService userProxyService,
+			IUserImpersonationService userImpersonationService,
 			ILogger logger)
 		{
 			_session = session;
 			_localeCache = localeCache;
-			_userProxyService = userProxyService;
+			_userImpersonationService = userImpersonationService;
 			_logger = logger;
 		}
 
 		public SDKUser GetUser(string username)
 		{
-			var proxiedLogin = _userProxyService.GetCurrentProxiedLoginFor(username);
+			var proxiedLogin = _userImpersonationService.GetImpersonatedLoginFor(username);
 			var login = username;
 
 			if (proxiedLogin != null)

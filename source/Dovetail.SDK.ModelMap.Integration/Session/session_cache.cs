@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Reflection;
 using Dovetail.SDK.Bootstrap;
 using Dovetail.SDK.Bootstrap.Authentication;
 using Dovetail.SDK.Bootstrap.Clarify;
@@ -36,14 +34,14 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 				_userSessionStartObserver = MockRepository.GenerateStub<IUserSessionStartObserver>();
 				_userSessionEndObserver = MockRepository.GenerateStub<IUserSessionEndObserver>();
 
-				_container = bootstrap_ioc.getContainer(c =>
+				_container = bootstrap_ioc.getContainer(c =>{ });
+				_container.Configure(c =>
 				{
 					c.For<IUserClarifySessionConfigurator>().Use(_userClarifySessionConfigurator);
 					c.For<IClarifyApplication>().Use(_clarifyApplication);
 					c.For<IUserSessionStartObserver>().Use(_userSessionStartObserver);
 					c.For<IUserSessionEndObserver>().Use(_userSessionEndObserver);
 				});
-
 				_cut = _container.GetInstance<ClarifySessionCache>();
 
 				_settings = _container.GetInstance<DovetailDatabaseSettings>();
@@ -75,57 +73,6 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 			}
 
 			public virtual void setup() {}
-		}
-
-		public class proxy_user : session_cache_context
-		{
-			private const string ProxyUser = "annie";
-			private const string ProxiedUser = "hank";
-
-			[TearDown]
-			public void afterEach()
-			{
-				UserProxyService.CancelProxyFor(ProxyUser);
-			}
-
-			private ClarifySession hackCreateTestSession(string login)
-			{
-				var clarifySessionDataCtor = typeof(ClarifySessionData).GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic).First(c => c.GetParameters().Length == 0);
-				var clarifySessionCtor = typeof(ClarifySession)
-					.GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)
-					.First(c => c.GetParameters().Length == 4);
-
-				var clarifySessionData = clarifySessionDataCtor.Invoke(new object[0]);
-				return (ClarifySession)clarifySessionCtor.Invoke(new[] { clarifySessionData, login, login, ClarifyLoginType.User });
-			}
-
-			[Test]
-			public void should_create_session_for_proxyed_user()
-			{
-				_clarifyApplication.Expect(s => s.CreateSession(ProxiedUser, ClarifyLoginType.User)).Return(hackCreateTestSession(ProxiedUser));
-				UserProxyService.CreateProxyFor(ProxyUser, ProxiedUser);
-
-				var session = _cut.CreateSession(ProxyUser);
-
-				session.UserName.ShouldEqual(ProxiedUser);
-				session.ProxyUserName.ShouldEqual(ProxyUser);
-				session.ProxyUserId.ShouldBeGreaterThan(0);
-				_clarifyApplication.VerifyAllExpectations();
-			}
-
-			[Test]
-			public void should_create_session_normally_when_not_related_to_a_proxy()
-			{
-				UserProxyService.CancelProxyFor(ProxyUser);
-				_clarifyApplication.Expect(s => s.CreateSession(ProxyUser, ClarifyLoginType.User)).Return(hackCreateTestSession(ProxyUser));
-				
-				var session = _cut.CreateSession(ProxyUser);
-
-				session.UserName.ShouldEqual(ProxyUser);
-				session.ProxyUserName.ShouldBeNull();
-				session.ProxyUserId.ShouldBeLessThan(0);
-				_clarifyApplication.VerifyAllExpectations();
-			}
 		}
 
 		public class session_user : session_cache_context

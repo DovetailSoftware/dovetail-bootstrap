@@ -11,20 +11,25 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 	{
 		private readonly ICurrentSDKUser _currentSdkUser;
 		private readonly IFormsAuthenticationService _formsAuthentication;
-		private readonly IUserProxyService _proxyService;
+		private readonly IClarifySessionCache _sessionCache;
+		private readonly IUserImpersonationService _impersonationService;
 
-		public AuthenticationSignOutService(ICurrentSDKUser currentSdkUser, 
-			IFormsAuthenticationService formsAuthentication, 
-			IUserProxyService proxyService)
+		public AuthenticationSignOutService(ICurrentSDKUser currentSdkUser,
+			IFormsAuthenticationService formsAuthentication,
+			IClarifySessionCache sessionCache,
+			IUserImpersonationService impersonationService)
 		{
 			_currentSdkUser = currentSdkUser;
 			_formsAuthentication = formsAuthentication;
-			_proxyService = proxyService;
+			_sessionCache = sessionCache;
+			_impersonationService = impersonationService;
 		}
 
 		public void SignOut()
 		{
-			_proxyService.CancelProxy(_currentSdkUser.ProxyUsername);
+			var user = _currentSdkUser.Username;
+			_impersonationService.CancelImpersonation(user);
+			_sessionCache.EjectSession(user);
 
 			_currentSdkUser.SignOut();
 			_formsAuthentication.SignOut();

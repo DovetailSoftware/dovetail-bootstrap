@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Security.Principal;
+﻿using System.Security.Principal;
 using Dovetail.SDK.Bootstrap.Clarify;
 using FChoice.Foundation;
 
@@ -33,11 +32,11 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 
 			try
 			{
-				//if agent get session and use its permissions
-				var session = _sessionCache.GetSession(username);
-				_logger.LogDebug("Creating principal for user {0} with {1} permissions.", username, session.Permissions.Length);
+				//if agent get session to validate it. Yay! Exceptions as control flow!
+				_sessionCache.GetSession(username);
+				_logger.LogDebug("Creating principal for user {0}.", username);
 
-				return new DovetailPrincipal(identity, session.Permissions);
+				return new GenericPrincipal(identity, new string[0]);
 			}
 			catch (FCInvalidLoginException e)
 			{
@@ -50,28 +49,6 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 		public IPrincipal CreatePrincipal(string username)
 		{
 			return CreatePrincipal(new GenericIdentity(username));
-		}
-	}
-
-	public class DovetailPrincipal : IPrincipal
-	{
-		private readonly IIdentity _identity;
-		private readonly string[] _permissions;
-
-		public DovetailPrincipal(IIdentity identity, string[] permissions)
-		{
-			_identity = identity;
-			_permissions = permissions;
-		}
-
-		public bool IsInRole(string role)
-		{
-			return _permissions.Any(p => p == role);
-		}
-
-		public IIdentity Identity
-		{
-			get { return _identity; }
 		}
 	}
 }

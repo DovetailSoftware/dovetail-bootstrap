@@ -15,21 +15,21 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 		private readonly IFormsAuthenticationService _formsAuthentication;
 		private readonly IUserAuthenticator _agentAuthenticator;
 		private readonly IPrincipalFactory _principalFactory;
-		private readonly IUserProxyService _proxyService;
+		private readonly IUserImpersonationService _impersonationService;
 		private readonly ILogger _logger;
 
 		public AuthenticationService(ICurrentSDKUser currentSdkUser,
 			IFormsAuthenticationService formsAuthentication,
 			IUserAuthenticator agentAuthenticator,
 			IPrincipalFactory principalFactory,
-			IUserProxyService proxyService,
+			IUserImpersonationService impersonationService,
 			ILogger logger)
 		{
 			_currentSdkUser = currentSdkUser;
 			_formsAuthentication = formsAuthentication;
 			_agentAuthenticator = agentAuthenticator;
 			_principalFactory = principalFactory;
-			_proxyService = proxyService;
+			_impersonationService = impersonationService;
 			_logger = logger;
 		}
 
@@ -44,7 +44,7 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 				return false;
 			}
 
-			_proxyService.CancelProxy(username);
+			_impersonationService.CancelImpersonation(username);
 
 			var identity = new GenericIdentity(username);
 			_currentSdkUser.SetUser(_principalFactory.CreatePrincipal(identity));

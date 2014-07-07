@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Security.Principal;
 using FChoice.Foundation.Clarify;
 using FChoice.Foundation.DataObjects;
+using FubuCore;
 
 namespace Dovetail.SDK.Bootstrap.Clarify
 {
 	public interface ICurrentSDKUser
 	{
 		string Username { get; }
-		string ProxyUsername { get; }
+		string ImpersonatingUsername { get; }
 		string Fullname { get; }
 		bool IsAuthenticated { get; }
 		bool HasPermission(string permission);
@@ -24,14 +25,14 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 
 	public class CurrentSDKUser : ICurrentSDKUser
 	{
-		private IPrincipal _principal;
 		private readonly DovetailDatabaseSettings _settings;
 		private readonly IUserDataAccess _userDataAccess;
+		private readonly IClarifySessionCache _sessionCache;
 		private readonly ILogger _logger;
 		private readonly ILocaleCache _localeCache;
 		private Lazy<SDKUser> _user;
 		private Lazy<ITimeZone> _timezone;
-		private string _authenticatedUserName;
+		private Lazy<HashSet<string>> _permissionsByName; 
 
 		public string Fullname
 		{
@@ -51,7 +52,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 			get { return _user.Value.Login; }
 		}
 
-		public string ProxyUsername
+		public string ImpersonatingUsername
 		{
 			get { return _user.Value.ProxyLogin; }
 		}
@@ -61,7 +62,9 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 			get
 			{
 				if (!IsAuthenticated)
+				{
 					return _localeCache.ServerTimeZone;
+				}
 
 				return _timezone.Value;
 			}
@@ -77,7 +80,9 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 			get
 			{
 				if (!IsAuthenticated)
+				{
 					return new SDKUserQueue[0];
+				}
 
 				return _user.Value.Queues;
 			}
@@ -87,55 +92,75 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		{
 			get
 			{
-				if (!IsAuthenticated) return "";
+				if (!IsAuthenticated)
+				{
+					return "";
+				}
 
 				return _user.Value.Workgroup;
 			}
 		}
 
-		public CurrentSDKUser(DovetailDatabaseSettings settings, ILocaleCache localeCache, IUserDataAccess userDataAccess,
+		public CurrentSDKUser(DovetailDatabaseSettings settings, 
+			ILocaleCache localeCache, 
+			IUserDataAccess userDataAccess,
+			IClarifySessionCache sessionCache,
 			ILogger logger)
 		{
 			_settings = settings;
 			_userDataAccess = userDataAccess;
+			_sessionCache = sessionCache;
 			_logger = logger;
 			_localeCache = localeCache;
 
 			//set up defaults
 			SignOut();
-
-			_user = new Lazy<SDKUser>(GetUser);
-			_timezone = new Lazy<ITimeZone>(() => _user.Value.Timezone);
 		}
 
 		public bool HasPermission(string permission)
 		{
-			return _principal != null && _principal.IsInRole(permission);
+			return _permissionsByName.Value.Contains(permission);
 		}
 
 		public void SetUser(IPrincipal principal)
 		{
-			_principal = principal;
-
-			_authenticatedUserName = _principal.Identity.Name;
-			_user = new Lazy<SDKUser>(GetUser);
-
-			_logger.LogDebug("Setting the current user to be {0}", _authenticatedUserName);
-
+			var login = principal.Identity.Name;
+			_logger.LogDebug("CurrentSDK user set via principal to {0}.".ToFormat(login));
+			changeUser(login);
+			
 			IsAuthenticated = true;
 		}
 
 		public void SignOut()
 		{
+			_logger.LogDebug("Signing out currentSDK user.");
+
 			IsAuthenticated = false;
 
 			//when no user is authenticated the application user is used
-			_authenticatedUserName = _settings.ApplicationUsername;
+			changeUser(_settings.ApplicationUsername);
 		}
 
-		private SDKUser GetUser()
+		public void changeUser(string login)
 		{
-			return _userDataAccess.GetUser(_authenticatedUserName);
+			_logger.LogDebug("Changing the current SDK user to be {0}.", login);
+			_user = new Lazy<SDKUser>(() => GetUser(login));
+			_permissionsByName = new Lazy<HashSet<string>>(GetSessionPermissions);
+			_timezone = new Lazy<ITimeZone>(() => _user.Value.Timezone);
+		}
+
+		private SDKUser GetUser(string login)
+		{
+			return _userDataAccess.GetUser(login);
+		}
+
+		private HashSet<string> GetSessionPermissions()
+		{
+			var session = _sessionCache.GetSession(_user.Value.Login);
+			var set = new HashSet<string>();
+			set.UnionWith(session.Permissions);
+			_logger.LogDebug("Permission set for {0} setup with {1} permissions.".ToFormat(_user.Value.Login, set.Count));
+			return set;
 		}
 	}
 }

@@ -26,8 +26,6 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		SqlHelper CreateSqlHelper(string sql);
 		string[] Permissions { get; }
 		IEnumerable<string> DataRestriction { get; }
-		string ProxyUserName { get; }
-		int ProxyUserId { get; }
 		void Close();
 	}
 
@@ -77,24 +75,6 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 				var restrictionGroup = ClarifySession.RestrictionGroup;
 
 				return restrictionGroup == null ? new string[0] : restrictionGroup.Restrictions;
-			}
-		}
-
-		public string ProxyUserName
-		{
-			get
-			{
-				var proxy = ClarifySession["proxy.login_name"];
-				return proxy == null ? null : Convert.ToString(proxy);
-			}
-		}
-
-		public int ProxyUserId
-		{
-			get
-			{
-				var proxy = ClarifySession["proxy.userid"];
-				return proxy == null ? -1 : Convert.ToInt32(proxy);
 			}
 		}
 
