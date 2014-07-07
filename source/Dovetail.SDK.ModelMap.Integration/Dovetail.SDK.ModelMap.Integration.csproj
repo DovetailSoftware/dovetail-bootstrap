@@ -80,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assembling_dtos.cs" />
+    <Compile Include="Authentication\user_proxy_service.cs" />
     <Compile Include="email_log_updater.cs" />
     <Compile Include="Filtering_a_child_generic.cs" />
     <Compile Include="List_values_from_hgbst_list.cs" />

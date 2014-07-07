@@ -24,9 +24,7 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 
 		public void SignOut()
 		{
-			var username = _currentSdkUser.Username;
-
-			_proxyService.CancelProxy(username);
+			_proxyService.CancelProxy(_currentSdkUser.ProxyUsername);
 
 			_currentSdkUser.SignOut();
 			_formsAuthentication.SignOut();

@@ -4,7 +4,6 @@ using System.Reflection;
 using Dovetail.SDK.Bootstrap;
 using Dovetail.SDK.Bootstrap.Authentication;
 using Dovetail.SDK.Bootstrap.Clarify;
-using FChoice.Common.Data;
 using FChoice.Foundation.Clarify;
 using NUnit.Framework;
 using Rhino.Mocks;
@@ -37,15 +36,13 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 				_userSessionStartObserver = MockRepository.GenerateStub<IUserSessionStartObserver>();
 				_userSessionEndObserver = MockRepository.GenerateStub<IUserSessionEndObserver>();
 
-				_container = bootstrap_ioc.getContainer(c =>{});
-
-				_container.Configure(c=>
-					{
-						c.For<IUserClarifySessionConfigurator>().Use(_userClarifySessionConfigurator);
-						c.For<IClarifyApplication>().Use(_clarifyApplication);
-						c.For<IUserSessionStartObserver>().Use(_userSessionStartObserver);
-						c.For<IUserSessionEndObserver>().Use(_userSessionEndObserver);
-					});
+				_container = bootstrap_ioc.getContainer(c =>
+				{
+					c.For<IUserClarifySessionConfigurator>().Use(_userClarifySessionConfigurator);
+					c.For<IClarifyApplication>().Use(_clarifyApplication);
+					c.For<IUserSessionStartObserver>().Use(_userSessionStartObserver);
+					c.For<IUserSessionEndObserver>().Use(_userSessionEndObserver);
+				});
 
 				_cut = _container.GetInstance<ClarifySessionCache>();
 

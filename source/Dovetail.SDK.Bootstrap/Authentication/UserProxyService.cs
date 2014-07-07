@@ -1,5 +1,4 @@
 using System;
-using System.Security.Cryptography.X509Certificates;
 using Dovetail.SDK.Bootstrap.Clarify;
 using Dovetail.SDK.Bootstrap.Clarify.Extensions;
 using FChoice.Common.Data;
@@ -13,6 +12,7 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 	{
 		void CancelProxy(string proxyUserLogin);
 		void CreateProxy(string proxyUserLogin, string userBeingProxiedLogin);
+		string GetCurrentProxiedLoginFor(string login);
 	}
 
 	public class UserProxyService : IUserProxyService
@@ -30,36 +30,43 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 			_logger = logger;
 		}
 
+		public string GetCurrentProxiedLoginFor(string login)
+		{
+			var sql = new SqlHelper("SELECT p.login_name FROM table_user u, table_user p WHERE u.login_name = {0} AND p.objid = u.user2proxy_user");
+			sql.Parameters.Add("login", login);
+			var result = sql.ExecuteScalar();
+
+			if (result == null || result == DBNull.Value) return null;
+
+			return Convert.ToString(result);
+		}
+
 		public void CancelProxy(string proxyUserLogin)
 		{
+			if (proxyUserLogin.IsEmpty())
+			{
+				return; //nothing to do
+			}
+
 			var session = _sessionCache.GetSession(proxyUserLogin);
 			var proxiedUserName = session.ProxyUserName;
 
-			if (proxiedUserName != null && !HasProxyFor(proxyUserLogin))
+			if (proxiedUserName != null && HasProxyFor(proxyUserLogin))
 			{
-				//nothing to do as the session was not proxied
+				_logger.LogDebug("Cancelling the proxy of user {0} by user {1}.".ToFormat(session.UserName, session.ProxyUserName));
+
+				//create activity entry for proxy completion
+				CreateActEntry("Revert impersonation of " + proxiedUserName, proxiedUserName, 94003, session.ProxyUserId);
+
+				CancelProxyFor(proxiedUserName);
+
+				//eject session as it is proxied and should not be used going forward
+				_logger.LogDebug("Ejecting existing session for user {0}. New sessions will not be proxied.".ToFormat(proxyUserLogin));
+				_sessionCache.EjectSession(proxiedUserName);
 				return;
 			}
-			
-			_logger.LogDebug("Cancelling the proxy of user {0} by user {1}.".ToFormat(session.UserName, session.ProxyUserName));
 
-			//create activity entry for proxy completion
-			var applicationSession = _sessionCache.GetApplicationSession();
-			var dataset = applicationSession.CreateDataSet();
-			var actEntryGeneric = dataset.CreateGeneric("act_entry");
-			var actEntry = actEntryGeneric.AddNew();
-			const int actCode = 94003;
-			actEntry["act_code"] = actCode;
-			actEntry["entry_time"] = FCGeneric.NOW_DATE;
-			actEntry["addnl_info"] = "Revert impersonation of " + proxiedUserName;
-			actEntry["proxy"] = proxiedUserName;
-			actEntry.RelateByID(session.ProxyUserId, "act_entry2user");
-			actEntry.RelateByID(_listCache.GetGbstElmRankObjID("Activity Name", actCode), "entry_name2gbst_elm");
-			actEntry.Update();
-
-			//eject session as it is proxied and should not be used going forward
-			_logger.LogDebug("Ejecting existing session for user {0}. New sessions will not be proxied.".ToFormat(proxyUserLogin));
-			_sessionCache.EjectSession(proxiedUserName);
+			_sessionCache.EjectSession(proxyUserLogin);
 		}
 
 		public void CreateProxy(string proxyUserLogin, string userBeingProxiedLogin)
@@ -91,16 +98,7 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 			_logger.LogDebug("Setting up user {0} as a proxy of user {1}.".ToFormat(userBeingProxiedLogin, proxyUserLogin));
 
 			//create act entry for proxy creation
-			var actEntryGeneric = dataset.CreateGeneric("act_entry");
-			var actEntry = actEntryGeneric.AddNew();
-			const int actCode = 94002;
-			actEntry["act_code"] = actCode;
-			actEntry["entry_time"] = FCGeneric.NOW_DATE;
-			actEntry["addnl_info"] = "Impersonate " + userBeingProxiedLogin;
-			actEntry["proxy"] = userBeingProxiedLogin;
-			actEntry.RelateByID(proxyUserGeneric.Rows[0].DatabaseIdentifier(), "act_entry2user");
-			actEntry.RelateByID(_listCache.GetGbstElmRankObjID("Activity Name", actCode), "entry_name2gbst_elm");
-			actEntry.Update();
+			CreateActEntry("Impersonate " + userBeingProxiedLogin, userBeingProxiedLogin, 94002, proxyUserGeneric.Rows[0].DatabaseIdentifier());
 
 			CreateProxyFor(proxyUserLogin, userBeingProxiedLogin);
 
@@ -108,7 +106,22 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 			_sessionCache.EjectSession(proxyUserLogin);
 		}
 
-		public static bool HasProxyFor(string proxyUserLogin)
+		private void CreateActEntry(string message, string proxy, int actCode, int userId)
+		{
+			var applicationSession = _sessionCache.GetApplicationSession();
+			var dataset = applicationSession.CreateDataSet();
+			var actEntryGeneric = dataset.CreateGeneric("act_entry");
+			var actEntry = actEntryGeneric.AddNew();
+			actEntry["act_code"] = actCode;
+			actEntry["entry_time"] = FCGeneric.NOW_DATE;
+			actEntry["addnl_info"] = message;
+			actEntry["proxy"] = proxy;
+			actEntry.RelateByID(userId, "act_entry2user");
+			actEntry.RelateByID(_listCache.GetGbstElmRankObjID("Activity Name", actCode), "entry_name2gbst_elm");
+			actEntry.Update();
+		}
+
+		public bool HasProxyFor(string proxyUserLogin)
 		{
 			var sql = new SqlHelper("SELECT user2proxy_user FROM table_user WHERE login_name = {0}");
 			sql.Parameters.Add("login", proxyUserLogin);

@@ -9,6 +9,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 	public interface ICurrentSDKUser
 	{
 		string Username { get; }
+		string ProxyUsername { get; }
 		string Fullname { get; }
 		bool IsAuthenticated { get; }
 		bool HasPermission(string permission);
@@ -28,8 +29,9 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		private readonly IUserDataAccess _userDataAccess;
 		private readonly ILogger _logger;
 		private readonly ILocaleCache _localeCache;
-		private readonly Lazy<SDKUser> _user;
+		private Lazy<SDKUser> _user;
 		private Lazy<ITimeZone> _timezone;
+		private string _authenticatedUserName;
 
 		public string Fullname
 		{
@@ -37,13 +39,22 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 			{
 				if (!IsAuthenticated) return "";
 
-				SDKUser user = _user.Value;
+				var user = _user.Value;
 				return user.FirstName + " " + user.LastName;
 			}
 		}
 
 		public bool IsAuthenticated { get; private set; }
-		public string Username { get; set; }
+
+		public string Username
+		{
+			get { return _user.Value.Login; }
+		}
+
+		public string ProxyUsername
+		{
+			get { return _user.Value.ProxyLogin; }
+		}
 
 		public ITimeZone Timezone
 		{
@@ -93,7 +104,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 			//set up defaults
 			SignOut();
 
-			_user = new Lazy<SDKUser>(() => _userDataAccess.GetUser(Username));
+			_user = new Lazy<SDKUser>(GetUser);
 			_timezone = new Lazy<ITimeZone>(() => _user.Value.Timezone);
 		}
 
@@ -106,9 +117,10 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		{
 			_principal = principal;
 
-			Username = _principal.Identity.Name;
+			_authenticatedUserName = _principal.Identity.Name;
+			_user = new Lazy<SDKUser>(GetUser);
 
-			_logger.LogDebug("Setting the current user to be {0}", Username);
+			_logger.LogDebug("Setting the current user to be {0}", _authenticatedUserName);
 
 			IsAuthenticated = true;
 		}
@@ -118,7 +130,12 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 			IsAuthenticated = false;
 
 			//when no user is authenticated the application user is used
-			Username = _settings.ApplicationUsername;
+			_authenticatedUserName = _settings.ApplicationUsername;
+		}
+
+		private SDKUser GetUser()
+		{
+			return _userDataAccess.GetUser(_authenticatedUserName);
 		}
 	}
 }
