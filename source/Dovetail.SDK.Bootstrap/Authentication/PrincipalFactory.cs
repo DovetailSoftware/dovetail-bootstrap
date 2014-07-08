@@ -30,13 +30,18 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 		{
 			var username = identity.Name;
 
+			return CreatePrincipal(username);
+		}
+
+		public IPrincipal CreatePrincipal(string username)
+		{
 			try
 			{
 				//if agent get session to validate it. Yay! Exceptions as control flow!
-				_sessionCache.GetSession(username);
-				_logger.LogDebug("Creating principal for user {0}.", username);
+				var session = _sessionCache.GetSession(username);
+				_logger.LogDebug("Creating principal for user {0} with {1} roles sourced from permissions.", username, session.Permissions.Length);
 
-				return new GenericPrincipal(identity, new string[0]);
+				return new GenericPrincipal(new GenericIdentity(username, "bootstrap"), session.Permissions);
 			}
 			catch (FCInvalidLoginException e)
 			{
@@ -44,11 +49,6 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 				_formsAuthenticationService.SignOut();
 				return null;
 			}
-		}
-
-		public IPrincipal CreatePrincipal(string username)
-		{
-			return CreatePrincipal(new GenericIdentity(username));
 		}
 	}
 }

@@ -13,6 +13,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		public class happy_path : Context<PrincipalFactory>
 		{
 			private IIdentity _identity;
+			private IPrincipal _result;
 
 			public override void Given()
 			{
@@ -20,9 +21,10 @@ namespace Dovetail.SDK.Bootstrap.Tests
 				_identity.Stub(s => s.Name).Return("annie");
 
 				var clarifySession = MockFor<IClarifySession>();
+				clarifySession.Stub(s => s.Permissions).Return(new[] {"permission1", "permission2"});
 
 				MockFor<IClarifySessionCache>().Expect(s => s.GetSession(_identity.Name)).Return(clarifySession);
-				_cut.CreatePrincipal(_identity);
+				_result = _cut.CreatePrincipal(_identity);
 			}
 
 			[Test]
@@ -30,6 +32,15 @@ namespace Dovetail.SDK.Bootstrap.Tests
 			{
 				MockFor<IClarifySessionCache>().VerifyAllExpectations();
 			}
+
+			[Test]
+			public void should_populate_principal_roles_from_permissions()
+			{
+				_result.IsInRole("permission1").ShouldBeTrue();
+				_result.IsInRole("permission2").ShouldBeTrue();
+				_result.IsInRole("permission3").ShouldBeFalse();
+			}
+
 		}
 
 		[TestFixture]
