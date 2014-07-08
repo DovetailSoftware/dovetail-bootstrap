@@ -44,7 +44,7 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 				return false;
 			}
 
-			_impersonationService.CancelImpersonation(username);
+			_impersonationService.StopImpersonating(username);
 
 			var identity = new GenericIdentity(username);
 			_currentSdkUser.SetUser(_principalFactory.CreatePrincipal(identity));

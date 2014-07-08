@@ -28,7 +28,7 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 		public void SignOut()
 		{
 			var user = _currentSdkUser.Username;
-			_impersonationService.CancelImpersonation(user);
+			_impersonationService.StopImpersonating(user);
 			_sessionCache.EjectSession(user);
 
 			_currentSdkUser.SignOut();

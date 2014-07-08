@@ -40,7 +40,6 @@ namespace Dovetail.SDK.Bootstrap.Tests
 				_result.IsInRole("permission2").ShouldBeTrue();
 				_result.IsInRole("permission3").ShouldBeFalse();
 			}
-
 		}
 
 		[TestFixture]

@@ -12,7 +12,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 	public class SDKUser
 	{
 		public string Login { get; set; }
-		public string ProxyLogin { get; set; }
+		public string ImpersonatingLogin { get; set; }
 		public string ProxyUserId { get; set; }
 		public string FirstName { get; set; }
 		public string LastName { get; set; }
@@ -53,13 +53,14 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 
 		public SDKUser GetUser(string username)
 		{
-			var proxiedLogin = _userImpersonationService.GetImpersonatedLoginFor(username);
+			var impersonatedLogin = _userImpersonationService.GetImpersonatedLoginFor(username);
 			var login = username;
-
-			if (proxiedLogin != null)
+			string impersonateingLogin = null;
+			if (impersonatedLogin != null)
 			{
-				_logger.LogDebug("Proxied user: setting {0} as the authenticated user being proxied by {1}", proxiedLogin, username);
-				login = proxiedLogin;
+				_logger.LogDebug("Proxied user: setting {0} as the authenticated user being proxied by {1}", impersonatedLogin, username);
+				login = impersonatedLogin;
+				impersonateingLogin = username;
 			}
 		
 			var dataSet = _session.CreateDataSet();
@@ -92,7 +93,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 				LastName = employeeRow.AsString("last_name"),
 				Workgroup = employeeRow.AsString("work_group"),
 				Login = login,
-				ProxyLogin = proxiedLogin,
+				ImpersonatingLogin = impersonateingLogin,
 				Queues = queues,
 				Timezone = timezone
 			};

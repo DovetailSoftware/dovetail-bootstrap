@@ -54,7 +54,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 
 		public string ImpersonatingUsername
 		{
-			get { return _user.Value.ProxyLogin; }
+			get { return _user.Value.ImpersonatingLogin; }
 		}
 
 		public ITimeZone Timezone

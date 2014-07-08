@@ -30,7 +30,7 @@ namespace Dovetail.SDK.Bootstrap.Tests.Authentication
 					Queues = new[] {new SDKUserQueue {Name = "queue1"}},
 					Timezone = _sdkUserTimeZone,
 					Login = "user login",
-					ProxyLogin = "proxy user login",
+					ImpersonatingLogin = "proxy user login",
 					Workgroup = "user workgroup"
 				};
 				MockFor<IUserDataAccess>().Stub(s => s.GetUser(_username)).Return(_sdkUser);
@@ -51,7 +51,7 @@ namespace Dovetail.SDK.Bootstrap.Tests.Authentication
 			[Test]
 			public void proxy_username_should_match_proxy()
 			{
-				_cut.ImpersonatingUsername.ShouldEqual(_sdkUser.ProxyLogin);
+				_cut.ImpersonatingUsername.ShouldEqual(_sdkUser.ImpersonatingLogin);
 			}
 
 			[Test]

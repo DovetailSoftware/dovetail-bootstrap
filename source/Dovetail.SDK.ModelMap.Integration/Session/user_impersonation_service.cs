@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
+using System.Security.Principal;
 using Dovetail.SDK.Bootstrap.Authentication;
 using Dovetail.SDK.Bootstrap.Clarify;
 using Dovetail.SDK.Bootstrap.Clarify.Extensions;
+using FChoice.Common.Data;
 using FChoice.Foundation;
 using NUnit.Framework;
 using StructureMap;
@@ -33,7 +35,6 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 		public virtual void beforeAll() { }
 	}
 
-
 	public class user_impersonation_service 
 	{
 		public class when_setting_is_disabled : impersonation_context
@@ -43,10 +44,39 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 			{
 				_settings.IsImpersonationEnabled = false;
 
-				_cut.CancelImpersonation("annie").ShouldEqual(-1);
-				_cut.CreateImpersonation("annie", "hank").ShouldEqual(-1);
+				_cut.StopImpersonating("annie").ShouldEqual(-1);
+				_cut.StartImpersonation("annie", "hank").ShouldEqual(-1);
 				_cut.GetImpersonatedLoginFor("annie").ShouldBeNull();
 			}
+		}
+
+		public class scenario : impersonation_context
+		{
+			[SetUp]
+			public void beforeEach()
+			{
+				UserImpersonationService.cancelImpersonationFor("annie");
+				setAllowProxy("hank", true);
+			}
+
+			[Test]
+			public void when_impersonating_should_return_impersonated_user()
+			{
+				_cut.StartImpersonation("annie", "hank");
+
+				var impersonated = _container.GetInstance<ICurrentSDKUser>();
+				impersonated.SetUser(new GenericPrincipal(new GenericIdentity("annie"), new string[0]));
+				impersonated.Username.ShouldEqual("hank");
+				impersonated.ImpersonatingUsername.ShouldEqual("annie");
+
+				_cut.StopImpersonating("annie");
+
+				var normal = _container.GetInstance<ICurrentSDKUser>();
+				normal.SetUser(new GenericPrincipal(new GenericIdentity("annie"), new string[0]));
+				normal.Username.ShouldEqual("annie");
+				normal.ImpersonatingUsername.ShouldBeNull();
+			}
+
 		}
 
 		public class get_impersonated_login_for : impersonation_context
@@ -68,7 +98,7 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 			}
 		}
 
-		public class canceling_impersonation : impersonation_context
+		public class stop_impersonating : impersonation_context
 		{
 			[SetUp]
 			public void beforeEach()
@@ -79,13 +109,13 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 			[Test]
 			public void when_input_is_empty_does_nothing()
 			{
-				_cut.CancelImpersonation("").ShouldEqual(-1); ;
+				_cut.StopImpersonating("").ShouldEqual(-1); ;
 			}
 
 			[Test]
 			public void should_remove_proxy_user_relation()
 			{
-				_cut.CancelImpersonation("annie");
+				_cut.StopImpersonating("annie");
 
 				_cut.GetImpersonatedLoginFor("annie").ShouldBeNull();
 			}
@@ -93,7 +123,7 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 			[Test]
 			public void should_create_act_entry()
 			{
-				var actEntryObjid = _cut.CancelImpersonation("annie");
+				var actEntryObjid = _cut.StopImpersonating("annie");
 
 				var dataSet = _container.GetInstance<IApplicationClarifySession>().CreateDataSet();
 				var actEntryGeneric = dataSet.CreateGeneric("act_entry");
@@ -110,25 +140,37 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 			}
 		}
 
-		public class create_impersonation : impersonation_context
+		public class start_impersonation : impersonation_context
 		{
 			[SetUp]
 			public void beforeEach()
 			{
 				UserImpersonationService.cancelImpersonationFor("annie");
+				setAllowProxy("hank", true);
 			}
 
 			[Test]
 			public void when_logins_are_unknown_should_throw_exception()
 			{
-				typeof(ArgumentException).ShouldBeThrownBy(() => _cut.CreateImpersonation("unknown", "hank"));
-				typeof(ArgumentException).ShouldBeThrownBy(() => _cut.CreateImpersonation("annie", "unknown"));
+				typeof(ArgumentException).ShouldBeThrownBy(() => _cut.StartImpersonation("unknown", "hank"))
+					.Message.ShouldContain("impersonating user unknown does not exist");
+				typeof(ArgumentException).ShouldBeThrownBy(() => _cut.StartImpersonation("annie", "unknown"))
+					.Message.ShouldContain("user being impersonated unknown does not exist");
+			}
+
+			[Test]
+			public void when_impersonated_user_does_not_allow_proxies_should_throw_exception()
+			{
+				setAllowProxy("hank", false);
+
+				typeof(ArgumentException).ShouldBeThrownBy(() => _cut.StartImpersonation("annie", "hank"))
+					.Message.ShouldContain("does not allow others to impersonate");
 			}
 
 			[Test]
 			public void should_add_proxy_user_relation()
 			{
-				_cut.CreateImpersonation("annie", "hank");
+				_cut.StartImpersonation("annie", "hank");
 
 				_cut.GetImpersonatedLoginFor("annie").ShouldEqual("hank");
 			}
@@ -136,7 +178,7 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 			[Test]
 			public void should_create_act_entry()
 			{
-				var actEntryObjid = _cut.CreateImpersonation("annie", "hank");
+				var actEntryObjid = _cut.StartImpersonation("annie", "hank");
 
 				var dataSet = _container.GetInstance<IApplicationClarifySession>().CreateDataSet();
 				var actEntryGeneric = dataSet.CreateGeneric("act_entry");
@@ -152,5 +194,14 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 				entry.AsInt("act_code").ShouldEqual(94002);
 			}
 		}
+
+		public static void setAllowProxy(string userLogin, bool canProxy)
+		{
+			var sql = new SqlHelper("update table_employee set allow_proxy = {0} where objid = (select objid from table_user where login_name = {1})");
+			sql.Parameters.Add("canProxy", canProxy ? 1 : 0);
+			sql.Parameters.Add("login", userLogin);
+			sql.ExecuteNonQuery();
+		}
+
 	}
 }

@@ -14,12 +14,12 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 		/// Stop impersonation by the given login
 		/// </summary>
 		/// <returns>Act entry objid of the cancelled action</returns>
-		int CancelImpersonation(string impersonatingUserLogin);
+		int StopImpersonating(string impersonatingUserLogin);
 		/// <summary>
 		/// Start impersonation by the given login for the user login to be impersonated.
 		/// </summary>
 		/// <returns>Act entry objid of the impersonation creation action</returns>
-		int CreateImpersonation(string impersonatingUserLogin, string userLoginBeingImpersonated);
+		int StartImpersonation(string impersonatingUserLogin, string userLoginBeingImpersonated);
 		string GetImpersonatedLoginFor(string login);
 	}
 
@@ -57,7 +57,7 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 			return Convert.ToString(result);
 		}
 
-		public int CancelImpersonation(string impersonatingUserLogin)
+		public int StopImpersonating(string impersonatingUserLogin)
 		{
 			int result = -1;
 			if (!_settings.IsImpersonationEnabled || impersonatingUserLogin.IsEmpty())
@@ -80,7 +80,7 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 			return result;
 		}
 
-		public int CreateImpersonation(string impersonatingUserLogin, string userLoginBeingImpersonated)
+		public int StartImpersonation(string impersonatingUserLogin, string userLoginBeingImpersonated)
 		{
 			int result = -1;
 			if (!_settings.IsImpersonationEnabled)
@@ -96,6 +96,7 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 
 			var proxiedUserGeneric = dataset.CreateGenericWithFields("user", "objid");
 			proxiedUserGeneric.Filter(f => f.Equals("login_name", userLoginBeingImpersonated));
+			var proxiedEmployeeGeneric = proxiedUserGeneric.TraverseWithFields("user2employee", "allow_proxy");
 
 			dataset.Query(proxyUserGeneric, proxiedUserGeneric);
 
@@ -107,6 +108,11 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 			if (proxiedUserGeneric.Count < 1)
 			{
 				throw new ArgumentException("The user being impersonated {0} does not exist.".ToFormat(userLoginBeingImpersonated), "userLoginBeingImpersonated");
+			}
+
+			if (proxiedEmployeeGeneric.Rows[0].AsInt("allow_proxy") != 1)
+			{
+				throw new ArgumentException("The user being impersonated {0} does not allow others to impersonate them. The employee record for this user must have allow_proxy set to 1.".ToFormat(userLoginBeingImpersonated), "userLoginBeingImpersonated");
 			}
 
 			cancelImpersonationFor(impersonatingUserLogin);
