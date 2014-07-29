@@ -9,7 +9,6 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 	/// </summary>
 	public interface IPrincipalFactory
 	{
-		IPrincipal CreatePrincipal(IIdentity identity);
 		IPrincipal CreatePrincipal(string username);
 	}
 

@@ -69,7 +69,7 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 		{
 			var identity = _securityContext.CurrentIdentity;
 
-			var principal = _principalFactory.CreatePrincipal(identity);
+			var principal = _principalFactory.CreatePrincipal(identity.Name);
 
 			_securityContext.CurrentUser = principal;
 		}

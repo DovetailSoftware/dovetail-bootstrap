@@ -32,7 +32,7 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 				return;
 			}
 
-			var principal = _principalFactory.CreatePrincipal(identity);
+			var principal = _principalFactory.CreatePrincipal(identity.Name);
 
 			if (principal == null)
 			{

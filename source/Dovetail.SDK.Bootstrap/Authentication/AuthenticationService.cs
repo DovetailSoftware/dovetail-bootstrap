@@ -46,8 +46,7 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 
 			_impersonationService.StopImpersonating(username);
 
-			var identity = new GenericIdentity(username);
-			_currentSdkUser.SetUser(_principalFactory.CreatePrincipal(identity));
+			_currentSdkUser.SetUser(_principalFactory.CreatePrincipal(username));
 
 			_formsAuthentication.SetAuthCookie(username, rememberMe);
 
