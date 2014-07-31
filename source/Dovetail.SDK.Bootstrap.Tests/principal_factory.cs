@@ -1,5 +1,6 @@
 using System.Security.Principal;
 using Dovetail.SDK.Bootstrap.Authentication;
+using Dovetail.SDK.Bootstrap.Authentication.Principal;
 using Dovetail.SDK.Bootstrap.Clarify;
 using FChoice.Foundation;
 using NUnit.Framework;
@@ -12,19 +13,16 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		[TestFixture]
 		public class happy_path : Context<PrincipalFactory>
 		{
-			private IIdentity _identity;
 			private IPrincipal _result;
 
 			public override void Given()
 			{
-				_identity = MockFor<IIdentity>();
-				_identity.Stub(s => s.Name).Return("annie");
-
 				var clarifySession = MockFor<IClarifySession>();
 				clarifySession.Stub(s => s.Permissions).Return(new[] {"permission1", "permission2"});
 
-				MockFor<IClarifySessionCache>().Expect(s => s.GetSession(_identity.Name)).Return(clarifySession);
-				_result = _cut.CreatePrincipal(_identity);
+				const string username = "annie";
+				MockFor<IClarifySessionCache>().Expect(s => s.GetSession(username)).Return(clarifySession);
+				_result = _cut.CreatePrincipal(username);
 			}
 
 			[Test]
@@ -45,16 +43,14 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		[TestFixture]
 		public class login_does_not_exist : Context<PrincipalFactory>
 		{
-			private IIdentity _identity;
 			private IPrincipal _result;
 
 			public override void Given()
 			{
-				_identity = MockFor<IIdentity>();
-				_identity.Stub(s => s.Name).Return("doesnotexist");
+				const string username = "doesnotexist";
 
-				MockFor<IClarifySessionCache>().Stub(s => s.GetSession(_identity.Name)).Throw(new FCInvalidLoginException(10101, _identity.Name));
-				_result = _cut.CreatePrincipal(_identity);
+				MockFor<IClarifySessionCache>().Stub(s => s.GetSession(username)).Throw(new FCInvalidLoginException(10101, username));
+				_result = _cut.CreatePrincipal(username);
 			}
 
 			[Test]

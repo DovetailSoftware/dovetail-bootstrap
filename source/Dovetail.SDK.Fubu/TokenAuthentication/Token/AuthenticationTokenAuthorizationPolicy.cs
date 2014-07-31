@@ -4,7 +4,7 @@ using Dovetail.SDK.Bootstrap.Token;
 using FubuCore;
 using FubuMVC.Core.Runtime;
 using FubuMVC.Core.Security;
-using IPrincipalFactory = Dovetail.SDK.Bootstrap.Authentication.IPrincipalFactory;
+using IPrincipalFactory = Dovetail.SDK.Bootstrap.Authentication.Principal.IPrincipalFactory;
 
 namespace Dovetail.SDK.Fubu.TokenAuthentication.Token
 {

@@ -1,4 +1,4 @@
-﻿using System.Security.Principal;
+﻿using Dovetail.SDK.Bootstrap.Authentication.Principal;
 using Dovetail.SDK.Bootstrap.Clarify;
 using FubuCore;
 

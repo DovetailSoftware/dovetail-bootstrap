@@ -6,7 +6,7 @@ using FubuMVC.Core.Runtime;
 using FubuMVC.Core.Security;
 using NUnit.Framework;
 using Rhino.Mocks;
-using IPrincipalFactory = Dovetail.SDK.Bootstrap.Authentication.IPrincipalFactory;
+using IPrincipalFactory = Dovetail.SDK.Bootstrap.Authentication.Principal.IPrincipalFactory;
 
 namespace Dovetail.SDK.Bootstrap.Tests.Token
 {

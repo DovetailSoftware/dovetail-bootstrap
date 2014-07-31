@@ -11,10 +11,10 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 		public void Init(HttpApplication context)
 		{
 			_securityContext = ObjectFactory.Container.GetInstance<ISecurityContext>();
-			context.AuthenticateRequest += onContextOnAuthenticateRequest;
+			context.AuthenticateRequest += OnContextOnAuthenticateRequest;
 		}
 
-		private void onContextOnAuthenticateRequest(object sender, EventArgs e)
+		private void OnContextOnAuthenticateRequest(object sender, EventArgs e)
 		{
 			if (RequiresAuthentication(_securityContext))
 			{

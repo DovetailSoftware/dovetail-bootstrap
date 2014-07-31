@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using Dovetail.SDK.Bootstrap.Authentication;
+using Dovetail.SDK.Bootstrap.Authentication.Principal;
 using Dovetail.SDK.Bootstrap.Clarify;
 using Dovetail.SDK.Bootstrap.Configuration;
 using Dovetail.SDK.ModelMap.Configuration;

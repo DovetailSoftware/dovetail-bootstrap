@@ -1,3 +1,4 @@
+using Dovetail.SDK.Bootstrap.Authentication.Principal;
 using FChoice.Foundation.Clarify;
 using FubuCore;
 

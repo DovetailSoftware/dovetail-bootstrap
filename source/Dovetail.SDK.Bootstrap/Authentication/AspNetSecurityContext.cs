@@ -1,5 +1,7 @@
+using System.Configuration;
 using System.Security.Principal;
 using System.Web;
+using Dovetail.SDK.Bootstrap.Configuration;
 
 namespace Dovetail.SDK.Bootstrap.Authentication
 {
@@ -52,6 +54,6 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 
         public IIdentity CurrentIdentity { get { return HttpContext.Current.User.Identity; } }
 
-        public IPrincipal CurrentUser { get { return HttpContext.Current.User; } set { HttpContext.Current.User = value; } }
+		public IPrincipal CurrentUser { get { return HttpContext.Current.User; } set { HttpContext.Current.User = value; } }
     }
 }

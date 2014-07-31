@@ -1,0 +1,13 @@
+<schemaScript xmlns="http://www.dovetailsoftware.com/2006/10/SchemaScript.xsd">
+
+  <addColumn name="x_windows_login_name" dataType="String" table="user" >
+    <description>Used for Windows Authentication to map a {domain}\{username} to a Clarify user</description>
+    <length>128</length>
+    <isSearchable>true</isSearchable>
+  </addColumn>
+
+  <addViewColumn name="windows_login" view="empl_user" table="user" column="x_windows_login_name">
+    <description>Used for Windows Authentication to map a {domain}\{username} to a Clarify user</description>
+  </addViewColumn>
+
+</schemaScript>
