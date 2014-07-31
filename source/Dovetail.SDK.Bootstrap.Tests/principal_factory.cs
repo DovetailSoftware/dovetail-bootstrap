@@ -1,5 +1,5 @@
+using System;
 using System.Security.Principal;
-using Dovetail.SDK.Bootstrap.Authentication;
 using Dovetail.SDK.Bootstrap.Authentication.Principal;
 using Dovetail.SDK.Bootstrap.Clarify;
 using FChoice.Foundation;
@@ -8,6 +8,19 @@ using Rhino.Mocks;
 
 namespace Dovetail.SDK.Bootstrap.Tests
 {
+	public class NullPrincipalValidator : IPrincipalValidator
+	{
+		public void FailureHandler(Exception ex)
+		{
+			
+		}
+
+		public string UserValidator(string username)
+		{
+			return username;
+		}
+	}
+
 	public class when_creating_principal
 	{
 		[TestFixture]
@@ -17,6 +30,9 @@ namespace Dovetail.SDK.Bootstrap.Tests
 
 			public override void Given()
 			{
+				var validatorFactory = MockFor<IPrincipalValidatorFactory>();
+				validatorFactory.Stub(s => s.Create()).Return(new NullPrincipalValidator());
+
 				var clarifySession = MockFor<IClarifySession>();
 				clarifySession.Stub(s => s.Permissions).Return(new[] {"permission1", "permission2"});
 
@@ -41,15 +57,22 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		}
 
 		[TestFixture]
-		public class login_does_not_exist : Context<PrincipalFactory>
+		public class clarify_login_does_not_exist : Context<PrincipalFactory>
 		{
 			private IPrincipal _result;
+			private IPrincipalValidator _validator;
+			private FCInvalidLoginException _exception;
 
 			public override void Given()
 			{
 				const string username = "doesnotexist";
+				var validatorFactory = MockFor<IPrincipalValidatorFactory>();
+				_validator = MockFor<IPrincipalValidator>();
+				_validator.Stub(s => s.UserValidator(username)).Return(username);
+				validatorFactory.Stub(s => s.Create()).Return(_validator);
 
-				MockFor<IClarifySessionCache>().Stub(s => s.GetSession(username)).Throw(new FCInvalidLoginException(10101, username));
+				_exception = new FCInvalidLoginException(10101, username);
+				MockFor<IClarifySessionCache>().Stub(s => s.GetSession(username)).Throw(_exception);
 				_result = _cut.CreatePrincipal(username);
 			}
 
@@ -60,11 +83,10 @@ namespace Dovetail.SDK.Bootstrap.Tests
 			}
 
 			[Test]
-			public void should_sign_user_out()
+			public void should_invoke_failure_handler()
 			{
-				MockFor<IFormsAuthenticationService>().AssertWasCalled(a => a.SignOut());
+				_validator.AssertWasCalled(v=>v.FailureHandler(_exception));
 			}
-
 		}
 	}
 }

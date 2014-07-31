@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Security.Principal;
 using FChoice.Foundation.Clarify;
 using FChoice.Foundation.DataObjects;
 using FubuCore;
@@ -19,7 +18,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		string Workgroup { get; }
 
 		void SignOut();
-		void SetUser(IPrincipal principal);
+		void SetUser(string clarifyLoginName);
 		void SetTimezone(ITimeZone timezone);
 	}
 
@@ -122,11 +121,10 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 			return _permissionsByName.Value.Contains(permission);
 		}
 
-		public void SetUser(IPrincipal principal)
+		public void SetUser(string clarifyLoginName)
 		{
-			var login = principal.Identity.Name;
-			_logger.LogDebug("CurrentSDK user set via principal to {0}.".ToFormat(login));
-			changeUser(login);
+			_logger.LogDebug("CurrentSDK user set via principal to {0}.".ToFormat(clarifyLoginName));
+			changeUser(clarifyLoginName);
 			
 			IsAuthenticated = true;
 		}

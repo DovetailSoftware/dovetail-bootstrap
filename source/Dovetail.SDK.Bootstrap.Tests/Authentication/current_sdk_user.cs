@@ -1,4 +1,3 @@
-using System.Security.Principal;
 using Dovetail.SDK.Bootstrap.Clarify;
 using FChoice.Foundation.DataObjects;
 using NUnit.Framework;
@@ -21,7 +20,7 @@ namespace Dovetail.SDK.Bootstrap.Tests.Authentication
 				_sdkUserTimeZone = MockFor<ITimeZone>();
 
 				_username = "username";
-				_cut.SetUser(new GenericPrincipal(new GenericIdentity(_username), new string[0]));
+				_cut.SetUser(_username);
 
 				_sdkUser = new SDKUser
 				{

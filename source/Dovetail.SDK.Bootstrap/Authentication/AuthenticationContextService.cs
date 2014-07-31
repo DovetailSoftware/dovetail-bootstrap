@@ -42,7 +42,7 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 			}
 
 			_securityContext.CurrentUser = principal;
-			_currentSdkUser.SetUser(principal);
+			_currentSdkUser.SetUser(principal.Identity.Name);
 		}
 	}
 }

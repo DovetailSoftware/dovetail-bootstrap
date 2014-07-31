@@ -1,5 +1,4 @@
-﻿using Dovetail.SDK.Bootstrap.Authentication.Principal;
-using Dovetail.SDK.Bootstrap.Clarify;
+﻿using Dovetail.SDK.Bootstrap.Clarify;
 using FubuCore;
 
 namespace Dovetail.SDK.Bootstrap.Authentication
@@ -14,21 +13,18 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 		private readonly ICurrentSDKUser _currentSdkUser;
 		private readonly IFormsAuthenticationService _formsAuthentication;
 		private readonly IUserAuthenticator _agentAuthenticator;
-		private readonly IPrincipalFactory _principalFactory;
 		private readonly IUserImpersonationService _impersonationService;
 		private readonly ILogger _logger;
 
 		public AuthenticationService(ICurrentSDKUser currentSdkUser,
 			IFormsAuthenticationService formsAuthentication,
 			IUserAuthenticator agentAuthenticator,
-			IPrincipalFactory principalFactory,
 			IUserImpersonationService impersonationService,
 			ILogger logger)
 		{
 			_currentSdkUser = currentSdkUser;
 			_formsAuthentication = formsAuthentication;
 			_agentAuthenticator = agentAuthenticator;
-			_principalFactory = principalFactory;
 			_impersonationService = impersonationService;
 			_logger = logger;
 		}
@@ -46,7 +42,7 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 
 			_impersonationService.StopImpersonating(username);
 
-			_currentSdkUser.SetUser(_principalFactory.CreatePrincipal(username));
+			_currentSdkUser.SetUser(username);
 
 			_formsAuthentication.SetAuthCookie(username, rememberMe);
 

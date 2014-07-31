@@ -84,12 +84,10 @@ namespace Dovetail.SDK.Bootstrap.Tests.Token
             const string username = "annie";
             IAuthenticationToken authToken = new AuthenticationToken { Token = _token, Username = username };
             MockFor<IAuthenticationTokenRepository>().Stub(a => a.RetrieveByToken(_token)).Return(authToken);
-            var principal = MockFor<IPrincipal>();
-            MockFor<IPrincipalFactory>().Stub(a => a.CreatePrincipal(username)).Return(principal);
 
             _cut.RightsFor(_request);
 
-            MockFor<ICurrentSDKUser>().AssertWasCalled(s => s.SetUser(principal));
+            MockFor<ICurrentSDKUser>().AssertWasCalled(s => s.SetUser(username));
         }
     }
 }

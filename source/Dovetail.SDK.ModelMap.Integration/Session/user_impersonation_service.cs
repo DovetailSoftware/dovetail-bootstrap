@@ -65,14 +65,14 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 				_cut.StartImpersonation("annie", "hank");
 
 				var impersonated = _container.GetInstance<ICurrentSDKUser>();
-				impersonated.SetUser(new GenericPrincipal(new GenericIdentity("annie"), new string[0]));
+				impersonated.SetUser("annie");
 				impersonated.Username.ShouldEqual("hank");
 				impersonated.ImpersonatingUsername.ShouldEqual("annie");
 
 				_cut.StopImpersonating("annie");
 
 				var normal = _container.GetInstance<ICurrentSDKUser>();
-				normal.SetUser(new GenericPrincipal(new GenericIdentity("annie"), new string[0]));
+				normal.SetUser("annie");
 				normal.Username.ShouldEqual("annie");
 				normal.ImpersonatingUsername.ShouldBeNull();
 			}

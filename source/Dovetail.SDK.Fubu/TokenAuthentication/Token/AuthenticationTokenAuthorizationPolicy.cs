@@ -4,7 +4,6 @@ using Dovetail.SDK.Bootstrap.Token;
 using FubuCore;
 using FubuMVC.Core.Runtime;
 using FubuMVC.Core.Security;
-using IPrincipalFactory = Dovetail.SDK.Bootstrap.Authentication.Principal.IPrincipalFactory;
 
 namespace Dovetail.SDK.Fubu.TokenAuthentication.Token
 {
@@ -17,14 +16,14 @@ namespace Dovetail.SDK.Fubu.TokenAuthentication.Token
     {
         private readonly ICurrentSDKUser _currentSdkUser;
         private readonly IAuthenticationTokenRepository _tokenRepository;
-        private readonly IPrincipalFactory _principalFactory;
         private readonly ILogger _logger;
 
-        public AuthenticationTokenAuthorizationPolicy(ICurrentSDKUser currentSdkUser, IAuthenticationTokenRepository tokenRepository, IPrincipalFactory principalFactory, ILogger logger)
+        public AuthenticationTokenAuthorizationPolicy(ICurrentSDKUser currentSdkUser, 
+			IAuthenticationTokenRepository tokenRepository, 
+			ILogger logger)
         {
             _currentSdkUser = currentSdkUser;
             _tokenRepository = tokenRepository;
-            _principalFactory = principalFactory;
             _logger = logger;
         }
 
@@ -60,7 +59,7 @@ namespace Dovetail.SDK.Fubu.TokenAuthentication.Token
             _logger.LogDebug("Authentication token {0} found and validated for user {1}.", authenticationToken, authenticationToken);
             request.Set(authenticationToken);
 
-            _currentSdkUser.SetUser(_principalFactory.CreatePrincipal(authenticationToken.Username));
+			_currentSdkUser.SetUser(authenticationToken.Username);
 
             return AuthorizationRight.Allow;
         }
