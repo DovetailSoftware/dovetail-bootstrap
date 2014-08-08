@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Linq;
-using System.Security.Principal;
 using Dovetail.SDK.Bootstrap.Authentication;
 using Dovetail.SDK.Bootstrap.Clarify;
 using Dovetail.SDK.Bootstrap.Clarify.Extensions;
 using FChoice.Common.Data;
-using FChoice.Foundation;
 using NUnit.Framework;
 using StructureMap;
 
@@ -21,8 +19,6 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 		[TestFixtureSetUp]
 		public void BeforeAll()
 		{
-			//log4net.Config.XmlConfigurator.Configure(new FileInfo("bootstrap.log4net"));
-
 			_container = bootstrap_ioc.getContainer(c => { });
 			_cut = _container.GetInstance<UserImpersonationService>();
 
@@ -73,7 +69,7 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 
 				var normal = _container.GetInstance<ICurrentSDKUser>();
 				normal.SetUser("annie");
-				normal.Username.ShouldEqual("annie");
+				normal.Username.ToLowerInvariant().ShouldEqual("annie");
 				normal.ImpersonatingUsername.ShouldBeNull();
 			}
 

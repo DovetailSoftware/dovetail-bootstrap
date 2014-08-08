@@ -55,16 +55,16 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		{
 			var impersonatedLogin = _userImpersonationService.GetImpersonatedLoginFor(username);
 			var login = username;
-			string impersonateingLogin = null;
+			string impersonatingLogin = null;
 			if (impersonatedLogin != null)
 			{
 				_logger.LogDebug("Proxied user: setting {0} as the authenticated user being proxied by {1}", impersonatedLogin, username);
 				login = impersonatedLogin;
-				impersonateingLogin = username;
+				impersonatingLogin = username;
 			}
 		
 			var dataSet = _session.CreateDataSet();
-			var userGeneric = dataSet.CreateGeneric("user");
+			var userGeneric = dataSet.CreateGenericWithFields("user", "login_name");
 			userGeneric.Filter.AddFilter(FilterType.Equals("login_name", login));
 
 			var employeeGeneric = userGeneric.TraverseWithFields("user2employee", "work_group", "first_name", "last_name");
@@ -92,8 +92,8 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 				FirstName = employeeRow.AsString("first_name"),
 				LastName = employeeRow.AsString("last_name"),
 				Workgroup = employeeRow.AsString("work_group"),
-				Login = login,
-				ImpersonatingLogin = impersonateingLogin,
+				Login = userGeneric.Rows[0].AsString("login_name"),
+				ImpersonatingLogin = impersonatingLogin,
 				Queues = queues,
 				Timezone = timezone
 			};
