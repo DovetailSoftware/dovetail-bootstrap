@@ -14,12 +14,12 @@
     <copyright>Copyright Dovetail Software 2012-2013</copyright>
     <tags>Clarify</tags>
     <dependencies>
-      <dependency id="Dovetail.SDK.Bootstrap" version="0.6.1.0"/>
-      <dependency id="Dovetail.SDK" version="3.3.0.37" />
+      <dependency id="Dovetail.SDK.Bootstrap" version="2.0.0.0"/>
+      <dependency id="Dovetail.SDK" version="3.3.3.3" />
       <dependency id="FubuCore" version="1.2.0.225" />
       <dependency id="log4net" version="2.0.0" />
       <dependency id="structuremap" version="2.6.3.0" />
-    </dependencies>      
+    </dependencies>
     </metadata>
     <files>
       <file src="..\..\source\Dovetail.SDK.ModelMap\bin\release\Dovetail.SDK.ModelMap.*" target="lib\net40" />
