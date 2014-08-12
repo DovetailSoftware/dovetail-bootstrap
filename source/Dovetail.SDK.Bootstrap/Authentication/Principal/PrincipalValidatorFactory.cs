@@ -25,7 +25,7 @@ namespace Dovetail.SDK.Bootstrap.Authentication.Principal
 
 		public IPrincipalValidator Create()
 		{
-			var configuration = WebConfigurationManager.OpenWebConfiguration(null);
+			var configuration = WebConfigurationManager.OpenWebConfiguration("~");
 			var authenticationSection = (AuthenticationSection)configuration.GetSection("system.web/authentication");
 			if (authenticationSection.Mode == AuthenticationMode.Windows)
 			{
