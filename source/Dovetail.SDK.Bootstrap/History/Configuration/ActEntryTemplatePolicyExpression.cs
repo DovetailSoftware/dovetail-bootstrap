@@ -33,6 +33,7 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
 		}
 
 		public int Code { get; set; }
+		public bool IsVerbose { get; set; }
 		public StringToken DisplayName { get; set; }
 		public Action<ClarifyDataRow, HistoryItem, ActEntryTemplate> ActivityDTOUpdater;
 		public Action<HistoryItem> ActivityDTOEditor { get; set; }
@@ -80,6 +81,11 @@ Has Editor: {2}
 		/// Remove this act entry code from the current set of act entry templates
 		/// </summary>
 		void Remove();
+
+		/// <summary>
+		/// When a template has this set the history item will not be returned unless ShowAllActivities is true.
+		/// </summary>
+		IAfterActEntryCode IsVerbose();
 	}
 
 	public interface IAfterDisplayName
@@ -169,15 +175,44 @@ Has Editor: {2}
 		}
 
 		/// <summary>
-		/// Start the definition of act entry template for a given act_code. Each act_code cooresponds to a
-		/// type of event in the clarify system.
+		/// Start the definition of act entry template for a given act_code. If a template for this act_code is already present it will replace it. 
+		/// Each act_code cooresponds to a type of event in the clarify system.
 		/// </summary>
 		/// <param name="code">The act_code of the activity entry you wish to include. </param>
+		/// <param name="isVerbose">When this is true the history item will not be returned unless ShowAllActivities is true.</param>
 		public IAfterActEntryCode ActEntry(int code)
 		{
 			addCurrentActEntryTemplate();
 
 			_currentActEntryTemplate = new ActEntryTemplate(_historyOutputParser) {Code = code};
+
+			return this;
+		}
+
+		/// <summary>
+		/// Edit the existing act entry template for the given act_code. If one does not already exist a new one is created.
+		/// </summary>
+		/// <param name="code">The act_code of the activity entry whose template you wish to edit.</param>
+		public IAfterActEntryCode EditActEntry(int code)
+		{
+			addCurrentActEntryTemplate();
+
+			//find existing template if it exists. 
+			if (ActEntryTemplatesByCode.ContainsKey(code))
+			{
+				_currentActEntryTemplate = ActEntryTemplatesByCode[code];
+			}
+			else
+			{
+				_currentActEntryTemplate = new ActEntryTemplate(_historyOutputParser) { Code = code };
+			}
+
+			return this;
+		}
+
+		public IAfterActEntryCode IsVerbose()
+		{
+			_currentActEntryTemplate.IsVerbose = true;
 
 			return this;
 		}

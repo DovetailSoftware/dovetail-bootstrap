@@ -39,12 +39,12 @@ namespace Dovetail.SDK.Bootstrap.History
 
 		public IEnumerable<HistoryItem> Assemble(ClarifyGeneric actEntryGeneric, IDictionary<int, ActEntryTemplate> templatesByCode, HistoryRequest historyRequest)
 		{
-			var codes = templatesByCode.Values.Select(d => d.Code).ToArray();
 			actEntryGeneric.DataFields.AddRange("act_code", "entry_time", "addnl_info");
 
 			if (!historyRequest.ShowAllActivities)
 			{
-				actEntryGeneric.Filter(f => f.IsIn("act_code", codes));
+				var activeCodes = templatesByCode.Values.Where(t => !t.IsVerbose).Select(d => d.Code).ToArray();
+				actEntryGeneric.Filter(f => f.IsIn("act_code", activeCodes));
 			}
 
 			//adding related generics expected by any fancy act entry templates

@@ -10,9 +10,12 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
 		}
 
 		protected override void DefineTemplate(WorkflowObject workflowObject)
-		{
+		{	
 			//you can remove templates created by other policies
 			ActEntry(3000).Remove();
+
+			//edit existing template to make it only appear when requesting history with ShowAllActivities=true
+			EditActEntry(300).IsVerbose();
 
 			//you can redefine existing policies
 			ActEntry(900).DisplayName(HistoryBuilderTokens.DISPATCHED)
