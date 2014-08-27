@@ -12,10 +12,10 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Collection of common infrastrucure used by applications based on Dovetail SDK: Session Management, Workflow History</description>
     <dependencies>
-        <dependency id="Dovetail.SDK" version="3.3.3.3" />
-        <dependency id="FubuCore" version="1.2.0.272" />
+        <dependency id="Dovetail.SDK" version="3.3.3.10" />
+        <dependency id="FubuCore" version="1.3.0.278" />
         <dependency id="FubuLocalization" version="1.0.0.174" />
-        <dependency id="log4net" version="2.0.0" />
+        <dependency id="log4net" version="2.0.3" />
         <dependency id="structuremap" version="2.6.3.0" />
         <dependency id="Sprache" version="1.10.0.35" />
     </dependencies>
