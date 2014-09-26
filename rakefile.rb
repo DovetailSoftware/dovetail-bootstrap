@@ -10,7 +10,7 @@ solution = FubuRake::Solution.new do |sln|
 	sln.compile = {
 		:solutionfile => 'source/Bootstrap.sln'
 	}
-				 
+
 	sln.assembly_info = {
 		:product_name => "Dovetail Bootstrap",
 		:copyright => 'Copyright Dovetail Software 2013',
@@ -19,63 +19,63 @@ solution = FubuRake::Solution.new do |sln|
 	}
 
 	sln.options = @options
-	sln.ripple_enabled = true	
+	sln.ripple_enabled = true
 end
 
-### Edit these settings 
+### Edit these settings
 DATABASE = "mobilecl125"
 DATABASE_TYPE = "mssql"
 DATABASE_CONNECTION = "Data Source=localhost;Initial Catalog=mobilecl125;User Id=sa;Password=sa"
 
 SCHEMAEDITOR_PATH = "#{Rake::Win32::normalize(ENV['PROGRAMFILES'])}/Dovetail Software/SchemaEditor/SchemaEditor.exe"
 
-#desc "Copy archives to test folder in order to run unit tests"
-output :test_assemblies => [:compile] do |out|
-	out.from "#{File.dirname(__FILE__)}"
-	out.to @options[:results]
-	Dir.glob("**/bin/Debug*/*.*"){ |file|
-		out.file file, :as => "assemblies/#{File.basename(file)}"
-	}	
-end
+# #desc "Copy archives to test folder in order to run unit tests"
+# output :test_assemblies => [:compile] do |out|
+# 	out.from "#{File.dirname(__FILE__)}"
+# 	out.to @options[:results]
+# 	Dir.glob("**/bin/Debug*/*.*"){ |file|
+# 		out.file file, :as => "assemblies/#{File.basename(file)}"
+# 	}
+# end
 
 def findNunitConsoleExe
 	nunitPackageDirectory = Dir.glob('source/packages/NUnit*').first
 	raise "NUnit package was not found under source/packages." if nunitPackageDirectory.nil?
-	
+
 	return File.join(nunitPackageDirectory, 'tools/nunit-console.exe')
 end
 
-task :nuget_deploy => [:compile, "ripple:package"] do 
+task :nuget_deploy => [:compile, "ripple:package"] do
 	DOVETAIL_FEED = "http://focus.dovetailsoftware.com/nuget"
 	DOVETAIL_NUGET_APIKEY = ENV['DT_NUGET_API_KEY'] || ''
-	
+
 	fail 'You need to define an environment variable "DT_NUGET_API_KEY" with the Dovetail Nuget feed api key as committing credentials is BAD.' if(DOVETAIL_NUGET_APIKEY.empty?)
 
 	sh "ripple publish #{solution.options[:build_number]} #{DOVETAIL_NUGET_APIKEY} --server #{DOVETAIL_FEED}"
 end
 
-namespace :setup do 
+namespace :setup do
 
 	#desc "Rebuilds development database and populates it with data"
 	task :developer => [:clean,:apply_schemascripts]
-	
+
 	desc "Apply all schema scripts in the schema directory"
 	task :apply_schemascripts do
 		sh "\"#{SCHEMAEDITOR_PATH}\" -g"
 		apply_schema
 	end
 
-	def apply_schema(database = DATABASE)  
+	def apply_schema(database = DATABASE)
 
 		puts "Applying scripts to #{database} database"
-		seConfig = 'Default.SchemaEditor'           
+		seConfig = 'Default.SchemaEditor'
 		seReport = 'SchemaDifferenceReport.txt'
 
 		#SchemaEditor has different (more verbose) database type configuration than Dovetail SDK
 		databaseType = (DATABASE_TYPE == 'mssql') ? 'MsSqlServer2005' : 'Oracle9'
 
-		Dir.glob(File.join('packaging', 'schemascripts', "*schemascript.xml")) do |schema_script|  
- 
+		Dir.glob(File.join('packaging', 'schemascripts', "*schemascript.xml")) do |schema_script|
+
 			File.open(seConfig) do |schema_editor_config_file|
 				doc = REXML::Document.new(schema_editor_config_file)
 				doc.root.elements['database/type'].text = databaseType
