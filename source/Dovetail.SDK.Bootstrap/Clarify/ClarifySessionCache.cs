@@ -151,29 +151,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		{
 			_logger.LogDebug("Creating missing session.");
 
-//			string actualUserName = username;
-//			int proxyUserId = -1;
-//			//if the desired user currently proxying another user
-//			var sqlHelper = new SqlHelper("SELECT u.login_name, u.objid FROM table_user u, table_user p WHERE p.user2proxy_user = u.objid AND p.login_name = {0}");
-//			sqlHelper.Parameters.Add("login", username);
-//
-//			using (var dr = sqlHelper.ExecuteReader())
-//			{
-//				if (dr.Read())
-//				{
-//					actualUserName = dr.GetString(0);
-//					proxyUserId = dr.GetInt32(1);
-//				}
-//			}
-
 			var clarifySession = _clarifyApplication.CreateSession(username, ClarifyLoginType.User);
-
-			//save the original requested username as the proxy user in the session state
-//			if (actualUserName != username)
-//			{
-//				clarifySession["proxy.login_name"] = username;
-//				clarifySession["proxy.userid"] = proxyUserId;
-//			}
 
 			var wrappedSession = wrapSession(clarifySession);
 
