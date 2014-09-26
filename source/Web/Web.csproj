@@ -4,8 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>
-    </ProductVersion>
+    <ProductVersion></ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{81BEBC91-46D5-4118-84AF-F85C2BEAE32C}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
@@ -15,8 +14,7 @@
     <AssemblyName>Bootstrap.Web</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
+    <FileUpgradeFlags></FileUpgradeFlags>
     <OldToolsVersion>4.0</OldToolsVersion>
     <UpgradeBackupLocation />
     <IISExpressSSLPort />
@@ -42,6 +40,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="adodb">
+      <HintPath>..\packages\Dovetail.SDK\lib\net40\adodb.dll</HintPath>
+    </Reference>
     <Reference Include="Bottles">
       <HintPath>..\packages\Bottles\lib\Bottles.dll</HintPath>
     </Reference>
@@ -266,8 +267,7 @@
           <IISUrl>http://localhost:64935/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
-          <CustomServerUrl>
-          </CustomServerUrl>
+          <CustomServerUrl></CustomServerUrl>
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>

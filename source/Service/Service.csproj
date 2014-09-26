@@ -34,6 +34,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="adodb">
+      <HintPath>..\packages\Dovetail.SDK\lib\net40\adodb.dll</HintPath>
+    </Reference>
     <Reference Include="FChoice.Common">
       <HintPath>..\packages\Dovetail.SDK\lib\net40\FChoice.Common.dll</HintPath>
     </Reference>

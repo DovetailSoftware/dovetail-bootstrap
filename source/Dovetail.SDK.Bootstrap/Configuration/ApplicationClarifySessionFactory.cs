@@ -10,19 +10,15 @@ namespace Dovetail.SDK.Bootstrap.Configuration
 	public class DefaultApplicationClarifySessionFactory : IApplicationClarifySessionFactory
 	{
 		private readonly IClarifySessionCache _sessionCache;
-		private readonly UTCTimezoneUserClarifySessionConfigurator _sessionConfigurator;
 
-		public DefaultApplicationClarifySessionFactory(IClarifySessionCache sessionCache, UTCTimezoneUserClarifySessionConfigurator sessionConfigurator)
+		public DefaultApplicationClarifySessionFactory(IClarifySessionCache sessionCache)
 		{
 			_sessionCache = sessionCache;
-			_sessionConfigurator = sessionConfigurator;
 		}
 
 		public IApplicationClarifySession Create()
 		{
 			var session = (ClarifySessionWrapper) _sessionCache.GetApplicationSession();
-
-			//_sessionConfigurator.Configure(session.ClarifySession);
 
 			return session;
 		}

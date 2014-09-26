@@ -1,19 +1,18 @@
 using System;
 using System.Collections.Generic;
 using Dovetail.SDK.Bootstrap.Authentication;
-using FChoice.Common.Data;
 using FChoice.Foundation.Clarify;
 using FubuCore;
 
 namespace Dovetail.SDK.Bootstrap.Clarify
 {
 	public interface IClarifySessionCache
-    {
-		IClarifySession GetApplicationSession();
+	{
+		IClarifySession GetApplicationSession(bool isConfigured = true);
 		IClarifySession GetSession(string username);
-		bool EjectSession(string username);
+		bool EjectSession(string username, bool isObserved = true);
 		IDictionary<string, IClarifySession> SessionsByUsername { get; }
-    }
+	}
 
 	public class ClarifySessionCache : IClarifySessionCache
 	{
@@ -31,7 +30,9 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 			_agentSessionCacheByUsername = new Dictionary<string, IClarifySession>();
 		}
 
-		public ClarifySessionCache(IClarifyApplication clarifyApplication, ILogger logger, IUserClarifySessionConfigurator sessionConfigurator, Func<IUserSessionEndObserver> sessionEndObserver, Func<IUserSessionStartObserver> sessionStartObserver, DovetailDatabaseSettings settings)
+		public ClarifySessionCache(IClarifyApplication clarifyApplication, ILogger logger,
+			IUserClarifySessionConfigurator sessionConfigurator, Func<IUserSessionEndObserver> sessionEndObserver,
+			Func<IUserSessionStartObserver> sessionStartObserver, DovetailDatabaseSettings settings)
 		{
 			_clarifyApplication = clarifyApplication;
 			_logger = logger;
@@ -61,10 +62,8 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 			_agentSessionCacheByUsername.Clear();
 		}
 
-		public bool EjectSession(string username)
+		public bool EjectSession(string username, bool isObserved = true)
 		{
-			var isApplicationUser = isApplicationUsername(username);
-
 			using (_logger.Push("Ejecting session for {0}.".ToFormat(username)))
 			{
 				if (!_agentSessionCacheByUsername.ContainsKey(username))
@@ -84,7 +83,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 					var session = _agentSessionCacheByUsername[username];
 					_agentSessionCacheByUsername.Remove(username);
 
-					if (!isApplicationUser)
+					if (isObserved)
 					{
 						_logger.LogDebug("Expiring session {0}.", session.Id);
 						_sessionEndObserver().SessionExpired(session);
@@ -100,18 +99,13 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 			return true;
 		}
 
-		private bool isApplicationUsername(string username)
+		public IClarifySession GetApplicationSession(bool isConfigured = true)
 		{
-			return username == _settings.ApplicationUsername;
+			_logger.LogDebug("Getting application {0}session.", isConfigured ? "configured ":"");
+			return getSession(_settings.ApplicationUsername, isConfigured, false);
 		}
 
-		public IClarifySession GetApplicationSession()
-		{
-			_logger.LogDebug("Getting application session.");
-			return getSession(_settings.ApplicationUsername);
-		}
-
-		private IClarifySession getSession(string username)
+		private IClarifySession getSession(string username, bool isConfigured = true, bool isObserved = true)
 		{
 			IClarifySession session;
 
@@ -126,7 +120,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 						return session;
 					}
 					_logger.LogDebug("Ejecting invalid session.");
-					EjectSession(username);
+					EjectSession(username, isObserved);
 				}
 
 				lock (_agentSessionCacheByUsername)
@@ -137,7 +131,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 						return _agentSessionCacheByUsername[username];
 					}
 
-					session = CreateSession(username);
+					session = CreateSession(username, isConfigured, isObserved);
 					_agentSessionCacheByUsername.Add(username, session);
 
 					_logger.LogDebug("{0} sessions are now in the cache.", _agentSessionCacheByUsername.Count);
@@ -147,7 +141,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 			return session;
 		}
 
-		public IClarifySession CreateSession(string username)
+		public IClarifySession CreateSession(string username, bool isConfigured = true, bool isObserved = true)
 		{
 			_logger.LogDebug("Creating missing session.");
 
@@ -155,12 +149,16 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 
 			var wrappedSession = wrapSession(clarifySession);
 
-			_sessionConfigurator.Configure(clarifySession);
-			_logger.LogDebug("Configured created session.");
+			if (isConfigured)
+			{
+				_sessionConfigurator.Configure(clarifySession);
+				_logger.LogDebug("Configured created session.");
+			}
 
-			if (!isApplicationUsername(username))
+			if (isObserved)
 			{
 				_sessionStartObserver().SessionStarted(wrappedSession);
+				_logger.LogDebug("Observed created session.");
 			}
 
 			_logger.LogInfo("Created session {0}.".ToFormat(clarifySession.SessionID));

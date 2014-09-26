@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="adodb">
+      <HintPath>..\packages\Dovetail.SDK\lib\net40\adodb.dll</HintPath>
+    </Reference>
     <Reference Include="Bottles">
       <HintPath>..\packages\Bottles\lib\Bottles.dll</HintPath>
     </Reference>

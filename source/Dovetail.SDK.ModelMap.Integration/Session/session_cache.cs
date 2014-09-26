@@ -9,7 +9,7 @@ using StructureMap;
 
 namespace Dovetail.SDK.ModelMap.Integration.Session
 {
-	public abstract class session_cache
+	public class session_cache
 	{
 		[TestFixture]
 		public class session_cache_context
@@ -129,62 +129,40 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 				_session.Stub(s => s.Id).Return(sessionId);
 
 				_cut.addSessionToCache(UserName, _session);
-
-				_result = _cut.EjectSession(UserName);
 			}
 
 			[Test]
 			public void should_return_true()
 			{
+				_result = _cut.EjectSession(UserName);
+	
 				_result.ShouldBeTrue();
 			}
 
 			[Test]
 			public void should_close_session()
 			{
-				_session.AssertWasCalled(a=>a.Close());
-			}
-
-			[Test]
-			public void should_tell_observer()
-			{
-				_userSessionEndObserver.AssertWasCalled(a => a.SessionExpired(_session));
-			}
-		}
-
-		public class ejecting_an_application_user : session_cache_context
-		{
-			private IClarifySession _session;
-			private bool _result;
-
-			public override void setup()
-			{
-				var username = _settings.ApplicationUsername;
-				var sessionId = Guid.NewGuid();
-				_session = MockRepository.GenerateStub<IClarifySession>();
-				_session.Stub(s => s.Id).Return(sessionId);
-
-				_cut.addSessionToCache(username, _session);
-				_result = _cut.EjectSession(username);
-			}
-			
-			[Test]
-			public void should_not_tell_observer()
-			{
-				_userSessionEndObserver.AssertWasNotCalled(a => a.SessionExpired(_session));
-			}
-			
-			[Test]
-			public void should_close_session()
-			{
+				_result = _cut.EjectSession(UserName);
+				
 				_session.AssertWasCalled(a => a.Close());
 			}
 
 			[Test]
-			public void should_return_true()
+			public void should_tell_observer_by_default()
 			{
-				_result.ShouldBeTrue();
+				_result = _cut.EjectSession(UserName, true);
+	
+				_userSessionEndObserver.AssertWasCalled(a => a.SessionExpired(_session));
 			}
+
+			[Test]
+			public void should_not_tell_observer_when_told()
+			{
+				_result = _cut.EjectSession(UserName, false);
+
+				_userSessionEndObserver.AssertWasNotCalled(a => a.SessionExpired(_session));
+			}
+
 		}
 
 		public class ejecting_a_session_that_does_not_exist : session_cache_context
@@ -208,47 +186,56 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 
 		public class application_session_user : session_cache_context
 		{
-			protected IClarifySession _result;
 
 			public override void  setup()
 			{
 				_clarifyApplication.Expect(s => s.CreateSession(_settings.ApplicationUsername, ClarifyLoginType.User)).Return(_expectedSession);
 				_clarifyApplication.Stub(s => s.IsSessionValid(_expectedSession.SessionID)).Return(true);
-				_result = _cut.GetApplicationSession();
 			}
 
 			[Test]
 			public void should_have_expected_id()
 			{
+				_cut.GetApplicationSession();
+
 				_cut.GetApplicationSession().Id.ShouldEqual(_expectedSession.SessionID);
 			}
 
 			[Test]
 			public void should_be_created_once()
 			{
-				_cut.GetApplicationSession().ShouldBeTheSameAs(_result);
+				var result = _cut.GetApplicationSession();
+
+				_cut.GetApplicationSession().ShouldBeTheSameAs(result);
 			}
 
 			[Test]
 			public void should_use_application_username()
 			{
+				_cut.GetApplicationSession();
+
 				_clarifyApplication.VerifyAllExpectations();
 			}
 
 			[Test]
-			public void should_be_configured()
+			public void should_be_configured_by_default()
 			{
-				_userClarifySessionConfigurator.AssertWasCalled(a=>a.Configure(_expectedSession));
+				_cut.GetApplicationSession(true);
+
+				_userClarifySessionConfigurator.AssertWasCalled(a => a.Configure(_expectedSession));
 			}
+		}
 
+		public class application_session_user_unconfigured : session_cache_context
+		{
 			[Test]
-			public void ejecting_session_should_not_tell_observer()
+			public void should_not_be_configured_when_told()
 			{
-				var result = _cut.EjectSession(_settings.ApplicationUsername);
-
-				result.ShouldBeTrue();
-
-				_userSessionEndObserver.AssertWasNotCalled(a => a.SessionExpired(null), x => x.IgnoreArguments());
+				_clarifyApplication.Expect(s => s.CreateSession(_settings.ApplicationUsername, ClarifyLoginType.User)).Return(_expectedSession);
+				_clarifyApplication.Stub(s => s.IsSessionValid(_expectedSession.SessionID)).Return(true);
+				_cut.GetApplicationSession(false);
+				
+				_userClarifySessionConfigurator.AssertWasNotCalled(a => a.Configure(_expectedSession));
 			}
 		}
 	}
