@@ -87,7 +87,7 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
 						var docInstDetail = new DocInstDetail
 						{
 							ObjId = docInst.DatabaseIdentifier(),
-							Title = docInst.AsString("title").HtmlEncode()
+							Title = docInst.AsString("title")
 						};
 						_attachmentHistoryItemUpdater.Update(docInstDetail, item);
 						item.Internal = string.Empty;
