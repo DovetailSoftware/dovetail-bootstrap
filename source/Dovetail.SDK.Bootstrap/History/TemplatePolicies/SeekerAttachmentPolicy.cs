@@ -17,6 +17,7 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
 	{
 		public int ObjId { get; set; }
 		public string Title { get; set; }
+		public string Path { get; set; }
 	}
 	public class SeekerAttachmentPolicy : ActEntryTemplatePolicyExpression
 	{
@@ -87,7 +88,8 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
 						var docInstDetail = new DocInstDetail
 						{
 							ObjId = docInst.DatabaseIdentifier(),
-							Title = docInst.AsString("title")
+							Title = docInst.AsString("title"),
+							Path = docInst.RelatedRows("attach_info2doc_path")[0].AsString("path")
 						};
 						_attachmentHistoryItemUpdater.Update(docInstDetail, item);
 						item.Internal = string.Empty;
