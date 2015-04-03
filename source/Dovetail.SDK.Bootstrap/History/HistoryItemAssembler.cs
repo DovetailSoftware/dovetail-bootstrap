@@ -208,6 +208,7 @@ namespace Dovetail.SDK.Bootstrap.History
 
 			return new HistoryItem
 			{
+				DatabaseIdentifier = actEntry.ActEntryRecord.DatabaseIdentifier(),
 				Id = actEntry.Id,
 				Type = actEntry.Type,
 				Title = actEntry.Template.DisplayName,
