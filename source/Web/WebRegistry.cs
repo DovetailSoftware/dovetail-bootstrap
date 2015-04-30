@@ -3,6 +3,7 @@ using Dovetail.SDK.Fubu.TokenAuthentication.Token;
 using Dovetail.SDK.ModelMap.Configuration;
 using Dovetail.SDK.ModelMap.Registration;
 using StructureMap.Configuration.DSL;
+using StructureMap.Graph;
 
 namespace Bootstrap.Web
 {

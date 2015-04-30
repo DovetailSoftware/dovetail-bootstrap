@@ -14,7 +14,7 @@ using ILocaleCache = FChoice.Foundation.Clarify.ILocaleCache;
 namespace Dovetail.SDK.Bootstrap.Configuration
 {
 	public class BootstrapRegistry : Registry
-	{
+    {
 		public static bool MaintainAspNetCompatibility = true;
 
         public BootstrapRegistry()

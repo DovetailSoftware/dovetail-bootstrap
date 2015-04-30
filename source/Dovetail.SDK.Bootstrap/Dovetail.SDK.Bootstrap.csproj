@@ -66,7 +66,10 @@
       <HintPath>..\packages\Sprache\lib\net40\Sprache.dll</HintPath>
     </Reference>
     <Reference Include="StructureMap">
-      <HintPath>..\packages\structuremap\lib\StructureMap.dll</HintPath>
+      <HintPath>..\packages\structuremap\lib\net40\StructureMap.dll</HintPath>
+    </Reference>
+    <Reference Include="StructureMap.Net4">
+      <HintPath>..\packages\structuremap\lib\net40\StructureMap.Net4.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -106,8 +109,10 @@
     <Compile Include="Configuration\DoNothingOutputEncoder.cs" />
     <Compile Include="Configuration\FastYetSimpleTypeActivator.cs" />
     <Compile Include="Configuration\HtmlEncodeOutputEncoder.cs" />
+    <Compile Include="Configuration\IClarifySessionProvider.cs" />
     <Compile Include="Configuration\IOutputEncoder.cs" />
     <Compile Include="Configuration\LogRequestContextModule.cs" />
+    <Compile Include="Configuration\SecurityContextProvider.cs" />
     <Compile Include="Configuration\SettingsProviderRegistry.cs" />
     <Compile Include="Configuration\StructureMapServiceLocator.cs" />
     <Compile Include="Configuration\WebsiteSettings.cs" />

@@ -6,6 +6,7 @@ using Dovetail.SDK.ModelMap;
 using Dovetail.SDK.ModelMap.Configuration;
 using Dovetail.SDK.ModelMap.Registration;
 using StructureMap;
+using StructureMap.Graph;
 using Topshelf;
 using Topshelf.Runtime;
 

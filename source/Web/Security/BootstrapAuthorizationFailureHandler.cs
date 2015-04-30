@@ -2,6 +2,7 @@ using System.Net;
 using Bootstrap.Web.Handlers.user.signin;
 using FubuCore.Binding;
 using FubuMVC.Core;
+using FubuMVC.Core.Continuations;
 using FubuMVC.Core.Http;
 using FubuMVC.Core.Runtime;
 using FubuMVC.Core.Security;
@@ -14,9 +15,9 @@ namespace Bootstrap.Web.Security
         private readonly IOutputWriter _writer;
         private readonly IRequestData _requestData;
         private readonly IUrlRegistry _urlRegistry;
-        private readonly ICurrentHttpRequest _currentHttpRequest;
+        private readonly IHttpRequest _currentHttpRequest;
 
-        public BootstrapAuthorizationFailureHandler(IOutputWriter writer, IRequestData requestData, IUrlRegistry urlRegistry, ICurrentHttpRequest currentHttpRequest)
+		public BootstrapAuthorizationFailureHandler(IOutputWriter writer, IRequestData requestData, IUrlRegistry urlRegistry, IHttpRequest currentHttpRequest)
         {
             _writer = writer;
             _requestData = requestData;
@@ -24,22 +25,21 @@ namespace Bootstrap.Web.Security
             _currentHttpRequest = currentHttpRequest;
         }
 
-        public void Handle()
-        {
-            if (_requestData.IsAjaxRequest())
-            {
-                _writer.WriteResponseCode(HttpStatusCode.Forbidden);
-                return;
-            }
-            
-            //ICK - working around Fubu Url building bug 
-            //var loginUrl = _urlRegistry.UrlFor(new SignInRequest {ReturnUrl = _currentHttpRequest.RawUrl()}); //this is what it should be
+		public FubuContinuation Handle()
+		{
+			if (_requestData.IsAjaxRequest())
+			{
+				return FubuContinuation.EndWithStatusCode(HttpStatusCode.Forbidden);
+			}
 
-            //redirect to login url 
-            var loginUrl = _urlRegistry.UrlFor(new SignInRequest());
-            loginUrl = loginUrl.TrimEnd('/') + "?ReturnUrl=" + _currentHttpRequest.RawUrl().UrlEncode();
+			//ICK - working around Fubu Url building bug 
+			//var loginUrl = _urlRegistry.UrlFor(new SignInRequest {ReturnUrl = _currentHttpRequest.RawUrl()}); //this is what it should be
 
-            _writer.RedirectToUrl(loginUrl);
-        }
-    }
+			//redirect to login url 
+			var loginUrl = _urlRegistry.UrlFor(new SignInRequest());
+			loginUrl = loginUrl.TrimEnd('/') + "?ReturnUrl=" + _currentHttpRequest.RawUrl().UrlEncode();
+
+			return FubuContinuation.RedirectTo(loginUrl, categoryOrHttpMethod: null);
+		}
+	}
 }

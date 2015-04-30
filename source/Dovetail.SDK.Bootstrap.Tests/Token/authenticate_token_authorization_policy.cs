@@ -1,12 +1,13 @@
-﻿using System.Security.Principal;
-using Dovetail.SDK.Bootstrap.Clarify;
+﻿using Dovetail.SDK.Bootstrap.Clarify;
 using Dovetail.SDK.Bootstrap.Token;
 using Dovetail.SDK.Fubu.TokenAuthentication.Token;
+using FubuMVC.Core;
+using FubuMVC.Core.Http;
 using FubuMVC.Core.Runtime;
 using FubuMVC.Core.Security;
+using FubuMVC.StructureMap;
 using NUnit.Framework;
 using Rhino.Mocks;
-using IPrincipalFactory = Dovetail.SDK.Bootstrap.Authentication.Principal.IPrincipalFactory;
 
 namespace Dovetail.SDK.Bootstrap.Tests.Token
 {
@@ -14,6 +15,7 @@ namespace Dovetail.SDK.Bootstrap.Tests.Token
     {
         private string _token;
         private IFubuRequest _request;
+	    private IFubuRequestContext _context;
         private AuthenticationTokenRequest _authenticationTokenRequest;
 
         public override void Given()
@@ -25,13 +27,16 @@ namespace Dovetail.SDK.Bootstrap.Tests.Token
             _request.Stub(a => a.Get<AuthenticationTokenRequest>()).Return(_authenticationTokenRequest);
             
             _request.Stub(a => a.Get<ICurrentSDKUser>()).Return(MockFor<ICurrentSDKUser>());
+
+	        var services = new StructureMapServiceLocator(_services.Container);
+	        _context = new FubuRequestContext(services, MockFor<IHttpRequest>(), _request, MockFor<IOutputWriter>(), MockFor<FubuCore.Logging.ILogger>());
         }
 
         [Test]
         public void token_should_be_found_on_request()
         {
 
-            _cut.RightsFor(_request);
+            _cut.RightsFor(_context);
 
             MockFor<IAuthenticationTokenRepository>().AssertWasCalled(a => a.RetrieveByToken(_token));
         }
@@ -42,7 +47,7 @@ namespace Dovetail.SDK.Bootstrap.Tests.Token
             _authenticationTokenRequest.authToken = null;
             MockFor<ICurrentSDKUser>().Stub(a => a.IsAuthenticated).Return(true);
 
-            var result = _cut.RightsFor(_request);
+			var result = _cut.RightsFor(_context);
 
             result.ShouldEqual(AuthorizationRight.Allow);
         }
@@ -52,7 +57,7 @@ namespace Dovetail.SDK.Bootstrap.Tests.Token
         {
             _authenticationTokenRequest.authToken = null;
 
-            var result = _cut.RightsFor(_request);
+			var result = _cut.RightsFor(_context);
 
             result.ShouldEqual(AuthorizationRight.Deny);
         }
@@ -62,7 +67,7 @@ namespace Dovetail.SDK.Bootstrap.Tests.Token
         {
             MockFor<IAuthenticationTokenRepository>().Stub(a => a.RetrieveByToken(_token)).Return(null);
 
-            var result = _cut.RightsFor(_request);
+			var result = _cut.RightsFor(_context);
 
             result.ShouldEqual(AuthorizationRight.Deny);
         }
@@ -73,7 +78,7 @@ namespace Dovetail.SDK.Bootstrap.Tests.Token
             IAuthenticationToken authToken = new AuthenticationToken { Token = _token };
             MockFor<IAuthenticationTokenRepository>().Stub(a => a.RetrieveByToken(_token)).Return(authToken);
 
-            _cut.RightsFor(_request);
+			_cut.RightsFor(_context);
 
             _request.AssertWasCalled(a => a.Set(authToken));
         }
@@ -85,7 +90,7 @@ namespace Dovetail.SDK.Bootstrap.Tests.Token
             IAuthenticationToken authToken = new AuthenticationToken { Token = _token, Username = username };
             MockFor<IAuthenticationTokenRepository>().Stub(a => a.RetrieveByToken(_token)).Return(authToken);
 
-            _cut.RightsFor(_request);
+			_cut.RightsFor(_context);
 
             MockFor<ICurrentSDKUser>().AssertWasCalled(s => s.SetUser(username));
         }

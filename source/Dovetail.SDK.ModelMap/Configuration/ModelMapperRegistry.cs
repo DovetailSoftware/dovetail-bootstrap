@@ -1,5 +1,6 @@
 using Dovetail.SDK.Bootstrap.Configuration;
 using StructureMap.Configuration.DSL;
+using StructureMap.Graph;
 
 namespace Dovetail.SDK.ModelMap.Configuration
 {

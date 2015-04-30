@@ -8,6 +8,7 @@ using Dovetail.SDK.ModelMap.Configuration;
 using Dovetail.SDK.ModelMap.Registration;
 using NUnit.Framework;
 using StructureMap;
+using StructureMap.Graph;
 
 namespace Dovetail.SDK.ModelMap.Integration
 {
