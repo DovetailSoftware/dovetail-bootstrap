@@ -8,12 +8,15 @@ using FChoice.Foundation.Clarify;
 using FChoice.Foundation.Schema;
 using FubuLocalization;
 using StructureMap.Configuration.DSL;
+using StructureMap.Configuration.DSL.Expressions;
 using ILocaleCache = FChoice.Foundation.Clarify.ILocaleCache;
 
 namespace Dovetail.SDK.Bootstrap.Configuration
 {
 	public class BootstrapRegistry : Registry
-    {
+	{
+		public static bool MaintainAspNetCompatibility = true;
+
         public BootstrapRegistry()
         {
             For<ISecurityContext>().Use(c =>
@@ -47,14 +50,14 @@ namespace Dovetail.SDK.Bootstrap.Configuration
             //any web class that takes a dependency on IClarifySession will get a session for the current 
             //authenticated user. 
             ForSingletonOf<IClarifySessionCache>().Use<ClarifySessionCache>();
-			For<IClarifySession>().HybridHttpOrThreadLocalScoped().Use(ctx=>
+			For<IClarifySession>().TransientOrHybridHttpScoped().Use(ctx=>
 				{
 					var user = ctx.GetInstance<ICurrentSDKUser>();
 					return ctx.GetInstance<IClarifySessionCache>().GetSession(user.Username);
 				});
 
 			For<IApplicationClarifySessionFactory>().Use<DefaultApplicationClarifySessionFactory>();
-			For<IApplicationClarifySession>().HybridHttpOrThreadLocalScoped().Use(ctx => ctx.GetInstance<IApplicationClarifySessionFactory>().Create());
+			For<IApplicationClarifySession>().TransientOrHybridHttpScoped().Use(ctx => ctx.GetInstance<IApplicationClarifySessionFactory>().Create());
 
 			//Make Dovetail SDK caches directly available for DI.
 			For<ISchemaCache>().Use(c => c.GetInstance<IClarifyApplication>().SchemaCache);
@@ -67,9 +70,9 @@ namespace Dovetail.SDK.Bootstrap.Configuration
 			For<IOutputEncoder>().Use<HtmlEncodeOutputEncoder>();
 
             //It is the responsibility of the applicationUrl using bootstrap to set the current sdk user's login 
-            For<ICurrentSDKUser>().HybridHttpOrThreadLocalScoped().Use<CurrentSDKUser>();
+            For<ICurrentSDKUser>().TransientOrHybridHttpScoped().Use<CurrentSDKUser>();
         	For<IUserClarifySessionConfigurator>().Use<UTCTimezoneUserClarifySessionConfigurator>();
-			For<IDatabaseTime>().HybridHttpOrThreadLocalScoped().Use<DatabaseTime>();
+			For<IDatabaseTime>().TransientOrHybridHttpScoped().Use<DatabaseTime>();
 
 	        For<ILocalizationMissingHandler>().Use<BootstrapLocalizationMissingHandler>();
 
@@ -79,4 +82,15 @@ namespace Dovetail.SDK.Bootstrap.Configuration
             this.ActEntryTemplatePolicies<DefaultActEntryTemplatePolicyRegistry>();
         }
     }
+
+	public static class StructureMapExtensions
+	{
+		public static CreatePluginFamilyExpression<TPlugin> TransientOrHybridHttpScoped<TPlugin>(this CreatePluginFamilyExpression<TPlugin> expression)
+		{
+			if (BootstrapRegistry.MaintainAspNetCompatibility)
+				return expression.TransientOrHybridHttpScoped();
+
+			return expression;
+		}
+	}
 }
