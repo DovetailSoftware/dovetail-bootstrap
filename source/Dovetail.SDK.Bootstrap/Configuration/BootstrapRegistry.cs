@@ -88,7 +88,7 @@ namespace Dovetail.SDK.Bootstrap.Configuration
 		public static CreatePluginFamilyExpression<TPlugin> TransientOrHybridHttpScoped<TPlugin>(this CreatePluginFamilyExpression<TPlugin> expression)
 		{
 			if (BootstrapRegistry.MaintainAspNetCompatibility)
-				return expression.TransientOrHybridHttpScoped();
+				return expression.HybridHttpOrThreadLocalScoped();
 
 			return expression;
 		}
