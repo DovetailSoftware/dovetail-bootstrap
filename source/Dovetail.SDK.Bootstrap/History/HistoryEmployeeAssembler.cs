@@ -35,6 +35,8 @@ namespace Dovetail.SDK.Bootstrap.History
 			return new HistoryItemEmployee
 			{
 				Name = name,
+				Firstname = employeeRecord.AsString("first_name"),
+				Lastname = employeeRecord.AsString("last_name"),
 				Id = id,
 				Login = login,
 				Email = email,

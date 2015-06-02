@@ -25,7 +25,14 @@ namespace Dovetail.SDK.Bootstrap.History
 			var email = contactRecord.AsString("e_mail");
 			var id = contactRecord.DatabaseIdentifier();
 
-			return new HistoryItemContact { Name = name, Id = id, Email = email };
+			return new HistoryItemContact
+			{
+				Name = name,
+				Firstname = contactRecord.AsString("first_name"),
+				Lastname = contactRecord.AsString("last_name"),
+				Id = id,
+				Email = email
+			};
 		}
 
 		public ClarifyGeneric TraverseContact(ClarifyGeneric actEntryGeneric)
