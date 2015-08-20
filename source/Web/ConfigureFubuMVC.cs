@@ -10,9 +10,9 @@ using FubuMVC.Core;
 using FubuMVC.Core.Registration.Nodes;
 using FubuMVC.Core.Security;
 using FubuMVC.Localization;
-using FubuMVC.Swagger;
-using FubuMVC.Swagger.Configuration;
-using IApi = Dovetail.SDK.Bootstrap.IApi;
+//using FubuMVC.Swagger;
+//using FubuMVC.Swagger.Configuration;
+//using IApi = Dovetail.SDK.Bootstrap.IApi;
 
 namespace Bootstrap.Web
 {
@@ -20,7 +20,7 @@ namespace Bootstrap.Web
 	{
 		public ConfigureFubuMVC()
 		{
-			Import<HandlerConvention>(x => x.MarkerType<HandlerMarker>());
+			//Import<HandlerConvention>(x => x.MarkerType<HandlerMarker>());
 
 			Policies.Global.Add<AuthenticationTokenConvention>();
 
@@ -46,16 +46,16 @@ namespace Bootstrap.Web
 		}
 	}
 
-	public class BootstrapActionFinder : IActionFinder
-	{
-		public Func<ActionCall, bool> Matches
-		{
-			get { return IsApiCall; }
-		}
+	//public class BootstrapActionFinder : IActionFinder
+	//{
+	//	public Func<ActionCall, bool> Matches
+	//	{
+	//		get { return IsApiCall; }
+	//	}
 
-		private static bool IsApiCall(ActionCall actionCall)
-		{
-			return actionCall.ParentChain().InputType().CanBeCastTo<IApi>();
-		}
-	}
+	//	private static bool IsApiCall(ActionCall actionCall)
+	//	{
+	//		return actionCall.ParentChain().InputType().CanBeCastTo<IApi>();
+	//	}
+	//}
 }

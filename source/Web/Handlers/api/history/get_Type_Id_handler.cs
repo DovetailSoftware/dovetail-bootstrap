@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using Dovetail.SDK.Bootstrap;
 using Dovetail.SDK.Bootstrap.History;
 using Dovetail.SDK.ModelMap;
-using FubuMVC.Swagger.Specification;
+//using FubuMVC.Swagger.Specification;
 
 namespace Bootstrap.Web.Handlers.api.history
 {
@@ -39,7 +39,7 @@ namespace Bootstrap.Web.Handlers.api.history
 	public class GETHistoryRequest : IApi
 	{
 		[Required, Description("Type of workflow object. Typically this is 'case'.")]
-		[AllowableValues("case", "subcase", "solution", "<any workflow object name>")]
+		//[AllowableValues("case", "subcase", "solution", "<any workflow object name>")]
 		public string Type { get; set; }
 
 		[Required, Description("Id of the workflow object.")]
