@@ -30,7 +30,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			}
 			catch (Exception e)
 			{
-				_logger.LogError("Could not parse content. Contents:\n\n{0}".ToFormat(input), e);
+				_logger.LogWarn("Could not parse content. Contents:\n\n{0}".ToFormat(input), e);
 				return fakeContent(input);
 			}
 		}
@@ -43,7 +43,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			}
 			catch (Exception e)
 			{
-				_logger.LogError("Could not parse email log. Contents:\n\n{0}".ToFormat(input), e);
+				_logger.LogWarn("Could not parse email log. Contents:\n\n{0}".ToFormat(input), e);
 				return fakeEmailLog(input);
 			}
 		}
