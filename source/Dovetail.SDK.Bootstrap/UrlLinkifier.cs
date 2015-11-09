@@ -9,11 +9,15 @@ namespace Dovetail.SDK.Bootstrap
 
 	public class UrlLinkifier : IUrlLinkifier
 	{
-		private static readonly Regex urlFinderRegEx = new Regex(@"(?<link>(?<protocol>ftp|http|https|mailto|file|webcal):(?:(?:[A-Za-z0-9$_.+!*(),;/?:@&~=-])|%[A-Fa-f0-9]{2}){2,}(?:#(?:[a-zA-Z0-9][a-zA-Z0-9$_.+!*(),;/?:@&~=%-]*))?(?:[A-Za-z0-9$_+!*();/?:~-]))");
+		// Based on URL regex from John Gruber:
+		// http://daringfireball.net/
+		// Copied from Chad Myers' repo:
+		// https://github.com/chadmyers/UrlRegex
+		public static readonly Regex UrlExpression = new Regex(@"(?<link>\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'"".,<>?«»“”‘’])))", RegexOptions.IgnoreCase);
 
 		public string Linkify(string text)
 		{
-			return urlFinderRegEx.Replace(text, @"<a href=""${link}"">${link}</a>");
+			return UrlExpression.Replace(text, @"<a href=""${link}"">${link}</a>");
 		}
 	}
 }
