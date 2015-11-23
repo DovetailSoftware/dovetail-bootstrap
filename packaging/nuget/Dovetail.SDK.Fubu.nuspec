@@ -14,8 +14,8 @@
     <copyright>Copyright Dovetail Software 2012-2013</copyright>
     <tags>Clarify</tags>
     <dependencies>
-      <dependency id="Dovetail.SDK" version="3.3.3.10" />
-      <dependency id="Dovetail.SDK.Bootstrap" version="2.1.0.0"/>
+      <dependency id="Dovetail.SDK" version="3.3" />
+      <dependency id="Dovetail.SDK.Bootstrap" version="2.3.2"/>
       <dependency id="FubuCore" version="1.3.0.278" />
       <dependency id="log4net" version="2.0.3" />
       <dependency id="structuremap" version="2.6.3.0" />
