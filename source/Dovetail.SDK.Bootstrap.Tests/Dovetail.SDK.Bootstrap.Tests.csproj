@@ -110,6 +110,8 @@
     <Compile Include="Authentication\current_sdk_user.cs" />
     <Compile Include="clarify_application_factory.cs" />
     <Compile Include="Configuration\fast_type_activator.cs" />
+    <Compile Include="History\HistoryParsingScenario.cs" />
+    <Compile Include="History\Suites\SuiteMarker.cs" />
     <Compile Include="history_original_message_config.cs" />
     <Compile Include="history_output_parser.cs" />
     <Compile Include="history_item_parser.cs" />
@@ -143,6 +145,10 @@
       <Project>{BDB6AD41-4C91-451F-B0EA-5858DFB5FB26}</Project>
       <Name>Dovetail.SDK.Fubu</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="History\Suites\sample.output.txt" />
+    <EmbeddedResource Include="History\Suites\sample.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
