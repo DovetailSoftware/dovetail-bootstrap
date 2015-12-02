@@ -103,6 +103,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
@@ -149,6 +150,10 @@
   <ItemGroup>
     <EmbeddedResource Include="History\Suites\sample.output.txt" />
     <EmbeddedResource Include="History\Suites\sample.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="History\Suites\markdownCode.output.txt" />
+    <Content Include="History\Suites\markdownCode.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

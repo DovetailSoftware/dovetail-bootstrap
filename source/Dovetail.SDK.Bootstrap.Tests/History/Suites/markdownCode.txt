@@ -1,0 +1,29 @@
+﻿	*** Performed by: Mark Miller, 5585555555
+
+```
+using FubuLocalization;
+
+namespace Agent.Core.Domain.Commands.Policies
+{
+	public class MustNotContainOpenSubcases : IEntityCommandValidationPolicy
+	{
+		public MustNotContainOpenSubcases()
+		{
+			Token = UserMessageKeys.CANNOT_CLOSE_A_CASE_WITH_OPEN_GENERAL_SUBCASES;
+		}
+
+		public StringToken Token { get; set; }
+
+		public void Validate(EntityCommandValidationContext context)
+		{
+			var entity = context.Entity<IWorkflowEntity>() as Case;
+			if (entity == null) return;
+
+			if (entity.HasOpenGeneralSubcases)
+			{
+				context.RegisterMessage(Token);
+			}
+		}
+	}
+}
+```

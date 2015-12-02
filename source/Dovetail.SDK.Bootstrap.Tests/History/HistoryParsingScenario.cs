@@ -1,13 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Web;
+using System.Web.Script.Serialization;
+using Dovetail.SDK.Bootstrap.Configuration;
 using Dovetail.SDK.Bootstrap.History.Configuration;
 using Dovetail.SDK.Bootstrap.History.Parser;
 using Dovetail.SDK.Bootstrap.Tests.History.Suites;
 using FubuCore;
+using FubuMVC.Core.Diagnostics.Visualization;
+using FubuMVC.Core.Runtime;
 using NUnit.Framework;
+using Rhino.Mocks;
 using Sprache;
 using StructureMap.AutoMocking;
 
@@ -40,33 +47,22 @@ namespace Dovetail.SDK.Bootstrap.Tests.History
 		{
 			Debug.WriteLine("Running History Parsing suite: " + suite);
 
-			var parser = buildParser();
+			var outputParser = buildOutputParser();
 			var input = readStream(fullName);
 			var expected = readStream(fullName.Replace(".txt", ".output.txt"));
+			string output = "";
 
-			IEnumerable<IItem> contents;
 			if (fullName.Contains("email"))
 			{
-				contents = parser.ContentItem.Many().End().Parse(input);
+				output = outputParser.EncodeEmailLog(input);
 			}
 			else
 			{
-				contents = parser.ContentItem.Many().End().Parse(input);
+				output = outputParser.Encode(input);
 			}
 
-			var actual = new StringBuilder();
-			contents.Each(_ =>
-			{
-				if (_ is IRenderHtml)
-				{
-					actual.Append(_.As<IRenderHtml>().RenderHtml());
-					return;
-				}
-
-				actual.Append(_.ToString());
-			});
-
-			actual.ToString().ShouldEqual(expected);
+			string renderedOutput = new JavaScriptSerializer().Serialize(output);
+			renderedOutput.ShouldEqual(expected);
 		}
 
 		private static HistoryParsers buildParser()
@@ -75,6 +71,17 @@ namespace Dovetail.SDK.Bootstrap.Tests.History
 			services.Inject(new HistorySettings());
 			services.Inject(new HistoryOriginalMessageConfiguration(services.Get<ILogger>()));
 			return services.ClassUnderTest;
+		}
+
+		private static HistoryOutputParser buildOutputParser()
+		{
+			var parser = buildParser();
+			return new HistoryOutputParser(new ParagraphEndLocator(),
+				new ParagraphAggregator(),
+				new HistoryItemParser(parser, MockRepository.GenerateStub<ILogger>()),
+				new HistoryItemHtmlRenderer(),
+				new HtmlEncodeOutputEncoder(),
+				new UrlLinkifier());
 		}
 
 		private static string readStream(string resource)
