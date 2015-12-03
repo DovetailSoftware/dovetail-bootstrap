@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using Dovetail.SDK.Bootstrap.History.Configuration;
@@ -77,12 +79,18 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		[Test]
 		public void unicode_non_breaking_alone_not_considered_a_line()
 		{
-			const string input = "line1\r\n&#160;\r\nline2";
+			const string input = "line1\r\n&#160;\r\n    line2";
 
-			var items = _cut.EmailItem.Many().Parse(input).ToArray();
+			var items = _cut.ContentItem.Many().Parse(input).ToArray();
+
+			items.Each(_ =>
+			{
+				var content = _.ToString();
+				Debug.WriteLine(content);
+			});
 
 			items[0].ToString().ShouldEqual("line1");
-			items[1].ToString().ShouldEqual("line2");
+			items[1].ToString().ShouldEqual("    line2");
 		}
 
 		[Test]

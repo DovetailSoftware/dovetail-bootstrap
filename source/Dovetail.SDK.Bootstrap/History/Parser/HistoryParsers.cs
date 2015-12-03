@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using Dovetail.SDK.Bootstrap.History.Configuration;
 using FubuCore;
 using FubuCore.Descriptions;
@@ -132,7 +133,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 
 		public static readonly Parser<BlockQuote> BlockQuote =
 			from lines in BlockQuoteLine.Many()
-			select new BlockQuote {Lines = lines};
+			select new BlockQuote { Lines = lines };
 
 		public Parser<IItem> Line
 		{
@@ -140,13 +141,13 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			{
 				return
 					(
-						from r1 in Parse.Regex(@"(\n|\r\n)").Optional()
-						from _1 in WhiteSpace.Text()
-						from text2 in UntilEndOfLine.Many().Text()
-						from r in Parse.Regex(@"(\n|\r\n)\s*(\n|\r\n)(&#160;|\s)+$|\s*(\n|\r\n)+").Optional()
+						from whitespace in WhiteSpace.Text()
+						from text in UntilEndOfLine.Many().Text()
+						let content = whitespace + text
+						from blankLines in Parse.Regex(@"(\n|\r\n)*(&#160;|\s)*(\n|\r\n)").Optional()
 						select new Line
 						{
-							Text = _1 + text2
+							Text = content
 						}
 					).Except(ParagraphEnd);
 			}
@@ -170,7 +171,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			{
 				return from text in UntilEndOfLine.Many().Token().Text()
 					   where _originalMessageConfiguration.Expressions.Any(h => h.IsMatch(text))
-				select text;
+					   select text;
 			}
 		}
 
@@ -179,8 +180,8 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			get
 			{
 				return from header in OriginalMessageHeader
-					from items in EmailItem.Many()
-					select new OriginalMessage {Header = header, Items = items};
+					   from items in EmailItem.Many()
+					   select new OriginalMessage { Header = header, Items = items };
 			}
 		}
 
@@ -189,17 +190,17 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			get
 			{
 				return from _1 in WhiteSpace
-					from title in Parse.CharExcept(':').Many().Text().Token()
-					where _settings.GetLogEmailHeaderTokens().Any(h =>
-					{
-						var key = h.ToString();
-						var isMatch = key.Equals(title, StringComparison.CurrentCultureIgnoreCase);
-						return isMatch;
-					})
-					from _2 in Parse.Char(':')
-					from text in IsoDate.Or(UntilEndOfLine.Many().Token().Text())
-					from rest in HardRule.Or(WhiteSpace)
-					select new EmailHeaderItem {Title = title, Text = text};
+					   from title in Parse.CharExcept(':').Many().Text().Token()
+					   where _settings.GetLogEmailHeaderTokens().Any(h =>
+					   {
+						   var key = h.ToString();
+						   var isMatch = key.Equals(title, StringComparison.CurrentCultureIgnoreCase);
+						   return isMatch;
+					   })
+					   from _2 in Parse.Char(':')
+					   from text in IsoDate.Or(UntilEndOfLine.Many().Token().Text())
+					   from rest in HardRule.Or(WhiteSpace)
+					   select new EmailHeaderItem { Title = title, Text = text };
 			}
 		}
 
@@ -208,9 +209,9 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			get
 			{
 				return from _start in Parse.String(BEGIN_EMAIL_LOG_HEADER)
-					from items in EmailHeaderItem.Many()
-					from _end in Parse.String(END_EMAIL_LOG_HEADER)
-					select new EmailHeader {Headers = items, IsLogHeader = true};
+					   from items in EmailHeaderItem.Many()
+					   from _end in Parse.String(END_EMAIL_LOG_HEADER)
+					   select new EmailHeader { Headers = items, IsLogHeader = true };
 			}
 		}
 
@@ -230,7 +231,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			get
 			{
 				return from items in EmailHeaderItem.Many()
-					select new EmailHeader {Headers = items};
+					   select new EmailHeader { Headers = items };
 			}
 		}
 
@@ -243,7 +244,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 		{
 			get
 			{
-				return from items in Parse.Ref(() => OriginalMessage).Select(n => (IItem) n)
+				return from items in Parse.Ref(() => OriginalMessage).Select(n => (IItem)n)
 					.Or(EmailHeader)
 					.Or(BlockQuote)
 					.Or(ContentItem)
@@ -256,9 +257,28 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			get
 			{
 				return from header in LogEmailHeader
-					from items in EmailItem.Many()
-					select new EmailLog {Header = header, Items = items};
+					   from items in EmailItem.Many()
+					   select new EmailLog { Header = header, Items = items };
 			}
+		}
+	}
+
+	public static class ParserExtensions
+	{
+		public static Parser<IItem> Exclude(this Parser<IItem> parser)
+		{
+			if (parser == null)
+				throw new ArgumentNullException("parser");
+
+			return i =>
+			{
+				IResult<IItem> result = parser(i);
+				if (!result.WasSuccessful)
+					return Result.Success((IItem)null, i);
+
+				var message = string.Format("`{0}' was not expected", string.Join(", ", result.Expectations));
+				return Result.Failure<IItem>(i, message, new string[0]);
+			};
 		}
 	}
 }
