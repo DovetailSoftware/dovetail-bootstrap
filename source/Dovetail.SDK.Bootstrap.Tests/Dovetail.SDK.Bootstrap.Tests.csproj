@@ -152,8 +152,8 @@
     <EmbeddedResource Include="History\Suites\sample.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="History\Suites\markdownCode.output.txt" />
-    <Content Include="History\Suites\markdownCode.txt" />
+    <EmbeddedResource Include="History\Suites\markdownCode.output.txt" />
+    <EmbeddedResource Include="History\Suites\markdownCode.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,21 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Web;
 using System.Web.Script.Serialization;
 using Dovetail.SDK.Bootstrap.Configuration;
 using Dovetail.SDK.Bootstrap.History.Configuration;
 using Dovetail.SDK.Bootstrap.History.Parser;
 using Dovetail.SDK.Bootstrap.Tests.History.Suites;
-using FubuCore;
-using FubuMVC.Core.Diagnostics.Visualization;
-using FubuMVC.Core.Runtime;
 using NUnit.Framework;
 using Rhino.Mocks;
-using Sprache;
 using StructureMap.AutoMocking;
 
 namespace Dovetail.SDK.Bootstrap.Tests.History
@@ -49,7 +42,7 @@ namespace Dovetail.SDK.Bootstrap.Tests.History
 
 			var outputParser = buildOutputParser();
 			var input = readStream(fullName);
-			var expected = readStream(fullName.Replace(".txt", ".output.txt"));
+			var expected = readStream(fullName.Replace(".txt", ".output.txt")).TrimEnd(Environment.NewLine.ToCharArray());
 			string output = "";
 
 			if (fullName.Contains("email"))
@@ -62,7 +55,7 @@ namespace Dovetail.SDK.Bootstrap.Tests.History
 			}
 
 			string renderedOutput = new JavaScriptSerializer().Serialize(output);
-			renderedOutput.ShouldEqual(expected);
+			renderedOutput.Trim('"').ShouldEqual(expected);
 		}
 
 		private static HistoryParsers buildParser()
