@@ -262,23 +262,4 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			}
 		}
 	}
-
-	public static class ParserExtensions
-	{
-		public static Parser<IItem> Exclude(this Parser<IItem> parser)
-		{
-			if (parser == null)
-				throw new ArgumentNullException("parser");
-
-			return i =>
-			{
-				IResult<IItem> result = parser(i);
-				if (!result.WasSuccessful)
-					return Result.Success((IItem)null, i);
-
-				var message = string.Format("`{0}' was not expected", string.Join(", ", result.Expectations));
-				return Result.Failure<IItem>(i, message, new string[0]);
-			};
-		}
-	}
 }
