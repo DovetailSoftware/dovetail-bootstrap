@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using Dovetail.SDK.Bootstrap.History.Configuration;
 using FubuCore;
-using FubuCore.Descriptions;
 using Sprache;
 
 namespace Dovetail.SDK.Bootstrap.History.Parser
@@ -138,17 +137,9 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 		{
 			get
 			{
-				return
-					(
-						from r1 in Parse.Regex(@"(\n|\r\n)").Optional()
-						from _1 in WhiteSpace.Text()
-						from text2 in UntilEndOfLine.Many().Text()
-						from r in Parse.Regex(@"(\n|\r\n)\s*(\n|\r\n)(&#160;|\s)+$|\s*(\n|\r\n)+").Optional()
-						select new Line
-						{
-							Text = _1 + text2
-						}
-					).Except(ParagraphEnd);
+				return from _1 in WhiteSpace
+					from text in UntilEndOfLine.Many().Text().Token()
+					select new Line {Text = text.TrimEnd()};
 			}
 		}
 

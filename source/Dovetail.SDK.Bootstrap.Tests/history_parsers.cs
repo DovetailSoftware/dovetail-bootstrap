@@ -23,7 +23,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		[Test]
 		public void detect_item()
 		{
-			const string input = "\tline1\nline2";
+			const string input = "line1\nline2";
 
 			var item = _cut.EmailItem.Parse(input);
 
@@ -86,25 +86,14 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		}
 
 		[Test]
-		public void item_white_space_is_not_removed()
+		public void item_white_space_is_removed()
 		{
 			const string input = "   line1 \r\n   line2    ";
 
 			var items = _cut.EmailItem.Many().Parse(input).ToArray();
 
-			items[0].ToString().ShouldEqual("   line1 ");
-			items[1].ToString().ShouldEqual("   line2    ");
-		}
-
-		[Test]
-		public void item_leading_white_space_is_not_removed_from_html()
-		{
-			const string input = "   line1 \r\n    line2    ";
-
-			var items = _cut.EmailItem.Many().Parse(input).ToArray();
-
-			((Line)items[0]).RenderHtml().ShouldEqual("   line1 <br/>\r\n");
-			((Line)items[1]).RenderHtml().ShouldEqual("    line2    <br/>\r\n");
+			items[0].ToString().ShouldEqual("line1");
+			items[1].ToString().ShouldEqual("line2");
 		}
 
 		[Test]
