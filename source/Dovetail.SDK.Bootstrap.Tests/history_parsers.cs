@@ -27,7 +27,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 
 			var item = _cut.EmailItem.Parse(input);
 
-			item.ToString().ShouldEqual("\tline1");
+			item.ToString().ShouldEqual("line1");
 		}
 
 		[Test]

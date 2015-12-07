@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Web;
 using System.Web.Script.Serialization;
 using Dovetail.SDK.Bootstrap.Configuration;
 using Dovetail.SDK.Bootstrap.History.Configuration;
@@ -51,7 +52,7 @@ namespace Dovetail.SDK.Bootstrap.Tests.History
 			}
 			else
 			{
-				output = outputParser.Encode(input);
+				output = HttpUtility.HtmlEncode(input);
 			}
 
 			string renderedOutput = new JavaScriptSerializer().Serialize(output);
