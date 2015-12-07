@@ -46,7 +46,7 @@ def findNunitConsoleExe
 end
 
 task :nuget_deploy => [:compile, "ripple:package"] do
-	DOVETAIL_FEED = "http://focus.dovetailsoftware.com/nuget"
+	DOVETAIL_FEED = ENV['DT_NUGET_FEED'] || ''
 	DOVETAIL_NUGET_APIKEY = ENV['DT_NUGET_API_KEY'] || ''
 
 	fail 'You need to define an environment variable "DT_NUGET_API_KEY" with the Dovetail Nuget feed api key as committing credentials is BAD.' if(DOVETAIL_NUGET_APIKEY.empty?)
