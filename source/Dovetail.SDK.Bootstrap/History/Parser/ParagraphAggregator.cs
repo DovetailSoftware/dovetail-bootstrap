@@ -21,7 +21,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 
 		public string RenderHtml()
 		{
-			return "<p>" + String.Join("<br/>" + Environment.NewLine, Lines.Select(l => l.Text)) + "</p>";
+			return "<p>" + String.Join("<br/>", Lines.Select(l => l.Text)) + "</p>";
 		}
 	}
 
@@ -47,7 +47,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 
 				//paragraph ends should be added to the output stream
 				if (itemType.CanBeCastTo<ParagraphEnd>()) return;
-
+				
 				//when the item has nested items we need to collapse those too
 				if (itemType.CanBeCastTo<IHasNestedItems>())
 				{

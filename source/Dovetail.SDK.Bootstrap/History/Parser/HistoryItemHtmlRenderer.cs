@@ -90,7 +90,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 
 			foreach (var line in blockQuote.Lines)
 			{
-				output.AppendLine(line + "<br/>" + Environment.NewLine);
+				output.AppendLine(line + "<br/>");
 			}
 
 			output.AppendLine(@"</blockquote>");

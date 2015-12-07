@@ -31,7 +31,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 
 		public string RenderHtml()
 		{
-			return Text + "<br/>" + Environment.NewLine;
+			return Text + "<br/>";
 		}
 	}
 
@@ -147,14 +147,14 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 		{
 			get
 			{
-				return
+				return 
 					from _1 in WhiteSpace
 					from eop in Parse.String(ParagraphEndLocator.ENDOFPARAGRAPHTOKEN).Token()
 					from _2 in WhiteSpace
 					select new ParagraphEnd();
 			}
 		}
-
+		
 		public Parser<string> OriginalMessageHeader
 		{
 			get
