@@ -51,18 +51,6 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		}
 
 		[Test]
-		public void detect_paragraph_end_when_preceeded_by_non_breaking_spaces()
-		{
-			const string input = "&#160; " + ParagraphEndLocator.ENDOFPARAGRAPHTOKEN;
-
-			var p = _cut.ParagraphEnd.Parse(input);
-			p.ShouldBeOfType<ParagraphEnd>();
-
-			var c = _cut.ContentItem.Parse(input);
-			c.ShouldBeOfType<ParagraphEnd>();
-		}
-
-		[Test]
 		public void detect_items_having_paragraph_end()
 		{
 			const string input = "line1\n" + ParagraphEndLocator.ENDOFPARAGRAPHTOKEN + "\nline2";
