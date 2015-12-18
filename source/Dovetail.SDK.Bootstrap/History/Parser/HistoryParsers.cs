@@ -156,7 +156,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			get
 			{
 				return
-					from _1 in WhiteSpace.Many()
+					from _1 in WhiteSpace
 					from eop in Parse.String(ParagraphEndLocator.ENDOFPARAGRAPHTOKEN)
 					select new ParagraphEnd();
 			}
