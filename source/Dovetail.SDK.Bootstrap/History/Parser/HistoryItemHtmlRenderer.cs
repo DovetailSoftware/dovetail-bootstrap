@@ -52,12 +52,38 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			return output.ToString();
 		}
 
+		private void renderMarkdownItems(IEnumerable<IItem> items, StringBuilder output)
+		{
+			// This looks odd and can result in an empty trailing a5-markdown
+			// element. However it band-aids an issue in where a single list or
+			// code block could be split by ParagraphAggregator. This allows
+			// those matching pieces to be rendered by Markdown together.
+			output.Append(@"<div class=""a5-markdown"">");
+			foreach (var messageItem in items)
+			{
+				if (messageItem.GetType().CanBeCastTo<EmailLog>() ||
+					messageItem.GetType().CanBeCastTo<EmailHeader>() ||
+					messageItem.GetType().CanBeCastTo<BlockQuote>() ||
+					messageItem.GetType().CanBeCastTo<OriginalMessage>())
+				{
+					output.Append("</div>");
+					output.Append(Render(new IItem[] { messageItem }));
+					output.Append(@"<div class=""a5-markdown"">");
+				}
+				else
+				{
+					output.Append(Render(new IItem[] { messageItem }));
+				}
+			}
+			output.Append("</div>");
+		}
+
 		private void renderEmailLog(EmailLog emailLog, StringBuilder output)
 		{
 			output.Append(@"<div class=""history-email-wrapper"">");
 
 			renderEmailHeader(emailLog.Header, output);
-			output.Append(Render(emailLog.Items));
+			renderMarkdownItems(emailLog.Items, output);
 
 			output.AppendLine("</div>");
 		}
@@ -108,7 +134,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			output.AppendLine(@"<h5>Original Message <span class=""caret arrow-down""></span></h5></a></div>".ToFormat(message.Header));
 
 			output.AppendLine(@"<div id=""collapse{0}"" class=""accordion-body collapse""><div class=""accordion-inner"">".ToFormat(id));
-			output.Append(Render(message.Items));
+			renderMarkdownItems(message.Items, output);
 			output.AppendLine(@"</div></div></div></div>");
 		}
 
@@ -118,7 +144,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			{
 				throw new ArgumentException("IItem {0} type has no HTML rendering mechanism".ToFormat(item.GetType()));
 			}
-		
+
 			var htmlRenderer = (IRenderHtml) item;
 			output.AppendLine(htmlRenderer.RenderHtml());
 		}
