@@ -125,8 +125,10 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 		public static readonly Parser<IEnumerable<char>> WhiteSpace = Parse.WhiteSpace.Many().Or(Parse.String("&#160;"));
 
 		public static readonly Parser<string> BlockQuoteLine =
+			from whitespace in WhiteSpace.Text()
 			from leader in Parse.String("&gt;").AtLeastOnce()
-			from text in UntilEndOfLine.Many().Token().Text()
+			from text in UntilEndOfLine.Many().Text()
+			from endOfLine in Parse.Regex(@"(\n|\r\n)").Optional()
 			select text;
 
 		public static readonly Parser<BlockQuote> BlockQuote =
@@ -137,9 +139,15 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 		{
 			get
 			{
-				return from _1 in WhiteSpace
-					from text in UntilEndOfLine.Many().Text().Token()
-					select new Line {Text = text.TrimEnd()};
+				return
+					from whitespace in WhiteSpace.Text()
+					from text in UntilEndOfLine.Many().Text()
+					let content = whitespace + text
+					from endOfLine in Parse.Regex(@"(\n|\r\n)").Optional()
+					select new Line
+					{
+						Text = content
+					};
 			}
 		}
 
@@ -148,9 +156,8 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			get
 			{
 				return
-					from _1 in WhiteSpace
-					from eop in Parse.String(ParagraphEndLocator.ENDOFPARAGRAPHTOKEN).Token()
-					from _2 in WhiteSpace
+					from _1 in WhiteSpace.Many()
+					from eop in Parse.String(ParagraphEndLocator.ENDOFPARAGRAPHTOKEN)
 					select new ParagraphEnd();
 			}
 		}

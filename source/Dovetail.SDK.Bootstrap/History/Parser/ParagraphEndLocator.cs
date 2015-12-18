@@ -13,7 +13,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 
 		public string LocateAndReplace(string input)
 		{
-			return Regex.Replace(input, @"(\n|\r\n)\s*(\n|\r\n)+", "\n" + ENDOFPARAGRAPHTOKEN + "\n");
+			return Regex.Replace(input, @"(\n|\r\n)(\n|\r\n)", "\n" + ENDOFPARAGRAPHTOKEN + "\n");
 		}
 	}
 }

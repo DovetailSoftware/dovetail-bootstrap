@@ -51,9 +51,9 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		}
 
 		[Test]
-		public void detect_paragraph_end_when_surrounded_by_non_breaking_spaces()
+		public void detect_paragraph_end_when_preceeded_by_non_breaking_spaces()
 		{
-			const string input = "&#160; " + ParagraphEndLocator.ENDOFPARAGRAPHTOKEN + "&#160;  ";
+			const string input = "&#160; " + ParagraphEndLocator.ENDOFPARAGRAPHTOKEN;
 
 			var p = _cut.ParagraphEnd.Parse(input);
 			p.ShouldBeOfType<ParagraphEnd>();
@@ -71,29 +71,7 @@ namespace Dovetail.SDK.Bootstrap.Tests
 
 			items[0].ToString().ShouldEqual("line1");
 			items[1].ShouldBeOfType<ParagraphEnd>();
-			items[2].ToString().ShouldEqual("line2");
-		}
-
-		[Test]
-		public void unicode_non_breaking_alone_not_considered_a_line()
-		{
-			const string input = "line1\r\n&#160;\r\nline2";
-
-			var items = _cut.EmailItem.Many().Parse(input).ToArray();
-
-			items[0].ToString().ShouldEqual("line1");
-			items[1].ToString().ShouldEqual("line2");
-		}
-
-		[Test]
-		public void item_white_space_is_removed()
-		{
-			const string input = "   line1 \r\n   line2    ";
-
-			var items = _cut.EmailItem.Many().Parse(input).ToArray();
-
-			items[0].ToString().ShouldEqual("line1");
-			items[1].ToString().ShouldEqual("line2");
+			items[2].ToString().ShouldEqual("\nline2");
 		}
 
 		[Test]
