@@ -128,7 +128,8 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			from whitespace in WhiteSpace.Text()
 			from leader in Parse.String("&gt;").AtLeastOnce()
 			from text in UntilEndOfLine.Many().Text()
-			from endOfLine in Parse.Regex(@"(\n|\r\n)").Optional()
+			from endOfLineR in Parse.Char('\r').Optional()
+			from endOfLineN in Parse.Char('\n')
 			select text;
 
 		public static readonly Parser<BlockQuote> BlockQuote =
@@ -143,7 +144,8 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 					from whitespace in WhiteSpace.Text()
 					from text in UntilEndOfLine.Many().Text()
 					let content = whitespace + text
-					from endOfLine in Parse.Regex(@"(\n|\r\n)").Optional()
+					from endOfLineR in Parse.Char('\r').Optional()
+					from endOfLineN in Parse.Char('\n')
 					select new Line
 					{
 						Text = content
