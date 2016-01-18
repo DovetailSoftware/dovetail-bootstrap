@@ -4,18 +4,18 @@ using Dovetail.SDK.ModelMap;
 
 namespace Bootstrap.Web.Handlers.home
 {
-    public class get_handler
+    public class HomeEndpoint
     {
         private readonly IModelBuilder<UserOpenCaseListing> _listingBuilder;
         private readonly ICurrentSDKUser _currentUser;
 
-        public get_handler(IModelBuilder<UserOpenCaseListing> listingBuilder, ICurrentSDKUser currentUser)
+        public HomeEndpoint(IModelBuilder<UserOpenCaseListing> listingBuilder, ICurrentSDKUser currentUser)
         {
             _listingBuilder = listingBuilder;
             _currentUser = currentUser;
         }
 
-        public HomeModel Execute(HomeRequest request)
+        public HomeModel Index(HomeRequest request)
         {
             var userCases = _listingBuilder.GetAll();
 
@@ -29,7 +29,7 @@ namespace Bootstrap.Web.Handlers.home
 
     public class HomeRequest { }
 
-    public class HomeModel 
+    public class HomeModel
     {
         public UserOpenCaseListing[] Cases { get; set; }
         public SDKUserQueue[] Queues{ get; set; }

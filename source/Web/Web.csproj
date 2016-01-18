@@ -169,7 +169,7 @@
     <Compile Include="Handlers\api\history\get_Type_Id_handler.cs" />
     <Compile Include="Handlers\error\http500\get_handler.cs" />
     <Compile Include="Handlers\home\UserOpenCaseListingMap.cs" />
-    <Compile Include="Handlers\home\get_handler.cs" />
+    <Compile Include="Handlers\home\HomeEndpoint.cs" />
     <Compile Include="Handlers\HandlerMarker.cs" />
     <None Include="bootstrap.log4net">
       <SubType>Designer</SubType>
