@@ -245,7 +245,6 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			{
 				return from items in Parse.Ref(() => OriginalMessage).Select(n => (IItem) n)
 					.Or(EmailHeader)
-					.Or(BlockQuote)
 					.Or(ContentItem)
 					select items;
 			}

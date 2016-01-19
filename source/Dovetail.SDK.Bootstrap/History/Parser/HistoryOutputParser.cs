@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Dovetail.SDK.Bootstrap.Configuration;
 using FubuCore;
 
@@ -30,6 +31,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 		private readonly IHistoryItemHtmlRenderer _itemHtmlRenderer;
 		private readonly HtmlEncodeOutputEncoder _encoder;
 		private readonly IUrlLinkifier _linkifier;
+		public const string Ticks = "```";
 
 		public HistoryOutputParser(IParagraphEndLocator paragraphEndLocator, IParagraphAggregator paragraphAggregator, IHistoryItemParser itemParser, IHistoryItemHtmlRenderer itemHtmlRenderer, HtmlEncodeOutputEncoder encoder, IUrlLinkifier linkifier)
 		{
@@ -41,40 +43,87 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			_linkifier = linkifier;
 		}
 
+		public List<string> FencedStrings(string input)
+		{
+			var arr1 = new List<string>();
+			var tickPos = input.IndexOf(Ticks);
+
+			while (tickPos >= 0)
+			{
+				arr1.Add(input.Substring(0, tickPos));
+				input = input.Substring(tickPos);
+
+				var closeTickPos = input.Substring(3).IndexOf(Ticks);
+
+				if (closeTickPos >= 0)
+				{
+					arr1.Add(input.Substring(0, closeTickPos + 6));
+					input = input.Substring(closeTickPos + 6);
+					tickPos = input.IndexOf(Ticks);
+				}
+				else
+				{
+					tickPos = -1;
+				}
+			}
+
+			if (input.IsNotEmpty())
+			{
+				arr1.Add(input);
+			}
+
+			return arr1;
+		}
+
 		public string Encode(string input)
 		{
 			if (input.IsEmpty()) return String.Empty;
 
-			var output = _encoder.Encode(input);
+			var arrays = FencedStrings(input);
+			var outputBuilder = new StringBuilder();
 
-			output = _paragraphEndLocator.LocateAndReplace(output);
+			arrays.Each(output =>
+			{
+				if (output.IndexOf(Ticks) == 0 && output.EndsWith(Ticks) == false)
+				{
+					output = _paragraphEndLocator.LocateAndReplace(output);
+				}
 
-			var items = _itemParser.ParseContent(output).ToArray();
+				outputBuilder.Append(output);
+			});
 
-			//items.WriteToConsole();
+
+			var items = _itemParser.ParseContent(outputBuilder.ToString()).ToArray();
 
 			var paragraphedItems = _paragraphAggregator.CollapseContentItems(items);
 
-			var result = _itemHtmlRenderer.Render(paragraphedItems);
-
-			return _linkifier.Linkify(result);
+			return _itemHtmlRenderer.Render(paragraphedItems);
 		}
 
 		public string EncodeEmailLog(string input)
 		{
 			if (input.IsEmpty()) return String.Empty;
 
-			var output = _encoder.Encode(input);
+			var arrays = FencedStrings(input);
+			var outputBuilder = new StringBuilder();
 
-			output = _paragraphEndLocator.LocateAndReplace(output);
+			arrays.Each(output =>
+			{
+				output = output.Replace("\n\n\t", "\n");
 
-			var emailLog = _itemParser.ParseEmailLog(output);
-			
+				if (output.IndexOf(Ticks) == 0 && output.EndsWith(Ticks) == false)
+				{
+					output = _paragraphEndLocator.LocateAndReplace(output);
+				}
+
+				outputBuilder.Append(output);
+			});
+
+			var emailLog = _itemParser.ParseEmailLog(outputBuilder.ToString());
+
 			var items = _paragraphAggregator.CollapseContentItems(new IItem[] { emailLog });
-			
-			var result = _itemHtmlRenderer.Render(items);
 
-			return _linkifier.Linkify(result);
+			return _itemHtmlRenderer.Render(items);
 		}
 	}
 }
