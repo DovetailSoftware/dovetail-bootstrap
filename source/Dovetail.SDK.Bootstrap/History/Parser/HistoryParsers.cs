@@ -129,7 +129,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			from leader in Parse.String("&gt;").AtLeastOnce()
 			from text in UntilEndOfLine.Many().Text()
 			from endOfLineR in Parse.Char('\r').Optional()
-			from endOfLineN in Parse.Char('\n')
+			from endOfLineN in Parse.Char('\n').Optional()
 			select text;
 
 		public static readonly Parser<BlockQuote> BlockQuote =
@@ -145,7 +145,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 					from text in UntilEndOfLine.Many().Text()
 					let content = whitespace + text
 					from endOfLineR in Parse.Char('\r').Optional()
-					from endOfLineN in Parse.Char('\n')
+					from endOfLineN in Parse.Char('\n').Optional()
 					select new Line
 					{
 						Text = content
@@ -245,6 +245,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			{
 				return from items in Parse.Ref(() => OriginalMessage).Select(n => (IItem) n)
 					.Or(EmailHeader)
+					.Or(BlockQuote)
 					.Or(ContentItem)
 					select items;
 			}
