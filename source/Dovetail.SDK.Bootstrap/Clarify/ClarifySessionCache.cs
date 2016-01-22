@@ -72,6 +72,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 					return false;
 				}
 
+				IClarifySession session;
 				lock (_agentSessionCacheByUsername)
 				{
 					if (!_agentSessionCacheByUsername.ContainsKey(username))
@@ -80,20 +81,22 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 						return false;
 					}
 
-					var session = _agentSessionCacheByUsername[username];
+					session = _agentSessionCacheByUsername[username];
 					_agentSessionCacheByUsername.Remove(username);
-
-					if (isObserved)
-					{
-						_logger.LogDebug("Expiring session {0}.", session.Id);
-						_sessionEndObserver().SessionExpired(session);
-					}
-
-					_logger.LogDebug("Closing session {0}.", session.Id);
-					session.Close();
 
 					_logger.LogDebug("{0} sessions are now in the cache.", _agentSessionCacheByUsername.Count);
 				}
+
+				if (session == null) return true;
+
+				if (isObserved)
+				{
+					_logger.LogDebug("Expiring session {0}.", session.Id);
+					_sessionEndObserver().SessionExpired(session);
+				}
+
+				_logger.LogDebug("Closing session {0}.", session.Id);
+				session.Close();
 			}
 
 			return true;
@@ -101,7 +104,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 
 		public IClarifySession GetApplicationSession(bool isConfigured = true)
 		{
-			_logger.LogDebug("Getting application {0}session.", isConfigured ? "configured ":"");
+			_logger.LogDebug("Getting application {0}session.", isConfigured ? "configured " : "");
 			return getSession(_settings.ApplicationUsername, isConfigured, false);
 		}
 
@@ -123,6 +126,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 					EjectSession(username, isObserved);
 				}
 
+				ClarifySession clarifySession;
 				lock (_agentSessionCacheByUsername)
 				{
 					if (_agentSessionCacheByUsername.ContainsKey(username))
@@ -131,14 +135,38 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 						return _agentSessionCacheByUsername[username];
 					}
 
-					session = CreateSession(username, isConfigured, isObserved);
+					//session = CreateSession(username, isConfigured, isObserved);
+					_logger.LogDebug("Creating missing session.");
+
+					clarifySession = _clarifyApplication.CreateSession(username, ClarifyLoginType.User);
+					session = wrapSession(clarifySession);
+
+					_logger.LogInfo("Created session {0}.".ToFormat(clarifySession.SessionID));
+
 					_agentSessionCacheByUsername.Add(username, session);
 
 					_logger.LogDebug("{0} sessions are now in the cache.", _agentSessionCacheByUsername.Count);
 				}
+
+				visitSession(clarifySession, isConfigured, isObserved);
 			}
 
 			return session;
+		}
+
+		private void visitSession(ClarifySession session, bool isConfigured = true, bool isObserved = true)
+		{
+			if (isConfigured)
+			{
+				_sessionConfigurator.Configure(session);
+				_logger.LogDebug("Configured created session.");
+			}
+
+			if (isObserved)
+			{
+				_sessionStartObserver().SessionStarted(wrapSession(session));
+				_logger.LogDebug("Observed created session.");
+			}
 		}
 
 		public IClarifySession CreateSession(string username, bool isConfigured = true, bool isObserved = true)
