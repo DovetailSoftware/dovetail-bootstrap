@@ -46,20 +46,20 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 		public List<string> FencedStrings(string input)
 		{
 			var arr1 = new List<string>();
-			var tickPos = input.IndexOf(Ticks);
+			var tickPos = input.IndexOf(Ticks, StringComparison.Ordinal);
 
 			while (tickPos >= 0)
 			{
 				arr1.Add(input.Substring(0, tickPos));
 				input = input.Substring(tickPos);
 
-				var closeTickPos = input.Substring(3).IndexOf(Ticks);
+				var closeTickPos = input.Substring(3).IndexOf(Ticks, StringComparison.Ordinal);
 
 				if (closeTickPos >= 0)
 				{
 					arr1.Add(input.Substring(0, closeTickPos + 6));
 					input = input.Substring(closeTickPos + 6);
-					tickPos = input.IndexOf(Ticks);
+					tickPos = input.IndexOf(Ticks, StringComparison.Ordinal);
 				}
 				else
 				{
@@ -84,7 +84,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 
 			arrays.Each(output =>
 			{
-				if (output.IndexOf(Ticks) == 0 && output.EndsWith(Ticks) == false)
+				if (output.IndexOf(Ticks, StringComparison.Ordinal) == 0 && output.EndsWith(Ticks) == false)
 				{
 					output = _paragraphEndLocator.LocateAndReplace(output);
 				}
@@ -111,7 +111,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			{
 				output = output.Replace("\n\n\t", "\n");
 
-				if (output.IndexOf(Ticks) == 0 && output.EndsWith(Ticks) == false)
+				if (output.IndexOf(Ticks, StringComparison.Ordinal) == 0 && output.EndsWith(Ticks) == false)
 				{
 					output = _paragraphEndLocator.LocateAndReplace(output);
 				}

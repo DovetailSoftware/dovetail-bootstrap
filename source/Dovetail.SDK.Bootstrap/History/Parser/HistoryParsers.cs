@@ -171,10 +171,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			get
 			{
 				return from header in UntilEndOfLine.Many().Token().Text()
-					where _originalMessageConfiguration.Expressions.Any(h =>
-					{
-						return h.IsMatch(header);
-					})
+					where _originalMessageConfiguration.Expressions.Any(h => h.IsMatch(header))
 					select new EmailHeaderItem
 						{
 							Raw = header,
@@ -189,10 +186,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			get
 			{
 				return from eHeader in EmailHeaderItem
-					   where _originalMessageConfiguration.Expressions.Any(h =>
-					   {
-						   return h.IsMatch(eHeader.Raw);
-					   })
+					   where _originalMessageConfiguration.Expressions.Any(h => h.IsMatch(eHeader.Raw))
 					   select eHeader;
 			}
 		}
@@ -202,14 +196,16 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			get
 			{
 				return from header in OriginalMessageHeaderEmail.Or(OriginalMessageHeader)
+					from headerItems in EmailHeaderItem.Many()
 					from items in EmailItem.Many()
-					select transformHeader(header, items);
+					   select transformHeader(header, headerItems, items);
 			}
 		}
 
-		private static OriginalMessage transformHeader(EmailHeaderItem _header, IEnumerable<IItem> _items)
+		private static OriginalMessage transformHeader(EmailHeaderItem _header, IEnumerable<EmailHeaderItem> _headerItems, IEnumerable<IItem> _items)
 		{
 			var header = _header;
+			var headerItems = _headerItems;
 			var items = _items;
 			var headerString = "";
 
@@ -220,15 +216,22 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			else
 			{
 				headerString = header.Text;
+			}
 
+			if (headerItems != null && headerItems.Any())
+			{
 				if (items != null && items.Any() && items.First().GetType().CanBeCastTo<EmailHeader>())
 				{
 					var eHeader = items.First() as EmailHeader;
-					var headers = new EmailHeaderItem[] { header }.Concat(eHeader.Headers);
+					var headers = headerItems.Concat(eHeader.Headers);
 					eHeader.Headers = headers;
 
-					items = items.Except(new[] { eHeader as IItem });
-					items = new[] { eHeader }.Concat(items);
+					items = items.Except(new[] {eHeader as IItem});
+					items = new[] {eHeader}.Concat(items);
+				}
+				else
+				{
+					items = new[] { new EmailHeader { Headers = headerItems, IsLogHeader = true } }.Concat(items);
 				}
 			}
 
