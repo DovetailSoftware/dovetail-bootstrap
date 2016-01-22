@@ -131,7 +131,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			output.AppendLine(@"<div class=""accordion""><div class=""accordion-group"">");
 
 			output.AppendLine(@"<div class=""accordion-heading""><a class=""accordion-toggle collapsed"" data-toggle=""collapse"" href=""#collapse{0}"">".ToFormat(id));
-			output.AppendLine(@"<h5>Original Message <span class=""caret arrow-down""></span></h5></a></div>".ToFormat(message.Header));
+			output.AppendLine(@"<h5>Original Message <span class=""caret arrow-down""></span></h5></a></div>");
 
 			output.AppendLine(@"<div id=""collapse{0}"" class=""accordion-body collapse""><div class=""accordion-inner"">".ToFormat(id));
 			renderMarkdownItems(message.Items, output);

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Dovetail.SDK.Bootstrap.History.Configuration;
 using FubuCore;
+using FubuCore.Descriptions;
 using Sprache;
 
 namespace Dovetail.SDK.Bootstrap.History.Parser
@@ -37,10 +38,11 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 
 	public class ParagraphEnd : IItem { }
 
-	public class EmailHeaderItem
+	public class EmailHeaderItem : IItem
 	{
 		public string Title { get; set; }
 		public string Text { get; set; }
+		public string Raw { get; set; }
 	}
 
 	public class EmailLog : IItem, IHasNestedItems
@@ -164,13 +166,34 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			}
 		}
 
-		public Parser<string> OriginalMessageHeader
+		public Parser<EmailHeaderItem> OriginalMessageHeader
 		{
 			get
 			{
-				return from text in UntilEndOfLine.Many().Token().Text()
-					   where _originalMessageConfiguration.Expressions.Any(h => h.IsMatch(text))
-				select text;
+				return from header in UntilEndOfLine.Many().Token().Text()
+					where _originalMessageConfiguration.Expressions.Any(h =>
+					{
+						return h.IsMatch(header);
+					})
+					select new EmailHeaderItem
+						{
+							Raw = header,
+							Text = null,
+							Title = null
+						};
+			}
+		}
+
+		public Parser<EmailHeaderItem> OriginalMessageHeaderEmail
+		{
+			get
+			{
+				return from eHeader in EmailHeaderItem
+					   where _originalMessageConfiguration.Expressions.Any(h =>
+					   {
+						   return h.IsMatch(eHeader.Raw);
+					   })
+					   select eHeader;
 			}
 		}
 
@@ -178,10 +201,42 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 		{
 			get
 			{
-				return from header in OriginalMessageHeader
+				return from header in OriginalMessageHeaderEmail.Or(OriginalMessageHeader)
 					from items in EmailItem.Many()
-					select new OriginalMessage {Header = header, Items = items};
+					select transformHeader(header, items);
 			}
+		}
+
+		private static OriginalMessage transformHeader(EmailHeaderItem _header, IEnumerable<IItem> _items)
+		{
+			var header = _header;
+			var items = _items;
+			var headerString = "";
+
+			if (header.Text == null && header.Title == null)
+			{
+				headerString = header.Raw;
+			}
+			else
+			{
+				headerString = header.Text;
+
+				if (items != null && items.Any() && items.First().GetType().CanBeCastTo<EmailHeader>())
+				{
+					var eHeader = items.First() as EmailHeader;
+					var headers = new EmailHeaderItem[] { header }.Concat(eHeader.Headers);
+					eHeader.Headers = headers;
+
+					items = items.Except(new[] { eHeader as IItem });
+					items = new[] { eHeader }.Concat(items);
+				}
+			}
+
+			return new OriginalMessage
+			{
+				Header = headerString,
+				Items = items
+			};
 		}
 
 		public Parser<EmailHeaderItem> EmailHeaderItem
@@ -199,7 +254,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 					from _2 in Parse.Char(':')
 					from text in IsoDate.Or(UntilEndOfLine.Many().Token().Text())
 					from rest in HardRule.Or(WhiteSpace)
-					select new EmailHeaderItem {Title = title, Text = text};
+					select new EmailHeaderItem {Title = title, Text = text, Raw = title + _2 + text };
 			}
 		}
 
@@ -262,3 +317,5 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 		}
 	}
 }
+
+

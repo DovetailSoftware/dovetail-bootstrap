@@ -34,6 +34,11 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 
 			items.Each(i =>
 			{
+				if (i == null)
+				{
+					return;
+				}
+
 				var itemType = i.GetType();
 
 				//collect line items for possible collapsing into a paragraph
