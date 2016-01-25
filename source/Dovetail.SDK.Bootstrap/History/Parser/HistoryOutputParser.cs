@@ -90,6 +90,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 					output = _paragraphEndLocator.LocateAndReplace(output);
 				}
 
+				output = _encoder.Encode(output);
 				outputBuilder.Append(output);
 			});
 
@@ -119,6 +120,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 					output = _paragraphEndLocator.LocateAndReplace(output);
 				}
 
+				output = _encoder.Encode(output);
 				outputBuilder.Append(output);
 			});
 
