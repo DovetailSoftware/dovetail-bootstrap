@@ -43,6 +43,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			_linkifier = linkifier;
 		}
 
+		// fenced code blocks need to be protected from paragraph formatting
 		public List<string> FencedStrings(string input)
 		{
 			var arr1 = new List<string>();
@@ -109,6 +110,8 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 
 			arrays.Each(output =>
 			{
+				// Carrier added a \t for paragraphs for the look and feel
+				// but this doesn't play well with Markdown formatting
 				output = output.Replace("\n\n\t", "\n");
 
 				if (output.IndexOf(Ticks, StringComparison.Ordinal) == 0 && output.EndsWith(Ticks) == false)
