@@ -1,8 +1,12 @@
+#
+# Ignored directories
+#
+.vs/
+[Bb]in/
+[Oo]bj/
 # ===================
 # Build Support
 # ===================
-[Bb]in/
-[Oo]bj/
 CommonAssemblyInfo.cs
 *.csproj.user
 source/Bootstrap.sln.DotSettings.user

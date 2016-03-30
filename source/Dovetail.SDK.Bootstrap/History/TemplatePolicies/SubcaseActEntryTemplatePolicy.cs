@@ -25,9 +25,10 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
 			{
 				ActEntry(3000).Remove();
 				ActEntry(3100).Remove();
+				ActEntry(7200).Remove();
 			}
 
-			//the rest of this policy is subcase specific 
+			//the rest of this policy is subcase specific
 			if (workflowObject.Type != WorkflowObject.Subcase) return;
 
 			//make subcase creation and close more detailed.
@@ -40,6 +41,12 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
 				.GetRelatedRecord("act_entry2close_case")
 				.WithFields("summary")
 				.UpdateActivityDTOWith((record, dto) => { dto.Detail = record.AsString("summary"); });
+
+			//make admin subcase creation and close more detailed.
+			ActEntry(7200).DisplayName(HistoryBuilderTokens.SUBCASE_CREATED_ADMINISTRATIVE)
+				.GetRelatedRecord("act_entry2notes_log")
+				.WithFields("description")
+				.UpdateActivityDTOWith((record, dto) => { dto.Detail = record.AsString("description"); });
 
 			//templates specific to subcases which are child histories
 			if (!workflowObject.IsChild) return;

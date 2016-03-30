@@ -11,9 +11,9 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
 		private readonly IHistoryOutputParser _parser;
 		private readonly HistorySettings _historySettings;
 
-		public WorkflowActEntryTemplatePolicy(ISchemaCache schemaCache, 
-			IHistoryOutputParser parser, 
-			HistorySettings historySettings) 
+		public WorkflowActEntryTemplatePolicy(ISchemaCache schemaCache,
+			IHistoryOutputParser parser,
+			HistorySettings historySettings)
 			: base(parser)
 		{
 			_schemaCache = schemaCache;
@@ -60,6 +60,7 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
 				ActEntry(3000).DisplayName(HistoryBuilderTokens.SUBCASE_CREATED);
 				ActEntry(3100).DisplayName(HistoryBuilderTokens.SUBCASE_CLOSED);
 				ActEntry(4200).DisplayName(HistoryBuilderTokens.SUBCASE_REOPENED);
+				ActEntry(7200).DisplayName(HistoryBuilderTokens.SUBCASE_CREATED_ADMINISTRATIVE);
 			}
 
 			this.TimeAndExpenseEdittedActEntry();
