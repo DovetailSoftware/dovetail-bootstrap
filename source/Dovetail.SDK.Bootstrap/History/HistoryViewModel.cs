@@ -99,6 +99,7 @@ namespace Dovetail.SDK.Bootstrap.History
 
 	public class HistoryViewModel
 	{
+		public DateTime Since { get; set; }
 		public bool AllActivitiesShown { get; set; }
 		public WorkflowObject WorkflowObject { get; set; }
 		public HistoryItem[] HistoryItems { get; set; }

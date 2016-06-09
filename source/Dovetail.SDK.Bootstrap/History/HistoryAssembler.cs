@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Dovetail.SDK.Bootstrap.History.AssemblerPolicies;
@@ -39,7 +40,13 @@ namespace Dovetail.SDK.Bootstrap.History
 
 		private static HistoryViewModel CreateHistoryModel(HistoryRequest request, IEnumerable<HistoryItem> historyItems)
 		{
-			return new HistoryViewModel {WorkflowObject = request.WorkflowObject, AllActivitiesShown = request.ShowAllActivities, HistoryItems = historyItems.ToArray()};
+			return new HistoryViewModel
+			{
+				Since = DateTime.UtcNow,
+				WorkflowObject = request.WorkflowObject,
+				AllActivitiesShown = request.ShowAllActivities,
+				HistoryItems = historyItems.ToArray()
+			};
 		}
 	}
 }
