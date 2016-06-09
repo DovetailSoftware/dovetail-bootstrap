@@ -1,9 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
+using FubuCore.Util;
 
 namespace Dovetail.SDK.Bootstrap.History
 {
 	public class HistoryItem
 	{
+		private readonly Cache<string, object> _data;
+
+		public HistoryItem()
+		{
+			_data = new Cache<string, object>(_ => null);
+		}
+
 		public bool IsCancelled { get; set; }
 
 		/// <summary>
@@ -27,7 +36,7 @@ namespace Dovetail.SDK.Bootstrap.History
 		public DateTime When { get; set; }
 
 		/// <summary>
-		/// Placeholder for describing the history when field. If this is desired it should be populated downstream from Bootstrap. This field is NOT populated by Dovetail Bootstrap. 
+		/// Placeholder for describing the history when field. If this is desired it should be populated downstream from Bootstrap. This field is NOT populated by Dovetail Bootstrap.
 		/// </summary>
 		public string WhenDescribed { get; set; }
 
@@ -44,13 +53,26 @@ namespace Dovetail.SDK.Bootstrap.History
 		/// <summary>
 		/// Internal item details. Not to be displayed to the end user.
 		/// </summary>
-		/// 
+		///
 		public string Internal { get; set; }
 
 		/// <summary>
 		/// User account which logged the activity
 		/// </summary>
 		public HistoryItemEmployee Who { get; set; }
+
+		public IDictionary<string, object> Data { get { return _data.ToDictionary(); } }
+
+		public bool Has(string key)
+		{
+			return Data.ContainsKey(key);
+		}
+
+		public object this[string key]
+		{
+			get { return _data[key]; }
+			set { _data[key] = value; }
+		}
 	}
 
 	public class HistoryItemContact

@@ -155,8 +155,8 @@ namespace Dovetail.SDK.Bootstrap.History
 
 		private static string[] getEmailLogFields(ISchemaCache schemaCache)
 		{
-			string[] emailLogFields = {"message", "sender", "recipient", "cc_list", "creation_time"};
-			
+			string[] emailLogFields = {"message", "sender", "recipient", "cc_list", "creation_time", "objid"};
+
 			if (doesEmailLogSubjectExist(schemaCache))
 			{
 				emailLogFields = emailLogFields.Concat(new [] {"x_subject"}).ToArray();
@@ -180,7 +180,7 @@ namespace Dovetail.SDK.Bootstrap.History
 			var subject = doesEmailLogSubjectExist(schemaCache) ? record.AsTrimmedString("x_subject") : "";
 			var message = record.AsString("message");
 			var isoDate = record.AsDateTime("creation_time").ToString("s", CultureInfo.InvariantCulture);
-			
+
 			log.Append(HistoryParsers.BEGIN_EMAIL_LOG_HEADER);
 
 			log.AppendLine("{0}: {1}{2}".ToFormat(HistoryBuilderTokens.LOG_EMAIL_DATE, HistoryParsers.BEGIN_ISODATE_HEADER, isoDate));
@@ -189,10 +189,12 @@ namespace Dovetail.SDK.Bootstrap.History
 			log.AppendLine(headerFormat.ToFormat(HistoryBuilderTokens.LOG_EMAIL_TO, to));
 			if (cclist.IsNotEmpty()) log.AppendLine(headerFormat.ToFormat(HistoryBuilderTokens.LOG_EMAIL_CC, cclist));
 			if (subject.IsNotEmpty()) log.AppendLine(headerFormat.ToFormat(HistoryBuilderTokens.LOG_EMAIL_SUBJECT, subject));
-			
+
 			log.Append(HistoryParsers.END_EMAIL_LOG_HEADER);
 
 			log.AppendLine(message);
+
+			historyItem["emailObjId"] = record.DatabaseIdentifier();
 
 			historyItem.Detail = log.ToString();
 		}
