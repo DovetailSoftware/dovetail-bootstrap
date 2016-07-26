@@ -31,7 +31,7 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 		public virtual void beforeAll() { }
 	}
 
-	public class user_impersonation_service 
+	public class user_impersonation_service
 	{
 		public class when_setting_is_disabled : impersonation_context
 		{
@@ -53,6 +53,7 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 			{
 				UserImpersonationService.cancelImpersonationFor("annie");
 				setAllowProxy("hank", true);
+				setActiveStatus("hank", true);
 			}
 
 			[Test]
@@ -88,6 +89,8 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 			[Test]
 			public void when_impersonating_should_return_impersonated_user()
 			{
+				setActiveStatus("hank", true);
+
 				UserImpersonationService.createImpersonationFor("annie", "hank");
 
 				_cut.GetImpersonatedLoginFor("annie").ShouldEqual("hank");
@@ -99,6 +102,7 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 			[SetUp]
 			public void beforeEach()
 			{
+				setActiveStatus("hank", true);
 				UserImpersonationService.createImpersonationFor("annie", "hank");
 			}
 
@@ -143,6 +147,7 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 			{
 				UserImpersonationService.cancelImpersonationFor("annie");
 				setAllowProxy("hank", true);
+				setActiveStatus("hank", true);
 			}
 
 			[Test]
@@ -191,6 +196,28 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 			}
 		}
 
+		public class stop_impersonation_if_user_is_inactive : impersonation_context
+		{
+			[SetUp]
+			public void beforeEach()
+			{
+				UserImpersonationService.cancelImpersonationFor("annie");
+				setAllowProxy("hank", true);
+				setActiveStatus("hank", true);
+			}
+
+			[Test]
+			public void should_return_null_for_impersonated_user_if_inactive()
+			{
+				_cut.StartImpersonation("annie", "hank");
+				_cut.GetImpersonatedLoginFor("annie").ShouldEqual("hank");
+
+				setActiveStatus("hank", false);
+
+				_cut.GetImpersonatedLoginFor("annie").ShouldBeNull();
+			}
+		}
+
 		public static void setAllowProxy(string userLogin, bool canProxy)
 		{
 			var sql = new SqlHelper("update table_employee set allow_proxy = {0} where objid = (select objid from table_user where login_name = {1})");
@@ -199,5 +226,12 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 			sql.ExecuteNonQuery();
 		}
 
+		public static void setActiveStatus(string userLogin, bool isActive)
+		{
+			var sql = new SqlHelper("update table_user set status = {0} where login_name = {1}");
+			sql.Parameters.Add("isActive", isActive ? 1 : 0);
+			sql.Parameters.Add("login", userLogin);
+			sql.ExecuteNonQuery();
+		}
 	}
 }

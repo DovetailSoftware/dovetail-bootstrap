@@ -64,7 +64,7 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 				else
 				{
 					_logger.LogDebug("Cancelling the impersonation of INACTIVE user {0} by user {1}.".ToFormat(impersonatedLoginFor, login));
-					StopImpersonating(login);
+					cancelImpersonation(login, impersonatedLoginFor);
 					return null;
 				}
 			}
@@ -84,13 +84,22 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 
 			if (GetImpersonatedLoginFor(impersonatingUserLogin).IsNotEmpty())
 			{
-				_logger.LogDebug("Cancelling the impersonation of user {0} by user {1}.".ToFormat(impersonatedUsername, impersonatingUserLogin));
-
-				//create activity entry for impersonatedUserLogin completion
-
-				result = CreateActEntry(impersonatingUserLogin, impersonatedUsername, 94003, "Revert impersonation of " + impersonatedUsername);
-				cancelImpersonationFor(impersonatingUserLogin);
+				result = cancelImpersonation(impersonatingUserLogin, impersonatedUsername);
 			};
+
+			return result;
+		}
+
+		private int cancelImpersonation(string impersonatingUserLogin, string impersonatedUsername)
+		{
+			_logger.LogDebug("Cancelling the impersonation of user {0} by user {1}.".ToFormat(impersonatedUsername,
+				impersonatingUserLogin));
+
+			//create activity entry for impersonatedUserLogin completion
+
+			var result = CreateActEntry(impersonatingUserLogin, impersonatedUsername, 94003, "Revert impersonation of " + impersonatedUsername);
+
+			cancelImpersonationFor(impersonatingUserLogin);
 
 			return result;
 		}
