@@ -48,13 +48,28 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 				return null;
 			}
 
-			var sql = new SqlHelper("SELECT p.login_name FROM table_user u, table_user p WHERE u.login_name = {0} AND p.objid = u.user2proxy_user");
+			var sql = new SqlHelper("SELECT p.login_name, p.status FROM table_user u, table_user p WHERE u.login_name = {0} AND p.objid = u.user2proxy_user");
 			sql.Parameters.Add("login", login);
-			var result = sql.ExecuteScalar();
+			var result = sql.ExecuteReader();
 
-			if (result == null || result == DBNull.Value) return null;
+			while (result.Read())
+			{
+				var status = Convert.ToInt32(result["status"]);
+				var impersonatedLoginFor = result["login_name"].ToString();
 
-			return Convert.ToString(result);
+				if (status == 1)
+				{
+					return impersonatedLoginFor;
+				}
+				else
+				{
+					_logger.LogDebug("Cancelling the impersonation of INACTIVE user {0} by user {1}.".ToFormat(impersonatedLoginFor, login));
+					StopImpersonating(login);
+					return null;
+				}
+			}
+
+			return null;
 		}
 
 		public int StopImpersonating(string impersonatingUserLogin)
@@ -66,7 +81,7 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 			}
 
 			var impersonatedUsername = GetImpersonatedLoginFor(impersonatingUserLogin);
-			
+
 			if (GetImpersonatedLoginFor(impersonatingUserLogin).IsNotEmpty())
 			{
 				_logger.LogDebug("Cancelling the impersonation of user {0} by user {1}.".ToFormat(impersonatedUsername, impersonatingUserLogin));
