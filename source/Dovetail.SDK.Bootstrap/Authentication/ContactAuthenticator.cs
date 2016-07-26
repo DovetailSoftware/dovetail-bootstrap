@@ -12,14 +12,10 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 	public class ContactAuthenticator : IContactAuthenticator
 	{
 		private readonly ILogger _logger;
-		//private readonly IClarifyApplication _clarifyApplication;
 
-		public ContactAuthenticator(ILogger logger) //, IClarifyApplication clarifyApplication)
+		public ContactAuthenticator(ILogger logger)
 		{
 			_logger = logger;
-
-			////HACK to make sure SDK is spun up. ICK
-			//_clarifyApplication = clarifyApplication;
 		}
 
 		public bool Authenticate(string username, string password)

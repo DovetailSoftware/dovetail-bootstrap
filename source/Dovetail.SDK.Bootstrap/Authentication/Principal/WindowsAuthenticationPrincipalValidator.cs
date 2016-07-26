@@ -57,7 +57,7 @@ namespace Dovetail.SDK.Bootstrap.Authentication.Principal
 			}
 
 			var clarifyUserName = emplViewGeneric.Rows[0].AsString("login_name");
-			_logger.LogDebug("Windows user {0} mapped to Clairfy user {1}.", username, clarifyUserName);
+			_logger.LogDebug("Windows user {0} mapped to Clarify user {1}.", username, clarifyUserName);
 			return clarifyUserName;
 		}
 	}
