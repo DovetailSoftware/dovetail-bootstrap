@@ -95,7 +95,7 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 			public void should_be_created_once()
 			{
 				var result = _cut.GetSession(UserName);
-					
+
 				_cut.GetSession(UserName).ShouldBeTheSameAs(result);
 			}
 
@@ -113,6 +113,16 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 				_cut.GetSession(UserName);
 
 				_userSessionStartObserver.AssertWasCalled(a => a.SessionStarted(null), x=>x.IgnoreArguments());
+			}
+
+			[Test]
+			public void refresh_session_context_without_changes()
+			{
+				var session = _cut.GetSession(UserName);
+
+				_cut.RefreshSession(UserName);
+
+				_cut.GetSession(UserName).ShouldBeTheSameAs(session);
 			}
 		}
 
@@ -135,7 +145,7 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 			public void should_return_true()
 			{
 				_result = _cut.EjectSession(UserName);
-	
+
 				_result.ShouldBeTrue();
 			}
 
@@ -143,7 +153,7 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 			public void should_close_session()
 			{
 				_result = _cut.EjectSession(UserName);
-				
+
 				_session.AssertWasCalled(a => a.Close());
 			}
 
@@ -151,7 +161,7 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 			public void should_tell_observer_by_default()
 			{
 				_result = _cut.EjectSession(UserName, true);
-	
+
 				_userSessionEndObserver.AssertWasCalled(a => a.SessionExpired(_session));
 			}
 
@@ -234,7 +244,7 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 				_clarifyApplication.Expect(s => s.CreateSession(_settings.ApplicationUsername, ClarifyLoginType.User)).Return(_expectedSession);
 				_clarifyApplication.Stub(s => s.IsSessionValid(_expectedSession.SessionID)).Return(true);
 				_cut.GetApplicationSession(false);
-				
+
 				_userClarifySessionConfigurator.AssertWasNotCalled(a => a.Configure(_expectedSession));
 			}
 		}

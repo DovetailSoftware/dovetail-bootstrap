@@ -12,6 +12,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		IClarifySession GetSession(string username);
 		bool EjectSession(string username, bool isObserved = true);
 		IDictionary<string, IClarifySession> SessionsByUsername { get; }
+		void RefreshSession(string username);
 	}
 
 	public class ClarifySessionCache : IClarifySessionCache
@@ -50,6 +51,11 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		public IClarifySession GetSession(string username)
 		{
 			return getSession(username);
+		}
+
+		public void RefreshSession(string username)
+		{
+			getSession(username).RefreshContext();
 		}
 
 		public void addSessionToCache(string username, IClarifySession session)

@@ -26,6 +26,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		SqlHelper CreateSqlHelper(string sql);
 		string[] Permissions { get; }
 		IEnumerable<string> DataRestriction { get; }
+		void RefreshContext();
 		void Close();
 	}
 
@@ -103,6 +104,11 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		public SqlHelper CreateSqlHelper(string sql)
 		{
 			return new SqlHelper(sql);
+		}
+
+		public void RefreshContext()
+		{
+			ClarifySession.RefreshContext();
 		}
 
 		public void Close()
