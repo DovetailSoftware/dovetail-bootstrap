@@ -135,6 +135,7 @@ namespace Dovetail.SDK.ModelMap.Integration
 				Password = password,
 				Site = site,
 				Workgroup = createEmployeeSetup.WorkGroup,
+				PrivClass = createEmployeeSetup.OnlinePrivilegeClass,
 				Phone = createEmployeeSetup.Phone
 			};
 		}
@@ -221,6 +222,7 @@ namespace Dovetail.SDK.ModelMap.Integration
 		public string Email { get; set; }
 		public string Phone { get; set; }
 		public string Workgroup { get; set; }
+		public string PrivClass { get; set; }
 
 		public SiteDTO Site { get; set; }
 	}

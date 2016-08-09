@@ -20,6 +20,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		public ITimeZone Timezone { get; set; }
 		public IEnumerable<SDKUserQueue> Queues { get; set; }
 		public string Workgroup { get; set; }
+		public string PrivClass { get; set; }
 	}
 
 	public interface IUserDataAccess
@@ -40,8 +41,8 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		private readonly IUserImpersonationService _userImpersonationService;
 		private readonly ILogger _logger;
 
-		public UserDataAccess(IApplicationClarifySession session, 
-			ILocaleCache localeCache, 
+		public UserDataAccess(IApplicationClarifySession session,
+			ILocaleCache localeCache,
 			IUserImpersonationService userImpersonationService,
 			ILogger logger)
 		{
@@ -62,12 +63,13 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 				login = impersonatedLogin;
 				impersonatingLogin = username;
 			}
-		
+
 			var dataSet = _session.CreateDataSet();
 			var userGeneric = dataSet.CreateGenericWithFields("user", "login_name");
 			userGeneric.Filter.AddFilter(FilterType.Equals("login_name", login));
 
 			var employeeGeneric = userGeneric.TraverseWithFields("user2employee", "work_group", "first_name", "last_name");
+			var privClassGeneric = userGeneric.TraverseWithFields("user_access2privclass", "class_name");
 			var siteGeneric = employeeGeneric.TraverseWithFields("supp_person_off2site");
 			var addressGeneric = siteGeneric.TraverseWithFields("cust_primaddr2address");
 			var timeZoneGeneric = addressGeneric.TraverseWithFields("address2time_zone", "name");
@@ -84,6 +86,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 			}
 
 			var employeeRow = employeeGeneric.DataRows().First();
+			var privClassRow = privClassGeneric.DataRows().First();
 			var queues = findQueues(queueGeneric);
 			var timezone = findTimezone(timeZoneGeneric, username);
 
@@ -92,6 +95,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 				FirstName = employeeRow.AsString("first_name"),
 				LastName = employeeRow.AsString("last_name"),
 				Workgroup = employeeRow.AsString("work_group"),
+				PrivClass = privClassRow.AsString("class_name"),
 				Login = userGeneric.Rows[0].AsString("login_name"),
 				ImpersonatingLogin = impersonatingLogin,
 				Queues = queues,

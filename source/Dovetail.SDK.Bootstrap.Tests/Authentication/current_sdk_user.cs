@@ -14,7 +14,6 @@ namespace Dovetail.SDK.Bootstrap.Tests.Authentication
 			private string _username;
 			private SDKUser _sdkUser;
 
-
 			public override void Given()
 			{
 				_sdkUserTimeZone = MockFor<ITimeZone>();
@@ -30,6 +29,7 @@ namespace Dovetail.SDK.Bootstrap.Tests.Authentication
 					Timezone = _sdkUserTimeZone,
 					Login = "user login",
 					ImpersonatingLogin = "proxy user login",
+					PrivClass = "PrivClass",
 					Workgroup = "user workgroup"
 				};
 				MockFor<IUserDataAccess>().Stub(s => s.GetUser(_username)).Return(_sdkUser);
@@ -78,6 +78,12 @@ namespace Dovetail.SDK.Bootstrap.Tests.Authentication
 			}
 
 			[Test]
+			public void privClass_is_based_on_sdk_user_model()
+			{
+				_cut.PrivClass.ShouldEqual(_sdkUser.PrivClass);
+			}
+
+			[Test]
 			public void after_setting_timezone_that_timezone_should_be_used()
 			{
 				var newTimezone = _services.AddAdditionalMockFor<ITimeZone>();
@@ -94,7 +100,7 @@ namespace Dovetail.SDK.Bootstrap.Tests.Authentication
 		public class authenticated_user_signing_off : Context<CurrentSDKUser>
 		{
 			private DovetailDatabaseSettings _settings;
-			
+
 			public override void OverrideMocks()
 			{
 				_settings = new DovetailDatabaseSettings { ApplicationUsername = "app user name" };

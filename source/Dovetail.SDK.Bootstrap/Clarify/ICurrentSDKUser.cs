@@ -16,6 +16,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		ITimeZone Timezone { get; }
 		IEnumerable<SDKUserQueue> Queues { get; }
 		string Workgroup { get; }
+		string PrivClass { get; }
 
 		void SignOut();
 		void SetUser(string clarifyLoginName);
@@ -31,7 +32,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		private readonly ILocaleCache _localeCache;
 		private Lazy<SDKUser> _user;
 		private Lazy<ITimeZone> _timezone;
-		private Lazy<HashSet<string>> _permissionsByName; 
+		private Lazy<HashSet<string>> _permissionsByName;
 
 		public string Fullname
 		{
@@ -100,8 +101,21 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 			}
 		}
 
-		public CurrentSDKUser(DovetailDatabaseSettings settings, 
-			ILocaleCache localeCache, 
+		public string PrivClass
+		{
+			get
+			{
+				if (!IsAuthenticated)
+				{
+					return "";
+				}
+
+				return _user.Value.PrivClass;
+			}
+		}
+
+		public CurrentSDKUser(DovetailDatabaseSettings settings,
+			ILocaleCache localeCache,
 			IUserDataAccess userDataAccess,
 			IClarifySessionCache sessionCache,
 			ILogger logger)
@@ -125,7 +139,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		{
 			_logger.LogDebug("CurrentSDK user set via principal to {0}.".ToFormat(clarifyLoginName));
 			changeUser(clarifyLoginName);
-			
+
 			IsAuthenticated = true;
 		}
 
