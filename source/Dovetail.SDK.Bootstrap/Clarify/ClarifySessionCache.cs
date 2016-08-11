@@ -145,7 +145,9 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 					_logger.LogDebug("Creating missing session.");
 
 					clarifySession = _clarifyApplication.CreateSession(username, ClarifyLoginType.User);
-					session = wrapSession(clarifySession);
+				    clarifySession.SetNullStringsToEmpty = true;
+
+                    session = wrapSession(clarifySession);
 
 					_logger.LogInfo("Created session {0}.".ToFormat(clarifySession.SessionID));
 
