@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{63AB3711-8693-4BCB-87E7-A85E128C36DF}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Dovetail.SDK.Clarify.Tests</RootNamespace>
+    <AssemblyName>Dovetail.SDK.Clarify.Tests</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="FChoice.Common, Version=3.3.4.6, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Dovetail.SDK\lib\net40\FChoice.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="FChoice.Foundation.Clarify.Compatibility, Version=3.3.4.6, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Dovetail.SDK\lib\net40\FChoice.Foundation.Clarify.Compatibility.dll</HintPath>
+    </Reference>
+    <Reference Include="FChoice.Foundation.Clarify.Compatibility.Toolkits, Version=3.3.4.6, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Dovetail.SDK\lib\net40\FChoice.Foundation.Clarify.Compatibility.Toolkits.dll</HintPath>
+    </Reference>
+    <Reference Include="FChoice.Toolkits.Clarify, Version=3.3.4.6, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Dovetail.SDK\lib\net40\FChoice.Toolkits.Clarify.dll</HintPath>
+    </Reference>
+    <Reference Include="fcSDK, Version=3.3.4.6, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Dovetail.SDK\lib\net40\fcSDK.dll</HintPath>
+    </Reference>
+    <Reference Include="FubuCore">
+      <HintPath>..\packages\FubuCore\lib\FubuCore.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Rhino.Mocks">
+      <HintPath>..\packages\RhinoMocks\lib\net\Rhino.Mocks.dll</HintPath>
+    </Reference>
+    <Reference Include="StructureMap">
+      <HintPath>..\packages\structuremap\lib\net40\StructureMap.dll</HintPath>
+    </Reference>
+    <Reference Include="StructureMap.AutoMocking">
+      <HintPath>..\packages\structuremap.automocking\lib\net40\StructureMap.AutoMocking.dll</HintPath>
+    </Reference>
+    <Reference Include="StructureMap.Net4">
+      <HintPath>..\packages\structuremap\lib\net40\StructureMap.Net4.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Context.cs">
+      <Link>Context.cs</Link>
+    </Compile>
+    <Compile Include="closing_the_session_adapter.cs" />
+    <Compile Include="ClarifySessionManagerTester.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SessionUtilities.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Dovetail.SDK.Clarify\Dovetail.SDK.Clarify.csproj">
+      <Project>{653e80e0-2b2c-4689-aa67-df105dca3f72}</Project>
+      <Name>Dovetail.SDK.Clarify</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

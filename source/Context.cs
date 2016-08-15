@@ -8,8 +8,9 @@ using FubuCore;
 using NUnit.Framework;
 using StructureMap.AutoMocking;
 
-namespace Dovetail.SDK.Bootstrap.Tests
+namespace Dovetail.SDK
 {
+    // This file is shared across the testing projects
     [TestFixture]
     public abstract class Context<T> where T : class
     {
