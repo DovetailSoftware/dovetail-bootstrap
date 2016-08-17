@@ -4,7 +4,7 @@ using FChoice.Foundation.Clarify;
 
 namespace Dovetail.SDK.Clarify
 {
-    public interface IClarifySession
+    public interface IClarifySession : IDisposable
     {
         Guid Id { get; }
         string UserName { get; }

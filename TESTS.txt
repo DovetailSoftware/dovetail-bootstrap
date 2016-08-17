@@ -1,3 +1,4 @@
 Dovetail.SDK.Bootstrap.Tests
+Dovetail.SDK.Clarify.Tests
 Dovetail.SDK.Fubu.Tests
 Dovetail.SDK.ModelMap.Integration

@@ -66,13 +66,13 @@ namespace Dovetail.SDK.Clarify.Tests
 
         private class StubSession : IClarifySession
         {
-            public Guid Id { get; }
-            public string UserName { get; }
-            public int SessionEmployeeId { get; }
-            public int SessionUserId { get; }
-            public string SessionEmployeeSiteId { get; }
-            public IEnumerable<string> Permissions { get; }
-            public IEnumerable<string> DataRestriction { get; }
+            public Guid Id { get; set; }
+            public string UserName { get; set; }
+            public int SessionEmployeeId { get; set; }
+            public int SessionUserId { get; set; }
+            public string SessionEmployeeSiteId { get; set; }
+            public IEnumerable<string> Permissions { get; set; }
+            public IEnumerable<string> DataRestriction { get; set; }
             public ClarifyDataSet CreateDataSet()
             {
                 throw new NotImplementedException();
@@ -84,6 +84,11 @@ namespace Dovetail.SDK.Clarify.Tests
             }
 
             public void Close()
+            {
+                throw new NotImplementedException();
+            }
+
+            public void Dispose()
             {
                 throw new NotImplementedException();
             }

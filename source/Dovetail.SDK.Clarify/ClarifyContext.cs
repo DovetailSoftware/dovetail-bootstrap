@@ -7,6 +7,7 @@ using FChoice.Foundation;
 using FChoice.Foundation.Clarify;
 using FChoice.Foundation.DataObjects;
 using FChoice.Foundation.Schema;
+using StructureMap;
 
 namespace Dovetail.SDK.Clarify
 {
@@ -15,13 +16,13 @@ namespace Dovetail.SDK.Clarify
         private static readonly object SyncRoot = new object();
         private readonly ClarifyApplication _clarifyApplication;
         private readonly DovetailCRMSettings _settings;
-        private readonly IClarifySessionManager _manager;
+        private readonly IContainer _container;
         private readonly ILogger _logger;
 
-        public ClarifyContext(DovetailCRMSettings settings, IClarifySessionManager manager, ILogger logger)
+        public ClarifyContext(DovetailCRMSettings settings, IContainer container, ILogger logger)
         {
             _settings = settings;
-            _manager = manager;
+            _container = container;
             _logger = logger;
             _clarifyApplication = InitializeClarifyApplication();
         }
@@ -49,7 +50,8 @@ namespace Dovetail.SDK.Clarify
         public IClarifySession CreateSession()
         {
             var session = _clarifyApplication.CreateSession();
-            return new ClarifySessionAdapter(session, _manager);
+            var manager = _container.GetInstance<IClarifySessionManager>();
+            return new ClarifySessionAdapter(session, manager);
         }
 
         private ClarifyApplication InitializeClarifyApplication()
