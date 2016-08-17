@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<package xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <id>Dovetail.SDK.Clarify</id>
+    <version>0.0.0</version>
+    <title>Dovetail SDK Clarify</title>
+    <authors>Kevin Miller, Gary Sherman</authors>
+    <owners>Dovetail Software Inc.</owners>
+    <licenseUrl>https://github.com/DovetailSoftware/dovetail-bootstrap/blob/master/license.txt</licenseUrl>
+    <projectUrl>https://github.com/DovetailSoftware/dovetail-bootstrap/tree/master/source/Dovetail.SDK.Clarify</projectUrl>
+    <iconUrl>http://www.dovetailsoftware.com/logo/logo.jpg</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Dovetail SDK Abstrations</description>
+    <dependencies>
+        <dependency id="Dovetail.SDK" version="3.3.5.14" />
+        <dependency id="FubuCore" version="2.0" />
+        <dependency id="log4net" version="2.0.3" />
+        <dependency id="structuremap" version="3.1" />
+    </dependencies>
+    <copyright>Copyright Dovetail Software 2012-2013</copyright>
+    <tags>Clarify</tags>
+  </metadata>
+  <files>
+    <file src="..\..\source\Dovetail.SDK.Clarify\bin\release\Dovetail.SDK.Clarify.*" target="lib\net40" />
+  </files>
+</package>
