@@ -100,7 +100,10 @@ namespace Dovetail.SDK.Clarify
                 source = new NameValueCollection
                 {
                     {"fchoice.dbtype", crmSettings.DatabaseType},
-                    {"fchoice.connectionstring", crmSettings.DatabaseConnectionString}
+                    {"fchoice.connectionstring", crmSettings.DatabaseConnectionString},
+                    {"fchoice.disableloginfromfcapp", "false"},
+                    {"fchoice.sessionpasswordrequired", "false"},
+                    {"fchoice.nocachefile", "true"}
                 };
             }
 
