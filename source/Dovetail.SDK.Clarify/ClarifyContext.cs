@@ -16,14 +16,16 @@ namespace Dovetail.SDK.Clarify
         private static readonly object SyncRoot = new object();
         private readonly ClarifyApplication _clarifyApplication;
         private readonly DovetailDatabaseSettings _settings;
+        private readonly DovetailCRMSettings _crmSettings;
         private readonly IContainer _container;
         private readonly ILogger _logger;
 
-        public ClarifyContext(DovetailDatabaseSettings settings, IContainer container, ILogger logger)
+        public ClarifyContext(DovetailDatabaseSettings settings, IContainer container, ILogger logger, DovetailCRMSettings crmSettings)
         {
             _settings = settings;
             _container = container;
             _logger = logger;
+            _crmSettings = crmSettings;
             _clarifyApplication = InitializeClarifyApplication();
         }
 
@@ -66,7 +68,7 @@ namespace Dovetail.SDK.Clarify
 
         private ClarifyApplication initializeClarify()
         {
-            var configuration = GetDovetailSdkConfiguration(_settings);
+            var configuration = GetDovetailSdkConfiguration(_settings, _crmSettings);
             DbProviderFactory.Provider = DbProviderFactory.CreateProvider(_settings.Type);
 
             var settings = new StringBuilder();
@@ -80,8 +82,14 @@ namespace Dovetail.SDK.Clarify
             return ClarifyApplication.Initialize(configuration);
         }
 
-        private static NameValueCollection GetDovetailSdkConfiguration(DovetailDatabaseSettings settings)
+        private static NameValueCollection GetDovetailSdkConfiguration(DovetailDatabaseSettings settings, DovetailCRMSettings crmSettings)
         {
+            var crmConfig = new NameValueCollection
+            {
+                {"fchoice.dbtype", crmSettings.DatabaseType},
+                {"fchoice.connectionstring", crmSettings.DatabaseConnectionString}
+            };
+
             var configuration = new NameValueCollection
             {
                 {"fchoice.dbtype", settings.Type},
@@ -91,7 +99,7 @@ namespace Dovetail.SDK.Clarify
                 {"fchoice.nocachefile", "true"}
             };
 
-            return Merge(configuration, ConfigurationManager.AppSettings);
+            return Merge(Merge(crmConfig, configuration), ConfigurationManager.AppSettings);
         }
 
         public static NameValueCollection Merge(NameValueCollection target, NameValueCollection source)

@@ -12,4 +12,11 @@
         public double SessionTimeoutInMinutes { get; set; }
         public string ApplicationUsername { get; set; }
     }
+
+    public class DovetailCRMSettings
+    {
+        public string DatabaseType { get; set; }
+        public string DatabaseConnectionString { get; set; }
+        public string EmployeeUserName { get; set; }
+    }
 }
