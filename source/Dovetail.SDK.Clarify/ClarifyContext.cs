@@ -15,11 +15,11 @@ namespace Dovetail.SDK.Clarify
     {
         private static readonly object SyncRoot = new object();
         private readonly ClarifyApplication _clarifyApplication;
-        private readonly DovetailCRMSettings _settings;
+        private readonly DovetailDatabaseSettings _settings;
         private readonly IContainer _container;
         private readonly ILogger _logger;
 
-        public ClarifyContext(DovetailCRMSettings settings, IContainer container, ILogger logger)
+        public ClarifyContext(DovetailDatabaseSettings settings, IContainer container, ILogger logger)
         {
             _settings = settings;
             _container = container;
@@ -67,7 +67,7 @@ namespace Dovetail.SDK.Clarify
         private ClarifyApplication initializeClarify()
         {
             var configuration = GetDovetailSdkConfiguration(_settings);
-            DbProviderFactory.Provider = DbProviderFactory.CreateProvider(_settings.DatabaseType);
+            DbProviderFactory.Provider = DbProviderFactory.CreateProvider(_settings.Type);
 
             var settings = new StringBuilder();
             foreach (var key in configuration.AllKeys)
@@ -80,12 +80,12 @@ namespace Dovetail.SDK.Clarify
             return ClarifyApplication.Initialize(configuration);
         }
 
-        private static NameValueCollection GetDovetailSdkConfiguration(DovetailCRMSettings settings)
+        private static NameValueCollection GetDovetailSdkConfiguration(DovetailDatabaseSettings settings)
         {
             var configuration = new NameValueCollection
             {
-                {"fchoice.dbtype", settings.DatabaseType},
-                {"fchoice.connectionstring", settings.DatabaseConnectionString},
+                {"fchoice.dbtype", settings.Type},
+                {"fchoice.connectionstring", settings.ConnectionString},
                 {"fchoice.disableloginfromfcapp", "false"},
                 {"fchoice.sessionpasswordrequired", "false"},
                 {"fchoice.nocachefile", "true"}
