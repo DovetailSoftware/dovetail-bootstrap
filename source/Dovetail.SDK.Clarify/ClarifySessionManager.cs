@@ -78,6 +78,11 @@ namespace Dovetail.SDK.Clarify
             }
         }
 
+        private static void close(ClarifySession session)
+        {
+            session.CloseSession();
+        }
+
         public static void Close(ClarifySession session)
         {
             _closeSession(session);
@@ -90,7 +95,7 @@ namespace Dovetail.SDK.Clarify
 
         public static void Reset()
         {
-            CloseWith(Close);
+            CloseWith(close);
         }
     }
 }
