@@ -50,26 +50,29 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 
 			var sql = new SqlHelper("SELECT p.login_name, p.status FROM table_user u, table_user p WHERE u.login_name = {0} AND p.objid = u.user2proxy_user");
 			sql.Parameters.Add("login", login);
-			var result = sql.ExecuteReader();
+		    using (var result = sql.ExecuteReader())
+		    {
+		        while (result.Read())
+		        {
+		            var status = Convert.ToInt32(result["status"]);
+		            var impersonatedLoginFor = result["login_name"].ToString();
 
-			while (result.Read())
-			{
-				var status = Convert.ToInt32(result["status"]);
-				var impersonatedLoginFor = result["login_name"].ToString();
+		            if (status == 1)
+		            {
+		                return impersonatedLoginFor;
+		            }
+		            else
+		            {
+		                _logger.LogDebug(
+		                    "Cancelling the impersonation of INACTIVE user {0} by user {1}.".ToFormat(impersonatedLoginFor,
+		                        login));
+		                cancelImpersonation(login, impersonatedLoginFor);
+		                return null;
+		            }
+		        }
 
-				if (status == 1)
-				{
-					return impersonatedLoginFor;
-				}
-				else
-				{
-					_logger.LogDebug("Cancelling the impersonation of INACTIVE user {0} by user {1}.".ToFormat(impersonatedLoginFor, login));
-					cancelImpersonation(login, impersonatedLoginFor);
-					return null;
-				}
-			}
-
-			return null;
+		        return null;
+		    }
 		}
 
 		public int StopImpersonating(string impersonatingUserLogin)
