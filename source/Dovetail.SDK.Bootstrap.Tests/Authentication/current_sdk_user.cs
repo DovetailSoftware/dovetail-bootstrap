@@ -25,6 +25,7 @@ namespace Dovetail.SDK.Bootstrap.Tests.Authentication
 				{
 					FirstName = "first",
 					LastName = "last",
+					SiteName = "site",
 					Queues = new[] {new SDKUserQueue {Name = "queue1"}},
 					Timezone = _sdkUserTimeZone,
 					Login = "user login",
@@ -63,6 +64,12 @@ namespace Dovetail.SDK.Bootstrap.Tests.Authentication
 			public void fullname_based_on_sdk_user_model()
 			{
 				_cut.Fullname.ShouldEqual(_sdkUser.FirstName + " " + _sdkUser.LastName);
+			}
+
+			[Test]
+			public void sitename_based_on_sdk_user_model()
+			{
+				_cut.Sitename.ShouldEqual(_sdkUser.SiteName);
 			}
 
 			[Test]

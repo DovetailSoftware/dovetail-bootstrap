@@ -16,7 +16,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		public string ProxyUserId { get; set; }
 		public string FirstName { get; set; }
 		public string LastName { get; set; }
-
+		public string SiteName { get; set; }
 		public ITimeZone Timezone { get; set; }
 		public IEnumerable<SDKUserQueue> Queues { get; set; }
 		public string Workgroup { get; set; }
@@ -70,7 +70,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 
 			var employeeGeneric = userGeneric.TraverseWithFields("user2employee", "work_group", "first_name", "last_name");
 			var privClassGeneric = userGeneric.TraverseWithFields("user_access2privclass", "class_name");
-			var siteGeneric = employeeGeneric.TraverseWithFields("supp_person_off2site");
+			var siteGeneric = employeeGeneric.TraverseWithFields("supp_person_off2site", "name");
 			var addressGeneric = siteGeneric.TraverseWithFields("cust_primaddr2address");
 			var timeZoneGeneric = addressGeneric.TraverseWithFields("address2time_zone", "name");
 
@@ -87,6 +87,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 
 			var employeeRow = employeeGeneric.DataRows().First();
 			var privClassRow = privClassGeneric.DataRows().First();
+			var siteRow = siteGeneric.DataRows().First();
 			var queues = findQueues(queueGeneric);
 			var timezone = findTimezone(timeZoneGeneric, username);
 
@@ -94,6 +95,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 			{
 				FirstName = employeeRow.AsString("first_name"),
 				LastName = employeeRow.AsString("last_name"),
+				SiteName = siteRow.AsString("name"),
 				Workgroup = employeeRow.AsString("work_group"),
 				PrivClass = privClassRow.AsString("class_name"),
 				Login = userGeneric.Rows[0].AsString("login_name"),

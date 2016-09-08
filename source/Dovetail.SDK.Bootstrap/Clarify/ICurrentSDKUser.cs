@@ -11,6 +11,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		string Username { get; }
 		string ImpersonatingUsername { get; }
 		string Fullname { get; }
+		string Sitename { get; }
 		bool IsAuthenticated { get; }
 		bool HasPermission(string permission);
 		ITimeZone Timezone { get; }
@@ -50,6 +51,11 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		public string Username
 		{
 			get { return _user.Value.Login; }
+		}
+
+		public string Sitename
+		{
+			get { return _user.Value.SiteName; }
 		}
 
 		public string ImpersonatingUsername
