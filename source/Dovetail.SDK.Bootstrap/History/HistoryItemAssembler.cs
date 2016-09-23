@@ -86,7 +86,11 @@ namespace Dovetail.SDK.Bootstrap.History
 
 			}).ToList();
 
-			return actEntryDTOS.Select(dto => createActivityDTOFromMapper(dto, templateRelatedGenerics)).Where(i=>!i.IsCancelled).ToList();
+			return actEntryDTOS
+                .Select(dto => createActivityDTOFromMapper(dto, templateRelatedGenerics))
+                .Where(i=>!i.IsCancelled)
+                .Where(_ => historyRequest.ShowAllActivities || !_.IsVerbose)
+                .ToList();
 		}
 
 		private ActEntryTemplate findTemplateByActCode(int code, IDictionary<int, ActEntryTemplate> templatesByCode)
@@ -160,6 +164,7 @@ namespace Dovetail.SDK.Bootstrap.History
 
 			var relatedRow = actEntry.ActEntryRecord;
 			var relatedGenericKey = actEntry.Template;
+		    dto.IsVerbose = relatedGenericKey.IsVerbose;
 
 			if (templateRelatedGenerics.ContainsKey(relatedGenericKey))
 			{

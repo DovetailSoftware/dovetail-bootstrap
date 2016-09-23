@@ -13,6 +13,8 @@ namespace Dovetail.SDK.Bootstrap.History
 			_data = new Cache<string, object>(_ => null);
 		}
 
+        public bool IsVerbose { get; set; }
+
 		public bool IsCancelled { get; set; }
 
 		/// <summary>
