@@ -1,4 +1,5 @@
 ﻿using System;
+using FChoice.Common.Data;
 using FChoice.Foundation.Clarify;
 using FChoice.Toolkits.Clarify.FieldOps;
 using FChoice.Toolkits.Clarify.Interfaces;
@@ -31,5 +32,10 @@ namespace Dovetail.SDK.Clarify
         {
             return new InterfacesToolkit(session.AsClarifySession());
         }
+
+	    public static SqlHelper CreateSqlHelper(this IClarifySession session, string sql)
+	    {
+		    return new SqlHelper(sql);
+	    }
     }
 }
