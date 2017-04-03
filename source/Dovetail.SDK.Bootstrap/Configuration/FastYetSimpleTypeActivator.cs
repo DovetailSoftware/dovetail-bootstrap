@@ -6,22 +6,26 @@ namespace Dovetail.SDK.Bootstrap.Configuration
 {
 	public class FastYetSimpleTypeActivator
 	{
-		private static readonly Dictionary<Type, Func<object>> _ctors = new Dictionary<Type, Func<object>>();
-		
+		private static readonly object Lock = new object();
+		private static readonly Dictionary<Type, Func<object>> Ctors = new Dictionary<Type, Func<object>>();
+
 		public static object CreateInstance(Type type)
 		{
-			if (!_ctors.ContainsKey(type))
+			if (!Ctors.ContainsKey(type))
 			{
 				var exp = Expression.New(type);
 				var d = Expression.Lambda<Func<object>>(exp).Compile();
-				
-				if (!_ctors.ContainsKey(type))
+
+				lock (Lock)
 				{
-					_ctors.Add(type, d);
+					if (!Ctors.ContainsKey(type))
+					{
+						Ctors.Add(type, d);
+					}
 				}
 			}
 
-			return _ctors[type]();
+			return Ctors[type]();
 		}
 	}
 }
