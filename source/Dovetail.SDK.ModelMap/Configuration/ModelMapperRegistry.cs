@@ -1,4 +1,6 @@
 using Dovetail.SDK.Bootstrap.Configuration;
+using Dovetail.SDK.ModelMap.NewStuff;
+using Dovetail.SDK.ModelMap.NewStuff.Serialization;
 using StructureMap.Configuration.DSL;
 using StructureMap.Graph;
 
@@ -9,17 +11,19 @@ namespace Dovetail.SDK.ModelMap.Configuration
 		public ModelMapperRegistry()
 		{
 		    Scan(scan =>
-		             {
-                         scan.TheCallingAssembly();
-                         scan.WithDefaultConventions();
-		                 
-                         //TODO move settings configuration into its own registry
-                         scan.Convention<SettingsScanner>();
-		             });
+		    {
+                scan.TheCallingAssembly();
+                scan.WithDefaultConventions();
+                scan.Convention<SettingsScanner>();
+
+		        scan.AddAllTypesOf<IElementVisitor>();
+		    });
 
 			For(typeof(IModelBuilder<>)).Use(typeof(ModelBuilder<>));
 			For<IOutputEncoder>().Use<HtmlEncodeOutputEncoder>();
 			For<IModelMapVisitor>().Use<DovetailGenericModelMapVisitor>();
+
+		    ForSingletonOf<IModelMapCache>().Use<ModelMapCache>();
 		}
 	}
 }
