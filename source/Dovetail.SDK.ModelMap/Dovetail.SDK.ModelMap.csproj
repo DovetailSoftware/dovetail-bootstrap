@@ -113,6 +113,7 @@
     <Compile Include="NewStuff\IModelMapCache.cs" />
     <Compile Include="NewStuff\IModelMapRegistry.cs" />
     <Compile Include="NewStuff\IModelMapVisitor.cs" />
+    <Compile Include="NewStuff\Instructions\AddFilter.cs" />
     <Compile Include="NewStuff\Instructions\BeginAdHocRelation.cs" />
     <Compile Include="NewStuff\Instructions\BeginMappedCollection.cs" />
     <Compile Include="NewStuff\Instructions\BeginMappedProperty.cs" />
@@ -146,12 +147,14 @@
     <Compile Include="NewStuff\ObjectModel\SubRootInformation.cs" />
     <Compile Include="NewStuff\PaginationResult.cs" />
     <Compile Include="NewStuff\PropertyTypes.cs" />
+    <Compile Include="NewStuff\Serialization\AddFilter.cs" />
     <Compile Include="NewStuff\Serialization\AddMappedCollection.cs" />
     <Compile Include="NewStuff\Serialization\AddMappedProperty.cs" />
     <Compile Include="NewStuff\Serialization\AddProperty.cs" />
     <Compile Include="NewStuff\Serialization\AddSort.cs" />
     <Compile Include="NewStuff\Serialization\BuildObjectContext.cs" />
     <Compile Include="NewStuff\Serialization\FilterPolicyRegistry.cs" />
+    <Compile Include="NewStuff\Serialization\Filters\Equals.cs" />
     <Compile Include="NewStuff\Serialization\IElementVisitor.cs" />
     <Compile Include="NewStuff\Serialization\IFilterPolicy.cs" />
     <Compile Include="NewStuff\Serialization\IFilterPolicyRegistry.cs" />

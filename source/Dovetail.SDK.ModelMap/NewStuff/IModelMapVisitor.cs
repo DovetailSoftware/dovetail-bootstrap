@@ -22,5 +22,6 @@ namespace Dovetail.SDK.ModelMap.NewStuff
         void Visit(BeginMappedCollection instruction);
         void Visit(EndMappedCollection instruction);
         void Visit(FieldSortMap instruction);
+        void Visit(AddFilter instruction);
     }
 }

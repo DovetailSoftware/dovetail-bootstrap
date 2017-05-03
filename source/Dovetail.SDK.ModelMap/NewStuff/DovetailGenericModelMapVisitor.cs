@@ -169,5 +169,11 @@ namespace Dovetail.SDK.ModelMap.NewStuff
             var currentGeneric = _genericStack.Peek();
             currentGeneric.ClarifyGeneric.AppendSort(instruction.Field, instruction.IsAscending);
         }
+
+        public void Visit(AddFilter instruction)
+        {
+            var currentGeneric = _genericStack.Peek();
+            currentGeneric.ClarifyGeneric.Filter.AddFilter(instruction.Filter);
+        }
     }
 }
