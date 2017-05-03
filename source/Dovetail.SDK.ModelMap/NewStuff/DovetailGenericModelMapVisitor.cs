@@ -148,5 +148,26 @@ namespace Dovetail.SDK.ModelMap.NewStuff
         {
             _modelStack.Pop();
         }
+
+        public void Visit(BeginMappedCollection instruction)
+        {
+            _modelStack.Push(new ModelInformation
+            {
+                ModelName = instruction.Key,
+                ParentProperty = instruction.Key,
+                IsCollection = true
+            });
+        }
+
+        public void Visit(EndMappedCollection instruction)
+        {
+            _modelStack.Pop();
+        }
+
+        public void Visit(FieldSortMap instruction)
+        {
+            var currentGeneric = _genericStack.Peek();
+            currentGeneric.ClarifyGeneric.AppendSort(instruction.Field, instruction.IsAscending);
+        }
     }
 }

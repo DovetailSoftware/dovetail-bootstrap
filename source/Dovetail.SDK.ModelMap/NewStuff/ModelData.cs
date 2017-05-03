@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using FubuCore;
 
 namespace Dovetail.SDK.ModelMap.NewStuff
@@ -43,6 +44,13 @@ namespace Dovetail.SDK.ModelMap.NewStuff
                 if (child != null)
                 {
                     values.Add(pair.Key, child.ToValues());
+                    continue;
+                }
+
+                var children = pair.Value as IEnumerable<ModelData>;
+                if (children != null)
+                {
+                    values.Add(pair.Key, children.Select(_ => _.ToValues()).ToArray());
                     continue;
                 }
 

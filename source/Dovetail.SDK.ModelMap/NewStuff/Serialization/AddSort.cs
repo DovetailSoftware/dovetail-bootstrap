@@ -3,22 +3,21 @@ using Dovetail.SDK.ModelMap.NewStuff.Instructions;
 
 namespace Dovetail.SDK.ModelMap.NewStuff.Serialization
 {
-    public class AddProperty : IElementVisitor
+    public class AddSort : IElementVisitor
     {
         public bool Matches(XElement element, ModelMap map, ParsingContext context)
         {
-            return element.Name == "addProperty" && context.IsCurrent<IQueryContext>();
+            return element.Name == "addSort";
         }
 
         public void Visit(XElement element, ModelMap map, ParsingContext context)
         {
-            var prop = XElementSerializer.Deserialize<BeginProperty>(element);
-            map.AddInstruction(prop);
+            var instruction = XElementSerializer.Deserialize<FieldSortMap>(element);
+            map.AddInstruction(instruction);
         }
 
         public void ChildrenBound(ModelMap map, ParsingContext context)
         {
-            map.AddInstruction(new EndProperty());
         }
     }
 }

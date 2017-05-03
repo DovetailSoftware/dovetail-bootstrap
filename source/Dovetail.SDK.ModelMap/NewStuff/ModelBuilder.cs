@@ -55,7 +55,7 @@ namespace Dovetail.SDK.ModelMap.NewStuff
                 rootGenericMap.ClarifyGeneric.ClearSorts();
                 foreach (var f in FieldSortMapOverrides)
                 {
-                    rootGenericMap.ClarifyGeneric.AppendSort(f.FieldName, f.IsAscending);
+                    rootGenericMap.ClarifyGeneric.AppendSort(f.Field, f.IsAscending);
                 }
             }
 
@@ -185,18 +185,34 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 
             foreach (var childMap in childMapsForChildDtos)
             {
-                // Let's assume just the single one for now
-                var relatedChildRows = parentRecord.RelatedRows(childMap.ClarifyGeneric);
-                if (relatedChildRows.Any())
+                if (childMap.Model.IsCollection)
                 {
-                    var childRecord = relatedChildRows.First();
-                    var childModel = new ModelData { Name = childMap.Model.ModelName };
-                    populateDTOForGenericRecord(childMap, childRecord, childModel);
-                    parentModel[childMap.Model.ParentProperty] = childModel;
+                    var children = new List<ModelData>();
+                    foreach (var childRecord in parentRecord.RelatedRows(childMap.ClarifyGeneric))
+                    {
+                        var childModel = new ModelData { Name = childMap.Model.ModelName };
+
+                        populateDTOForGenericRecord(childMap, childRecord, childModel);
+
+                        children.Add(childModel);
+                    }
+
+                    parentModel[childMap.Model.ParentProperty] = children;
                 }
                 else
                 {
-                    parentModel[childMap.Model.ParentProperty] = null;
+                    var relatedChildRows = parentRecord.RelatedRows(childMap.ClarifyGeneric);
+                    if (relatedChildRows.Any())
+                    {
+                        var childRecord = relatedChildRows.First();
+                        var childModel = new ModelData {Name = childMap.Model.ModelName};
+                        populateDTOForGenericRecord(childMap, childRecord, childModel);
+                        parentModel[childMap.Model.ParentProperty] = childModel;
+                    }
+                    else
+                    {
+                        parentModel[childMap.Model.ParentProperty] = null;
+                    }
                 }
             }
         }

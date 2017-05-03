@@ -99,4 +99,4 @@ namespace Dovetail.SDK.ModelMap.NewStuff.Serialization
             _assemblies.AddRange(assemblies);
         }
     }
-s}
+}
