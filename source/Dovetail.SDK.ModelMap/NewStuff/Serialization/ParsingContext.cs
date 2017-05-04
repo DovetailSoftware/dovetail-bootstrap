@@ -37,6 +37,11 @@ namespace Dovetail.SDK.ModelMap.NewStuff.Serialization
             get { return _query; }
         }
 
+        public IXElementSerializer Serializer
+        {
+            get { return Service<IXElementSerializer>();  }
+        }
+
         public XElement CurrentElement
         {
             get { return _elements.Count == 0 ? Query : _elements.Peek(); }

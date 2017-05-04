@@ -1,23 +1,34 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Dovetail.SDK.Bootstrap.Clarify;
+using Dovetail.SDK.Bootstrap.Configuration;
 using Dovetail.SDK.ModelMap.NewStuff.Instructions;
 using Dovetail.SDK.ModelMap.NewStuff.ObjectModel;
+using Dovetail.SDK.ModelMap.NewStuff.Transforms;
 using FChoice.Foundation.Clarify;
 using FChoice.Foundation.Schema;
+using FubuCore;
 
 namespace Dovetail.SDK.ModelMap.NewStuff
 {
-    public class DovetailGenericModelMapVisitor : IModelMapVisitor
+	public class DovetailGenericModelMapVisitor : IModelMapVisitor
     {
         private readonly IClarifySession _session;
         private readonly ISchemaCache _schemaCache;
+		private readonly IMappingTransformRegistry _registry;
         private readonly Stack<ModelInformation> _modelStack = new Stack<ModelInformation>();
         private readonly Stack<ClarifyGenericMapEntry> _genericStack = new Stack<ClarifyGenericMapEntry>();
+		private readonly IList<ITransformArgument> _arguments = new List<ITransformArgument>();
 
-        public DovetailGenericModelMapVisitor(IClarifySession session, ISchemaCache schemaCache)
+		private FieldMap _currentFieldMap;
+		private PropertyDefinition _propertyDef;
+		private IMappingTransform _transform;
+
+		public DovetailGenericModelMapVisitor(IClarifySession session, ISchemaCache schemaCache, IMappingTransformRegistry registry)
         {
             _session = session;
             _schemaCache = schemaCache;
+			_registry = registry;
         }
 
         // public for testing
@@ -73,10 +84,18 @@ namespace Dovetail.SDK.ModelMap.NewStuff
             RootGenericMap = _genericStack.Peek();
         }
 
-        private FieldMap _currentFieldMap;
-
         public void Visit(BeginProperty instruction)
         {
+			_propertyDef = new PropertyDefinition
+			{
+				Key = instruction.Key
+			};
+
+			if (instruction.Field.IsEmpty())
+	        {
+		        return;
+	        }
+
             _currentFieldMap = new FieldMap
             {
                 Key = instruction.Key,
@@ -88,8 +107,15 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 
         public void Visit(EndProperty instruction)
         {
-            var currentGeneric = _genericStack.Peek();
-            currentGeneric.ClarifyGeneric.DataFields.AddRange(_currentFieldMap.FieldNames);
+			_propertyDef = null;
+
+			var currentGeneric = _genericStack.Peek();
+			if (_currentFieldMap == null)
+			{
+				return;
+			}
+
+			currentGeneric.ClarifyGeneric.DataFields.AddRange(_currentFieldMap.FieldNames);
             currentGeneric.AddFieldMap(_currentFieldMap);
         }
 
@@ -125,7 +151,7 @@ namespace Dovetail.SDK.ModelMap.NewStuff
             var parentClarifyGenericMap = _genericStack.Peek();
             var relationGeneric = parentClarifyGenericMap.ClarifyGeneric.Traverse(instruction.RelationName);
 
-            var clarifyGenericMap = new ClarifyGenericMapEntry { ClarifyGeneric = relationGeneric, Model = _modelStack.Peek(), Relation = instruction.RelationName };
+            var clarifyGenericMap = new ClarifyGenericMapEntry { ClarifyGeneric = relationGeneric, Model = _modelStack.Peek() };
             parentClarifyGenericMap.AddChildGenericMap(clarifyGenericMap);
             _genericStack.Push(clarifyGenericMap);
         }
@@ -175,5 +201,38 @@ namespace Dovetail.SDK.ModelMap.NewStuff
             var currentGeneric = _genericStack.Peek();
             currentGeneric.ClarifyGeneric.Filter.AddFilter(instruction.Filter);
         }
+
+		public void Visit(BeginTransform instruction)
+		{
+			if (!_registry.HasPolicy(instruction.Name))
+			{
+				throw new ModelMapException("Invalid transform: \"{0}\"".ToFormat(instruction.Name));
+			}
+
+			_transform = (IMappingTransform) FastYetSimpleTypeActivator.CreateInstance(_registry.FindPolicy(instruction.Name));
+		}
+
+		public void Visit(AddTransformArgument instruction)
+		{
+			if (instruction.Value.IsNotEmpty())
+			{
+				_arguments.Add(new ValueArgument(instruction.Name, instruction.Value));
+				return;
+			}
+
+			var field = instruction.Property;
+			_arguments.Add(new FieldArgument(instruction.Name, ModelDataPath.Parse(field)));
+		}
+
+		public void Visit(EndTransform instruction)
+		{
+			var field = _propertyDef.Key;
+			var path = ModelDataPath.Parse(field);
+			var currentGeneric = _genericStack.Peek();
+
+			currentGeneric.AddTransform(new ConfiguredTransform(path, _transform, _arguments.ToArray()));
+
+			_arguments.Clear();
+		}
     }
 }

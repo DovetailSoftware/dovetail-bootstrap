@@ -13,7 +13,7 @@ namespace Dovetail.SDK.ModelMap.NewStuff.Serialization
 
         public void Visit(XElement element, ModelMap map, ParsingContext context)
         {
-            var relationshipDef = XElementSerializer.Deserialize<RelationshipDef>(element);
+            var relationshipDef = context.Serializer.Deserialize<RelationshipDef>(element);
             if (relationshipDef.IsAdhoc)
             {
                 map.AddInstruction(new BeginAdHocRelation

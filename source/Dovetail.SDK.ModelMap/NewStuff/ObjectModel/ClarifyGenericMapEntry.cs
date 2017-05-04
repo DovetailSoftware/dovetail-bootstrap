@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Dovetail.SDK.ModelMap.NewStuff.Transforms;
 using FChoice.Foundation.Clarify;
 
 namespace Dovetail.SDK.ModelMap.NewStuff.ObjectModel
@@ -6,14 +7,20 @@ namespace Dovetail.SDK.ModelMap.NewStuff.ObjectModel
     public class ClarifyGenericMapEntry
     {
         private readonly List<FieldMap> _fieldMaps = new List<FieldMap>();
-        private readonly List<ClarifyGenericMapEntry> _childMaps = new List<ClarifyGenericMapEntry>();
+		private readonly List<ConfiguredTransform> _transforms = new List<ConfiguredTransform>();
+		private readonly List<ClarifyGenericMapEntry> _childMaps = new List<ClarifyGenericMapEntry>();
 
         public FieldMap[] FieldMaps
         {
             get { return _fieldMaps.ToArray(); }
         }
 
-        public ClarifyGenericMapEntry[] ChildGenericMaps
+		public ConfiguredTransform[] Transforms
+		{
+			get { return _transforms.ToArray(); }
+		}
+
+		public ClarifyGenericMapEntry[] ChildGenericMaps
         {
             get { return _childMaps.ToArray(); }
         }
@@ -21,20 +28,23 @@ namespace Dovetail.SDK.ModelMap.NewStuff.ObjectModel
         public ClarifyGeneric ClarifyGeneric { get; set; }
         public ModelInformation Model { get; set; }
         public SubRootInformation NewRoot { get; set; }
-        public string Relation { get; set; }
 
         public bool IsNewRoot()
         {
             return NewRoot != null;
         }
 
-
         public void AddFieldMap(FieldMap fieldMap)
         {
             _fieldMaps.Add(fieldMap);
         }
 
-        public void AddChildGenericMap(ClarifyGenericMapEntry clarifyGenericMap)
+		public void AddTransform(ConfiguredTransform transform)
+		{
+			_transforms.Add(transform);
+		}
+
+		public void AddChildGenericMap(ClarifyGenericMapEntry clarifyGenericMap)
         {
             _childMaps.Add(clarifyGenericMap);
         }

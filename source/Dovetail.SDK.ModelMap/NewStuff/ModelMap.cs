@@ -8,7 +8,7 @@ namespace Dovetail.SDK.ModelMap.NewStuff
         private readonly string _name;
         private readonly IList<IModelMapInstruction> _instructions = new List<IModelMapInstruction>();
 
-        public ModelMap(string name)
+		public ModelMap(string name)
         {
             _name = name;
         }

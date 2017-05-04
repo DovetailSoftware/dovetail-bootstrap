@@ -20,16 +20,18 @@ namespace Dovetail.SDK.ModelMap.NewStuff
         private readonly IOutputEncoder _encoder;
         private readonly IMapEntryBuilder _entries;
         private readonly IClarifyListCache _lists;
+	    private readonly IServiceLocator _services;
 
-        public ModelBuilder(IModelMapRegistry models, ISchemaCache schema, IOutputEncoder encoder, IMapEntryBuilder entries, IClarifyListCache lists)
+        public ModelBuilder(IModelMapRegistry models, ISchemaCache schema, IOutputEncoder encoder, IMapEntryBuilder entries, IClarifyListCache lists, IServiceLocator services)
         {
             _models = models;
             _schema = schema;
             _encoder = encoder;
             _entries = entries;
             _lists = lists;
+	        _services = services;
 
-            FieldSortMapOverrides = new FieldSortMap[0];
+	        FieldSortMapOverrides = new FieldSortMap[0];
         }
 
         public IEnumerable<FieldSortMap> FieldSortMapOverrides { get; set; }
@@ -164,7 +166,12 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 
                 populateDTOForGenericRecord(genericMap, record, row);
 
-                rows.Add(row);
+				foreach (var transform in genericMap.Transforms)
+				{
+					transform.Execute(row, _services);
+				}
+
+				rows.Add(row);
             }
 
             return rows.ToArray();
@@ -194,7 +201,12 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 
                         populateDTOForGenericRecord(childMap, childRecord, childModel);
 
-                        children.Add(childModel);
+						foreach (var transform in childMap.Transforms)
+						{
+							transform.Execute(childModel, _services);
+						}
+
+						children.Add(childModel);
                     }
 
                     parentModel[childMap.Model.ParentProperty] = children;
@@ -207,7 +219,11 @@ namespace Dovetail.SDK.ModelMap.NewStuff
                         var childRecord = relatedChildRows.First();
                         var childModel = new ModelData {Name = childMap.Model.ModelName};
                         populateDTOForGenericRecord(childMap, childRecord, childModel);
-                        parentModel[childMap.Model.ParentProperty] = childModel;
+						foreach (var transform in childMap.Transforms)
+						{
+							transform.Execute(childModel, _services);
+						}
+						parentModel[childMap.Model.ParentProperty] = childModel;
                     }
                     else
                     {

@@ -17,6 +17,7 @@ namespace Dovetail.SDK.ModelMap.Configuration
                 scan.Convention<SettingsScanner>();
 
 		        scan.AddAllTypesOf<IElementVisitor>();
+		        scan.AddAllTypesOf<IMappingVariableSource>();
 		    });
 
 			For(typeof(IModelBuilder<>)).Use(typeof(ModelBuilder<>));

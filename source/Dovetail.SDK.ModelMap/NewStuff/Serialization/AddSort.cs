@@ -12,7 +12,7 @@ namespace Dovetail.SDK.ModelMap.NewStuff.Serialization
 
         public void Visit(XElement element, ModelMap map, ParsingContext context)
         {
-            var instruction = XElementSerializer.Deserialize<FieldSortMap>(element);
+            var instruction = context.Serializer.Deserialize<FieldSortMap>(element);
             map.AddInstruction(instruction);
         }
 

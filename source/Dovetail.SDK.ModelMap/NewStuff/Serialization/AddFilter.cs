@@ -20,7 +20,7 @@ namespace Dovetail.SDK.ModelMap.NewStuff.Serialization
             var builder = context.Service<IObjectBuilder>();
             var values = new Dictionary<string, string>(element
                     .Attributes()
-                    .ToDictionary(_ => _.Name.ToString(), _ => _.Value.ToString()));
+                    .ToDictionary(_ => _.Name.ToString(), _ => context.Serializer.ValueFor(_).ToString()));
 
             var result = builder.Build(new BuildObjectContext(policyType, values));
 

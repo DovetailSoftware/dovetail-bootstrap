@@ -12,7 +12,7 @@ namespace Dovetail.SDK.ModelMap.NewStuff.Serialization
 
         public void Visit(XElement element, ModelMap map, ParsingContext context)
         {
-            var prop = XElementSerializer.Deserialize<BeginProperty>(element);
+            var prop = context.Serializer.Deserialize<BeginProperty>(element);
             map.AddInstruction(prop);
         }
 

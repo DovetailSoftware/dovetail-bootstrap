@@ -5,9 +5,32 @@ using FubuCore;
 
 namespace Dovetail.SDK.ModelMap.NewStuff.Serialization
 {
-    public class XElementSerializer
+    public interface IXElementSerializer
     {
-        public static T Deserialize<T>(XElement element) where T : class, new()
+        object ValueFor(XAttribute attribute);
+        T Deserialize<T>(XElement element) where T : class, new();
+    }
+
+    public class XElementSerializer : IXElementSerializer
+    {
+        private readonly IMappingVariableExpander _expander;
+
+        public XElementSerializer(IMappingVariableExpander expander)
+        {
+            _expander = expander;
+        }
+
+        public object ValueFor(XAttribute attribute)
+        {
+            if (_expander.IsVariable(attribute.Value))
+            {
+                return _expander.Expand(attribute.Value);
+            }
+
+            return attribute.Value;
+        }
+
+        public T Deserialize<T>(XElement element) where T : class, new()
         {
             var target = new T();
             var properties = typeof(T).GetProperties();
@@ -17,7 +40,7 @@ namespace Dovetail.SDK.ModelMap.NewStuff.Serialization
                 var prop = properties.SingleOrDefault(_ => _.Name.EqualsIgnoreCase(attribute.Name.ToString()));
                 if (prop != null)
                 {
-                    object value = attribute.Value;
+                    object value = ValueFor(attribute);
                     if (value == null) continue;
 
                     if (value.GetType() != prop.PropertyType)

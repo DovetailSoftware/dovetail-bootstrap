@@ -12,7 +12,7 @@ namespace Dovetail.SDK.ModelMap.NewStuff.Serialization
 
         public void Visit(XElement element, ModelMap map, ParsingContext context)
         {
-            var query = XElementSerializer.Deserialize<QueryElement>(element);
+            var query = context.Serializer.Deserialize<QueryElement>(element);
 
             var queryContext = query.Type == "view"
                 ? (IModelMapInstruction) new BeginView(query.From)

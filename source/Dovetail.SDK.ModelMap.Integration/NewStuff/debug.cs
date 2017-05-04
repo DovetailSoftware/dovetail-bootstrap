@@ -4,6 +4,7 @@ using Dovetail.SDK.ModelMap.Clarify;
 using Dovetail.SDK.ModelMap.NewStuff;
 using Dovetail.SDK.ModelMap.NewStuff.Instructions;
 using FChoice.Foundation.Schema;
+using FubuCore;
 using NUnit.Framework;
 
 namespace Dovetail.SDK.ModelMap.Integration.NewStuff
@@ -48,7 +49,7 @@ namespace Dovetail.SDK.ModelMap.Integration.NewStuff
 
             var builder = Container.GetInstance<ModelMap.NewStuff.MapEntryBuilder>();
             var models = new ModelBuilder(new StubRegistry(map), Container.GetInstance<ISchemaCache>(),
-                Container.GetInstance<IOutputEncoder>(), builder, Container.GetInstance<IClarifyListCache>());
+                Container.GetInstance<IOutputEncoder>(), builder, Container.GetInstance<IClarifyListCache>(), new InMemoryServiceLocator());
 
             var @case = models.GetOne("case", 268435890);
             Debug.WriteLine(@case.ToValues().ToString());
