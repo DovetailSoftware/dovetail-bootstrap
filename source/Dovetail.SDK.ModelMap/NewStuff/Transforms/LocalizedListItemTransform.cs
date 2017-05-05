@@ -13,12 +13,4 @@ namespace Dovetail.SDK.ModelMap.NewStuff.Transforms
 			return lists.GetLocalizedTitle(listName, title);
 		}
 	}
-
-	public class ToUpperTransform : IMappingTransform
-	{
-		public object Execute(TransformContext context)
-		{
-			return context.Arguments.Get<string>("value").ToUpper();
-		}
-	}
 }

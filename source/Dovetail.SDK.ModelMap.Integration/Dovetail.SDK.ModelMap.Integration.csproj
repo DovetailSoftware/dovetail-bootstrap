@@ -92,6 +92,7 @@
     <Compile Include="NewStuff\MappingVariableExpanderTester.cs" />
     <Compile Include="NewStuff\MappingVariableRegistryTester.cs" />
     <Compile Include="NewStuff\debug.cs" />
+    <Compile Include="NewStuff\ModelMapTester.cs" />
     <Compile Include="NewStuff\PropertyTypesTester.cs" />
     <Compile Include="NewStuff\Serialization\ObjectBuilderTester.cs" />
     <Compile Include="NewStuff\Transforms\IntegratedConfiguredTransformTester.cs" />

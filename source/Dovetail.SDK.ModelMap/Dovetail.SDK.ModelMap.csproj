@@ -109,6 +109,7 @@
     <Compile Include="ModelMapSchemaValidationSource.cs" />
     <Compile Include="NewStuff\DefaultVariables.cs" />
     <Compile Include="NewStuff\DovetailGenericModelMapVisitor.cs" />
+    <Compile Include="NewStuff\IExpandableMap.cs" />
     <Compile Include="NewStuff\IMapEntryBuilder.cs" />
     <Compile Include="NewStuff\IMappingVariable.cs" />
     <Compile Include="NewStuff\IMappingVariableExpander.cs" />
@@ -119,6 +120,7 @@
     <Compile Include="NewStuff\IModelMapRegistry.cs" />
     <Compile Include="NewStuff\IModelMapVisitor.cs" />
     <Compile Include="NewStuff\Instructions\AddFilter.cs" />
+    <Compile Include="NewStuff\Instructions\IncludePartial.cs" />
     <Compile Include="NewStuff\Instructions\AddTransformArgument.cs" />
     <Compile Include="NewStuff\Instructions\BeginAdHocRelation.cs" />
     <Compile Include="NewStuff\Instructions\BeginMappedCollection.cs" />
@@ -161,6 +163,7 @@
     <Compile Include="NewStuff\Serialization\AddFilter.cs" />
     <Compile Include="NewStuff\Serialization\AddMappedCollection.cs" />
     <Compile Include="NewStuff\Serialization\AddMappedProperty.cs" />
+    <Compile Include="NewStuff\Serialization\AddPartial.cs" />
     <Compile Include="NewStuff\Serialization\AddProperty.cs" />
     <Compile Include="NewStuff\Serialization\AddSort.cs" />
     <Compile Include="NewStuff\Serialization\BuildObjectContext.cs" />

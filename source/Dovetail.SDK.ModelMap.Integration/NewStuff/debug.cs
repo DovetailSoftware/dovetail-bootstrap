@@ -68,6 +68,11 @@ namespace Dovetail.SDK.ModelMap.Integration.NewStuff
             {
                 return _map;
             }
+
+	        public ModelMap.NewStuff.ModelMap FindPartial(string name)
+	        {
+		        throw new System.NotImplementedException();
+	        }
         }
     }
 }

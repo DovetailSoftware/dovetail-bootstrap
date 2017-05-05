@@ -54,11 +54,7 @@ namespace Dovetail.SDK.ModelMap.NewStuff.Serialization
             if (name == null)
                 throw new InvalidOperationException("No name specified");
 
-            var queryElement = root.Element("query");
-            if (queryElement == null)
-                throw new InvalidOperationException("No query specified");
-
-            var context = new ParsingContext(queryElement, _services, report);
+            var context = new ParsingContext(_services, report);
             var map = new ModelMap(name.Value);
 
             map.AddInstruction(new BeginModelMap(name.Value));

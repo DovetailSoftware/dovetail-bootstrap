@@ -9,12 +9,13 @@ namespace Dovetail.SDK.ModelMap.NewStuff
     public class ModelMapCache : IModelMapCache
     {
         private Lazy<ModelMap[]> _maps;
-        private readonly IModelMapParser _parser;
+		private Lazy<ModelMap[]> _partials;
+	    private bool _visiting;
+		private readonly IModelMapParser _parser;
         private readonly ModelMapSettings _settings;
 
-        public ModelMapCache(Lazy<ModelMap[]> maps, IModelMapParser parser, ModelMapSettings settings)
+        public ModelMapCache(IModelMapParser parser, ModelMapSettings settings)
         {
-            _maps = maps;
             _parser = parser;
             _settings = settings;
 
@@ -26,20 +27,45 @@ namespace Dovetail.SDK.ModelMap.NewStuff
             if (!_settings.EnableCache)
                 Clear();
 
-            return _maps.Value;
+			return _maps.Value;
         }
 
-        public void Clear()
+		public IEnumerable<ModelMap> Partials()
+		{
+			if (!_settings.EnableCache)
+				Clear();
+
+			return _partials.Value;
+		}
+
+		public void Clear()
         {
-            _maps = new Lazy<ModelMap[]>(findMaps);
+			if (_visiting) return;
+
+			_visiting = true;
+
+			_maps = new Lazy<ModelMap[]>(() => findMaps("*.map.config"));
+			_partials = new Lazy<ModelMap[]>(() => findMaps("*.partial.config"));
+
+			foreach (var map in _partials.Value)
+			{
+				map.As<IExpandableMap>().Expand(this);
+			}
+
+			foreach (var map in _maps.Value)
+			{
+				map.As<IExpandableMap>().Expand(this);
+			}
+
+			_visiting = false;
         }
 
-        private ModelMap[] findMaps()
+        private ModelMap[] findMaps(string include)
         {
             var files = new FileSystem();
             var mapFiles = files.FindFiles(_settings.Directory, new FileSet
             {
-                Include = "*.map.config",
+                Include = include,
                 DeepSearch = true
             });
 

@@ -5,6 +5,7 @@ namespace Dovetail.SDK.ModelMap.NewStuff
     public interface IModelMapCache
     {
         IEnumerable<ModelMap> Maps();
-        void Clear();
+		IEnumerable<ModelMap> Partials();
+		void Clear();
     }
 }

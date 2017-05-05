@@ -8,7 +8,7 @@ namespace Dovetail.SDK.ModelMap.NewStuff.Serialization
     {
         public bool Matches(XElement element, ModelMap map, ParsingContext context)
         {
-            return element.Name == "traverseRelation" && context.IsCurrent<IQueryContext>();
+	        return element.Name == "traverseRelation";
         }
 
         public void Visit(XElement element, ModelMap map, ParsingContext context)

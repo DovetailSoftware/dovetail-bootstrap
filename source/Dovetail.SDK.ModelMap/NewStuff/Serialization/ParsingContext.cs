@@ -7,15 +7,13 @@ namespace Dovetail.SDK.ModelMap.NewStuff.Serialization
 {
     public class ParsingContext
     {
-        private readonly XElement _query;
         private readonly IServiceLocator _services;
         private readonly ModelMapCompilationReport _report;
         private readonly Stack<XElement> _elements;
         private readonly Stack<object> _objects;
 
-        public ParsingContext(XElement query, IServiceLocator services, ModelMapCompilationReport report)
+        public ParsingContext(IServiceLocator services, ModelMapCompilationReport report)
         {
-            _query = query;
             _services = services;
             _report = report;
             _elements = new Stack<XElement>();
@@ -32,11 +30,6 @@ namespace Dovetail.SDK.ModelMap.NewStuff.Serialization
             get { return Service<ISchemaCache>(); }
         }
 
-        public XElement Query
-        {
-            get { return _query; }
-        }
-
         public IXElementSerializer Serializer
         {
             get { return Service<IXElementSerializer>();  }
@@ -44,7 +37,7 @@ namespace Dovetail.SDK.ModelMap.NewStuff.Serialization
 
         public XElement CurrentElement
         {
-            get { return _elements.Count == 0 ? Query : _elements.Peek(); }
+            get { return _elements.Count == 0 ? null : _elements.Peek(); }
         }
 
         public TService Service<TService>()
