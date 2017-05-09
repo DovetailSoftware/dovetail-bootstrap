@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Dovetail.SDK.Bootstrap.Configuration;
 using Dovetail.SDK.ModelMap.NewStuff.Instructions;
 using FubuCore;
 
@@ -62,6 +63,7 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 				var instructionsToAdd = partial
 					._instructions
 					.Where(_ => _.GetType() != typeof(BeginModelMap) && _.GetType() != typeof(EndModelMap))
+					.Select(CloneInstruction)
 					.ToArray();
 
 				for (var i = 0; i < instructionsToAdd.Length; ++i)
@@ -116,6 +118,20 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 		public static bool operator !=(ModelMap left, ModelMap right)
 		{
 			return !Equals(left, right);
+		}
+
+		public static IModelMapInstruction CloneInstruction(IModelMapInstruction instruction)
+		{
+			var type = instruction.GetType();
+			var clone = (IModelMapInstruction) FastYetSimpleTypeActivator.CreateInstance(type);
+			var properties = type.GetProperties();
+
+			foreach (var property in properties)
+			{
+				property.SetValue(clone, property.GetValue(instruction, null));
+			}
+
+			return clone;
 		}
 
 		private class ConfiguredVariable : IMappingVariable
