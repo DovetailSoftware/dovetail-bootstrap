@@ -50,6 +50,8 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 				if (partial == null)
 					continue;
 
+				partial.As<IExpandableMap>().Expand(cache);
+
 				var index = replacement.Item1 + offset;
 				_instructions.RemoveAt(index);
 

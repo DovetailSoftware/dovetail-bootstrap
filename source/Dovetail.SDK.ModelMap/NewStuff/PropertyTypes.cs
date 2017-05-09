@@ -14,7 +14,17 @@ namespace Dovetail.SDK.ModelMap.NewStuff
                     return typeof(string);
                 case "datetime":
                     return typeof(DateTime);
-                default:
+				case "decimal":
+					return typeof(decimal);
+				case "bool":
+					return typeof(bool);
+				case "double":
+					return typeof(double);
+				case "float":
+					return typeof(float);
+				case "short":
+					return typeof(short);
+				default:
                     throw new ModelMapException("Invalid dataType specified: " + dataType);
             }
         }

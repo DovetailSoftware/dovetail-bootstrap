@@ -13,6 +13,11 @@ namespace Dovetail.SDK.ModelMap.Integration.NewStuff
             PropertyTypes.Parse("int").ShouldEqual(typeof(int));
             PropertyTypes.Parse("string").ShouldEqual(typeof(string));
             PropertyTypes.Parse("dateTime").ShouldEqual(typeof(DateTime));
-        }
+			PropertyTypes.Parse("decimal").ShouldEqual(typeof(decimal));
+			PropertyTypes.Parse("bool").ShouldEqual(typeof(decimal));
+			PropertyTypes.Parse("double").ShouldEqual(typeof(double));
+			PropertyTypes.Parse("float").ShouldEqual(typeof(float));
+			PropertyTypes.Parse("short").ShouldEqual(typeof(short));
+		}
     }
 }

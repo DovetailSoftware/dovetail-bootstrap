@@ -278,6 +278,11 @@ namespace Dovetail.SDK.ModelMap.NewStuff
                 foreach (var childRecord in record.RelatedRows(childMap.ClarifyGeneric))
                 {
                     populateDTOForGenericRecord(childMap, childRecord, dto);
+
+	                foreach (var transform in childMap.Transforms)
+	                {
+		                transform.Execute(dto, _services);
+	                }
                 }
             }
         }
