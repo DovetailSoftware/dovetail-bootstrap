@@ -1,8 +1,9 @@
-﻿using FChoice.Foundation.Filters;
+﻿using System;
+using FChoice.Foundation.Filters;
 
 namespace Dovetail.SDK.ModelMap.NewStuff.Instructions
 {
-    public class AddFilter : IModelMapInstruction
+    public class AddFilter : IModelMapInstruction, ICloneable
     {
         public AddFilter(Filter filter)
         {
@@ -15,5 +16,10 @@ namespace Dovetail.SDK.ModelMap.NewStuff.Instructions
         {
             visitor.Visit(this);
         }
+
+	    public object Clone()
+	    {
+		    return new AddFilter(Filter);
+	    }
     }
 }

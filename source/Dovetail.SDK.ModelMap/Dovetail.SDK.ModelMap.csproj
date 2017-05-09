@@ -198,6 +198,7 @@
     <Compile Include="NewStuff\Transforms\LocalizedListItemTransform.cs" />
     <Compile Include="NewStuff\Transforms\MappingTransformRegistry.cs" />
     <Compile Include="NewStuff\Transforms\ModelDataPath.cs" />
+    <Compile Include="NewStuff\Transforms\StringConcatTransform.cs" />
     <Compile Include="NewStuff\Transforms\TransformAliasAttribute.cs" />
     <Compile Include="NewStuff\Transforms\TransformArguments.cs" />
     <Compile Include="NewStuff\Transforms\TransformContext.cs" />

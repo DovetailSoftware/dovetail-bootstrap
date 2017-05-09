@@ -122,12 +122,19 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 
 		public static IModelMapInstruction CloneInstruction(IModelMapInstruction instruction)
 		{
+			var cloneable = instruction as ICloneable;
+			if (cloneable != null)
+				return (IModelMapInstruction) cloneable.Clone();
+
 			var type = instruction.GetType();
 			var clone = (IModelMapInstruction) FastYetSimpleTypeActivator.CreateInstance(type);
 			var properties = type.GetProperties();
 
 			foreach (var property in properties)
 			{
+				if (!property.CanWrite)
+					continue;
+
 				property.SetValue(clone, property.GetValue(instruction, null));
 			}
 

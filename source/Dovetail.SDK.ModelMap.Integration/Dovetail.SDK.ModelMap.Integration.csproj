@@ -97,6 +97,7 @@
     <Compile Include="NewStuff\Serialization\ObjectBuilderTester.cs" />
     <Compile Include="NewStuff\Transforms\IntegratedConfiguredTransformTester.cs" />
     <Compile Include="NewStuff\Transforms\ModelDataPathTester.cs" />
+    <Compile Include="NewStuff\Transforms\StringConcatTransformTester.cs" />
     <Compile Include="Session\user_impersonation_service.cs" />
     <Compile Include="email_log_updater.cs" />
     <Compile Include="Filtering_a_child_generic.cs" />
