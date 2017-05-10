@@ -24,9 +24,14 @@ namespace Dovetail.SDK.ModelMap.NewStuff.Serialization
 
         public void ChildrenBound(ModelMap map, ParsingContext context)
         {
-            context.PopObject();
-            map.AddInstruction(new EndTable());
-        }
+	        var query = context.CurrentObject<IQueryContext>();
+			var instruction = query is BeginView
+				? (IModelMapInstruction) new EndView()
+				: new EndTable();
+
+			map.AddInstruction(instruction);
+			context.PopObject();
+		}
 
         private class QueryElement
         {

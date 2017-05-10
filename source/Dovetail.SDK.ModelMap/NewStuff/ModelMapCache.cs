@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Dovetail.SDK.ModelMap.NewStuff.Serialization;
+using Dovetail.SDK.ModelMap.NewStuff.Serialization.Overrides;
 using FubuCore;
 
 namespace Dovetail.SDK.ModelMap.NewStuff
@@ -12,14 +13,16 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 		private Lazy<ModelMap[]> _partials;
 	    private bool _visiting;
 		private readonly IModelMapParser _parser;
+	    private readonly IModelMapOverrideParser _overrides;
         private readonly ModelMapSettings _settings;
 
-        public ModelMapCache(IModelMapParser parser, ModelMapSettings settings)
+        public ModelMapCache(IModelMapParser parser, IModelMapOverrideParser overrides, ModelMapSettings settings)
         {
             _parser = parser;
-            _settings = settings;
+	        _overrides = overrides;
+	        _settings = settings;
 
-            Clear();
+	        Clear();
         }
 
         public IEnumerable<ModelMap> Maps()
@@ -70,15 +73,21 @@ namespace Dovetail.SDK.ModelMap.NewStuff
             });
 
             var maps = mapFiles
-                .Select(_ => _parser.Parse(_))
+				.Where(_ => !_overrides.ShouldParse(_))
+				.Select(_ => _parser.Parse(_))
                 .ToArray();
 
             var conflicts = maps.GroupBy(_ => _.Name).Where(_ => _.Count() > 1).ToArray();
             if (conflicts.Any())
                 throw new ModelMapException("Multiple models found with the same name: " + conflicts.Select(_ => _.Key).Join(", "));
 
+			mapFiles
+				.Where(_ => _overrides.ShouldParse(_))
+				.Each(_ => maps
+							.Where(__ => _overrides.Matches(__, _))
+							.Each(__ => _overrides.Parse(__, _)));
 
-            return maps;
+			return maps;
         }
     }
 }

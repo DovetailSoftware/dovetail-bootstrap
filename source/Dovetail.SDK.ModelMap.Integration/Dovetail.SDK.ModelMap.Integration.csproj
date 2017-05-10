@@ -92,7 +92,11 @@
     <Compile Include="NewStuff\MappingVariableExpanderTester.cs" />
     <Compile Include="NewStuff\MappingVariableRegistryTester.cs" />
     <Compile Include="NewStuff\debug.cs" />
+    <Compile Include="NewStuff\Serialization\remove_property_scenario.cs" />
+    <Compile Include="NewStuff\Serialization\simple_properties_scenario.cs" />
+    <Compile Include="NewStuff\Serialization\ModelMapParsingScenario.cs" />
     <Compile Include="NewStuff\ModelMapTester.cs" />
+    <Compile Include="NewStuff\NulloLogger.cs" />
     <Compile Include="NewStuff\PropertyTypesTester.cs" />
     <Compile Include="NewStuff\Serialization\ObjectBuilderTester.cs" />
     <Compile Include="NewStuff\Transforms\IntegratedConfiguredTransformTester.cs" />
@@ -136,6 +140,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="App.config" />
+    <EmbeddedResource Include="NewStuff\Serialization\simple-case.map.config" />
+    <EmbeddedResource Include="NewStuff\Serialization\remove-property.map.config" />
     <None Include="ripple.dependencies.config">
       <SubType>Designer</SubType>
     </None>

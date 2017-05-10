@@ -224,6 +224,10 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 			_arguments.Add(new FieldArgument(instruction.Name, ModelDataPath.Parse(field)));
 		}
 
+		public void Visit(RemoveProperty instruction)
+		{
+		}
+
 		public void Visit(EndTransform instruction)
 		{
 			var field = _propertyDef.Key;

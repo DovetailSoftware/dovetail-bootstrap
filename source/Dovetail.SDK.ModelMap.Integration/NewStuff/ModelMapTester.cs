@@ -196,6 +196,11 @@ namespace Dovetail.SDK.ModelMap.Integration.NewStuff
 			{
 				_instructions.Add(instruction);
 			}
+
+			public void Visit(RemoveProperty instruction)
+			{
+				_instructions.Add(instruction);
+			}
 		}
 
 		private class StubModelMapCache : IModelMapCache

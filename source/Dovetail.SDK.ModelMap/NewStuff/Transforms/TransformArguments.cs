@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using FubuCore;
 
 namespace Dovetail.SDK.ModelMap.NewStuff.Transforms
 {
-	public class TransformArguments
+	public class TransformArguments : IEnumerable<KeyValuePair<string, object>>
 	{
 		private readonly IDictionary<string, object> _values;
 
@@ -25,6 +26,16 @@ namespace Dovetail.SDK.ModelMap.NewStuff.Transforms
 		public bool Has(string key)
 		{
 			return _values.ContainsKey(key);
+		}
+
+		public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
+		{
+			return _values.GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
 		}
 	}
 }

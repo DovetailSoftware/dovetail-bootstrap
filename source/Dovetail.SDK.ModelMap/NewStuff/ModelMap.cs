@@ -22,12 +22,19 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 		    get { return _name; }
 	    }
 
+		public IEnumerable<IModelMapInstruction> Instructions {  get {  return _instructions.ToArray();} }
+
 	    public void AddInstruction(IModelMapInstruction instruction)
         {
             _instructions.Add(instruction);
         }
 
-        public void Accept(IModelMapVisitor visitor)
+		public void RemoveInstruction(IModelMapInstruction instruction)
+		{
+			_instructions.Remove(instruction);
+		}
+
+		public void Accept(IModelMapVisitor visitor)
         {
             _instructions.Each(_ => _.Accept(visitor));
         }

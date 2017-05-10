@@ -142,6 +142,7 @@
     <Compile Include="NewStuff\Instructions\FieldSortMap.cs" />
     <Compile Include="NewStuff\Instructions\IModelMapInstruction.cs" />
     <Compile Include="NewStuff\Instructions\IQueryContext.cs" />
+    <Compile Include="NewStuff\Instructions\RemoveProperty.cs" />
     <Compile Include="NewStuff\IPaginationResult.cs" />
     <Compile Include="NewStuff\MapEntryBuilder.cs" />
     <Compile Include="NewStuff\MappingVariableExpander.cs" />
@@ -180,9 +181,14 @@
     <Compile Include="NewStuff\Serialization\ObjectBuilder.cs" />
     <Compile Include="NewStuff\Serialization\ObjectBuilderResult.cs" />
     <Compile Include="NewStuff\Serialization\ObjectBuilderError.cs" />
+    <Compile Include="NewStuff\Serialization\Overrides\IModelMapDiff.cs" />
+    <Compile Include="NewStuff\Serialization\Overrides\IModelMapOverrideParser.cs" />
+    <Compile Include="NewStuff\Serialization\Overrides\ModelMapDiff.cs" />
+    <Compile Include="NewStuff\Serialization\Overrides\ModelMapOverrideParser.cs" />
     <Compile Include="NewStuff\Serialization\ParsingContext.cs" />
     <Compile Include="NewStuff\Serialization\ParseQuery.cs" />
     <Compile Include="NewStuff\Serialization\PolicyAliasAttribute.cs" />
+    <Compile Include="NewStuff\Serialization\RemoveProperty.cs" />
     <Compile Include="NewStuff\Serialization\RequiredAttribute.cs" />
     <Compile Include="NewStuff\Serialization\TraverseRelation.cs" />
     <Compile Include="NewStuff\Serialization\TypePool.cs" />
@@ -190,7 +196,9 @@
     <Compile Include="NewStuff\Serialization\XElementSerializer.cs" />
     <Compile Include="NewStuff\Serialization\XElementService.cs" />
     <Compile Include="NewStuff\Transforms\ConfiguredTransform.cs" />
+    <Compile Include="NewStuff\Transforms\ExecuteScalarTransform.cs" />
     <Compile Include="NewStuff\Transforms\FieldArgument.cs" />
+    <Compile Include="NewStuff\Transforms\SqlCountTransform.cs" />
     <Compile Include="NewStuff\Transforms\IMappingTransform.cs" />
     <Compile Include="NewStuff\Transforms\IMappingTransformRegistry.cs" />
     <Compile Include="NewStuff\Transforms\ITransformArgument.cs" />
