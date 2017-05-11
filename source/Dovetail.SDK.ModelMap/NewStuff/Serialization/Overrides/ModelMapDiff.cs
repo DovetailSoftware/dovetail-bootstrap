@@ -140,11 +140,6 @@ namespace Dovetail.SDK.ModelMap.NewStuff.Serialization.Overrides
 			}
 		}
 
-		private static bool shouldPushContext(IModelMapInstruction instruction)
-		{
-			return PropertyContexts.Any(_ => _.Matches(instruction.GetType()));
-		}
-
 		private static bool shouldOffset(IModelMapInstruction instruction)
 		{
 			return Offsets.Contains(instruction.GetType());
