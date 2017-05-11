@@ -34,6 +34,12 @@ namespace Dovetail.SDK.ModelMap.Integration.NewStuff.Serialization
 			return Instructions[index].As<TInstruction>();
 		}
 
+		public void Verify<TInstruction>(int index, Action<TInstruction> action)
+		{
+			var instruction = Get<TInstruction>(index);
+			action(instruction);
+		}
+
 		public void CleanUp()
 		{
 			_files.Each(_ => File.Delete(_));
