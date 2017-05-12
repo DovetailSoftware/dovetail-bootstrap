@@ -34,40 +34,73 @@ namespace Dovetail.SDK.ModelMap.NewStuff.Serialization.Overrides
 
 		private void removeProperties(ModelMap map, ModelMap overrides)
 		{
-			var removals = overrides.Instructions.OfType<Instructions.RemoveProperty>().ToArray();
-			foreach (var removal in removals)
+			//var removals = overrides.Instructions.OfType<Instructions.RemoveProperty>().ToArray();
+			//foreach (var removal in removals)
+			//{
+			//	var instructionsToRemove = new List<IModelMapInstruction>();
+			//	int count = 0;
+			//	var removing = false;
+			//	foreach (var instruction in map.Instructions)
+			//	{
+			//		var beginProp = instruction as BeginProperty;
+			//		if (beginProp != null && beginProp.Key.EqualsIgnoreCase(removal.Key))
+			//		{
+			//			removing = true;
+			//		}
+
+			//		if (removing)
+			//		{
+			//			instructionsToRemove.Add(instruction);
+
+			//			var endProp = instruction as EndProperty;
+			//			if (endProp != null)
+			//			{
+			//				--count;
+			//			}
+			//			else if (beginProp != null)
+			//			{
+			//				++count;
+			//			}
+
+			//			if (count == 0)
+			//				break;
+			//		}
+			//	}
+
+			//	instructionsToRemove.Each(map.RemoveInstruction);
+			//}
+
+			var targetIndex = 0;
+			var mapInstructions = map.Instructions.ToList();
+			var sets = new List<InstructionSet>();
+			foreach (var instruction in overrides.Instructions)
 			{
-				var instructionsToRemove = new List<IModelMapInstruction>();
-				int count = 0;
-				var removing = false;
-				foreach (var instruction in map.Instructions)
+				if (shouldOffset(instruction))
 				{
-					var beginProp = instruction as BeginProperty;
-					if (beginProp != null && beginProp.Key.EqualsIgnoreCase(removal.Key))
+					var i = mapInstructions.IndexOf(instruction);
+					if (i != -1)
 					{
-						removing = true;
+						targetIndex = i;
 					}
-
-					if (removing)
+					else
 					{
-						instructionsToRemove.Add(instruction);
-
-						var endProp = instruction as EndProperty;
-						if (endProp != null)
-						{
-							--count;
-						}
-						else if (beginProp != null)
-						{
-							++count;
-						}
-
-						if (count == 0)
-							break;
+						targetIndex += 1;
 					}
 				}
 
-				instructionsToRemove.Each(map.RemoveInstruction);
+				var removal = instruction as Instructions.RemoveProperty;
+				if (removal != null)
+				{
+					var set = map.FindProperty(removal.Key, targetIndex);
+					sets.Add(set);
+				}
+			}
+
+			var offset = 0;
+			foreach (var set in sets)
+			{
+				map.Remove(set, offset);
+				offset += set.Instructions.Count();
 			}
 
 			var prunedInstructions = new List<IModelMapInstruction>();
@@ -120,7 +153,7 @@ namespace Dovetail.SDK.ModelMap.NewStuff.Serialization.Overrides
 					continue;
 
 				var context = PropertyContexts.SingleOrDefault(_ => _.Matches(instruction.GetType()));
-				if (context != null)
+				if (context != null && mapInstructions.IndexOf(instruction) == -1)
 				{
 					contexts.Push(context.WaitFor());
 				}

@@ -119,6 +119,7 @@
     <Compile Include="NewStuff\IModelMapCache.cs" />
     <Compile Include="NewStuff\IModelMapRegistry.cs" />
     <Compile Include="NewStuff\IModelMapVisitor.cs" />
+    <Compile Include="NewStuff\InstructionSet.cs" />
     <Compile Include="NewStuff\Instructions\AddFilter.cs" />
     <Compile Include="NewStuff\Instructions\IncludePartial.cs" />
     <Compile Include="NewStuff\Instructions\AddTransformArgument.cs" />

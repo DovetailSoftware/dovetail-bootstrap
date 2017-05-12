@@ -96,6 +96,7 @@
     <Compile Include="NewStuff\Serialization\add_root_property_scenario.cs" />
     <Compile Include="NewStuff\Serialization\add_nested_traverse_property_scenario.cs" />
     <Compile Include="NewStuff\Serialization\add_traversed_property_scenario.cs" />
+    <Compile Include="NewStuff\Serialization\remove_nested_property_scenario.cs" />
     <Compile Include="NewStuff\Serialization\remove_property_scenario.cs" />
     <Compile Include="NewStuff\Serialization\advanced_properties_scenario.cs" />
     <Compile Include="NewStuff\Serialization\simple_properties_scenario.cs" />
@@ -153,6 +154,7 @@
     <EmbeddedResource Include="NewStuff\Serialization\add-traversed-property.map.config" />
     <EmbeddedResource Include="NewStuff\Serialization\add-nested-traverse-property.map.config" />
     <EmbeddedResource Include="NewStuff\Serialization\add-nested-mapped-property.map.config" />
+    <EmbeddedResource Include="NewStuff\Serialization\removed-nested-property.map.config" />
     <None Include="ripple.dependencies.config">
       <SubType>Designer</SubType>
     </None>
