@@ -28,5 +28,7 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 	    void Visit(EndTransform instruction);
 	    void Visit(AddTransformArgument instruction);
 	    void Visit(RemoveProperty instruction);
+	    void Visit(RemoveMappedProperty instruction);
+	    void Visit(RemoveMappedCollection instruction);
     }
 }

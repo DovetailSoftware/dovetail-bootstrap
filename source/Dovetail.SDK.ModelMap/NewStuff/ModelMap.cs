@@ -96,6 +96,90 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 			return new InstructionSet(start, instructions, end);
 		}
 
+		public InstructionSet FindMappedProperty(string key, int startIndex)
+		{
+			var instructions = new List<IModelMapInstruction>();
+			int count = 0;
+			int start = 0;
+			int end = 0;
+			var collecting = false;
+			for (var i = 0; i < _instructions.Count; ++i)
+			{
+				var instruction = _instructions[i];
+				var beginProp = instruction as BeginMappedProperty;
+				if (beginProp != null && beginProp.Key.EqualsIgnoreCase(key) && i > startIndex)
+				{
+					start = i;
+					collecting = true;
+				}
+
+				if (collecting)
+				{
+					instructions.Add(instruction);
+
+					var endProp = instruction as EndMappedProperty;
+					if (endProp != null)
+					{
+						--count;
+					}
+					else if (beginProp != null)
+					{
+						++count;
+					}
+
+					if (count == 0)
+					{
+						end = i;
+						break;
+					}
+				}
+			}
+
+			return new InstructionSet(start, instructions, end);
+		}
+
+		public InstructionSet FindMappedCollection(string key, int startIndex)
+		{
+			var instructions = new List<IModelMapInstruction>();
+			int count = 0;
+			int start = 0;
+			int end = 0;
+			var collecting = false;
+			for (var i = 0; i < _instructions.Count; ++i)
+			{
+				var instruction = _instructions[i];
+				var beginProp = instruction as BeginMappedCollection;
+				if (beginProp != null && beginProp.Key.EqualsIgnoreCase(key) && i > startIndex)
+				{
+					start = i;
+					collecting = true;
+				}
+
+				if (collecting)
+				{
+					instructions.Add(instruction);
+
+					var endProp = instruction as EndMappedCollection;
+					if (endProp != null)
+					{
+						--count;
+					}
+					else if (beginProp != null)
+					{
+						++count;
+					}
+
+					if (count == 0)
+					{
+						end = i;
+						break;
+					}
+				}
+			}
+
+			return new InstructionSet(start, instructions, end);
+		}
+
 		public void Remove(InstructionSet set, int offset)
 		{
 			for (var i = set.Start - offset; i <= set.End - offset; ++i)

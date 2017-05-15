@@ -92,6 +92,8 @@
     <Compile Include="NewStuff\MappingVariableExpanderTester.cs" />
     <Compile Include="NewStuff\MappingVariableRegistryTester.cs" />
     <Compile Include="NewStuff\debug.cs" />
+    <Compile Include="NewStuff\Serialization\removed_mapped_property_scenario.cs" />
+    <Compile Include="NewStuff\Serialization\removed_mapped_collection_scenario.cs" />
     <Compile Include="NewStuff\Serialization\add_nested_mapped_property_scenario.cs" />
     <Compile Include="NewStuff\Serialization\add_root_property_scenario.cs" />
     <Compile Include="NewStuff\Serialization\add_nested_traverse_property_scenario.cs" />
@@ -155,6 +157,8 @@
     <EmbeddedResource Include="NewStuff\Serialization\add-nested-traverse-property.map.config" />
     <EmbeddedResource Include="NewStuff\Serialization\add-nested-mapped-property.map.config" />
     <EmbeddedResource Include="NewStuff\Serialization\removed-nested-property.map.config" />
+    <EmbeddedResource Include="NewStuff\Serialization\removed-mapped-collection.map.config" />
+    <EmbeddedResource Include="NewStuff\Serialization\remove-mapped-property.map.config" />
     <None Include="ripple.dependencies.config">
       <SubType>Designer</SubType>
     </None>

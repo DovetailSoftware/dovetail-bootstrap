@@ -4,6 +4,7 @@ using System.Linq;
 using Dovetail.SDK.Bootstrap.Configuration;
 using Dovetail.SDK.ModelMap.NewStuff.Instructions;
 using FubuCore;
+using FubuCore.Reflection;
 
 namespace Dovetail.SDK.ModelMap.NewStuff.Serialization.Overrides
 {
@@ -34,74 +35,9 @@ namespace Dovetail.SDK.ModelMap.NewStuff.Serialization.Overrides
 
 		private void removeProperties(ModelMap map, ModelMap overrides)
 		{
-			//var removals = overrides.Instructions.OfType<Instructions.RemoveProperty>().ToArray();
-			//foreach (var removal in removals)
-			//{
-			//	var instructionsToRemove = new List<IModelMapInstruction>();
-			//	int count = 0;
-			//	var removing = false;
-			//	foreach (var instruction in map.Instructions)
-			//	{
-			//		var beginProp = instruction as BeginProperty;
-			//		if (beginProp != null && beginProp.Key.EqualsIgnoreCase(removal.Key))
-			//		{
-			//			removing = true;
-			//		}
-
-			//		if (removing)
-			//		{
-			//			instructionsToRemove.Add(instruction);
-
-			//			var endProp = instruction as EndProperty;
-			//			if (endProp != null)
-			//			{
-			//				--count;
-			//			}
-			//			else if (beginProp != null)
-			//			{
-			//				++count;
-			//			}
-
-			//			if (count == 0)
-			//				break;
-			//		}
-			//	}
-
-			//	instructionsToRemove.Each(map.RemoveInstruction);
-			//}
-
-			var targetIndex = 0;
-			var mapInstructions = map.Instructions.ToList();
-			var sets = new List<InstructionSet>();
-			foreach (var instruction in overrides.Instructions)
-			{
-				if (shouldOffset(instruction))
-				{
-					var i = mapInstructions.IndexOf(instruction);
-					if (i != -1)
-					{
-						targetIndex = i;
-					}
-					else
-					{
-						targetIndex += 1;
-					}
-				}
-
-				var removal = instruction as Instructions.RemoveProperty;
-				if (removal != null)
-				{
-					var set = map.FindProperty(removal.Key, targetIndex);
-					sets.Add(set);
-				}
-			}
-
-			var offset = 0;
-			foreach (var set in sets)
-			{
-				map.Remove(set, offset);
-				offset += set.Instructions.Count();
-			}
+			executeRemoveInstruction<Instructions.RemoveProperty>(map, overrides, (_, key, index) => _.FindProperty(key, index));
+			executeRemoveInstruction<Instructions.RemoveMappedProperty>(map, overrides, (_, key, index) => _.FindMappedProperty(key, index));
+			executeRemoveInstruction<Instructions.RemoveMappedCollection>(map, overrides, (_, key, index) => _.FindMappedCollection(key, index));
 
 			var prunedInstructions = new List<IModelMapInstruction>();
 			var contexts = new Stack<IModelMapInstruction>();
@@ -126,6 +62,43 @@ namespace Dovetail.SDK.ModelMap.NewStuff.Serialization.Overrides
 			}
 
 			prunedInstructions.Each(map.RemoveInstruction);
+		}
+
+		private void executeRemoveInstruction<TInstruction>(ModelMap map, ModelMap overrides, Func<ModelMap, string, int, InstructionSet> findProperty)
+			where TInstruction : class, IModelMapRemovalInstruction
+		{
+			var targetIndex = 0;
+			var mapInstructions = map.Instructions.ToList();
+			var sets = new List<InstructionSet>();
+			foreach (var instruction in overrides.Instructions)
+			{
+				if (shouldOffset(instruction))
+				{
+					var i = mapInstructions.IndexOf(instruction);
+					if (i != -1)
+					{
+						targetIndex = i;
+					}
+					else
+					{
+						targetIndex += 1;
+					}
+				}
+
+				var removal = instruction as TInstruction;
+				if (removal != null)
+				{
+					var set = findProperty(map, removal.Key, targetIndex);
+					sets.Add(set);
+				}
+			}
+
+			var offset = 0;
+			foreach (var set in sets)
+			{
+				map.Remove(set, offset);
+				offset += set.Instructions.Count();
+			}
 		}
 
 		private void addProperties(ModelMap map, ModelMap overrides)

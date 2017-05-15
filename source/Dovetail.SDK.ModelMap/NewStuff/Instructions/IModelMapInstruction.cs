@@ -4,4 +4,9 @@
     {
         void Accept(IModelMapVisitor visitor);
     }
+
+	public interface IModelMapRemovalInstruction : IModelMapInstruction
+	{
+		string Key { get; }
+	}
 }

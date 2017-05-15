@@ -228,6 +228,14 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 		{
 		}
 
+		public void Visit(RemoveMappedProperty instruction)
+		{
+		}
+
+		public void Visit(RemoveMappedCollection instruction)
+		{
+		}
+
 		public void Visit(EndTransform instruction)
 		{
 			var field = _propertyDef.Key;
