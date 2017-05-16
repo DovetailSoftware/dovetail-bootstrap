@@ -117,6 +117,7 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 
 			currentGeneric.ClarifyGeneric.DataFields.AddRange(_currentFieldMap.FieldNames);
             currentGeneric.AddFieldMap(_currentFieldMap);
+	        _currentFieldMap = null;
         }
 
         public void Visit(BeginAdHocRelation instruction)
