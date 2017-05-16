@@ -8,6 +8,7 @@ namespace Dovetail.SDK.ModelMap.NewStuff
     public class ModelData : IEnumerable<object>
     {
         private readonly IDictionary<string, object> _values = new Dictionary<string, object>();
+		private readonly IList<string> _tags = new List<string>();
 
         public string Name { get; set; }
 
@@ -19,6 +20,11 @@ namespace Dovetail.SDK.ModelMap.NewStuff
             }
             set { _values[key] = value; }
         }
+
+	    public void AddTag(string tag)
+	    {
+		    _tags.Add(tag);
+	    }
 
         public ModelData Child(string key)
         {
@@ -60,6 +66,11 @@ namespace Dovetail.SDK.ModelMap.NewStuff
             return values;
         }
 
+	    public IEnumerable<string> Tags
+	    {
+		    get { return _tags; }
+	    }
+
         public IEnumerator<object> GetEnumerator()
         {
             return _values.Values.GetEnumerator();
@@ -69,5 +80,10 @@ namespace Dovetail.SDK.ModelMap.NewStuff
         {
             return GetEnumerator();
         }
+
+	    public bool HasTag(string tag)
+	    {
+		    return _tags.Contains(tag);
+	    }
     }
 }

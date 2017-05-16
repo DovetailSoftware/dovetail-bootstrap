@@ -1,6 +1,6 @@
 ﻿namespace Dovetail.SDK.ModelMap.NewStuff.Instructions
 {
-	public class RemoveProperty : IModelMapRemovalInstruction
+	public class RemoveMappedCollection : IModelMapRemovalInstruction
 	{
 		public string Key { get; set; }
 

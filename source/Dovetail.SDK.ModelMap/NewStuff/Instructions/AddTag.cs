@@ -1,8 +1,8 @@
 ﻿namespace Dovetail.SDK.ModelMap.NewStuff.Instructions
 {
-	public class RemoveProperty : IModelMapRemovalInstruction
+	public class AddTag : IModelMapInstruction
 	{
-		public string Key { get; set; }
+		public string Tag { get; set; }
 
 		public void Accept(IModelMapVisitor visitor)
 		{

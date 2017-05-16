@@ -30,5 +30,6 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 	    void Visit(RemoveProperty instruction);
 	    void Visit(RemoveMappedProperty instruction);
 	    void Visit(RemoveMappedCollection instruction);
+	    void Visit(AddTag instruction);
     }
 }

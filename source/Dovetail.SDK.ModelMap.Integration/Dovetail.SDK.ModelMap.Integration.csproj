@@ -92,6 +92,7 @@
     <Compile Include="NewStuff\MappingVariableExpanderTester.cs" />
     <Compile Include="NewStuff\MappingVariableRegistryTester.cs" />
     <Compile Include="NewStuff\debug.cs" />
+    <Compile Include="NewStuff\ModelDataTester.cs" />
     <Compile Include="NewStuff\Serialization\removed_mapped_property_scenario.cs" />
     <Compile Include="NewStuff\Serialization\removed_mapped_collection_scenario.cs" />
     <Compile Include="NewStuff\Serialization\add_nested_mapped_property_scenario.cs" />
@@ -101,6 +102,7 @@
     <Compile Include="NewStuff\Serialization\remove_nested_property_scenario.cs" />
     <Compile Include="NewStuff\Serialization\remove_property_scenario.cs" />
     <Compile Include="NewStuff\Serialization\advanced_properties_scenario.cs" />
+    <Compile Include="NewStuff\Serialization\simple_properties_with_tags_scenario.cs" />
     <Compile Include="NewStuff\Serialization\simple_properties_scenario.cs" />
     <Compile Include="NewStuff\Serialization\ModelMapParsingScenario.cs" />
     <Compile Include="NewStuff\ModelMapTester.cs" />
@@ -159,6 +161,7 @@
     <EmbeddedResource Include="NewStuff\Serialization\removed-nested-property.map.config" />
     <EmbeddedResource Include="NewStuff\Serialization\removed-mapped-collection.map.config" />
     <EmbeddedResource Include="NewStuff\Serialization\remove-mapped-property.map.config" />
+    <EmbeddedResource Include="NewStuff\Serialization\simple-case-with-tags.map.config" />
     <None Include="ripple.dependencies.config">
       <SubType>Designer</SubType>
     </None>

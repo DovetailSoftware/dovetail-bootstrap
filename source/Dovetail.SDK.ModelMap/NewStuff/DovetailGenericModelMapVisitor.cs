@@ -236,6 +236,12 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 		{
 		}
 
+		public void Visit(AddTag instruction)
+		{
+			var generic = _genericStack.Peek();
+			generic.AddTag(instruction.Tag);
+		}
+
 		public void Visit(EndTransform instruction)
 		{
 			var field = _propertyDef.Key;

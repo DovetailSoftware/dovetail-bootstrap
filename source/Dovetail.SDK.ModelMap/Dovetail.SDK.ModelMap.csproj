@@ -121,6 +121,7 @@
     <Compile Include="NewStuff\IModelMapVisitor.cs" />
     <Compile Include="NewStuff\InstructionSet.cs" />
     <Compile Include="NewStuff\Instructions\AddFilter.cs" />
+    <Compile Include="NewStuff\Instructions\AddTag.cs" />
     <Compile Include="NewStuff\Instructions\IncludePartial.cs" />
     <Compile Include="NewStuff\Instructions\AddTransformArgument.cs" />
     <Compile Include="NewStuff\Instructions\BeginAdHocRelation.cs" />
@@ -143,6 +144,8 @@
     <Compile Include="NewStuff\Instructions\FieldSortMap.cs" />
     <Compile Include="NewStuff\Instructions\IModelMapInstruction.cs" />
     <Compile Include="NewStuff\Instructions\IQueryContext.cs" />
+    <Compile Include="NewStuff\Instructions\RemoveMappedCollection.cs" />
+    <Compile Include="NewStuff\Instructions\RemoveMappedProperty.cs" />
     <Compile Include="NewStuff\Instructions\RemoveProperty.cs" />
     <Compile Include="NewStuff\IPaginationResult.cs" />
     <Compile Include="NewStuff\MapEntryBuilder.cs" />
@@ -168,6 +171,7 @@
     <Compile Include="NewStuff\Serialization\AddPartial.cs" />
     <Compile Include="NewStuff\Serialization\AddProperty.cs" />
     <Compile Include="NewStuff\Serialization\AddSort.cs" />
+    <Compile Include="NewStuff\Serialization\AddTag.cs" />
     <Compile Include="NewStuff\Serialization\BuildObjectContext.cs" />
     <Compile Include="NewStuff\Serialization\FilterPolicyRegistry.cs" />
     <Compile Include="NewStuff\Serialization\Filters\Equals.cs" />

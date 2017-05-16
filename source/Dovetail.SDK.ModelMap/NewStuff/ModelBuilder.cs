@@ -34,7 +34,7 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 	        FieldSortMapOverrides = new FieldSortMap[0];
         }
 
-        public IEnumerable<FieldSortMap> FieldSortMapOverrides { get; set; }
+	    public IEnumerable<FieldSortMap> FieldSortMapOverrides { get; set; }
 
         public ModelData GetOne(string name, int identifier)
         {
@@ -43,7 +43,68 @@ namespace Dovetail.SDK.ModelMap.NewStuff
             return assembleWithIdentifier(map, identifier, rootGenericMap);
         }
 
-        private PaginationResult assembleWithFilter(Filter filter, ClarifyGenericMapEntry rootGenericMap, IPaginationRequest paginationRequest)
+	    public ModelData GetOne(string name, string identifier)
+	    {
+			var map = _models.Find(name);
+			var rootGenericMap = _entries.BuildFromModelMap(map);
+			return assembleWithIdentifier(map, identifier, rootGenericMap);
+		}
+
+	    public ModelData[] Get(string name, Filter filter)
+	    {
+			var map = _models.Find(name);
+			var rootGenericMap = _entries.BuildFromModelMap(map);
+			return assembleWithFilter(filter, rootGenericMap, null).Models;
+		}
+
+	    public ModelData[] Get(string name, Func<FilterExpression, Filter> filterFunction)
+	    {
+			var filter = filterFunction(new FilterExpression());
+
+			return Get(name, filter);
+		}
+
+	    public ModelData[] GetTop(string name, Filter filter, int numberOfRecords)
+	    {
+			return Get(name, filter, new PaginationRequest { CurrentPage = 1, PageSize = numberOfRecords }).Models;
+		}
+
+	    public ModelData[] GetTop(string name, Func<FilterExpression, Filter> filterFunction, int numberOfRecords)
+	    {
+			return Get(name, filterFunction, new PaginationRequest { CurrentPage = 1, PageSize = numberOfRecords }).Models;
+		}
+
+	    public PaginationResult Get(string name, Filter filter, IPaginationRequest paginationRequest)
+	    {
+			var map = _models.Find(name);
+			var rootGenericMap = _entries.BuildFromModelMap(map);
+			return assembleWithFilter(filter, rootGenericMap, paginationRequest);
+		}
+
+	    public PaginationResult Get(string name, Func<FilterExpression, Filter> filterFunction, IPaginationRequest paginationRequest)
+	    {
+			var filter = filterFunction(new FilterExpression());
+
+			return Get(name, filter, paginationRequest);
+		}
+
+	    public ModelData[] GetAll(string name)
+	    {
+		    return GetAll(name, -1);
+	    }
+
+		public ModelData[] GetAll(string name, int dtoCountLimit)
+		{
+			var map = _models.Find(name);
+			var rootGenericMap = _entries.BuildFromModelMap(map);
+
+			if (dtoCountLimit > 0)
+				rootGenericMap.ClarifyGeneric.MaximumRows = dtoCountLimit;
+
+			return assembleWithSortOverrides(rootGenericMap, null).Models;
+		}
+
+		private PaginationResult assembleWithFilter(Filter filter, ClarifyGenericMapEntry rootGenericMap, IPaginationRequest paginationRequest)
         {
             rootGenericMap.ClarifyGeneric.Filter.AddFilter(filter);
 
@@ -73,7 +134,16 @@ namespace Dovetail.SDK.ModelMap.NewStuff
             return assembleWithFilter(filter, rootGenericMap, null).Models.FirstOrDefault();
         }
 
-        private static string findIdentifierFieldName(ModelMap map, ClarifyGenericMapEntry rootGenericMap)
+		private ModelData assembleWithIdentifier(ModelMap map, string identifier, ClarifyGenericMapEntry rootGenericMap)
+		{
+			var identifierFieldName = findIdentifierFieldName(map, rootGenericMap);
+
+			var filter = FilterType.Equals(identifierFieldName, identifier);
+
+			return assembleWithFilter(filter, rootGenericMap, null).Models.FirstOrDefault();
+		}
+
+		private static string findIdentifierFieldName(ModelMap map, ClarifyGenericMapEntry rootGenericMap)
         {
             var identifierFieldName = rootGenericMap.GetIdentifierFieldName();
 
@@ -170,6 +240,8 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 				{
 					transform.Execute(row, _services);
 				}
+
+	            genericMap.Tags.Each(_ => row.AddTag(_));
 
 				rows.Add(row);
             }

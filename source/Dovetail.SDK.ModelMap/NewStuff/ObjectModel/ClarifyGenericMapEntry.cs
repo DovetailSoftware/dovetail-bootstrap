@@ -9,8 +9,14 @@ namespace Dovetail.SDK.ModelMap.NewStuff.ObjectModel
         private readonly List<FieldMap> _fieldMaps = new List<FieldMap>();
 		private readonly List<ConfiguredTransform> _transforms = new List<ConfiguredTransform>();
 		private readonly List<ClarifyGenericMapEntry> _childMaps = new List<ClarifyGenericMapEntry>();
+		private readonly IList<string> _tags = new List<string>();
 
-        public FieldMap[] FieldMaps
+		public IEnumerable<string> Tags
+		{
+			get { return _tags; }
+		}
+
+		public FieldMap[] FieldMaps
         {
             get { return _fieldMaps.ToArray(); }
         }
@@ -34,7 +40,12 @@ namespace Dovetail.SDK.ModelMap.NewStuff.ObjectModel
             return NewRoot != null;
         }
 
-        public void AddFieldMap(FieldMap fieldMap)
+		public void AddTag(string tag)
+		{
+			_tags.Add(tag);
+		}
+
+		public void AddFieldMap(FieldMap fieldMap)
         {
             _fieldMaps.Add(fieldMap);
         }
