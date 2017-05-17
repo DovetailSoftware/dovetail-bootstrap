@@ -261,7 +261,12 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 			populateDTOWithRelatedGenericRecords(genericMap, record, dto);
 
             populateDTOWithRelatedDTOs(genericMap, record, dto);
-        }
+
+			foreach (var transform in genericMap.Transforms)
+			{
+				transform.Execute(dto, _services);
+			}
+		}
 
         private void populateDTOWithRelatedDTOs(ClarifyGenericMapEntry parentGenericMap, ClarifyDataRow parentRecord, ModelData parentModel)
         {
