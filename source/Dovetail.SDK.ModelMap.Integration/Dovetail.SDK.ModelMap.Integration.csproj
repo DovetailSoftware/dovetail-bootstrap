@@ -109,6 +109,7 @@
     <Compile Include="NewStuff\PropertyTypesTester.cs" />
     <Compile Include="NewStuff\Serialization\ObjectBuilderTester.cs" />
     <Compile Include="NewStuff\Transforms\IntegratedConfiguredTransformTester.cs" />
+    <Compile Include="NewStuff\Transforms\IsEqualTransformTester.cs" />
     <Compile Include="NewStuff\Transforms\ModelDataPathTester.cs" />
     <Compile Include="NewStuff\Transforms\StringConcatTransformTester.cs" />
     <Compile Include="Session\user_impersonation_service.cs" />
