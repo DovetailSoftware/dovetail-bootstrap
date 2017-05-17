@@ -204,6 +204,8 @@
     <Compile Include="NewStuff\Transforms\ConfiguredTransform.cs" />
     <Compile Include="NewStuff\Transforms\ExecuteScalarTransform.cs" />
     <Compile Include="NewStuff\Transforms\FieldArgument.cs" />
+    <Compile Include="NewStuff\Transforms\LocalizedListItemByObjIdTransform.cs" />
+    <Compile Include="NewStuff\Transforms\LocalizedListItemByRankTransform.cs" />
     <Compile Include="NewStuff\Transforms\SqlCountTransform.cs" />
     <Compile Include="NewStuff\Transforms\IMappingTransform.cs" />
     <Compile Include="NewStuff\Transforms\IMappingTransformRegistry.cs" />

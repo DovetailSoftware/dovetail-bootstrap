@@ -23,5 +23,31 @@ namespace Dovetail.SDK.ModelMap.NewStuff.Transforms
 
 			return title;
 		}
+
+		public static string GetLocalizedTitleByRank(this IListCache listCache, string listName, int rank)
+		{
+			var globalStringElementCollection = listCache.GetGbstListElements(listName, true);
+			if (globalStringElementCollection != null)
+			{
+				var globalStringElement = globalStringElementCollection.Find(t => t.Rank == rank);
+				return (globalStringElement == null) ? "" : globalStringElement.GetLocalizedTitle(CultureInfo.CurrentCulture);
+			}
+
+			var hierarchicalStringElement = listCache.GetHgbstList(listName, true).Find(t => t.Rank == rank);
+			return (hierarchicalStringElement == null) ? "" : hierarchicalStringElement.GetLocalizedTitle(CultureInfo.CurrentCulture);
+		}
+
+		public static string GetLocalizedTitleByObjid(this IListCache listCache, string listName, int objid)
+		{
+			var globalStringElementCollection = listCache.GetGbstListElements(listName, true);
+			if (globalStringElementCollection != null)
+			{
+				var globalStringElement = globalStringElementCollection.Find(t => t.ObjectID == objid);
+				return (globalStringElement == null) ? "" : globalStringElement.GetLocalizedTitle(CultureInfo.CurrentCulture);
+			}
+
+			var hierarchicalStringElement = listCache.GetHgbstList(listName, true).Find(t => t.ObjectID == objid);
+			return (hierarchicalStringElement == null) ? "" : hierarchicalStringElement.GetLocalizedTitle(CultureInfo.CurrentCulture);
+		}
 	}
 }
