@@ -91,7 +91,6 @@
     <Compile Include="Assembling_dtos.cs" />
     <Compile Include="NewStuff\MappingVariableExpanderTester.cs" />
     <Compile Include="NewStuff\MappingVariableRegistryTester.cs" />
-    <Compile Include="NewStuff\debug.cs" />
     <Compile Include="NewStuff\ModelDataTester.cs" />
     <Compile Include="NewStuff\Serialization\removed_mapped_property_scenario.cs" />
     <Compile Include="NewStuff\Serialization\removed_mapped_collection_scenario.cs" />

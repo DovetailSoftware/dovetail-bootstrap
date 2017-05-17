@@ -23,5 +23,23 @@ namespace Dovetail.SDK.ModelMap.Integration.NewStuff.Transforms
 
 			transform.Execute(context).ShouldEqual("Hello, World!");
 		}
+
+		[Test]
+		public void concats_n_number_of_strings()
+		{
+			var arguments = new TransformArguments(new Dictionary<string, object>
+			{
+				{ "arg1", "Hello" },
+				{ "arg2", "," },
+				{ "arg3", " " },
+				{ "arg4", "World" },
+				{ "arg5", "!" }
+			});
+
+			var context = new TransformContext(new ModelData(), arguments, new InMemoryServiceLocator());
+			var transform = new StringConcatTransform();
+
+			transform.Execute(context).ShouldEqual("Hello, World!");
+		}
 	}
 }

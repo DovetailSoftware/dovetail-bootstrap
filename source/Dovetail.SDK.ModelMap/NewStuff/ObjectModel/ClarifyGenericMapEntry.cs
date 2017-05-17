@@ -31,6 +31,7 @@ namespace Dovetail.SDK.ModelMap.NewStuff.ObjectModel
             get { return _childMaps.ToArray(); }
         }
 
+		public string Entity { get; set; }
         public ClarifyGeneric ClarifyGeneric { get; set; }
         public ModelInformation Model { get; set; }
         public SubRootInformation NewRoot { get; set; }

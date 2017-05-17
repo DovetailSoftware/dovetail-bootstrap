@@ -232,7 +232,7 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 
             foreach (var record in records)
             {
-                var row = new ModelData { Name = genericMap.Model.ModelName };
+                var row = new ModelData { Name = genericMap.Model.ModelName, Entity = genericMap.Entity };
 
                 populateDTOForGenericRecord(genericMap, record, row);
 

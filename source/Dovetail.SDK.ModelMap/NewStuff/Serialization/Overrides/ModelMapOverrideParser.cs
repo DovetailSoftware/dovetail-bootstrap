@@ -32,7 +32,7 @@ namespace Dovetail.SDK.ModelMap.NewStuff.Serialization.Overrides
 
 		public void Parse(ModelMap map, string filePath)
 		{
-			var overrides = new ModelMap(map.Name);
+			var overrides = new ModelMap(map.Name, map.Entity);
 			_inner.Parse(overrides, filePath);
 			_diff.Diff(map, overrides);
 		}

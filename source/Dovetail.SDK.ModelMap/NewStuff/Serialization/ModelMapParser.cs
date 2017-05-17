@@ -75,8 +75,13 @@ namespace Dovetail.SDK.ModelMap.NewStuff.Serialization
             var name = root.Attribute("name");
             if (name == null)
                 throw new InvalidOperationException("No name specified");
+
+		    var entity = "";
+		    var entityAttribute = root.Attribute("entity");
+		    if (entityAttribute != null)
+			    entity = entityAttribute.Value;
             
-            var map = new ModelMap(name.Value);
+            var map = new ModelMap(name.Value, entity);
 		    parse(map, document, report);
 
             return map;

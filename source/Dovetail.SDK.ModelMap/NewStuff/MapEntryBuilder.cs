@@ -16,7 +16,10 @@ namespace Dovetail.SDK.ModelMap.NewStuff
         {
             var visitor = _container.GetInstance<DovetailGenericModelMapVisitor>();
             modelMap.Accept(visitor);
-            return visitor.RootGenericMap;
+            var generic = visitor.RootGenericMap;
+	        generic.Entity = modelMap.Entity;
+
+	        return generic;
         }
     }
 }

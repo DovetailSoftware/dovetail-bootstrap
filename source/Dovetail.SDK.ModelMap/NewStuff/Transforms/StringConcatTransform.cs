@@ -1,13 +1,19 @@
-﻿namespace Dovetail.SDK.ModelMap.NewStuff.Transforms
+﻿using System.Linq;
+
+namespace Dovetail.SDK.ModelMap.NewStuff.Transforms
 {
 	public class StringConcatTransform : IMappingTransform
 	{
 		public object Execute(TransformContext context)
 		{
-			var arg1 = context.Arguments.Get<string>("arg1");
-			var arg2 = context.Arguments.Get<string>("arg2");
+			var args = context
+				.Arguments
+				.Where(_ => _.Key.ToLower().StartsWith("arg"))
+				.OrderBy(_ => _.Key.ToLower())
+				.Select(_ => _.Value)
+				.ToArray();
 
-			return string.Concat(arg1, arg2);
+			return string.Concat(args);
 		}
 	}
 }

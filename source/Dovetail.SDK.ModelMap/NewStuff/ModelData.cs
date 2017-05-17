@@ -11,6 +11,7 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 		private readonly IList<string> _tags = new List<string>();
 
         public string Name { get; set; }
+		public string Entity { get; set; }
 
         public object this[string key]
         {

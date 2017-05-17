@@ -14,7 +14,7 @@ namespace Dovetail.SDK.ModelMap.Integration.NewStuff
 		[Test]
 		public void expands_the_partial()
 		{
-			var model = new ModelMap.NewStuff.ModelMap("case");
+			var model = new ModelMap.NewStuff.ModelMap("case", "case");
 			model.AddInstruction(new BeginProperty { Key = "caseId" });
 			model.AddInstruction(new EndProperty());
 			model.AddInstruction(new BeginRelation());
@@ -39,11 +39,11 @@ namespace Dovetail.SDK.ModelMap.Integration.NewStuff
 			model.AddInstruction(new IncludePartial { Name = "addressPartial" });
 			model.AddInstruction(new EndRelation());
 
-			var p1 = new ModelMap.NewStuff.ModelMap("reusablePartial");
+			var p1 = new ModelMap.NewStuff.ModelMap("reusablePartial", null);
 			p1.AddInstruction(new BeginProperty { Key = "${propertyName}" });
 			p1.AddInstruction(new EndProperty());
 
-			var p2 = new ModelMap.NewStuff.ModelMap("sitePartial");
+			var p2 = new ModelMap.NewStuff.ModelMap("sitePartial", null);
 			p2.AddInstruction(new BeginProperty { Key = "${propertyName}" });
 			p2.AddInstruction(new EndProperty());
 			p2.AddInstruction(new IncludePartial
@@ -55,7 +55,7 @@ namespace Dovetail.SDK.ModelMap.Integration.NewStuff
 				}
 			});
 
-			var p3 = new ModelMap.NewStuff.ModelMap("addressPartial");
+			var p3 = new ModelMap.NewStuff.ModelMap("addressPartial", null);
 			p3.AddInstruction(new BeginProperty { Key = "addressId" });
 			p3.AddInstruction(new EndProperty());
 

@@ -10,21 +10,28 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 	public class ModelMap : IExpandableMap
     {
 	    private readonly string _name;
+		private readonly string _entity;
         private readonly IList<IModelMapInstruction> _instructions = new List<IModelMapInstruction>();
 
-		public ModelMap(string name)
+		public ModelMap(string name, string entity)
 		{
 			_name = name;
+			_entity = entity;
 		}
 
-	    public string Name
+		public string Name
 	    {
 		    get { return _name; }
 	    }
 
-		public IModelMapInstruction[] Instructions {  get {  return _instructions.ToArray();} }
+		public string Entity
+		{
+			get { return _entity; }
+		}
 
-	    public void AddInstruction(IModelMapInstruction instruction)
+		public IModelMapInstruction[] Instructions { get { return _instructions.ToArray(); } }
+
+		public void AddInstruction(IModelMapInstruction instruction)
         {
             _instructions.Add(instruction);
         }
