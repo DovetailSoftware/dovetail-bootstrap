@@ -8,11 +8,12 @@ namespace Dovetail.SDK.ModelMap.NewStuff
     {
         public IEnumerable<IMappingVariable> Variables()
         {
-            yield return new SdkUserVariable();
-        }
+            yield return new SdkUserIdVariable();
+			yield return new SdkUserNameVariable();
+		}
     }
 
-    public class SdkUserVariable : MappingVariable
+    public class SdkUserIdVariable : MappingVariable
     {
         public override string Key { get { return "sessionUserId"; } }
 
@@ -21,4 +22,14 @@ namespace Dovetail.SDK.ModelMap.NewStuff
             return services.GetInstance<IClarifySession>().SessionUserID;
         }
     }
+
+	public class SdkUserNameVariable : MappingVariable
+	{
+		public override string Key { get { return "sessionUserName"; } }
+
+		public override object Expand(string key, IServiceLocator services)
+		{
+			return services.GetInstance<IClarifySession>().UserName;
+		}
+	}
 }
