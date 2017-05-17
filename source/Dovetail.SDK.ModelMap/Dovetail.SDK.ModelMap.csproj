@@ -174,6 +174,7 @@
     <Compile Include="NewStuff\Serialization\AddTag.cs" />
     <Compile Include="NewStuff\Serialization\BuildObjectContext.cs" />
     <Compile Include="NewStuff\Serialization\FilterPolicyRegistry.cs" />
+    <Compile Include="NewStuff\Serialization\Filters\NotEqual.cs" />
     <Compile Include="NewStuff\Serialization\Filters\Equals.cs" />
     <Compile Include="NewStuff\Serialization\IElementVisitor.cs" />
     <Compile Include="NewStuff\Serialization\IFilterPolicy.cs" />
