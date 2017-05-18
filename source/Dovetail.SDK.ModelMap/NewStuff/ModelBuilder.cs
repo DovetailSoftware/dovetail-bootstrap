@@ -293,7 +293,13 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 
                     parentModel[childMap.Model.ParentProperty] = children;
                 }
-                else
+                else if (parentGenericMap.ClarifyGeneric == childMap.ClarifyGeneric)
+                {
+					var childModel = new ModelData { Name = childMap.Model.ModelName };
+					populateDTOForGenericRecord(childMap, parentRecord, childModel);
+					parentModel[childMap.Model.ParentProperty] = childModel;
+				}
+				else
                 {
                     var relatedChildRows = parentRecord.RelatedRows(childMap.ClarifyGeneric);
                     if (relatedChildRows.Any())
@@ -366,42 +372,49 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 
         private void populateDTOWithFieldValues(ClarifyGenericMapEntry genericMap, ClarifyDataRow record, ModelData model)
         {
-            foreach (var fieldMap in genericMap.FieldMaps)
-            {
-                if (fieldMap.Key.IsEmpty())
-                    continue;
+			populateDataWithFieldValues(genericMap.FieldMaps, record, model);
+			populateDataWithFieldValues(genericMap.Model.FieldMaps, record, model);
+		}
 
-                var propertyValue = GetFieldValueForRecord(fieldMap, record);
+	    private void populateDataWithFieldValues(FieldMap[] fieldMaps, ClarifyDataRow record, ModelData model)
+	    {
+			foreach (var fieldMap in fieldMaps)
+			{
+				if (fieldMap.Key.IsEmpty())
+					continue;
 
-                if (propertyValue is string && fieldMap.ShouldEncode)
-                {
-                    propertyValue = _encoder.Encode((string)propertyValue);
-                }
+				var propertyValue = GetFieldValueForRecord(fieldMap, record);
 
-                if (fieldMap.PropertyType == typeof(int))
-                {
-                    propertyValue = Convert.ToInt32(propertyValue);
-                }
+				if (propertyValue is string && fieldMap.ShouldEncode)
+				{
+					propertyValue = _encoder.Encode((string)propertyValue);
+				}
 
-                if (fieldMap.PropertyType == typeof(DateTime))
-                {
-                    var dateTime = Convert.ToDateTime(propertyValue);
-                    var utcDateTime = new DateTime(dateTime.Ticks, DateTimeKind.Utc);
-                    propertyValue = utcDateTime;
-                }
+				if (fieldMap.PropertyType == typeof(int))
+				{
+					propertyValue = Convert.ToInt32(propertyValue);
+				}
 
-                try
-                {
-                    model[fieldMap.Key] = propertyValue;
-                }
-                catch (Exception ex)
-                {
-                    throw new ApplicationException("Could not set property on type {0}. Field: {1}".ToFormat(model.GetType().Name, fieldMap.ToString()), ex);
-                }
-            }
-        }
+				if (fieldMap.PropertyType == typeof(DateTime))
+				{
+					var dateTime = Convert.ToDateTime(propertyValue);
+					var utcDateTime = new DateTime(dateTime.Ticks, DateTimeKind.Utc);
+					propertyValue = utcDateTime;
+				}
 
-        private object GetFieldValueForRecord(FieldMap fieldMap, ClarifyDataRow record)
+				try
+				{
+					model[fieldMap.Key] = propertyValue;
+				}
+				catch (Exception ex)
+				{
+					throw new ApplicationException("Could not set property on type {0}. Field: {1}".ToFormat(model.GetType().Name, fieldMap.ToString()), ex);
+				}
+			}
+		}
+
+
+		private object GetFieldValueForRecord(FieldMap fieldMap, ClarifyDataRow record)
         {
             if (fieldMap.FieldValueMethod != null)
             {

@@ -116,7 +116,16 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 			}
 
 			currentGeneric.ClarifyGeneric.DataFields.AddRange(_currentFieldMap.FieldNames);
-            currentGeneric.AddFieldMap(_currentFieldMap);
+
+	        if (currentGeneric.Model.ModelName != _modelStack.Peek().ModelName)
+	        {
+				currentGeneric.Model.AddFieldMap(_currentFieldMap);
+			}
+	        else
+	        {
+				currentGeneric.AddFieldMap(_currentFieldMap);
+			}
+			
 	        _currentFieldMap = null;
         }
 
@@ -137,10 +146,16 @@ namespace Dovetail.SDK.ModelMap.NewStuff
                 RootKeyField = instruction.ToTableFieldName
             };
 
+	        var model = _modelStack.Peek();
             var clarifyGenericMap = new ClarifyGenericMapEntry
             {
                 ClarifyGeneric = tableGeneric,
-                Model = _modelStack.Peek(),
+                Model = new ModelInformation
+                {
+	                ModelName = model.ModelName,
+					ParentProperty = model.ParentProperty,
+					IsCollection = model.IsCollection
+                },
                 NewRoot = subRootInformation
             };
             parentClarifyGenericMap.AddChildGenericMap(clarifyGenericMap);
@@ -152,7 +167,17 @@ namespace Dovetail.SDK.ModelMap.NewStuff
             var parentClarifyGenericMap = _genericStack.Peek();
             var relationGeneric = parentClarifyGenericMap.ClarifyGeneric.Traverse(instruction.RelationName);
 
-            var clarifyGenericMap = new ClarifyGenericMapEntry { ClarifyGeneric = relationGeneric, Model = _modelStack.Peek() };
+			var model = _modelStack.Peek();
+			var clarifyGenericMap = new ClarifyGenericMapEntry
+			{
+				ClarifyGeneric = relationGeneric,
+				Model = new ModelInformation
+				{
+					ModelName = model.ModelName,
+					ParentProperty = model.ParentProperty,
+					IsCollection = model.IsCollection
+				}
+			};
             parentClarifyGenericMap.AddChildGenericMap(clarifyGenericMap);
             _genericStack.Push(clarifyGenericMap);
         }
@@ -164,15 +189,28 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 
         public void Visit(BeginMappedProperty instruction)
         {
-            _modelStack.Push(new ModelInformation
-            {
-                ModelName = instruction.Key,
-                ParentProperty = instruction.Key
-            });
+			var parentClarifyGenericMap = _genericStack.Peek();
+	        var childModel = new ModelInformation
+	        {
+				ModelName = instruction.Key,
+				ParentProperty = instruction.Key
+			};
+
+			var clarifyGenericMap = new ClarifyGenericMapEntry
+			{
+				ClarifyGeneric = parentClarifyGenericMap.ClarifyGeneric,
+				Model = childModel
+			};
+
+			parentClarifyGenericMap.AddChildGenericMap(clarifyGenericMap);
+			_genericStack.Push(clarifyGenericMap);
+
+			_modelStack.Push(childModel);
         }
 
         public void Visit(EndMappedProperty instruction)
         {
+	        _genericStack.Pop();
             _modelStack.Pop();
         }
 

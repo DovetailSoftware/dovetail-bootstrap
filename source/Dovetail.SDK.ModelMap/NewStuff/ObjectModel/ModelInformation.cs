@@ -1,12 +1,26 @@
-﻿namespace Dovetail.SDK.ModelMap.NewStuff.ObjectModel
+﻿using System.Collections.Generic;
+
+namespace Dovetail.SDK.ModelMap.NewStuff.ObjectModel
 {
     public class ModelInformation
     {
-        public string ModelName { get; set; }
+		private readonly List<FieldMap> _fieldMaps = new List<FieldMap>();
+
+		public string ModelName { get; set; }
         public string ParentProperty { get; set; }
         public bool IsCollection { get; set; }
 
-        public override bool Equals(object obj)
+		public FieldMap[] FieldMaps
+		{
+			get { return _fieldMaps.ToArray(); }
+		}
+
+		public void AddFieldMap(FieldMap fieldMap)
+		{
+			_fieldMaps.Add(fieldMap);
+		}
+
+		public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
