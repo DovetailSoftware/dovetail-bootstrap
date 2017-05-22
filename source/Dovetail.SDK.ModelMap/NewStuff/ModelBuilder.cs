@@ -243,6 +243,9 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 
 	            genericMap.Tags.Each(_ => row.AddTag(_));
 
+	            if (!row.Has("entity") && genericMap.Entity.IsNotEmpty())
+		            row["entity"] = genericMap.Entity;
+
 				rows.Add(row);
             }
 
