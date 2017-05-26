@@ -15,6 +15,7 @@ namespace Dovetail.SDK.ModelMap.Integration.NewStuff.Transforms
 			var transform = new StubTransform();
 			var services = new InMemoryServiceLocator();
 			services.Add<ISimpleService>(new SimpleService());
+			services.Add<IMappingVariableExpander>(new MappingVariableExpander(new MappingVariableRegistry(new List<IMappingVariableSource>()), services));
 
 			var path = ModelDataPath.Parse("child.grandChild.property");
 
@@ -27,7 +28,7 @@ namespace Dovetail.SDK.ModelMap.Integration.NewStuff.Transforms
 				new ValueArgument("foo", "bar")
 			};
 
-			var configuredTransform = new ConfiguredTransform(path, transform, arguments, null, null);
+			var configuredTransform = new ConfiguredTransform(path, transform, arguments, new MappingVariableExpander(new MappingVariableRegistry(new List<IMappingVariableSource>()), services), services);
 			configuredTransform.Execute(data, services);
 
 			data.Child("child").Child("grandChild").Get<string>("property").ShouldEqual("BAR");
@@ -39,6 +40,7 @@ namespace Dovetail.SDK.ModelMap.Integration.NewStuff.Transforms
 			var transform = new StubTransform();
 			var services = new InMemoryServiceLocator();
 			services.Add<ISimpleService>(new SimpleService());
+			services.Add<IMappingVariableExpander>(new MappingVariableExpander(new MappingVariableRegistry(new List<IMappingVariableSource>()), services));
 
 			var path = ModelDataPath.Parse("child.grandChild.property");
 
@@ -52,7 +54,7 @@ namespace Dovetail.SDK.ModelMap.Integration.NewStuff.Transforms
 				new FieldArgument("foo", ModelDataPath.Parse("test"))
 			};
 
-			var configuredTransform = new ConfiguredTransform(path, transform, arguments, null, null);
+			var configuredTransform = new ConfiguredTransform(path, transform, arguments, new MappingVariableExpander(new MappingVariableRegistry(new List<IMappingVariableSource>()), services), services);
 			configuredTransform.Execute(data, services);
 
 			data.Child("child").Child("grandChild").Get<string>("property").ShouldEqual("TESTING");
