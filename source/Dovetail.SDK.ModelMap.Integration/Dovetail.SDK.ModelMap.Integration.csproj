@@ -89,6 +89,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assembling_dtos.cs" />
+    <Compile Include="NewStuff\VerifyInstructions.cs" />
+    <Compile Include="NewStuff\DynamicValueTester.cs" />
     <Compile Include="NewStuff\MappingVariableExpanderTester.cs" />
     <Compile Include="NewStuff\MappingVariableRegistryTester.cs" />
     <Compile Include="NewStuff\ModelDataTester.cs" />
@@ -112,6 +114,8 @@
     <Compile Include="NewStuff\Transforms\IsEqualTransformTester.cs" />
     <Compile Include="NewStuff\Transforms\ModelDataPathTester.cs" />
     <Compile Include="NewStuff\Transforms\StringConcatTransformTester.cs" />
+    <Compile Include="NewStuff\VariableExpansionContextTester.cs" />
+    <Compile Include="NewStuff\VariableExpanderContextTester.cs" />
     <Compile Include="Session\user_impersonation_service.cs" />
     <Compile Include="email_log_updater.cs" />
     <Compile Include="Filtering_a_child_generic.cs" />

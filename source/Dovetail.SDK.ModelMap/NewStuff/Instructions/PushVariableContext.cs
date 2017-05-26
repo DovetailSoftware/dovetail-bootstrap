@@ -2,19 +2,18 @@
 
 namespace Dovetail.SDK.ModelMap.NewStuff.Instructions
 {
-	public class IncludePartial : IModelMapInstruction
+	public class PushVariableContext : IModelMapInstruction
 	{
-		public IncludePartial()
+		public PushVariableContext()
 		{
 			Attributes = new Dictionary<string, IDynamicValue>();
 		}
 
-		public string Name { get; set; }
 		public IDictionary<string, IDynamicValue> Attributes { get; set; }
 
 		public void Accept(IModelMapVisitor visitor)
 		{
-			// no-op
+			visitor.Visit(this);
 		}
 	}
 }

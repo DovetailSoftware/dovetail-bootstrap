@@ -4,5 +4,8 @@
     {
         bool IsVariable(string value);
         object Expand(string value);
+
+	    void PushContext(VariableExpanderContext context);
+	    void PopContext();
     }
 }

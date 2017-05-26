@@ -2,6 +2,6 @@
 {
     public interface IMappingVariableRegistry
     {
-        IMappingVariable Find(string key);
+        IMappingVariable Find(VariableExpansionContext context);
     }
 }

@@ -21,19 +21,22 @@ namespace Dovetail.SDK.ModelMap.Integration.NewStuff.Serialization
 		[Test]
 		public void verify_instructions()
 		{
-			theScenario.Get<BeginModelMap>(0).Name.ShouldEqual("test");
-			theScenario.Get<BeginView>(1).ViewName.ShouldEqual("qry_case_view");
-			theScenario.Get<BeginProperty>(2).Key.ShouldEqual("id");
-			theScenario.Get<EndProperty>(3);
+			VerifyInstructions.Assert(theScenario.Instructions, _ =>
+			{
+				_.Get<BeginModelMap>().Name.ShouldEqual("test");
+				_.Get<BeginView>().ViewName.ShouldEqual("qry_case_view");
+				_.Get<BeginProperty>().Key.ShouldEqual("id");
+				_.Get<EndProperty>();
 
-			theScenario.Get<BeginProperty>(4).Key.ShouldEqual("title");
-			theScenario.Get<EndProperty>(5);
+				_.Get<BeginProperty>().Key.ShouldEqual("title");
+				_.Get<EndProperty>();
 
-			theScenario.Get<BeginProperty>(6).Key.ShouldEqual("ownerUsername");
-			theScenario.Get<EndProperty>(7);
+				_.Get<BeginProperty>().Key.ShouldEqual("ownerUsername");
+				_.Get<EndProperty>();
 
-			theScenario.Get<EndView>(8);
-			theScenario.Get<EndModelMap>(9);
+				_.Get<EndView>();
+				_.Get<EndModelMap>();
+			});
 
 			theScenario.Instructions.Length.ShouldEqual(10);
 		}

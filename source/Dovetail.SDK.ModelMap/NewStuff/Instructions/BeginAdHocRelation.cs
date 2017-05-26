@@ -1,12 +1,10 @@
-﻿using System;
-
-namespace Dovetail.SDK.ModelMap.NewStuff.Instructions
+﻿namespace Dovetail.SDK.ModelMap.NewStuff.Instructions
 {
     public class BeginAdHocRelation : IModelMapInstruction
     {
-        public string FromTableField { get; set; }
-        public string ToTableName { get; set; }
-        public string ToTableFieldName { get; set; }
+        public IDynamicValue FromTableField { get; set; }
+        public IDynamicValue ToTableName { get; set; }
+        public IDynamicValue ToTableFieldName { get; set; }
 
         public void Accept(IModelMapVisitor visitor)
         {
@@ -15,7 +13,7 @@ namespace Dovetail.SDK.ModelMap.NewStuff.Instructions
 
 	    protected bool Equals(BeginAdHocRelation other)
 	    {
-		    return string.Equals(FromTableField, other.FromTableField, StringComparison.OrdinalIgnoreCase) && string.Equals(ToTableName, other.ToTableName, StringComparison.OrdinalIgnoreCase) && string.Equals(ToTableFieldName, other.ToTableFieldName, StringComparison.OrdinalIgnoreCase);
+		    return FromTableField.Equals(other.FromTableField) && ToTableName.Equals(other.ToTableName) && ToTableFieldName.Equals(other.ToTableFieldName);
 	    }
 
 	    public override bool Equals(object obj)
@@ -30,9 +28,9 @@ namespace Dovetail.SDK.ModelMap.NewStuff.Instructions
 	    {
 		    unchecked
 		    {
-			    var hashCode = StringComparer.OrdinalIgnoreCase.GetHashCode(FromTableField);
-			    hashCode = (hashCode*397) ^ StringComparer.OrdinalIgnoreCase.GetHashCode(ToTableName);
-			    hashCode = (hashCode*397) ^ StringComparer.OrdinalIgnoreCase.GetHashCode(ToTableFieldName);
+			    var hashCode = FromTableField.GetHashCode();
+			    hashCode = (hashCode*397) ^ ToTableName.GetHashCode();
+			    hashCode = (hashCode*397) ^ ToTableFieldName.GetHashCode();
 			    return hashCode;
 		    }
 	    }

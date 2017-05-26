@@ -43,7 +43,11 @@ namespace Dovetail.SDK.ModelMap.NewStuff.Serialization
                     object value = ValueFor(attribute);
                     if (value == null) continue;
 
-                    if (value.GetType() != prop.PropertyType)
+	                if (prop.PropertyType == typeof(IDynamicValue))
+	                {
+		                value = new DynamicValue(value.ToString());
+	                }
+                    else if (value.GetType() != prop.PropertyType)
                     {
                         var type = prop.PropertyType;
                         if (type.Closes(typeof(Nullable<>)))

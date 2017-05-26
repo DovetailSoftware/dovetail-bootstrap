@@ -55,6 +55,7 @@ namespace Dovetail.SDK.ModelMap.Integration.NewStuff.Serialization
 			services.Add<IObjectBuilder>(new ObjectBuilder());
 			services.Add<IFilterPolicyRegistry>(new FilterPolicyRegistry());
 			services.Add<IXElementSerializer>(new XElementSerializer(new MappingVariableExpander(new MappingVariableRegistry(new List<IMappingVariableSource>()), services)));
+			services.Add<IMappingVariableExpander>(new MappingVariableExpander(new MappingVariableRegistry(new List<IMappingVariableSource>()), services));
 
 			var visitors = Visitors();
 			var elementService = new XElementService(visitors);

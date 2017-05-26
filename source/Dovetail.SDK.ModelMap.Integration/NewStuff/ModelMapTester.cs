@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Dovetail.SDK.ModelMap.NewStuff;
 using Dovetail.SDK.ModelMap.NewStuff.Instructions;
 using FubuCore;
@@ -15,23 +16,23 @@ namespace Dovetail.SDK.ModelMap.Integration.NewStuff
 		public void expands_the_partial()
 		{
 			var model = new ModelMap.NewStuff.ModelMap("case", "case");
-			model.AddInstruction(new BeginProperty { Key = "caseId" });
+			model.AddInstruction(new BeginProperty { Key = new PassThruValue("caseId") });
 			model.AddInstruction(new EndProperty());
 			model.AddInstruction(new BeginRelation());
 			model.AddInstruction(new IncludePartial
 			{
 				Name = "sitePartial",
-				Attributes = new Dictionary<string, string>
+				Attributes = new Dictionary<string, IDynamicValue>
 				{
-					{ "propertyName", "siteId" }
+					{ "propertyName", new PassThruValue("siteId") }
 				}
 			});
 			model.AddInstruction(new IncludePartial
 			{
 				Name = "reusablePartial",
-				Attributes = new Dictionary<string, string>
+				Attributes = new Dictionary<string, IDynamicValue>
 				{
-					{ "propertyName", "myProperty" }
+					{ "propertyName", new PassThruValue("myProperty") }
 				}
 			});
 			model.AddInstruction(new EndRelation());
@@ -40,23 +41,23 @@ namespace Dovetail.SDK.ModelMap.Integration.NewStuff
 			model.AddInstruction(new EndRelation());
 
 			var p1 = new ModelMap.NewStuff.ModelMap("reusablePartial", null);
-			p1.AddInstruction(new BeginProperty { Key = "${propertyName}" });
+			p1.AddInstruction(new BeginProperty { Key = new PassThruValue("${propertyName}") });
 			p1.AddInstruction(new EndProperty());
 
 			var p2 = new ModelMap.NewStuff.ModelMap("sitePartial", null);
-			p2.AddInstruction(new BeginProperty { Key = "${propertyName}" });
+			p2.AddInstruction(new BeginProperty { Key = new PassThruValue("${propertyName}") });
 			p2.AddInstruction(new EndProperty());
 			p2.AddInstruction(new IncludePartial
 			{
 				Name = "reusablePartial",
-				Attributes = new Dictionary<string, string>
+				Attributes = new Dictionary<string, IDynamicValue>
 				{
-					{ "propertyName", "myOtherProperty" }
+					{ "propertyName", new PassThruValue("myOtherProperty") }
 				}
 			});
 
 			var p3 = new ModelMap.NewStuff.ModelMap("addressPartial", null);
-			p3.AddInstruction(new BeginProperty { Key = "addressId" });
+			p3.AddInstruction(new BeginProperty { Key = new PassThruValue("addressId") });
 			p3.AddInstruction(new EndProperty());
 
 			var cache = new StubModelMapCache();
@@ -71,21 +72,64 @@ namespace Dovetail.SDK.ModelMap.Integration.NewStuff
 
 			model.Accept(visitor);
 
-			instructions[0].As<BeginProperty>().Key.ShouldEqual("caseId");
-			instructions[1].ShouldBeOfType<EndProperty>();
-			instructions[2].ShouldBeOfType<BeginRelation>();
-			instructions[3].As<BeginProperty>().Key.ShouldEqual("siteId");
-			instructions[4].ShouldBeOfType<EndProperty>();
-			instructions[5].As<BeginProperty>().Key.ShouldEqual("myOtherProperty");
-			instructions[6].ShouldBeOfType<EndProperty>();
-			instructions[7].As<BeginProperty>().Key.ShouldEqual("myProperty");
-			instructions[8].ShouldBeOfType<EndProperty>();
-			instructions[9].ShouldBeOfType<EndRelation>();
+			VerifyInstructions.Assert(instructions, _ =>
+			{
+				_.Verify<BeginProperty>(__ => __.Key.ToString().ShouldEqual("caseId"));
+				_.Is<EndProperty>();
 
-			instructions[10].ShouldBeOfType<BeginRelation>();
-			instructions[11].As<BeginProperty>().Key.ShouldEqual("addressId");
-			instructions[12].ShouldBeOfType<EndProperty>();
-			instructions[13].ShouldBeOfType<EndRelation>();
+				_.Is<BeginRelation>();
+
+				// sitePartial
+				_.Verify<PushVariableContext>(__ => __.Attributes["propertyName"].ToString().ShouldEqual("siteId"));
+
+				_.Verify<BeginProperty>(__ => __.Key.ToString().ShouldEqual("${propertyName}"));
+				_.Is<EndProperty>();
+
+				// sitePartial => reusablePartial
+				_.Verify<PushVariableContext>(__ => __.Attributes["propertyName"].ToString().ShouldEqual("myOtherProperty"));
+				_.Verify<BeginProperty>(__ => __.Key.ToString().ShouldEqual("${propertyName}"));
+				_.Is<EndProperty>();
+				_.Is<PopVariableContext>();
+
+				_.Is<PopVariableContext>(); //end sitePartial
+
+				// reusablePartial
+				_.Verify<PushVariableContext>(__ => __.Attributes["propertyName"].ToString().ShouldEqual("myProperty"));
+				_.Verify<BeginProperty>(__ => __.Key.ToString().ShouldEqual("${propertyName}"));
+				_.Is<EndProperty>();
+				_.Is<PopVariableContext>(); //end reusablePartial
+
+				_.Is<EndRelation>();
+				_.Is<BeginRelation>();
+
+				// addressPartial
+				_.Is<PushVariableContext>();
+				_.Verify<BeginProperty>(__ => __.Key.ToString().ShouldEqual("addressId"));
+				_.Is<EndProperty>();
+				_.Is<PopVariableContext>(); //end addressPartial
+
+				_.Is<EndRelation>();
+			});
+		}
+
+		public class PassThruValue : IDynamicValue
+		{
+			private readonly object _value;
+
+			public PassThruValue(object value)
+			{
+				_value = value;
+			}
+
+			public object Resolve(IServiceLocator services)
+			{
+				return _value;
+			}
+
+			public override string ToString()
+			{
+				return _value.ToString();
+			}
 		}
 
 		private class RecordingVisitor : ModelMap.NewStuff.IModelMapVisitor
@@ -213,6 +257,16 @@ namespace Dovetail.SDK.ModelMap.Integration.NewStuff
 			}
 
 			public void Visit(AddTag instruction)
+			{
+				_instructions.Add(instruction);
+			}
+
+			public void Visit(PushVariableContext instruction)
+			{
+				_instructions.Add(instruction);
+			}
+
+			public void Visit(PopVariableContext instruction)
 			{
 				_instructions.Add(instruction);
 			}

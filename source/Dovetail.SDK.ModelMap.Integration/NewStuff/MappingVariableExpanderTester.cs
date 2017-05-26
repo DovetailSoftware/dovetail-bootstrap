@@ -1,4 +1,5 @@
-﻿using Dovetail.SDK.ModelMap.NewStuff;
+﻿using System.Collections.Generic;
+using Dovetail.SDK.ModelMap.NewStuff;
 using FubuCore;
 using NUnit.Framework;
 
@@ -41,6 +42,24 @@ namespace Dovetail.SDK.ModelMap.Integration.NewStuff
             theExpander.Expand("${foo}").ShouldEqual("bar");
         }
 
+		[Test]
+	    public void expands_the_variable_from_the_context()
+	    {
+			var variable = new StubVariable { Value = "bar" };
+			theRegistry.Variable = variable;
+
+			var data = new ModelData();
+			var values = new Dictionary<string, object>
+			{
+				{ "foo", "barbarbar" }
+			};
+			var context = new VariableExpanderContext(data, values);
+
+			theExpander.PushContext(context);
+
+			theExpander.Expand("${foo}").ShouldEqual("barbarbar");
+	    }
+
         [Test]
         public void returns_the_value_if_the_variable_cannot_be_found()
         {
@@ -54,14 +73,14 @@ namespace Dovetail.SDK.ModelMap.Integration.NewStuff
 
         private class StubVariable : IMappingVariable
         {
-            public bool Matches(string key)
+            public bool Matches(VariableExpansionContext context)
             {
                 throw new System.NotImplementedException();
             }
 
             public string Value;
 
-            public object Expand(string key, IServiceLocator services)
+            public object Expand(VariableExpansionContext context)
             {
                 return Value;
             }
@@ -71,7 +90,7 @@ namespace Dovetail.SDK.ModelMap.Integration.NewStuff
         {
             public IMappingVariable Variable;
 
-            public IMappingVariable Find(string key)
+            public IMappingVariable Find(VariableExpansionContext context)
             {
                 return Variable;
             }

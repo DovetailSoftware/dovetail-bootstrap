@@ -109,6 +109,8 @@
     <Compile Include="ModelMapSchemaValidationSource.cs" />
     <Compile Include="NewStuff\DefaultVariables.cs" />
     <Compile Include="NewStuff\DovetailGenericModelMapVisitor.cs" />
+    <Compile Include="NewStuff\DynamicValue.cs" />
+    <Compile Include="NewStuff\IDynamicValue.cs" />
     <Compile Include="NewStuff\IExpandableMap.cs" />
     <Compile Include="NewStuff\IMapEntryBuilder.cs" />
     <Compile Include="NewStuff\IMappingVariable.cs" />
@@ -144,11 +146,14 @@
     <Compile Include="NewStuff\Instructions\FieldSortMap.cs" />
     <Compile Include="NewStuff\Instructions\IModelMapInstruction.cs" />
     <Compile Include="NewStuff\Instructions\IQueryContext.cs" />
+    <Compile Include="NewStuff\Instructions\PopVariableContext.cs" />
+    <Compile Include="NewStuff\Instructions\PushVariableContext.cs" />
     <Compile Include="NewStuff\Instructions\RemoveMappedCollection.cs" />
     <Compile Include="NewStuff\Instructions\RemoveMappedProperty.cs" />
     <Compile Include="NewStuff\Instructions\RemoveProperty.cs" />
     <Compile Include="NewStuff\IPaginationResult.cs" />
     <Compile Include="NewStuff\MapEntryBuilder.cs" />
+    <Compile Include="NewStuff\VariableExpanderContext.cs" />
     <Compile Include="NewStuff\MappingVariableExpander.cs" />
     <Compile Include="NewStuff\MappingVariableRegistry.cs" />
     <Compile Include="NewStuff\ModelBuilder.cs" />
@@ -220,6 +225,7 @@
     <Compile Include="NewStuff\Transforms\TransformArguments.cs" />
     <Compile Include="NewStuff\Transforms\TransformContext.cs" />
     <Compile Include="NewStuff\Transforms\ValueArgument.cs" />
+    <Compile Include="NewStuff\VariableExpansionContext.cs" />
     <Compile Include="ObjectModel\ClarifyGenericMapEntry.cs" />
     <Compile Include="ObjectModel\FieldMap.cs" />
     <Compile Include="ObjectModel\FieldSortMap.cs" />

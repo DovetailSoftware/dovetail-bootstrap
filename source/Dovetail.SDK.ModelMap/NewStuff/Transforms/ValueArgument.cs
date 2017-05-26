@@ -3,9 +3,9 @@ namespace Dovetail.SDK.ModelMap.NewStuff.Transforms
 	public class ValueArgument : ITransformArgument
 	{
 		private readonly string _name;
-		private readonly string _value;
+		private readonly object _value;
 
-		public ValueArgument(string name, string value)
+		public ValueArgument(string name, object value)
 		{
 			_name = name;
 			_value = value;

@@ -2,18 +2,20 @@
 
 namespace Dovetail.SDK.ModelMap.NewStuff.Instructions
 {
-    public class BeginMappedCollection : IModelMapInstruction
+    public class BeginMappedCollection : IModelMapInstruction, IEquatable<BeginMappedCollection>
     {
-        public string Key { get; set; }
+        public IDynamicValue Key { get; set; }
 
         public void Accept(IModelMapVisitor visitor)
         {
             visitor.Visit(this);
         }
 
-	    protected bool Equals(BeginMappedCollection other)
+	    public bool Equals(BeginMappedCollection other)
 	    {
-		    return string.Equals(Key, other.Key, StringComparison.OrdinalIgnoreCase);
+		    if (ReferenceEquals(null, other)) return false;
+		    if (ReferenceEquals(this, other)) return true;
+		    return Key.Equals(other.Key);
 	    }
 
 	    public override bool Equals(object obj)
@@ -26,7 +28,7 @@ namespace Dovetail.SDK.ModelMap.NewStuff.Instructions
 
 	    public override int GetHashCode()
 	    {
-		    return StringComparer.OrdinalIgnoreCase.GetHashCode(Key);
+		    return Key.GetHashCode();
 	    }
 
 	    public static bool operator ==(BeginMappedCollection left, BeginMappedCollection right)

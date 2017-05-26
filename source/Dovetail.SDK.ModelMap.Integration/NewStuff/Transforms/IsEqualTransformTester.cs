@@ -12,7 +12,7 @@ namespace Dovetail.SDK.ModelMap.Integration.NewStuff.Transforms
 		[Test]
 		public void evaluates_equality()
 		{
-			var arguments = new TransformArguments(new Dictionary<string, object>
+			var arguments = new TransformArguments(new InMemoryServiceLocator(), new Dictionary<string, object>
 			{
 				{ "field", "status" },
 				{ "value", "0" }

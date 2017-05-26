@@ -2,9 +2,9 @@
 {
     public class BeginProperty : IModelMapInstruction
     {
-        public string Key { get; set; }
-        public string Field { get; set; }
-        public string DataType { get; set; }
+        public IDynamicValue Key { get; set; }
+        public IDynamicValue Field { get; set; }
+        public IDynamicValue DataType { get; set; }
         public string PropertyType { get; set; }
 
         public void Accept(IModelMapVisitor visitor)

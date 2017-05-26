@@ -23,12 +23,16 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 		private FieldMap _currentFieldMap;
 		private PropertyDefinition _propertyDef;
 		private IMappingTransform _transform;
+		private readonly IServiceLocator _services;
+		private readonly IMappingVariableExpander _expander;
 
-		public DovetailGenericModelMapVisitor(IClarifySession session, ISchemaCache schemaCache, IMappingTransformRegistry registry)
+		public DovetailGenericModelMapVisitor(IClarifySession session, ISchemaCache schemaCache, IMappingTransformRegistry registry, IServiceLocator services, IMappingVariableExpander expander)
         {
             _session = session;
             _schemaCache = schemaCache;
 			_registry = registry;
+			_services = services;
+			_expander = expander;
         }
 
         // public for testing
@@ -86,22 +90,23 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 
         public void Visit(BeginProperty instruction)
         {
+	        var key = instruction.Key.Resolve(_services).ToString();
 			_propertyDef = new PropertyDefinition
 			{
-				Key = instruction.Key
+				Key = instruction.Key.Resolve(_services).ToString()
 			};
 
-			if (instruction.Field.IsEmpty())
+			if (instruction.Field == null)
 	        {
 		        return;
 	        }
 
             _currentFieldMap = new FieldMap
             {
-                Key = instruction.Key,
-                FieldNames = new [] { instruction.Field },
+                Key = key,
+                FieldNames = new [] { instruction.Field.Resolve(_services).ToString() },
                 IsIdentifier = instruction.PropertyType == "identifier",
-                PropertyType = PropertyTypes.Parse(instruction.DataType)
+                PropertyType = PropertyTypes.Parse(instruction.DataType.Resolve(_services).ToString())
             };
         }
 
@@ -135,16 +140,16 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 
             var parentClarifyGenericMap = _genericStack.Peek();
 
-            parentClarifyGenericMap.ClarifyGeneric.DataFields.Add(instruction.FromTableField);
+            parentClarifyGenericMap.ClarifyGeneric.DataFields.Add(instruction.FromTableField.Resolve(_services).ToString());
 
-            var tableGeneric = parentClarifyGenericMap.ClarifyGeneric.DataSet.CreateGeneric(instruction.ToTableName);
-            tableGeneric.DataFields.Add(instruction.ToTableFieldName);
+            var tableGeneric = parentClarifyGenericMap.ClarifyGeneric.DataSet.CreateGeneric(instruction.ToTableName.Resolve(_services).ToString());
+            tableGeneric.DataFields.Add(instruction.ToTableFieldName.Resolve(_services).ToString());
 
             var subRootInformation = new SubRootInformation
             {
-                ParentKeyField = instruction.FromTableField,
-                RootKeyField = instruction.ToTableFieldName
-            };
+                ParentKeyField = instruction.FromTableField.Resolve(_services).ToString(),
+                RootKeyField = instruction.ToTableFieldName.Resolve(_services).ToString()
+			};
 
 	        var model = _modelStack.Peek();
             var clarifyGenericMap = new ClarifyGenericMapEntry
@@ -165,7 +170,7 @@ namespace Dovetail.SDK.ModelMap.NewStuff
         public void Visit(BeginRelation instruction)
         {
             var parentClarifyGenericMap = _genericStack.Peek();
-            var relationGeneric = parentClarifyGenericMap.ClarifyGeneric.Traverse(instruction.RelationName);
+            var relationGeneric = parentClarifyGenericMap.ClarifyGeneric.Traverse(instruction.RelationName.Resolve(_services).ToString());
 
 			var model = _modelStack.Peek();
 			var clarifyGenericMap = new ClarifyGenericMapEntry
@@ -190,10 +195,12 @@ namespace Dovetail.SDK.ModelMap.NewStuff
         public void Visit(BeginMappedProperty instruction)
         {
 			var parentClarifyGenericMap = _genericStack.Peek();
-	        var childModel = new ModelInformation
+	        var key = instruction.Key.Resolve(_services).ToString();
+
+			var childModel = new ModelInformation
 	        {
-				ModelName = instruction.Key,
-				ParentProperty = instruction.Key
+				ModelName = key,
+				ParentProperty = key
 			};
 
 			var clarifyGenericMap = new ClarifyGenericMapEntry
@@ -216,10 +223,11 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 
         public void Visit(BeginMappedCollection instruction)
         {
-            _modelStack.Push(new ModelInformation
+	        var key = instruction.Key.Resolve(_services).ToString();
+			_modelStack.Push(new ModelInformation
             {
-                ModelName = instruction.Key,
-                ParentProperty = instruction.Key,
+                ModelName = key,
+                ParentProperty = key,
                 IsCollection = true
             });
         }
@@ -232,7 +240,7 @@ namespace Dovetail.SDK.ModelMap.NewStuff
         public void Visit(FieldSortMap instruction)
         {
             var currentGeneric = _genericStack.Peek();
-            currentGeneric.ClarifyGeneric.AppendSort(instruction.Field, instruction.IsAscending);
+            currentGeneric.ClarifyGeneric.AppendSort(instruction.Field.Resolve(_services).ToString(), instruction.IsAscending);
         }
 
         public void Visit(AddFilter instruction)
@@ -243,24 +251,25 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 
 		public void Visit(BeginTransform instruction)
 		{
-			if (!_registry.HasPolicy(instruction.Name))
+			var name = instruction.Name.Resolve(_services).ToString();
+			if (!_registry.HasPolicy(name))
 			{
 				throw new ModelMapException("Invalid transform: \"{0}\"".ToFormat(instruction.Name));
 			}
 
-			_transform = (IMappingTransform) FastYetSimpleTypeActivator.CreateInstance(_registry.FindPolicy(instruction.Name));
+			_transform = (IMappingTransform) FastYetSimpleTypeActivator.CreateInstance(_registry.FindPolicy(name));
 		}
 
 		public void Visit(AddTransformArgument instruction)
 		{
-			if (instruction.Value.IsNotEmpty())
+			if (instruction.Value != null)
 			{
-				_arguments.Add(new ValueArgument(instruction.Name, instruction.Value));
+				_arguments.Add(new ValueArgument(instruction.Name.Resolve(_services).ToString(), instruction.Value.Resolve(_services)));
 				return;
 			}
 
-			var field = instruction.Property;
-			_arguments.Add(new FieldArgument(instruction.Name, ModelDataPath.Parse(field)));
+			var field = instruction.Property.Resolve(_services).ToString();
+			_arguments.Add(new FieldArgument(instruction.Name.Resolve(_services).ToString(), ModelDataPath.Parse(field)));
 		}
 
 		public void Visit(RemoveProperty instruction)
@@ -287,9 +296,19 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 			var path = ModelDataPath.Parse(field);
 			var currentGeneric = _genericStack.Peek();
 
-			currentGeneric.AddTransform(new ConfiguredTransform(path, _transform, _arguments.ToArray()));
+			currentGeneric.AddTransform(new ConfiguredTransform(path, _transform, _arguments.ToArray(), _expander, _services));
 
 			_arguments.Clear();
 		}
-    }
+
+		public void Visit(PushVariableContext instruction)
+		{
+			_expander.PushContext(new VariableExpanderContext(null, instruction.Attributes.ToDictionary(_ => _.Key, _ => _.Value.Resolve(_services))));
+		}
+
+		public void Visit(PopVariableContext instruction)
+		{
+			_expander.PopContext();
+		}
+	}
 }

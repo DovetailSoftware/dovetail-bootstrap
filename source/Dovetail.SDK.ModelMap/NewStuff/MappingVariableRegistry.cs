@@ -12,11 +12,11 @@ namespace Dovetail.SDK.ModelMap.NewStuff
             _sources = sources;
         }
 
-        public IMappingVariable Find(string key)
+        public IMappingVariable Find(VariableExpansionContext context)
         {
             return _sources
                 .SelectMany(_ => _.Variables())
-                .LastOrDefault(_ => _.Matches(key));
+                .LastOrDefault(_ => _.Matches(context));
         }
     }
 }

@@ -44,7 +44,9 @@ namespace Dovetail.SDK.ModelMap.Integration.NewStuff
                 }
             });
 
-            theRegistry.Find("b").ShouldEqual(v4);
+            theRegistry
+				.Find(new VariableExpansionContext(null, "b", null))
+				.ShouldEqual(v4);
         }
 
         [Test]
@@ -73,8 +75,10 @@ namespace Dovetail.SDK.ModelMap.Integration.NewStuff
                 }
             });
 
-            theRegistry.Find("d").ShouldBeNull();
-        }
+			theRegistry
+				.Find(new VariableExpansionContext(null, "d", null))
+				.ShouldBeNull();
+		}
 
         private class StubVariable : IMappingVariable
         {
@@ -85,12 +89,12 @@ namespace Dovetail.SDK.ModelMap.Integration.NewStuff
 
             public string Key;
 
-            public bool Matches(string key)
+            public bool Matches(VariableExpansionContext context)
             {
-                return key.EqualsIgnoreCase(Key);
+	            return context.Matches(Key);
             }
 
-            public object Expand(string key, IServiceLocator services)
+            public object Expand(VariableExpansionContext context)
             {
                 throw new System.NotImplementedException();
             }

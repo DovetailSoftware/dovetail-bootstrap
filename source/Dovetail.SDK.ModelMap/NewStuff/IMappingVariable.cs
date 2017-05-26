@@ -1,22 +1,20 @@
-﻿using FubuCore;
-
-namespace Dovetail.SDK.ModelMap.NewStuff
+﻿namespace Dovetail.SDK.ModelMap.NewStuff
 {
     public interface IMappingVariable
     {
-        bool Matches(string key);
-        object Expand(string key, IServiceLocator services);
+        bool Matches(VariableExpansionContext context);
+        object Expand(VariableExpansionContext context);
     }
 
     public abstract class MappingVariable : IMappingVariable
     {
         public abstract string Key { get; }
 
-        public virtual bool Matches(string key)
+        public virtual bool Matches(VariableExpansionContext context)
         {
-            return Key.EqualsIgnoreCase(key);
+	        return context.Matches(Key);
         }
 
-        public abstract object Expand(string key, IServiceLocator services);
+        public abstract object Expand(VariableExpansionContext context);
     }
 }

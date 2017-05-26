@@ -35,11 +35,11 @@ namespace Dovetail.SDK.ModelMap.NewStuff.Serialization
 
         private class RelationshipDef
         {
-            public string Name { get; set; }
+            public IDynamicValue Name { get; set; }
             public string Type { get; set; }
-            public string Field { get; set; }
-            public string Table { get; set; }
-            public string TargetField { get; set; }
+            public IDynamicValue Field { get; set; }
+            public IDynamicValue Table { get; set; }
+            public IDynamicValue TargetField { get; set; }
 
             public bool IsAdhoc
             {

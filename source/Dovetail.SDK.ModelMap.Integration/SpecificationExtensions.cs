@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
+using Dovetail.SDK.ModelMap.NewStuff;
 using FubuCore;
 using NUnit.Framework;
 
@@ -32,6 +33,12 @@ namespace Dovetail.SDK.ModelMap.Integration
         {
             Assert.IsTrue(condition.Value);
         }
+
+		public static object ShouldEqual(this IDynamicValue actual, string expected)
+		{
+			Assert.AreEqual(new DynamicValue(expected), actual);
+			return expected;
+		}
 
 		public static object ShouldEqual(this object actual, object expected)
 		{

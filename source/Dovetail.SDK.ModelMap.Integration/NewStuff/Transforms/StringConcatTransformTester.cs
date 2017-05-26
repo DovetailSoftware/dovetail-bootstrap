@@ -12,7 +12,7 @@ namespace Dovetail.SDK.ModelMap.Integration.NewStuff.Transforms
 		[Test]
 		public void concats_the_strings()
 		{
-			var arguments = new TransformArguments(new Dictionary<string, object>
+			var arguments = new TransformArguments(new InMemoryServiceLocator(), new Dictionary<string, object>
 			{
 				{ "arg1", "Hello, " },
 				{ "arg2", "World!" }
@@ -27,7 +27,7 @@ namespace Dovetail.SDK.ModelMap.Integration.NewStuff.Transforms
 		[Test]
 		public void concats_n_number_of_strings()
 		{
-			var arguments = new TransformArguments(new Dictionary<string, object>
+			var arguments = new TransformArguments(new InMemoryServiceLocator(), new Dictionary<string, object>
 			{
 				{ "arg1", "Hello" },
 				{ "arg2", "," },

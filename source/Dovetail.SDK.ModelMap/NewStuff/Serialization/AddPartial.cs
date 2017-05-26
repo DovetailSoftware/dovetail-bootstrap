@@ -17,7 +17,7 @@ namespace Dovetail.SDK.ModelMap.NewStuff.Serialization
 			var instruction = context.Serializer.Deserialize<IncludePartial>(element);
 			foreach (var attribute in element.Attributes().Where(_ => !_.Name.ToString().EqualsIgnoreCase("name")))
 			{
-				instruction.Attributes.Add(attribute.Name.ToString(), attribute.Value);
+				instruction.Attributes.Add(attribute.Name.ToString(), new DynamicValue(attribute.Value));
 			}
 
 			map.AddInstruction(instruction);

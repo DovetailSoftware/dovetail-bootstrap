@@ -20,27 +20,30 @@ namespace Dovetail.SDK.ModelMap.Integration.NewStuff.Serialization
 		[Test]
 		public void verify_instructions()
 		{
-			theScenario.Get<BeginModelMap>(0).Name.ShouldEqual("test");
-			theScenario.Get<AddTag>(1).Tag.ShouldEqual("linkable");
-			theScenario.Get<BeginView>(2).ViewName.ShouldEqual("qry_case_view");
-			theScenario.Get<BeginProperty>(3).Key.ShouldEqual("id");
-			theScenario.Get<EndProperty>(4);
+			VerifyInstructions.Assert(theScenario.Instructions, _ =>
+			{
+				_.Get<BeginModelMap>().Name.ShouldEqual("test");
+				_.Get<AddTag>().Tag.ShouldEqual("linkable");
+				_.Get<BeginView>().ViewName.ShouldEqual("qry_case_view");
+				_.Get<BeginProperty>().Key.ShouldEqual("id");
+				_.Get<EndProperty>();
 
-			theScenario.Get<BeginProperty>(5).Key.ShouldEqual("title");
-			theScenario.Get<EndProperty>(6);
+				_.Get<BeginProperty>().Key.ShouldEqual("title");
+				_.Get<EndProperty>();
 
-			theScenario.Get<BeginProperty>(7).Key.ShouldEqual("ownerUsername");
-			theScenario.Get<EndProperty>(8);
+				_.Get<BeginProperty>().Key.ShouldEqual("ownerUsername");
+				_.Get<EndProperty>();
 
-			theScenario.Get<BeginProperty>(9).Key.ShouldEqual("caseType");
-			theScenario.Get<BeginTransform>(10).Name.ShouldEqual("localizedListItem");
-			theScenario.Get<AddTransformArgument>(11).Name.ShouldEqual("listName");
-			theScenario.Get<AddTransformArgument>(12).Name.ShouldEqual("listValue");
-			theScenario.Get<EndTransform>(13);
-			theScenario.Get<EndProperty>(14);
+				_.Get<BeginProperty>().Key.ShouldEqual("caseType");
+				_.Get<BeginTransform>().Name.ShouldEqual("localizedListItem");
+				_.Get<AddTransformArgument>().Name.ShouldEqual("listName");
+				_.Get<AddTransformArgument>().Name.ShouldEqual("listValue");
+				_.Get<EndTransform>();
+				_.Get<EndProperty>();
 
-			theScenario.Get<EndView>(15);
-			theScenario.Get<EndModelMap>(16);
+				_.Get<EndView>();
+				_.Get<EndModelMap>();
+			});
 
 			theScenario.Instructions.Length.ShouldEqual(17);
 		}

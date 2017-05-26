@@ -2,9 +2,9 @@
 {
 	public class AddTransformArgument : IModelMapInstruction
 	{
-		public string Name { get; set; }
-		public string Property { get; set; }
-		public string Value { get; set; }
+		public IDynamicValue Name { get; set; }
+		public IDynamicValue Property { get; set; }
+		public IDynamicValue Value { get; set; }
 
 		public void Accept(IModelMapVisitor visitor)
 		{

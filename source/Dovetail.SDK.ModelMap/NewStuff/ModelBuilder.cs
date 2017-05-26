@@ -118,7 +118,7 @@ namespace Dovetail.SDK.ModelMap.NewStuff
                 rootGenericMap.ClarifyGeneric.ClearSorts();
                 foreach (var f in FieldSortMapOverrides)
                 {
-                    rootGenericMap.ClarifyGeneric.AppendSort(f.Field, f.IsAscending);
+                    rootGenericMap.ClarifyGeneric.AppendSort(f.Field.Resolve(_services).ToString(), f.IsAscending);
                 }
             }
 
@@ -236,10 +236,10 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 
                 populateDTOForGenericRecord(genericMap, record, row);
 
-				foreach (var transform in genericMap.Transforms)
-				{
-					transform.Execute(row, _services);
-				}
+				//foreach (var transform in genericMap.Transforms)
+				//{
+				//	transform.Execute(row, _services);
+				//}
 
 	            genericMap.Tags.Each(_ => row.AddTag(_));
 
@@ -256,10 +256,10 @@ namespace Dovetail.SDK.ModelMap.NewStuff
         {
             populateDTOWithFieldValues(genericMap, record, dto);
 
-			foreach (var transform in genericMap.Transforms)
-			{
-				transform.Execute(dto, _services);
-			}
+//			foreach (var transform in genericMap.Transforms)
+//			{
+//				transform.Execute(dto, _services);
+//			}
 
 			populateDTOWithRelatedGenericRecords(genericMap, record, dto);
 
@@ -286,10 +286,10 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 
                         populateDTOForGenericRecord(childMap, childRecord, childModel);
 
-						foreach (var transform in childMap.Transforms)
-						{
-							transform.Execute(childModel, _services);
-						}
+						//foreach (var transform in childMap.Transforms)
+						//{
+						//	transform.Execute(childModel, _services);
+						//}
 
 						children.Add(childModel);
                     }
@@ -310,10 +310,10 @@ namespace Dovetail.SDK.ModelMap.NewStuff
                         var childRecord = relatedChildRows.First();
                         var childModel = new ModelData {Name = childMap.Model.ModelName};
                         populateDTOForGenericRecord(childMap, childRecord, childModel);
-						foreach (var transform in childMap.Transforms)
-						{
-							transform.Execute(childModel, _services);
-						}
+						//foreach (var transform in childMap.Transforms)
+						//{
+						//	transform.Execute(childModel, _services);
+						//}
 						parentModel[childMap.Model.ParentProperty] = childModel;
                     }
                     else

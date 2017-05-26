@@ -22,95 +22,100 @@ namespace Dovetail.SDK.ModelMap.Integration.NewStuff.Serialization
 		[Test]
 		public void verify_instructions()
 		{
-			theScenario.Get<BeginModelMap>(0).Name.ShouldEqual("test");
-			theScenario.Get<BeginView>(1).ViewName.ShouldEqual("qry_case_view");
-			theScenario.Get<BeginProperty>(2).Key.ShouldEqual("id");
-			theScenario.Get<EndProperty>(3);
-
-			theScenario.Get<BeginProperty>(4).Key.ShouldEqual("title");
-			theScenario.Get<EndProperty>(5);
-
-			theScenario.Get<BeginProperty>(6).Key.ShouldEqual("ownerUsername");
-			theScenario.Get<EndProperty>(7);
-
-			theScenario.Get<BeginProperty>(8).Key.ShouldEqual("caseType");
-			theScenario.Get<BeginTransform>(9).Name.ShouldEqual("localizedListItem");
-			theScenario.Get<AddTransformArgument>(10).Name.ShouldEqual("listName");
-			theScenario.Get<AddTransformArgument>(11).Name.ShouldEqual("listValue");
-			theScenario.Get<EndTransform>(12);
-			theScenario.Get<EndProperty>(13);
-
-			theScenario.Verify<BeginAdHocRelation>(14, _ =>
+			VerifyInstructions.Assert(theScenario.Instructions, _ =>
 			{
-				_.FromTableField.ShouldEqual("elm_objid");
-				_.ToTableName.ShouldEqual("case");
-				_.ToTableFieldName.ShouldEqual("objid");
+				_.Get<BeginModelMap>().Name.ShouldEqual("test");
+				_.Get<BeginView>().ViewName.ShouldEqual("qry_case_view");
+				_.Get<BeginProperty>().Key.ShouldEqual("id");
+				_.Get<EndProperty>();
+
+				_.Get<BeginProperty>().Key.ShouldEqual("title");
+				_.Get<EndProperty>();
+
+				_.Get<BeginProperty>().Key.ShouldEqual("ownerUsername");
+				_.Get<EndProperty>();
+
+				_.Get<BeginProperty>().Key.ShouldEqual("caseType");
+				_.Get<BeginTransform>().Name.ShouldEqual("localizedListItem");
+				_.Get<AddTransformArgument>().Name.ShouldEqual("listName");
+				_.Get<AddTransformArgument>().Name.ShouldEqual("listValue");
+				_.Get<EndTransform>();
+				_.Get<EndProperty>();
+
+				_.Verify<BeginAdHocRelation>(__ =>
+				{
+					__.FromTableField.ShouldEqual("elm_objid");
+					__.ToTableName.ShouldEqual("case");
+					__.ToTableFieldName.ShouldEqual("objid");
+				});
+
+				_.Get<BeginProperty>().Key.ShouldEqual("id");
+				_.Get<EndProperty>();
+
+				_.Get<BeginProperty>().Key.ShouldEqual("lastModified");
+				_.Get<EndProperty>();
+
+				_.Verify<BeginRelation>(__ => __.RelationName.ShouldEqual("case_currq2queue"));
+				_.Get<BeginProperty>().Key.ShouldEqual("newProperty");
+				_.Get<EndProperty>();
+				_.Get<BeginProperty>().Key.ShouldEqual("inQueue");
+				_.Get<EndProperty>();
+				_.Get<EndRelation>();
+
+				_.Is<PushVariableContext>();
+				_.Get<BeginMappedProperty>().Key.ShouldEqual("site");
+				_.Verify<BeginRelation>(__ => __.RelationName.ShouldEqual("${relationName}"));
+				_.Get<BeginProperty>().Key.ShouldEqual("id");
+				_.Get<EndProperty>();
+				_.Get<EndRelation>();
+				_.Get<EndMappedProperty>();
+				_.Is<PopVariableContext>();
+
+				_.Get<BeginMappedCollection>().Key.ShouldEqual("attachments");
+				_.Verify<BeginRelation>(__ => __.RelationName.ShouldEqual("case_attch2doc_inst"));
+				_.Verify<FieldSortMap>(__ =>
+				{
+					__.Field.ShouldEqual("objid");
+					__.Type.ShouldEqual("desc");
+				});
+
+				_.Get<BeginProperty>().Key.ShouldEqual("title");
+				_.Get<EndProperty>();
+
+				_.Get<BeginProperty>().Key.ShouldEqual("id");
+				_.Get<EndProperty>();
+
+				_.Verify<BeginRelation>(__ => __.RelationName.ShouldEqual("attach_info2doc_path"));
+				_.Get<BeginProperty>().Key.ShouldEqual("fileIcon");
+				_.Get<EndProperty>();
+				_.Get<EndRelation>();
+
+				_.Verify<BeginRelation>(__ => __.RelationName.ShouldEqual("doc_inst2act_entry"));
+				_.Get<BeginProperty>().Key.ShouldEqual("uploaded");
+				_.Get<EndProperty>();
+				_.Get<BeginMappedProperty>().Key.ShouldEqual("uploader");
+				_.Verify<BeginRelation>(__ => __.RelationName.ShouldEqual("act_entry2user"));
+				_.Get<BeginProperty>().Key.ShouldEqual("login");
+				_.Get<EndProperty>();
+				_.Verify<BeginRelation>(__ => __.RelationName.ShouldEqual("user2employee"));
+				_.Get<BeginProperty>().Key.ShouldEqual("firstName");
+				_.Get<EndProperty>();
+				_.Get<BeginProperty>().Key.ShouldEqual("lastName");
+				_.Get<EndProperty>();
+				_.Get<EndRelation>();
+				_.Get<EndRelation>();
+				_.Get<EndMappedProperty>();
+				_.Get<EndRelation>();
+
+				_.Get<EndRelation>();
+				_.Get<EndMappedCollection>();
+				_.Get<EndRelation>();
+
+				_.Get<EndView>();
+				_.Get<EndModelMap>();
 			});
 
-			theScenario.Get<BeginProperty>(15).Key.ShouldEqual("id");
-			theScenario.Get<EndProperty>(16);
-
-			theScenario.Get<BeginProperty>(17).Key.ShouldEqual("lastModified");
-			theScenario.Get<EndProperty>(18);
-
-			theScenario.Verify<BeginRelation>(19, _ => _.RelationName.ShouldEqual("case_currq2queue"));
-			theScenario.Get<BeginProperty>(20).Key.ShouldEqual("newProperty");
-			theScenario.Get<EndProperty>(21);
-			theScenario.Get<BeginProperty>(22).Key.ShouldEqual("inQueue");
-			theScenario.Get<EndProperty>(23);
-			theScenario.Get<EndRelation>(24);
-
-			theScenario.Get<BeginMappedProperty>(25).Key.ShouldEqual("site");
-			theScenario.Verify<BeginRelation>(26, _ => _.RelationName.ShouldEqual("case_reporter2site"));
-			theScenario.Get<BeginProperty>(27).Key.ShouldEqual("id");
-			theScenario.Get<EndProperty>(28);
-			theScenario.Get<EndRelation>(29);
-			theScenario.Get<EndMappedProperty>(30);
-
-			theScenario.Get<BeginMappedCollection>(31).Key.ShouldEqual("attachments");
-			theScenario.Verify<BeginRelation>(32, _ => _.RelationName.ShouldEqual("case_attch2doc_inst"));
-			theScenario.Verify<FieldSortMap>(33, _ =>
-			{
-				_.Field.ShouldEqual("objid");
-				_.Type.ShouldEqual("desc");
-			});
-
-			theScenario.Get<BeginProperty>(34).Key.ShouldEqual("title");
-			theScenario.Get<EndProperty>(35);
-
-			theScenario.Get<BeginProperty>(36).Key.ShouldEqual("id");
-			theScenario.Get<EndProperty>(37);
-
-			theScenario.Verify<BeginRelation>(38, _ => _.RelationName.ShouldEqual("attach_info2doc_path"));
-			theScenario.Get<BeginProperty>(39).Key.ShouldEqual("fileIcon");
-			theScenario.Get<EndProperty>(40);
-			theScenario.Get<EndRelation>(41);
-
-			theScenario.Verify<BeginRelation>(42, _ => _.RelationName.ShouldEqual("doc_inst2act_entry"));
-			theScenario.Get<BeginProperty>(43).Key.ShouldEqual("uploaded");
-			theScenario.Get<EndProperty>(44);
-			theScenario.Get<BeginMappedProperty>(45).Key.ShouldEqual("uploader");
-			theScenario.Verify<BeginRelation>(46, _ => _.RelationName.ShouldEqual("act_entry2user"));
-			theScenario.Get<BeginProperty>(47).Key.ShouldEqual("login");
-			theScenario.Get<EndProperty>(48);
-			theScenario.Verify<BeginRelation>(49, _ => _.RelationName.ShouldEqual("user2employee"));
-			theScenario.Get<BeginProperty>(50).Key.ShouldEqual("firstName");
-			theScenario.Get<EndProperty>(51);
-			theScenario.Get<BeginProperty>(52).Key.ShouldEqual("lastName");
-			theScenario.Get<EndProperty>(53);
-			theScenario.Get<EndRelation>(54);
-			theScenario.Get<EndRelation>(55);
-			theScenario.Get<EndMappedProperty>(56);
-			theScenario.Get<EndRelation>(57);
-
-			theScenario.Get<EndRelation>(58);
-			theScenario.Get<EndMappedCollection>(59);
-			theScenario.Get<EndRelation>(60);
-
-			theScenario.Get<EndView>(61);
-			theScenario.Get<EndModelMap>(62);
-
-			theScenario.Instructions.Length.ShouldEqual(63);
+			theScenario.Instructions.Length.ShouldEqual(65);
 		}
 
 		[TearDown]

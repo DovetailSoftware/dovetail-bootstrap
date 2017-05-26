@@ -27,7 +27,7 @@ namespace Dovetail.SDK.ModelMap.Integration.NewStuff.Transforms
 				new ValueArgument("foo", "bar")
 			};
 
-			var configuredTransform = new ConfiguredTransform(path, transform, arguments);
+			var configuredTransform = new ConfiguredTransform(path, transform, arguments, null, null);
 			configuredTransform.Execute(data, services);
 
 			data.Child("child").Child("grandChild").Get<string>("property").ShouldEqual("BAR");
@@ -52,7 +52,7 @@ namespace Dovetail.SDK.ModelMap.Integration.NewStuff.Transforms
 				new FieldArgument("foo", ModelDataPath.Parse("test"))
 			};
 
-			var configuredTransform = new ConfiguredTransform(path, transform, arguments);
+			var configuredTransform = new ConfiguredTransform(path, transform, arguments, null, null);
 			configuredTransform.Execute(data, services);
 
 			data.Child("child").Child("grandChild").Get<string>("property").ShouldEqual("TESTING");
