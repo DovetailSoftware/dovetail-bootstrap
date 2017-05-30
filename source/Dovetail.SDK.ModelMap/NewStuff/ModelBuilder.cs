@@ -386,27 +386,27 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 				if (fieldMap.Key.IsEmpty())
 					continue;
 
-				var propertyValue = GetFieldValueForRecord(fieldMap, record);
-
-				if (propertyValue is string && fieldMap.ShouldEncode)
-				{
-					propertyValue = _encoder.Encode((string)propertyValue);
-				}
-
-				if (fieldMap.PropertyType == typeof(int))
-				{
-					propertyValue = Convert.ToInt32(propertyValue);
-				}
-
-				if (fieldMap.PropertyType == typeof(DateTime))
-				{
-					var dateTime = Convert.ToDateTime(propertyValue);
-					var utcDateTime = new DateTime(dateTime.Ticks, DateTimeKind.Utc);
-					propertyValue = utcDateTime;
-				}
-
 				try
 				{
+					var propertyValue = GetFieldValueForRecord(fieldMap, record);
+
+					if (propertyValue is string && fieldMap.ShouldEncode)
+					{
+						propertyValue = _encoder.Encode((string)propertyValue);
+					}
+
+					if (fieldMap.PropertyType == typeof(int))
+					{
+						propertyValue = Convert.ToInt32(propertyValue);
+					}
+
+					if (fieldMap.PropertyType == typeof(DateTime))
+					{
+						var dateTime = Convert.ToDateTime(propertyValue);
+						var utcDateTime = new DateTime(dateTime.Ticks, DateTimeKind.Utc);
+						propertyValue = utcDateTime;
+					}
+
 					model[fieldMap.Key] = propertyValue;
 				}
 				catch (Exception ex)
