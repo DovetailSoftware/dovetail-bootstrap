@@ -36,7 +36,8 @@ namespace Dovetail.SDK.ModelMap.NewStuff.Transforms
 					value = value.As<IDynamicValue>().Resolve(_services);
 				}
 
-				_path.Set(data, value);
+				if (value != null)
+					_path.Set(data, value);
 			}
 			finally
 			{

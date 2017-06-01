@@ -67,6 +67,11 @@ namespace Dovetail.SDK.ModelMap.NewStuff
             return values;
         }
 
+	    public bool IsEmpty()
+	    {
+		    return _values.Count == 0;
+	    }
+
 	    public IEnumerable<string> Tags
 	    {
 		    get { return _tags; }

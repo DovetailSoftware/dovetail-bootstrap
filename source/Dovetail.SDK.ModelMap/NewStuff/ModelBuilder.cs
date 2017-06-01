@@ -286,12 +286,8 @@ namespace Dovetail.SDK.ModelMap.NewStuff
 
                         populateDTOForGenericRecord(childMap, childRecord, childModel);
 
-						//foreach (var transform in childMap.Transforms)
-						//{
-						//	transform.Execute(childModel, _services);
-						//}
-
-						children.Add(childModel);
+						if (!childModel.IsEmpty())
+							children.Add(childModel);
                     }
 
                     parentModel[childMap.Model.ParentProperty] = children;
@@ -300,7 +296,9 @@ namespace Dovetail.SDK.ModelMap.NewStuff
                 {
 					var childModel = new ModelData { Name = childMap.Model.ModelName };
 					populateDTOForGenericRecord(childMap, parentRecord, childModel);
-					parentModel[childMap.Model.ParentProperty] = childModel;
+
+					if (!childModel.IsEmpty())
+						parentModel[childMap.Model.ParentProperty] = childModel;
 				}
 				else
                 {
@@ -310,11 +308,9 @@ namespace Dovetail.SDK.ModelMap.NewStuff
                         var childRecord = relatedChildRows.First();
                         var childModel = new ModelData {Name = childMap.Model.ModelName};
                         populateDTOForGenericRecord(childMap, childRecord, childModel);
-						//foreach (var transform in childMap.Transforms)
-						//{
-						//	transform.Execute(childModel, _services);
-						//}
-						parentModel[childMap.Model.ParentProperty] = childModel;
+
+						if (!childModel.IsEmpty())
+							parentModel[childMap.Model.ParentProperty] = childModel;
                     }
                     else
                     {
