@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Dovetail.SDK.ModelMap.Transforms;
 using FChoice.Foundation.Clarify;
 
 namespace Dovetail.SDK.ModelMap.ObjectModel
@@ -6,18 +7,31 @@ namespace Dovetail.SDK.ModelMap.ObjectModel
     public class ClarifyGenericMapEntry
     {
         private readonly List<FieldMap> _fieldMaps = new List<FieldMap>();
-        private readonly List<ClarifyGenericMapEntry> _childMaps = new List<ClarifyGenericMapEntry>();
+		private readonly List<ConfiguredTransform> _transforms = new List<ConfiguredTransform>();
+		private readonly List<ClarifyGenericMapEntry> _childMaps = new List<ClarifyGenericMapEntry>();
+		private readonly IList<string> _tags = new List<string>();
 
-        public FieldMap[] FieldMaps
+		public IEnumerable<string> Tags
+		{
+			get { return _tags; }
+		}
+
+		public FieldMap[] FieldMaps
         {
             get { return _fieldMaps.ToArray(); }
         }
 
-        public ClarifyGenericMapEntry[] ChildGenericMaps
+		public ConfiguredTransform[] Transforms
+		{
+			get { return _transforms.ToArray(); }
+		}
+
+		public ClarifyGenericMapEntry[] ChildGenericMaps
         {
             get { return _childMaps.ToArray(); }
         }
 
+		public string Entity { get; set; }
         public ClarifyGeneric ClarifyGeneric { get; set; }
         public ModelInformation Model { get; set; }
         public SubRootInformation NewRoot { get; set; }
@@ -27,13 +41,22 @@ namespace Dovetail.SDK.ModelMap.ObjectModel
             return NewRoot != null;
         }
 
+		public void AddTag(string tag)
+		{
+			_tags.Add(tag);
+		}
 
-        public void AddFieldMap(FieldMap fieldMap)
+		public void AddFieldMap(FieldMap fieldMap)
         {
             _fieldMaps.Add(fieldMap);
         }
 
-        public void AddChildGenericMap(ClarifyGenericMapEntry clarifyGenericMap)
+		public void AddTransform(ConfiguredTransform transform)
+		{
+			_transforms.Add(transform);
+		}
+
+		public void AddChildGenericMap(ClarifyGenericMapEntry clarifyGenericMap)
         {
             _childMaps.Add(clarifyGenericMap);
         }
@@ -41,7 +64,7 @@ namespace Dovetail.SDK.ModelMap.ObjectModel
         public string GetIdentifierFieldName()
         {
             var identifierField = _fieldMaps.Find(f => f.IsIdentifier);
-            if(identifierField == null || identifierField.FieldNames.Length == 0)
+            if (identifierField == null || identifierField.FieldNames.Length == 0)
             {
                 return null;
             }
@@ -53,8 +76,8 @@ namespace Dovetail.SDK.ModelMap.ObjectModel
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof (ClarifyGenericMapEntry)) return false;
-            return Equals((ClarifyGenericMapEntry) obj);
+            if (obj.GetType() != typeof(ClarifyGenericMapEntry)) return false;
+            return Equals((ClarifyGenericMapEntry)obj);
         }
 
         public bool Equals(ClarifyGenericMapEntry other)
@@ -69,8 +92,8 @@ namespace Dovetail.SDK.ModelMap.ObjectModel
             unchecked
             {
                 int result = (ClarifyGeneric != null ? ClarifyGeneric.GetHashCode() : 0);
-                result = (result*397) ^ (Model != null ? Model.GetHashCode() : 0);
-                result = (result*397) ^ (NewRoot != null ? NewRoot.GetHashCode() : 0);
+                result = (result * 397) ^ (Model != null ? Model.GetHashCode() : 0);
+                result = (result * 397) ^ (NewRoot != null ? NewRoot.GetHashCode() : 0);
                 return result;
             }
         }

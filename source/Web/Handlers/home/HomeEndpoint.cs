@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Dovetail.SDK.Bootstrap.Clarify;
 using Dovetail.SDK.ModelMap;
+using Dovetail.SDK.ModelMap.Legacy;
 
 namespace Bootstrap.Web.Handlers.home
 {

@@ -1,5 +1,5 @@
 using Dovetail.SDK.Bootstrap.Clarify;
-using Dovetail.SDK.ModelMap.Registration;
+using Dovetail.SDK.ModelMap.Legacy.Registration;
 
 namespace Bootstrap.Web.Handlers.home
 {

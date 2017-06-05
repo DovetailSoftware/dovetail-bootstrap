@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
-using Dovetail.SDK.ModelMap.NewStuff;
 using FubuCore;
 using NUnit.Framework;
 

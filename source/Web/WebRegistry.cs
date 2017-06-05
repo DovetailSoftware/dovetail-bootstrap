@@ -1,7 +1,7 @@
 ﻿using Dovetail.SDK.Bootstrap.Configuration;
 using Dovetail.SDK.Fubu.TokenAuthentication.Token;
 using Dovetail.SDK.ModelMap.Configuration;
-using Dovetail.SDK.ModelMap.Registration;
+using Dovetail.SDK.ModelMap.Legacy.Registration;
 using StructureMap.Configuration.DSL;
 using StructureMap.Graph;
 

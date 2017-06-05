@@ -1,29 +1,17 @@
-﻿using System;
-
 namespace Dovetail.SDK.ModelMap.Instructions
 {
-    public class BeginModelMap
+    public class BeginModelMap : IModelMapInstruction
     {
-        public Type ModelType { get; set; }
-
-        public override bool Equals(object obj)
+        public BeginModelMap(string name)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            var other = obj as BeginModelMap;
-            return other != null && Equals(other);
+            Name = name;
         }
 
-        public bool Equals(BeginModelMap other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return Equals(other.ModelType, ModelType);
-        }
+        public string Name { get; private set; }
 
-        public override int GetHashCode()
+        public void Accept(IModelMapVisitor visitor)
         {
-            return (ModelType != null ? ModelType.GetHashCode() : 0);
+            visitor.Visit(this);
         }
     }
 }

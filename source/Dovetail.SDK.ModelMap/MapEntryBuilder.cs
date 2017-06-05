@@ -1,5 +1,4 @@
 ﻿using Dovetail.SDK.ModelMap.ObjectModel;
-using Dovetail.SDK.ModelMap.Registration;
 using StructureMap;
 
 namespace Dovetail.SDK.ModelMap
@@ -12,12 +11,15 @@ namespace Dovetail.SDK.ModelMap
         {
             _container = container;
         }
-
-        public ClarifyGenericMapEntry BuildFromModelMap<MODEL>(ModelMap<MODEL> modelMap)
+        
+        public ClarifyGenericMapEntry BuildFromModelMap(ModelMap modelMap)
         {
             var visitor = _container.GetInstance<DovetailGenericModelMapVisitor>();
             modelMap.Accept(visitor);
-            return visitor.RootGenericMap;
+            var generic = visitor.RootGenericMap;
+	        generic.Entity = modelMap.Entity;
+
+	        return generic;
         }
     }
 }

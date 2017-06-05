@@ -1,5 +1,5 @@
 using System;
-using Dovetail.SDK.ModelMap.Registration.DSL;
+using Dovetail.SDK.ModelMap.Legacy.Registration.DSL;
 using FChoice.Foundation.Clarify;
 
 namespace Dovetail.SDK.ModelMap.Extensions

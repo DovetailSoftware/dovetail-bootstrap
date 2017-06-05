@@ -1,14 +1,26 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Collections.Generic;
 
 namespace Dovetail.SDK.ModelMap.ObjectModel
 {
     public class ModelInformation
     {
-        public Type ModelType { get; set; }
-        public PropertyInfo ParentProperty { get; set; }
+		private readonly List<FieldMap> _fieldMaps = new List<FieldMap>();
 
-        public override bool Equals(object obj)
+		public string ModelName { get; set; }
+        public string ParentProperty { get; set; }
+        public bool IsCollection { get; set; }
+
+		public FieldMap[] FieldMaps
+		{
+			get { return _fieldMaps.ToArray(); }
+		}
+
+		public void AddFieldMap(FieldMap fieldMap)
+		{
+			_fieldMaps.Add(fieldMap);
+		}
+
+		public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
@@ -20,14 +32,14 @@ namespace Dovetail.SDK.ModelMap.ObjectModel
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Equals(other.ModelType, ModelType) && Equals(other.ParentProperty, ParentProperty);
+            return Equals(other.ModelName, ModelName) && Equals(other.ParentProperty, ParentProperty);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return ((ModelType != null ? ModelType.GetHashCode() : 0)*397) ^ (ParentProperty != null ? ParentProperty.GetHashCode() : 0);
+                return ((ModelName != null ? ModelName.GetHashCode() : 0) * 397) ^ (ParentProperty != null ? ParentProperty.GetHashCode() : 0);
             }
         }
     }

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Dovetail.SDK.ModelMap.ObjectModel;
+using Dovetail.SDK.ModelMap.Legacy.ObjectModel;
 
 namespace Dovetail.SDK.ModelMap.Clarify
 {

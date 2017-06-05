@@ -1,8 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Dovetail.SDK.Bootstrap.Clarify;
+using Dovetail.SDK.Bootstrap.Configuration;
 using Dovetail.SDK.ModelMap.Instructions;
 using Dovetail.SDK.ModelMap.ObjectModel;
+using Dovetail.SDK.ModelMap.Transforms;
 using FChoice.Foundation.Clarify;
 using FChoice.Foundation.Schema;
 using FubuCore;
@@ -10,180 +12,303 @@ using FubuCore;
 namespace Dovetail.SDK.ModelMap
 {
 	public class DovetailGenericModelMapVisitor : IModelMapVisitor
-	{
-		private readonly IClarifySession _session;
-		private readonly ISchemaCache _schemaCache;
-		private readonly Stack<ModelInformation> _modelStack = new Stack<ModelInformation>();
-		private readonly Stack<ClarifyGenericMapEntry> _genericStack = new Stack<ClarifyGenericMapEntry>();
+    {
+        private readonly IClarifySession _session;
+        private readonly ISchemaCache _schemaCache;
+		private readonly IMappingTransformRegistry _registry;
+        private readonly Stack<ModelInformation> _modelStack = new Stack<ModelInformation>();
+        private readonly Stack<ClarifyGenericMapEntry> _genericStack = new Stack<ClarifyGenericMapEntry>();
+		private readonly IList<ITransformArgument> _arguments = new List<ITransformArgument>();
 
-		public DovetailGenericModelMapVisitor(IClarifySession session, ISchemaCache schemaCache)
-		{
-			_session = session;
-			_schemaCache = schemaCache;
-		}
+		private FieldMap _currentFieldMap;
+		private PropertyDefinition _propertyDef;
+		private IMappingTransform _transform;
+		private readonly IServiceLocator _services;
+		private readonly IMappingVariableExpander _expander;
 
-		// public for testing
-		public IEnumerable<ModelInformation> ModelStack
-		{
-			get { return _modelStack.ToArray(); }
-		}
+		public DovetailGenericModelMapVisitor(IClarifySession session, ISchemaCache schemaCache, IMappingTransformRegistry registry, IServiceLocator services, IMappingVariableExpander expander)
+        {
+            _session = session;
+            _schemaCache = schemaCache;
+			_registry = registry;
+			_services = services;
+			_expander = expander;
+        }
 
-		// public for testing
-		public IEnumerable<ClarifyGenericMapEntry> GenericStack
-		{
-			get { return _genericStack.ToArray(); }
-		}
+        // public for testing
+        public IEnumerable<ModelInformation> ModelStack
+        {
+            get { return _modelStack.ToArray(); }
+        }
 
-		public ClarifyGenericMapEntry RootGenericMap { get; private set; }
+        // public for testing
+        public IEnumerable<ClarifyGenericMapEntry> GenericStack
+        {
+            get { return _genericStack.ToArray(); }
+        }
 
-		// public for testing
-		public ClarifyDataSet DataSet { get; private set; }
+        public ClarifyGenericMapEntry RootGenericMap { get; private set; }
 
-		public void Visit(BeginModelMap beginModelMap)
-		{
-			DataSet = _session.CreateDataSet();
+        // public for testing
+        public ClarifyDataSet DataSet { get; private set; }
 
-			_modelStack.Push(new ModelInformation {ModelType = beginModelMap.ModelType});
-		}
+        public void Visit(BeginModelMap instruction)
+        {
+            DataSet = _session.CreateDataSet();
 
-		public void Visit(BeginTable beginTable)
-		{
-			var rootGeneric = DataSet.CreateGeneric(beginTable.TableName);
+            _modelStack.Push(new ModelInformation { ModelName = instruction.Name });
+        }
 
-			var clarifyGenericMap = new ClarifyGenericMapEntry {ClarifyGeneric = rootGeneric, Model = _modelStack.Peek()};
-			_genericStack.Push(clarifyGenericMap);
-		}
+        public void Visit(BeginTable instruction)
+        {
+            var rootGeneric = DataSet.CreateGeneric(instruction.TableName);
 
-		public void Visit(BeginView beginView)
-		{
-			var rootGeneric = DataSet.CreateGeneric(beginView.TableName);
+            var clarifyGenericMap = new ClarifyGenericMapEntry { ClarifyGeneric = rootGeneric, Model = _modelStack.Peek() };
+            _genericStack.Push(clarifyGenericMap);
+        }
 
-			var clarifyGenericMap = new ClarifyGenericMapEntry {ClarifyGeneric = rootGeneric, Model = _modelStack.Peek()};
-			_genericStack.Push(clarifyGenericMap);
-		}
+        public void Visit(EndTable instruction)
+        {
+        }
 
-		public void Visit(BeginAdHocRelation beginAdHocRelation)
-		{
-			validateAdhocRelation(beginAdHocRelation);
+        public void Visit(BeginView instruction)
+        {
+            var rootGeneric = DataSet.CreateGeneric(instruction.ViewName);
 
-			var parentClarifyGenericMap = _genericStack.Peek();
+            var clarifyGenericMap = new ClarifyGenericMapEntry { ClarifyGeneric = rootGeneric, Model = _modelStack.Peek() };
+            _genericStack.Push(clarifyGenericMap);
+        }
 
-			parentClarifyGenericMap.ClarifyGeneric.DataFields.Add(beginAdHocRelation.FromTableField);
+        public void Visit(EndView instruction)
+        {
+        }
 
-			var tableGeneric = parentClarifyGenericMap.ClarifyGeneric.DataSet.CreateGeneric(beginAdHocRelation.ToTableName);
-			tableGeneric.DataFields.Add(beginAdHocRelation.ToTableFieldName);
+        public void Visit(EndModelMap instruction)
+        {
+            RootGenericMap = _genericStack.Peek();
+        }
 
-			var subRootInformation = new SubRootInformation
+        public void Visit(BeginProperty instruction)
+        {
+	        var key = instruction.Key.Resolve(_services).ToString();
+			_propertyDef = new PropertyDefinition
 			{
-				ParentKeyField = beginAdHocRelation.FromTableField,
-				RootKeyField = beginAdHocRelation.ToTableFieldName
+				Key = instruction.Key.Resolve(_services).ToString()
+			};
+
+			if (instruction.Field == null)
+	        {
+		        return;
+	        }
+
+            _currentFieldMap = new FieldMap
+            {
+                Key = key,
+                FieldNames = new [] { instruction.Field.Resolve(_services).ToString() },
+                IsIdentifier = instruction.PropertyType == "identifier",
+                PropertyType = PropertyTypes.Parse(instruction.DataType.Resolve(_services).ToString())
+            };
+        }
+
+        public void Visit(EndProperty instruction)
+        {
+			_propertyDef = null;
+
+			var currentGeneric = _genericStack.Peek();
+			if (_currentFieldMap == null)
+			{
+				return;
+			}
+
+			currentGeneric.ClarifyGeneric.DataFields.AddRange(_currentFieldMap.FieldNames);
+
+	        if (currentGeneric.Model.ModelName != _modelStack.Peek().ModelName)
+	        {
+				currentGeneric.Model.AddFieldMap(_currentFieldMap);
+			}
+	        else
+	        {
+				currentGeneric.AddFieldMap(_currentFieldMap);
+			}
+			
+	        _currentFieldMap = null;
+        }
+
+        public void Visit(BeginAdHocRelation instruction)
+        {
+            //validateAdhocRelation(beginAdHocRelation);
+
+            var parentClarifyGenericMap = _genericStack.Peek();
+
+            parentClarifyGenericMap.ClarifyGeneric.DataFields.Add(instruction.FromTableField.Resolve(_services).ToString());
+
+            var tableGeneric = parentClarifyGenericMap.ClarifyGeneric.DataSet.CreateGeneric(instruction.ToTableName.Resolve(_services).ToString());
+            tableGeneric.DataFields.Add(instruction.ToTableFieldName.Resolve(_services).ToString());
+
+            var subRootInformation = new SubRootInformation
+            {
+                ParentKeyField = instruction.FromTableField.Resolve(_services).ToString(),
+                RootKeyField = instruction.ToTableFieldName.Resolve(_services).ToString()
+			};
+
+	        var model = _modelStack.Peek();
+            var clarifyGenericMap = new ClarifyGenericMapEntry
+            {
+                ClarifyGeneric = tableGeneric,
+                Model = new ModelInformation
+                {
+	                ModelName = model.ModelName,
+					ParentProperty = model.ParentProperty,
+					IsCollection = model.IsCollection
+                },
+                NewRoot = subRootInformation
+            };
+            parentClarifyGenericMap.AddChildGenericMap(clarifyGenericMap);
+            _genericStack.Push(clarifyGenericMap);
+        }
+
+        public void Visit(BeginRelation instruction)
+        {
+            var parentClarifyGenericMap = _genericStack.Peek();
+            var relationGeneric = parentClarifyGenericMap.ClarifyGeneric.Traverse(instruction.RelationName.Resolve(_services).ToString());
+
+			var model = _modelStack.Peek();
+			var clarifyGenericMap = new ClarifyGenericMapEntry
+			{
+				ClarifyGeneric = relationGeneric,
+				Model = new ModelInformation
+				{
+					ModelName = model.ModelName,
+					ParentProperty = model.ParentProperty,
+					IsCollection = model.IsCollection
+				}
+			};
+            parentClarifyGenericMap.AddChildGenericMap(clarifyGenericMap);
+            _genericStack.Push(clarifyGenericMap);
+        }
+
+        public void Visit(EndRelation instruction)
+        {
+            _genericStack.Pop();
+        }
+
+        public void Visit(BeginMappedProperty instruction)
+        {
+			var parentClarifyGenericMap = _genericStack.Peek();
+	        var key = instruction.Key.Resolve(_services).ToString();
+
+			var childModel = new ModelInformation
+	        {
+				ModelName = key,
+				ParentProperty = key
 			};
 
 			var clarifyGenericMap = new ClarifyGenericMapEntry
 			{
-				ClarifyGeneric = tableGeneric,
-				Model = _modelStack.Peek(),
-				NewRoot = subRootInformation
+				ClarifyGeneric = parentClarifyGenericMap.ClarifyGeneric,
+				Model = childModel
 			};
+
 			parentClarifyGenericMap.AddChildGenericMap(clarifyGenericMap);
 			_genericStack.Push(clarifyGenericMap);
-		}
 
-		private void validateAdhocRelation(BeginAdHocRelation beginAdHocRelation)
-		{
-			var currentTableName = getCurrentTableName();
+			_modelStack.Push(childModel);
+        }
 
-			if (!_schemaCache.IsValidField(currentTableName, beginAdHocRelation.FromTableField))
-				throw new ApplicationException("Cannot create an AdHocRelation from table {0} using invalid field {1}."
-					.ToFormat(currentTableName, beginAdHocRelation.FromTableField));
+        public void Visit(EndMappedProperty instruction)
+        {
+	        _genericStack.Pop();
+            _modelStack.Pop();
+        }
 
-			if (!_schemaCache.IsValidTableOrView(beginAdHocRelation.ToTableName))
-				throw new ApplicationException("Cannot create an AdHocRelation from table {0} to invalid table {1}."
-					.ToFormat(currentTableName, beginAdHocRelation.ToTableName));
-
-			if (!_schemaCache.IsValidField(beginAdHocRelation.ToTableName, beginAdHocRelation.ToTableFieldName))
-				throw new ApplicationException("Cannot create an AdHocRelation from table {0} to table {1} with invalid field {2}."
-					.ToFormat(currentTableName, beginAdHocRelation.ToTableName, beginAdHocRelation.ToTableFieldName));
-		}
-
-		private string getCurrentTableName()
-		{
-			return _genericStack.Peek().ClarifyGeneric.TableName;
-		}
-
-		public void Visit(BeginRelation beginRelation)
-		{
-			var parentClarifyGenericMap = _genericStack.Peek();
-			var relationGeneric = parentClarifyGenericMap.ClarifyGeneric.Traverse(beginRelation.RelationName);
-
-			var clarifyGenericMap = new ClarifyGenericMapEntry {ClarifyGeneric = relationGeneric, Model = _modelStack.Peek()};
-			parentClarifyGenericMap.AddChildGenericMap(clarifyGenericMap);
-			_genericStack.Push(clarifyGenericMap);
-		}
-
-		public void Visit(EndRelation endRelation)
-		{
-			_genericStack.Pop();
-		}
-
-		public void Visit(BeginMapMany beginMapMany)
-		{
-			// TODO -- verify parent Model type matches top of stack?
+        public void Visit(BeginMappedCollection instruction)
+        {
+	        var key = instruction.Key.Resolve(_services).ToString();
 			_modelStack.Push(new ModelInformation
+            {
+                ModelName = key,
+                ParentProperty = key,
+                IsCollection = true
+            });
+        }
+
+        public void Visit(EndMappedCollection instruction)
+        {
+            _modelStack.Pop();
+        }
+
+        public void Visit(FieldSortMap instruction)
+        {
+            var currentGeneric = _genericStack.Peek();
+            currentGeneric.ClarifyGeneric.AppendSort(instruction.Field.Resolve(_services).ToString(), instruction.IsAscending);
+        }
+
+        public void Visit(AddFilter instruction)
+        {
+            var currentGeneric = _genericStack.Peek();
+            currentGeneric.ClarifyGeneric.Filter.AddFilter(instruction.Filter);
+        }
+
+		public void Visit(BeginTransform instruction)
+		{
+			var name = instruction.Name.Resolve(_services).ToString();
+			if (!_registry.HasPolicy(name))
 			{
-				ModelType = beginMapMany.ChildModelType,
-				ParentProperty = beginMapMany.MappedProperty
-			});
+				throw new ModelMapException("Invalid transform: \"{0}\"".ToFormat(instruction.Name));
+			}
+
+			_transform = (IMappingTransform) FastYetSimpleTypeActivator.CreateInstance(_registry.FindPolicy(name));
 		}
 
-		public void Visit(EndMapMany endMapMany)
+		public void Visit(AddTransformArgument instruction)
 		{
-			_modelStack.Pop();
+			if (instruction.Value != null)
+			{
+				_arguments.Add(new ValueArgument(instruction.Name.Resolve(_services).ToString(), instruction.Value.Resolve(_services)));
+				return;
+			}
+
+			var field = instruction.Property.Resolve(_services).ToString();
+			_arguments.Add(new FieldArgument(instruction.Name.Resolve(_services).ToString(), ModelDataPath.Parse(field)));
 		}
 
-		public void Visit(FieldMap fieldMap)
+		public void Visit(RemoveProperty instruction)
 		{
-			//if (fieldMap.FieldValueMethod != null)
-			//{
-			//    var badFields = verifyFields(fieldMap.FieldNames);
-			//    if (badFields.Any())
-			//    {
-			//        throw new ApplicationException("Could not {0} : fields {1} were not valid.".ToFormat(fieldMap, String.Join(",", badFields.ToArray())));
-			//    }
-			//}
+		}
 
+		public void Visit(RemoveMappedProperty instruction)
+		{
+		}
+
+		public void Visit(RemoveMappedCollection instruction)
+		{
+		}
+
+		public void Visit(AddTag instruction)
+		{
+			var generic = _genericStack.Peek();
+			generic.AddTag(instruction.Tag);
+		}
+
+		public void Visit(EndTransform instruction)
+		{
+			var field = _propertyDef.Key;
+			var path = ModelDataPath.Parse(field);
 			var currentGeneric = _genericStack.Peek();
-			currentGeneric.ClarifyGeneric.DataFields.AddRange(fieldMap.FieldNames);
-			currentGeneric.AddFieldMap(fieldMap);
+
+			currentGeneric.AddTransform(new ConfiguredTransform(path, _transform, _arguments.ToArray(), _expander, _services));
+
+			_arguments.Clear();
 		}
 
-		//private IEnumerable<string> verifyFields(string[] fieldNames)
-		//{
-		//    if (fieldNames == null || !fieldNames.Any())
-		//        return new string[0];
-
-		//    var tableName = getCurrentTableName();
-
-		//    return fieldNames.Where(fieldName => fieldName.IsEmpty() || !_schemaCache.IsValidField(tableName, fieldName));
-		//}
-
-		public void Visit(EndModelMap endModelMap)
+		public void Visit(PushVariableContext instruction)
 		{
-			RootGenericMap = _genericStack.Peek();
+			_expander.PushContext(new VariableExpanderContext(null, instruction.Attributes.ToDictionary(_ => _.Key, _ => _.Value.Resolve(_services))));
 		}
 
-		public void Visit(FieldSortMap fieldSortMap)
+		public void Visit(PopVariableContext instruction)
 		{
-			//verifyFields(new[] { fieldSortMap.SchemaField });
-
-			var currentGeneric = _genericStack.Peek();
-			currentGeneric.ClarifyGeneric.AppendSort(fieldSortMap.FieldName, fieldSortMap.IsAscending);
-		}
-
-		public void Visit(AddFilter addFilter)
-		{
-			var currentGeneric = _genericStack.Peek();
-			currentGeneric.ClarifyGeneric.Filter.AddFilter(addFilter.Filter);
+			_expander.PopContext();
 		}
 	}
 }

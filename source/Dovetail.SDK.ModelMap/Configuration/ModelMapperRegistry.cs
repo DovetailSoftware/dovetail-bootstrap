@@ -1,8 +1,10 @@
 using Dovetail.SDK.Bootstrap.Configuration;
-using Dovetail.SDK.ModelMap.NewStuff;
-using Dovetail.SDK.ModelMap.NewStuff.Serialization;
+using Dovetail.SDK.ModelMap.Legacy;
+using Dovetail.SDK.ModelMap.Serialization;
 using StructureMap.Configuration.DSL;
 using StructureMap.Graph;
+using DovetailGenericModelMapVisitor = Dovetail.SDK.ModelMap.Legacy.DovetailGenericModelMapVisitor;
+using IModelMapVisitor = Dovetail.SDK.ModelMap.Legacy.IModelMapVisitor;
 
 namespace Dovetail.SDK.ModelMap.Configuration
 {

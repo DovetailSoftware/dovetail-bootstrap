@@ -1,7 +1,8 @@
 ﻿using Dovetail.SDK.Bootstrap.History;
 using Dovetail.SDK.Bootstrap.History.TemplatePolicies;
 using Dovetail.SDK.ModelMap;
-using Dovetail.SDK.ModelMap.Registration;
+using Dovetail.SDK.ModelMap.Legacy;
+using Dovetail.SDK.ModelMap.Legacy.Registration;
 using FubuCore;
 using FubuMVC.Core.Urls;
 

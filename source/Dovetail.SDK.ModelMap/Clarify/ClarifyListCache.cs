@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Dovetail.SDK.ModelMap.ObjectModel;
+using Dovetail.SDK.ModelMap.Legacy.ObjectModel;
 using FChoice.Foundation.Clarify;
 using FChoice.Foundation.Clarify.DataObjects;
 
