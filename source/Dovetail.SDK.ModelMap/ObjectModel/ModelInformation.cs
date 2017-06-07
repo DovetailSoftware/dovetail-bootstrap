@@ -9,6 +9,7 @@ namespace Dovetail.SDK.ModelMap.ObjectModel
 		public string ModelName { get; set; }
         public string ParentProperty { get; set; }
         public bool IsCollection { get; set; }
+		public bool AllowEmpty { get; set; }
 
 		public FieldMap[] FieldMaps
 		{

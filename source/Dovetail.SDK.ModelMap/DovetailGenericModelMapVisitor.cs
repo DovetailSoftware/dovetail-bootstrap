@@ -200,7 +200,8 @@ namespace Dovetail.SDK.ModelMap
 			var childModel = new ModelInformation
 	        {
 				ModelName = key,
-				ParentProperty = key
+				ParentProperty = key,
+				AllowEmpty = instruction.AllowEmpty
 			};
 
 			var clarifyGenericMap = new ClarifyGenericMapEntry

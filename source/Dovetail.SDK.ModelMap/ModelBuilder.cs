@@ -298,7 +298,7 @@ namespace Dovetail.SDK.ModelMap
 					var childModel = new ModelData { Name = childMap.Model.ModelName };
 					populateDTOForGenericRecord(childMap, parentRecord, childModel);
 
-					if (!childModel.IsEmpty())
+					if (!childModel.IsEmpty() || childMap.Model.AllowEmpty)
 						parentModel[childMap.Model.ParentProperty] = childModel;
 				}
 				else
@@ -310,7 +310,7 @@ namespace Dovetail.SDK.ModelMap
                         var childModel = new ModelData {Name = childMap.Model.ModelName};
                         populateDTOForGenericRecord(childMap, childRecord, childModel);
 
-						if (!childModel.IsEmpty())
+						if (!childModel.IsEmpty() || childMap.Model.AllowEmpty)
 							parentModel[childMap.Model.ParentProperty] = childModel;
                     }
                     else

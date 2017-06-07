@@ -5,6 +5,7 @@ namespace Dovetail.SDK.ModelMap.Instructions
     public class BeginMappedProperty : IModelMapInstruction, IEquatable<BeginMappedProperty>
     {
         public IDynamicValue Key { get; set; }
+		public bool AllowEmpty { get; set; }
 
         public void Accept(IModelMapVisitor visitor)
         {
