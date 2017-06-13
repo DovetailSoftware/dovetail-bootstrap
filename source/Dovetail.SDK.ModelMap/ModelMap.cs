@@ -236,7 +236,11 @@ namespace Dovetail.SDK.ModelMap
 				for (var i = 0; i < instructionsToAdd.Length; ++i)
 				{
 					var instruction = instructionsToAdd[i];
-					_instructions.Insert(index + i, instruction);
+					var targetIndex = index + i;
+					if (targetIndex > _instructions.Count)
+						_instructions.Add(instruction);
+					else
+						_instructions.Insert(index + i, instruction);
 				}
 
 				offset += instructionsToAdd.Length - 1;

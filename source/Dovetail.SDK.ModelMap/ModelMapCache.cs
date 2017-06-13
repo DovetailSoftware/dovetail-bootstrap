@@ -15,6 +15,7 @@ namespace Dovetail.SDK.ModelMap
 		private readonly IModelMapParser _parser;
 	    private readonly IModelMapOverrideParser _overrides;
         private readonly ModelMapSettings _settings;
+		private static readonly object Lock = new object();
 
         public ModelMapCache(IModelMapParser parser, IModelMapOverrideParser overrides, ModelMapSettings settings)
         {
@@ -65,29 +66,33 @@ namespace Dovetail.SDK.ModelMap
 
         private ModelMap[] findMaps(string include)
         {
-            var files = new FileSystem();
-            var mapFiles = files.FindFiles(_settings.Directory, new FileSet
-            {
-                Include = include,
-                DeepSearch = true
-            });
+	        lock (Lock)
+	        {
+		        var files = new FileSystem();
+		        var mapFiles = files.FindFiles(_settings.Directory, new FileSet
+		        {
+			        Include = include,
+			        DeepSearch = true
+		        });
 
-            var maps = mapFiles
-				.Where(_ => !_overrides.ShouldParse(_))
-				.Select(_ => _parser.Parse(_))
-                .ToArray();
+		        var maps = mapFiles
+			        .Where(_ => !_overrides.ShouldParse(_))
+			        .Select(_ => _parser.Parse(_))
+			        .ToArray();
 
-            var conflicts = maps.GroupBy(_ => _.Name).Where(_ => _.Count() > 1).ToArray();
-            if (conflicts.Any())
-                throw new ModelMapException("Multiple models found with the same name: " + conflicts.Select(_ => _.Key).Join(", "));
+		        var conflicts = maps.GroupBy(_ => _.Name).Where(_ => _.Count() > 1).ToArray();
+		        if (conflicts.Any())
+			        throw new ModelMapException("Multiple models found with the same name: " +
+			                                    conflicts.Select(_ => _.Key).Join(", "));
 
-			mapFiles
-				.Where(_ => _overrides.ShouldParse(_))
-				.Each(_ => maps
-							.Where(__ => _overrides.Matches(__, _))
-							.Each(__ => _overrides.Parse(__, _)));
+		        mapFiles
+			        .Where(_ => _overrides.ShouldParse(_))
+			        .Each(_ => maps
+				        .Where(__ => _overrides.Matches(__, _))
+				        .Each(__ => _overrides.Parse(__, _)));
 
-			return maps;
+		        return maps;
+	        }
         }
     }
 }
