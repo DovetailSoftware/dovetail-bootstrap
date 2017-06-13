@@ -237,11 +237,6 @@ namespace Dovetail.SDK.ModelMap
 
                 populateDTOForGenericRecord(genericMap, record, row);
 
-				//foreach (var transform in genericMap.Transforms)
-				//{
-				//	transform.Execute(row, _services);
-				//}
-
 	            genericMap.Tags.Each(_ => row.AddTag(_));
 
 	            if (!row.Has("entity") && genericMap.Entity.IsNotEmpty())
@@ -256,11 +251,6 @@ namespace Dovetail.SDK.ModelMap
         private void populateDTOForGenericRecord(ClarifyGenericMapEntry genericMap, ClarifyDataRow record, ModelData dto)
         {
             populateDTOWithFieldValues(genericMap, record, dto);
-
-//			foreach (var transform in genericMap.Transforms)
-//			{
-//				transform.Execute(dto, _services);
-//			}
 
 			populateDTOWithRelatedGenericRecords(genericMap, record, dto);
 
@@ -345,6 +335,8 @@ namespace Dovetail.SDK.ModelMap
                 var parentKeyField = childMap.NewRoot.ParentKeyField;
 
                 var childRecord = findRelatedSubRecord(parentRecord, parentKeyField, subRootGeneric, rootKeyField);
+	            if (childRecord == null)
+		            continue;
 
                 populateDTOForGenericRecord(childMap, childRecord, dto);
             }
@@ -355,11 +347,11 @@ namespace Dovetail.SDK.ModelMap
             if (_schema.IsIntegerField(parentRecord.ParentGeneric.TableName, parentKeyField))
             {
                 var parentKeyValue = Convert.ToInt32(parentRecord[parentKeyField]);
-                return subRootGeneric.Rows.Cast<ClarifyDataRow>().First(row => Convert.ToInt32(row[rootKeyField]) == parentKeyValue);
+                return subRootGeneric.Rows.Cast<ClarifyDataRow>().FirstOrDefault(row => Convert.ToInt32(row[rootKeyField]) == parentKeyValue);
             }
 
             var parentKeyString = parentRecord[parentKeyField].ToString();
-            return subRootGeneric.Rows.Cast<ClarifyDataRow>().First(row => row[rootKeyField].ToString() == parentKeyString);
+            return subRootGeneric.Rows.Cast<ClarifyDataRow>().FirstOrDefault(row => row[rootKeyField].ToString() == parentKeyString);
         }
 
         private void populateBasedOnRelatedGenerics(ModelData dto, IEnumerable<ClarifyGenericMapEntry> childMapsForDtoType,
