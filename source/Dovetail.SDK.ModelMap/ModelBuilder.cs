@@ -200,10 +200,6 @@ namespace Dovetail.SDK.ModelMap
                 return;
 
             var childSubRootMaps = parentGenericMap.ChildGenericMaps.Where(map => map.IsNewRoot()).ToArray();
-
-            if (!childSubRootMaps.Any())
-                return;
-
             foreach (var childGenericMap in childSubRootMaps)
             {
                 var parentKeyField = childGenericMap.NewRoot.ParentKeyField;
@@ -225,7 +221,9 @@ namespace Dovetail.SDK.ModelMap
 
                 traverseGenericsPopulatingSubRootMaps(childGenericMap);
             }
-        }
+
+			parentGenericMap.ChildGenericMaps.Where(map => !map.IsNewRoot()).Each(traverseGenericsPopulatingSubRootMaps);
+		}
 
         private ModelData[] createDtosForMap(ClarifyGenericMapEntry genericMap, IEnumerable<ClarifyDataRow> records)
         {
