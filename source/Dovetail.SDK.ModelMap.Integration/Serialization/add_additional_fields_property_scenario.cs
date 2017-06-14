@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace Dovetail.SDK.ModelMap.Integration.Serialization
 {
 	[TestFixture]
-	public class add_nested_mapped_property_scenario
+	public class add_additional_fields_property_scenario
 	{
 		private ModelMapParsingScenario theScenario;
 
@@ -14,7 +14,7 @@ namespace Dovetail.SDK.ModelMap.Integration.Serialization
 			theScenario = ModelMapParsingScenario.Create(_ =>
 			{
 				_.UseFile("advanced-case.map.config");
-				_.UseFile("add-nested-mapped-property.map.config");
+				_.UseFile("add-additional-fields-property.map.config");
 				_.UseFile("site.partial.config");
 			});
 		}
@@ -24,8 +24,15 @@ namespace Dovetail.SDK.ModelMap.Integration.Serialization
 		{
 			VerifyInstructions.Assert(theScenario.Instructions, _  =>
 			{
+
 				_.Get<BeginModelMap>().Name.ShouldEqual("test");
 				_.Get<BeginView>().ViewName.ShouldEqual("qry_case_view");
+
+				_.Get<BeginMappedProperty>().Key.ShouldEqual("additionalFields");
+				_.Get<BeginProperty>().Key.ShouldEqual("customField");
+				_.Get<EndProperty>();
+				_.Get<EndMappedProperty>();
+
 				_.Get<BeginProperty>().Key.ShouldEqual("id");
 				_.Get<EndProperty>();
 
@@ -49,29 +56,24 @@ namespace Dovetail.SDK.ModelMap.Integration.Serialization
 					__.ToTableFieldName.ShouldEqual("objid");
 				});
 
-				_.Verify<BeginMappedProperty>(__ => __.Key.ShouldEqual("currentQueue"));
-				_.Verify<BeginRelation>(__ => __.RelationName.ShouldEqual("case_currq2queue"));
 				_.Get<BeginProperty>().Key.ShouldEqual("id");
 				_.Get<EndProperty>();
-				_.Get<BeginProperty>().Key.ShouldEqual("title");
-				_.Get<EndProperty>();
-				_.Get<EndRelation>();
-				_.Get<EndMappedProperty>();
-
-				_.Get<BeginProperty>().Key.ShouldEqual("id");
-				_.Is<EndProperty>();
 
 				_.Get<BeginProperty>().Key.ShouldEqual("lastModified");
-				_.Is<EndProperty>();
+				_.Get<EndProperty>();
 
+				_.Verify<BeginRelation>(__ => __.RelationName.ShouldEqual("case_currq2queue"));
+				_.Get<BeginProperty>().Key.ShouldEqual("inQueue");
+				_.Get<EndProperty>();
+				_.Get<EndRelation>();
 
 				_.Is<PushVariableContext>();
 				_.Get<BeginMappedProperty>().Key.ShouldEqual("site");
 				_.Verify<BeginRelation>(__ => __.RelationName.ShouldEqual("${relationName}"));
 				_.Get<BeginProperty>().Key.ShouldEqual("id");
-				_.Is<EndProperty>();
-				_.Is<EndRelation>();
-				_.Is<EndMappedProperty>();
+				_.Get<EndProperty>();
+				_.Get<EndRelation>();
+				_.Get<EndMappedProperty>();
 				_.Is<PopVariableContext>();
 
 				_.Get<BeginMappedCollection>().Key.ShouldEqual("attachments");
@@ -90,32 +92,32 @@ namespace Dovetail.SDK.ModelMap.Integration.Serialization
 
 				_.Verify<BeginRelation>(__ => __.RelationName.ShouldEqual("attach_info2doc_path"));
 				_.Get<BeginProperty>().Key.ShouldEqual("fileIcon");
-				_.Is<EndProperty>();
-				_.Is<EndRelation>();
+				_.Get<EndProperty>();
+				_.Get<EndRelation>();
 
 				_.Verify<BeginRelation>(__ => __.RelationName.ShouldEqual("doc_inst2act_entry"));
 				_.Get<BeginProperty>().Key.ShouldEqual("uploaded");
-				_.Is<EndProperty>();
+				_.Get<EndProperty>();
 				_.Get<BeginMappedProperty>().Key.ShouldEqual("uploader");
 				_.Verify<BeginRelation>(__ => __.RelationName.ShouldEqual("act_entry2user"));
 				_.Get<BeginProperty>().Key.ShouldEqual("login");
-				_.Is<EndProperty>();
+				_.Get<EndProperty>();
 				_.Verify<BeginRelation>(__ => __.RelationName.ShouldEqual("user2employee"));
 				_.Get<BeginProperty>().Key.ShouldEqual("firstName");
-				_.Is<EndProperty>();
+				_.Get<EndProperty>();
 				_.Get<BeginProperty>().Key.ShouldEqual("lastName");
-				_.Is<EndProperty>();
-				_.Is<EndRelation>();
-				_.Is<EndRelation>();
+				_.Get<EndProperty>();
+				_.Get<EndRelation>();
+				_.Get<EndRelation>();
 				_.Get<EndMappedProperty>();
-				_.Is<EndRelation>();
+				_.Get<EndRelation>();
 
-				_.Is<EndRelation>();
-				_.Is<EndMappedCollection>();
-				_.Is<EndRelation>();
+				_.Get<EndRelation>();
+				_.Get<EndMappedCollection>();
+				_.Get<EndRelation>();
 
-				_.Is<EndView>();
-				_.Is<EndModelMap>();
+				_.Get<EndView>();
+				_.Get<EndModelMap>();
 			});
 			
 

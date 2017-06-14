@@ -116,7 +116,7 @@ namespace Dovetail.SDK.ModelMap.Serialization.Overrides
 					}
 					else
 					{
-						targetIndex += 1;
+						//targetIndex += 1;
 					}
 				}
 
