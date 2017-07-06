@@ -14,14 +14,16 @@ namespace Dovetail.SDK.ModelMap
 	    private bool _visiting;
 		private readonly IModelMapParser _parser;
 	    private readonly IModelMapOverrideParser _overrides;
-        private readonly ModelMapSettings _settings;
+	    private readonly IModelMapReplacementParser _replacements;
+		private readonly ModelMapSettings _settings;
 		private static readonly object Lock = new object();
 
-        public ModelMapCache(IModelMapParser parser, IModelMapOverrideParser overrides, ModelMapSettings settings)
+        public ModelMapCache(IModelMapParser parser, IModelMapOverrideParser overrides, IModelMapReplacementParser replacements, ModelMapSettings settings)
         {
             _parser = parser;
 	        _overrides = overrides;
 	        _settings = settings;
+	        _replacements = replacements;
 
 	        Clear();
         }
@@ -73,10 +75,10 @@ namespace Dovetail.SDK.ModelMap
 		        {
 			        Include = include,
 			        DeepSearch = true
-		        });
+		        }).ToArray();
 
 		        var maps = mapFiles
-			        .Where(_ => !_overrides.ShouldParse(_))
+			        .Where(_ => !_overrides.ShouldParse(_) && !_replacements.ShouldParse(_))
 			        .Select(_ => _parser.Parse(_))
 			        .ToArray();
 
@@ -91,7 +93,13 @@ namespace Dovetail.SDK.ModelMap
 				        .Where(__ => _overrides.Matches(__, _))
 				        .Each(__ => _overrides.Parse(__, _)));
 
-		        return maps;
+				mapFiles
+				   .Where(_ => _replacements.ShouldParse(_))
+				   .Each(_ => maps
+					   .Where(__ => _replacements.Matches(__, _))
+					   .Each(__ => _replacements.Parse(__, _)));
+
+				return maps;
 	        }
         }
     }

@@ -153,6 +153,8 @@
     <Compile Include="Instructions\RemoveProperty.cs" />
     <Compile Include="IPaginationResult.cs" />
     <Compile Include="MapEntryBuilder.cs" />
+    <Compile Include="Serialization\Overrides\IModelMapReplacementParser.cs" />
+    <Compile Include="Serialization\Overrides\ModelMapReplacementParser.cs" />
     <Compile Include="VariableExpanderContext.cs" />
     <Compile Include="MappingVariableExpander.cs" />
     <Compile Include="MappingVariableRegistry.cs" />

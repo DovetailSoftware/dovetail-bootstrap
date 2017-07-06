@@ -60,9 +60,10 @@ namespace Dovetail.SDK.ModelMap.Integration.Serialization
 			var elementService = new XElementService(visitors);
 			var parser = new ModelMapParser(services, elementService, logger);
 			var overrides = new ModelMapOverrideParser(parser, new ModelMapDiff());
+			var replacements = new ModelMapReplacementParser(parser);
 
 			var settings = new ModelMapSettings { Directory = _tempPath };
-			var cache = new ModelMapCache(parser, overrides, settings);
+			var cache = new ModelMapCache(parser, overrides, replacements, settings);
 
 			return cache.Maps().Single();
 		}

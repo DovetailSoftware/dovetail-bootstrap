@@ -90,6 +90,7 @@
   <ItemGroup>
     <Compile Include="Legacy\Assembling_dtos.cs" />
     <Compile Include="Serialization\add_additional_fields_property_scenario.cs" />
+    <Compile Include="Serialization\replacement_scenario.cs" />
     <Compile Include="VerifyInstructions.cs" />
     <Compile Include="DynamicValueTester.cs" />
     <Compile Include="MappingVariableExpanderTester.cs" />
@@ -171,6 +172,7 @@
       <SubType>Designer</SubType>
     </None>
     <EmbeddedResource Include="Serialization\add-additional-fields-property.map.config" />
+    <EmbeddedResource Include="Serialization\replacement.map.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="User\" />

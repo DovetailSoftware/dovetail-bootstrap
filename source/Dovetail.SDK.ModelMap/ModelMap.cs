@@ -61,6 +61,12 @@ namespace Dovetail.SDK.ModelMap
             _instructions.Each(_ => _.Accept(visitor));
         }
 
+		public void ReplaceWith(ModelMap map)
+		{
+			_instructions.Clear();
+			map._instructions.Each(_ => _instructions.Add(_));
+		}
+
 		public InstructionSet FindProperty(string key, int startIndex)
 		{
 			var instructions = new List<IModelMapInstruction>();
