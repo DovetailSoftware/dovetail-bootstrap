@@ -48,22 +48,27 @@ namespace Dovetail.SDK.ModelMap
         {
 			if (_visiting) return;
 
-			_visiting = true;
-
-			_maps = new Lazy<ModelMap[]>(() => findMaps("*.map.config"));
-			_partials = new Lazy<ModelMap[]>(() => findMaps("*.partial.config"));
-
-			foreach (var map in _partials.Value)
+			try
 			{
-				map.As<IExpandableMap>().Expand(this);
-			}
+				_visiting = true;
 
-			foreach (var map in _maps.Value)
+				_maps = new Lazy<ModelMap[]>(() => findMaps("*.map.config"));
+				_partials = new Lazy<ModelMap[]>(() => findMaps("*.partial.config"));
+
+				foreach (var map in _partials.Value)
+				{
+					map.As<IExpandableMap>().Expand(this);
+				}
+
+				foreach (var map in _maps.Value)
+				{
+					map.As<IExpandableMap>().Expand(this);
+				}
+			}
+			finally
 			{
-				map.As<IExpandableMap>().Expand(this);
+				_visiting = false;
 			}
-
-			_visiting = false;
         }
 
         private ModelMap[] findMaps(string include)
