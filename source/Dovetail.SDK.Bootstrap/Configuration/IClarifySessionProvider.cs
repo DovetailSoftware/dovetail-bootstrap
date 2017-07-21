@@ -20,7 +20,7 @@ namespace Dovetail.SDK.Bootstrap.Configuration
 
 		public IClarifySession CreateSession()
 		{
-			return _sessions.GetSession(_sdkUser.Username);
+			return new ClarifySessionProxy(_sdkUser.Username, _sessions);
 		}
 	}
 }

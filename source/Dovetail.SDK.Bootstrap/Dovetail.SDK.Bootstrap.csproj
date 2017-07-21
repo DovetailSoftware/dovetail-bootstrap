@@ -105,6 +105,7 @@
     <Compile Include="Authentication\SecurityModule.cs" />
     <Compile Include="Authentication\UserAuthenticator.cs" />
     <Compile Include="Authentication\UserSessionEndObserver.cs" />
+    <Compile Include="Clarify\ClarifySessionProxy.cs" />
     <Compile Include="Clarify\ClarifySessionUsage.cs" />
     <Compile Include="Clarify\ClarifySessionUsageReporter.cs" />
     <Compile Include="Clarify\IWorkflowObjectMetadata.cs" />

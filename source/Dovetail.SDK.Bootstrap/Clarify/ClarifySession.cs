@@ -30,7 +30,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		void Close();
 	}
 
-	public class ClarifySessionWrapper : IApplicationClarifySession
+	public class ClarifySessionWrapper : IApplicationClarifySession, IClarifySessionProxy
 	{
 		public ClarifySessionWrapper(ClarifySession clarifySession)
 		{
@@ -115,5 +115,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		{
 			ClarifySession.CloseSession();
 		}
+
+		ClarifySession IClarifySessionProxy.Session { get { return ClarifySession; } }
 	}
 }
