@@ -26,6 +26,10 @@ namespace Dovetail.SDK.ModelMap.Integration.Serialization
 			{
 				_.Get<BeginModelMap>().Name.ShouldEqual("test");
 				_.Get<BeginView>().ViewName.ShouldEqual("qry_case_view");
+
+				_.Get<BeginProperty>().Key.ShouldEqual("anotherProperty");
+				_.Get<EndProperty>();
+
 				_.Get<BeginProperty>().Key.ShouldEqual("id");
 				_.Get<EndProperty>();
 
@@ -116,7 +120,7 @@ namespace Dovetail.SDK.ModelMap.Integration.Serialization
 				_.Get<EndModelMap>();
 			});
 
-			theScenario.Instructions.Length.ShouldEqual(65);
+			theScenario.Instructions.Length.ShouldEqual(67);
 		}
 
 		[TearDown]

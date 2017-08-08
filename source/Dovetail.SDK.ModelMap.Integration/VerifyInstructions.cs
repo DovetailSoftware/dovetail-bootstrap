@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using Dovetail.SDK.ModelMap.Instructions;
 using FubuCore;
 
@@ -27,8 +29,19 @@ namespace Dovetail.SDK.ModelMap.Integration
 			public TInstruction Get<TInstruction>() where TInstruction : IModelMapInstruction
 			{
 				var instruction = _instructions[_index];
-				_index++;
+				if (!(instruction is TInstruction))
+				{
+					Debug.WriteLine("({0}) cannot be cast to {1} at index {2}".ToFormat(instruction, typeof(TInstruction).Name, _index));
+					
+					var map = new StringBuilder();
+					map.AppendLine("Dumping instruction set:");
+					for (var i = 0; i < _instructions.Length; ++i)
+						map.AppendLine("\t{0}: {1} ({2})".ToFormat(i, _instructions[i].GetType().Name, _instructions[i]));
 
+					Debug.WriteLine(map);
+				}
+
+				_index++;
 				return instruction.As<TInstruction>();
 			}
 

@@ -104,19 +104,15 @@ namespace Dovetail.SDK.ModelMap.Serialization.Overrides
 			var targetIndex = -1;
 			var instructionsToAdd = new List<IModelMapInstruction>();
 			var contexts = new Stack<IModelMapInstruction>();
-			var mapInstructions = map.Instructions.ToList();
 			foreach (var instruction in overrides.Instructions.Where(_ => _.GetType() != typeof(Instructions.RemoveProperty)).ToArray())
 			{
+				var mapInstructions = map.Instructions.ToList();
 				if (shouldOffset(instruction))
 				{
 					var i = mapInstructions.IndexOf(instruction);
 					if (i != -1)
 					{
 						targetIndex = i + 1;
-					}
-					else
-					{
-						//targetIndex += 1;
 					}
 				}
 
