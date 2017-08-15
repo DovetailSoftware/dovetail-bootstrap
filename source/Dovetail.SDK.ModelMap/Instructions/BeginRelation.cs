@@ -1,10 +1,25 @@
 ﻿using System;
+using FubuCore;
 
 namespace Dovetail.SDK.ModelMap.Instructions
 {
     public class BeginRelation : IModelMapInstruction, IEquatable<BeginRelation>
     {
-        public IDynamicValue RelationName { get; set; }
+		private string _key;
+
+		public string Key
+		{
+			get
+			{
+				if (_key.IsNotEmpty())
+					return _key;
+
+				return RelationName.Resolve(null).ToString();
+			}
+			set { _key = value; }
+		}
+
+		public IDynamicValue RelationName { get; set; }
 
         public void Accept(IModelMapVisitor visitor)
         {
@@ -15,7 +30,7 @@ namespace Dovetail.SDK.ModelMap.Instructions
 	    {
 		    if (ReferenceEquals(null, other)) return false;
 		    if (ReferenceEquals(this, other)) return true;
-		    return RelationName.Equals(other.RelationName);
+		    return Key.Equals(other.Key);
 	    }
 
 	    public override bool Equals(object obj)
@@ -28,7 +43,7 @@ namespace Dovetail.SDK.ModelMap.Instructions
 
 	    public override int GetHashCode()
 	    {
-		    return RelationName.GetHashCode();
+		    return Key.GetHashCode();
 	    }
 
 	    public static bool operator ==(BeginRelation left, BeginRelation right)

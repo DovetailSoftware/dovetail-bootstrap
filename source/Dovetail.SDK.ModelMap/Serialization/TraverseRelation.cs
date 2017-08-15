@@ -20,12 +20,13 @@ namespace Dovetail.SDK.ModelMap.Serialization
                 {
                     FromTableField = relationshipDef.Field,
                     ToTableFieldName = relationshipDef.TargetField,
-                    ToTableName = relationshipDef.Table
+                    ToTableName = relationshipDef.Table,
+					Key = relationshipDef.Key
                 });
                 return;
             }
 
-            map.AddInstruction(new BeginRelation {  RelationName = relationshipDef.Name });
+            map.AddInstruction(new BeginRelation {  RelationName = relationshipDef.Name, Key = relationshipDef.Key });
         }
 
         public void ChildrenBound(ModelMap map, ParsingContext context)
@@ -40,6 +41,7 @@ namespace Dovetail.SDK.ModelMap.Serialization
             public IDynamicValue Field { get; set; }
             public IDynamicValue Table { get; set; }
             public IDynamicValue TargetField { get; set; }
+			public string Key { get; set; }
 
             public bool IsAdhoc
             {

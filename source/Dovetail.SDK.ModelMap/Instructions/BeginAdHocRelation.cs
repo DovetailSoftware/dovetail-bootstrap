@@ -1,7 +1,23 @@
-﻿namespace Dovetail.SDK.ModelMap.Instructions
+﻿using FubuCore;
+
+namespace Dovetail.SDK.ModelMap.Instructions
 {
     public class BeginAdHocRelation : IModelMapInstruction
     {
+	    private string _key;
+
+	    public string Key
+	    {
+		    get
+		    {
+			    if (_key.IsNotEmpty())
+				    return _key;
+
+			    return "From={0};To={1}&Field={2};".ToFormat(FromTableField.Resolve(null), ToTableName.Resolve(null), ToTableFieldName.Resolve(null));
+		    }
+			set { _key = value; }
+	    }
+
         public IDynamicValue FromTableField { get; set; }
         public IDynamicValue ToTableName { get; set; }
         public IDynamicValue ToTableFieldName { get; set; }
@@ -13,7 +29,7 @@
 
 	    protected bool Equals(BeginAdHocRelation other)
 	    {
-		    return FromTableField.Equals(other.FromTableField) && ToTableName.Equals(other.ToTableName) && ToTableFieldName.Equals(other.ToTableFieldName);
+		    return Key.Equals(other.Key);
 	    }
 
 	    public override bool Equals(object obj)
@@ -26,13 +42,7 @@
 
 	    public override int GetHashCode()
 	    {
-		    unchecked
-		    {
-			    var hashCode = FromTableField.GetHashCode();
-			    hashCode = (hashCode*397) ^ ToTableName.GetHashCode();
-			    hashCode = (hashCode*397) ^ ToTableFieldName.GetHashCode();
-			    return hashCode;
-		    }
+		    return Key.GetHashCode();
 	    }
 
 	    public static bool operator ==(BeginAdHocRelation left, BeginAdHocRelation right)
