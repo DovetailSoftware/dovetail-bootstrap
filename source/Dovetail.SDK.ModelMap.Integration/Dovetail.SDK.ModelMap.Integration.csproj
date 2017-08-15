@@ -90,6 +90,7 @@
   <ItemGroup>
     <Compile Include="Legacy\Assembling_dtos.cs" />
     <Compile Include="Serialization\add_additional_fields_property_scenario.cs" />
+    <Compile Include="Serialization\partial_overrides_scenario.cs" />
     <Compile Include="Serialization\replacement_scenario.cs" />
     <Compile Include="VerifyInstructions.cs" />
     <Compile Include="DynamicValueTester.cs" />
@@ -173,6 +174,7 @@
     </None>
     <EmbeddedResource Include="Serialization\add-additional-fields-property.map.config" />
     <EmbeddedResource Include="Serialization\replacement.map.config" />
+    <EmbeddedResource Include="Serialization\site.overrides.partial.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="User\" />

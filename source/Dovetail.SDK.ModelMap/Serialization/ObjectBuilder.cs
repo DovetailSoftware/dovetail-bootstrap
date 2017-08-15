@@ -1,5 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using FubuCore;
+using FubuCore.Reflection;
 
 namespace Dovetail.SDK.ModelMap.Serialization
 {
@@ -21,16 +25,17 @@ namespace Dovetail.SDK.ModelMap.Serialization
             if (parameters.Any())
             {
                 parameters
-                    .Where(_ => !context.Has(_.Name))
+                    .Where(_ => !context.Has(_.Name) && !(_.ParameterType.IsArray && _.HasAttribute<ParamArrayAttribute>()))
                     .Each(_ => result.AddError(_.Name, "Missing required parameter"));
 
                 if (result.HasErrors())
                     return result;
 
                 parameters
-                    .Select(_ => new
+					.Where(_ => !(_.ParameterType.IsArray && _.HasAttribute<ParamArrayAttribute>()))
+					.Select(_ => new
                     {
-                        Name = _.Name,
+                        _.Name,
                         Value = context.GetValue(_.Name, _.ParameterType)
                     })
                     .Each(_ =>
@@ -38,6 +43,14 @@ namespace Dovetail.SDK.ModelMap.Serialization
                         usedValues.Add(_.Name.ToLower());
                         arguments.Add(_.Value);
                     });
+
+	            if (parameters.Any(_ => _.ParameterType.IsArray && _.HasAttribute<ParamArrayAttribute>()))
+	            {
+		            var param = parameters.First(_ => _.ParameterType.IsArray && _.HasAttribute<ParamArrayAttribute>());
+		            var type = param.ParameterType.FindInterfaceThatCloses(typeof(IEnumerable<>)).GetGenericArguments()[0];
+		            var builder = typeof(ParamsBuilder<>).CloseAndBuildAs<IParamsBuilder>(type);
+					arguments.Add(builder.BuildParams(context));
+	            }
             }
 
             var target = constructor.Invoke(arguments.ToArray());
@@ -55,5 +68,18 @@ namespace Dovetail.SDK.ModelMap.Serialization
             result.Result = target;
             return result;
         }
+
+	    private interface IParamsBuilder
+	    {
+		    object BuildParams(BuildObjectContext context);
+	    }
+
+	    private class ParamsBuilder<T> : IParamsBuilder
+	    {
+		    public object BuildParams(BuildObjectContext context)
+		    {
+			    return context.GetParamValues<T>().ToArray();
+		    }
+	    }
     }
 }

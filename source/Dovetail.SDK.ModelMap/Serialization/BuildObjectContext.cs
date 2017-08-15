@@ -36,5 +36,23 @@ namespace Dovetail.SDK.ModelMap.Serialization
 
             return value;
         }
+
+	    public IEnumerable<T> GetParamValues<T>()
+	    {
+		    var values = new List<T>();
+			var keys = new List<string>();
+		    _values.Each(pair =>
+		    {
+			    if (!pair.Key.ToLower().StartsWith("param"))
+				    return;
+
+				keys.Add(pair.Key);
+			});
+
+			keys.Sort();
+		    keys.Each(_ => values.Add((T) GetValue(_, typeof(T))));
+
+		    return values;
+	    }
     }
 }
