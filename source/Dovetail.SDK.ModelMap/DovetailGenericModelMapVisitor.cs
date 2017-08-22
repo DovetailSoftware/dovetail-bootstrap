@@ -105,7 +105,7 @@ namespace Dovetail.SDK.ModelMap
             {
                 Key = key,
                 FieldNames = new [] { instruction.Field.Resolve(_services).ToString() },
-                IsIdentifier = instruction.PropertyType == "identifier",
+                IsIdentifier = instruction.IsIdentifier,
                 PropertyType = PropertyTypes.Parse(instruction.DataType.Resolve(_services).ToString())
             };
         }

@@ -7,6 +7,11 @@
         public IDynamicValue DataType { get; set; }
         public string PropertyType { get; set; }
 
+	    public bool IsIdentifier
+	    {
+		    get { return PropertyType == "identifier"; }
+	    }
+
         public void Accept(IModelMapVisitor visitor)
         {
             visitor.Visit(this);

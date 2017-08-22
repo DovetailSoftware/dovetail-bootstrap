@@ -85,6 +85,7 @@
     <Compile Include="Clarify\IClarifyListElement.cs" />
     <Compile Include="Clarify\UserDefinedList.cs" />
     <Compile Include="Configuration\ModelMapperRegistry.cs" />
+    <Compile Include="IModelMapQuery.cs" />
     <Compile Include="Legacy\DovetailGenericModelMapVisitor.cs" />
     <Compile Include="Legacy\DovetailMappingException.cs" />
     <Compile Include="Extensions\MappingExtensions.cs" />
@@ -153,6 +154,8 @@
     <Compile Include="Instructions\RemoveProperty.cs" />
     <Compile Include="IPaginationResult.cs" />
     <Compile Include="MapEntryBuilder.cs" />
+    <Compile Include="ModelInspectorVisitor.cs" />
+    <Compile Include="ModelMapProperty.cs" />
     <Compile Include="Serialization\Filters\IsInPolicy.cs" />
     <Compile Include="Serialization\Overrides\IModelMapReplacementParser.cs" />
     <Compile Include="Serialization\Overrides\ModelMapReplacementParser.cs" />
