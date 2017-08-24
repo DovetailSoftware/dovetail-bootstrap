@@ -60,7 +60,7 @@ namespace Dovetail.SDK.Bootstrap.History.AssemblerPolicies
 
 			var results = subcaseHistories.Concat(caseHistory);
 
-			return results.OrderByDescending(r => r.When);
+			return results.OrderByDescending(r => r.When).ThenByDescending(r => r.DatabaseIdentifier);
 		}
 
 		private IEnumerable<string> GetSubcaseIds(WorkflowObject workflowObject)
