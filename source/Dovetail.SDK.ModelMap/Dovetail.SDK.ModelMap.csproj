@@ -155,6 +155,7 @@
     <Compile Include="IPaginationResult.cs" />
     <Compile Include="MapEntryBuilder.cs" />
     <Compile Include="ModelInspectorVisitor.cs" />
+    <Compile Include="ModelMapManager.cs" />
     <Compile Include="ModelMapProperty.cs" />
     <Compile Include="Serialization\Filters\IsInPolicy.cs" />
     <Compile Include="Serialization\Overrides\IModelMapReplacementParser.cs" />

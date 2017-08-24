@@ -30,17 +30,11 @@ namespace Dovetail.SDK.ModelMap
 
         public IEnumerable<ModelMap> Maps()
         {
-            if (!_settings.EnableCache)
-                Clear();
-
 			return _maps.Value;
         }
 
 		public IEnumerable<ModelMap> Partials()
 		{
-			if (!_settings.EnableCache)
-				Clear();
-
 			return _partials.Value;
 		}
 
