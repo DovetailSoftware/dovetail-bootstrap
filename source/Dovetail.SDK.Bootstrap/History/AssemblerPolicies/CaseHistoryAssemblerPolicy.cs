@@ -30,21 +30,22 @@ namespace Dovetail.SDK.Bootstrap.History.AssemblerPolicies
 
 		public IEnumerable<HistoryItem> BuildHistory(HistoryRequest request)
 		{
+			var caseHistory = _historyBuilder.Build(request).OrderByDescending(r => r.When).ThenByDescending(r => r.DatabaseIdentifier);
+
 			if (!_historySettings.MergeCaseHistoryChildSubcases)
 			{
-				return _historyBuilder.Build(request);
+				return caseHistory;
 			}
 
 			_logger.LogDebug("Build merged history for case {0}", request.WorkflowObject.Id);
 
 			var subcaseIds = GetSubcaseIds(request.WorkflowObject).ToArray();
 
-			var caseHistory = _historyBuilder.Build(request);
-
 			if (!subcaseIds.Any())
 			{
 				return caseHistory;
 			}
+
 			var subcaseWorkflowObject = new WorkflowObject {Type = WorkflowObject.Subcase, Id = subcaseIds.First(), IsChild = true};
 			var subcaseHistoryRequest = new HistoryRequest
 			{
