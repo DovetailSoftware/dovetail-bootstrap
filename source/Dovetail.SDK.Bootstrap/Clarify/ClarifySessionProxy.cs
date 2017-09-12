@@ -2,8 +2,13 @@
 using System.Collections.Generic;
 using FChoice.Common.Data;
 using FChoice.Foundation.Clarify;
+using FChoice.Toolkits.Clarify.Contracts;
+using FChoice.Toolkits.Clarify.DepotRepair;
 using FChoice.Toolkits.Clarify.FieldOps;
 using FChoice.Toolkits.Clarify.Interfaces;
+using FChoice.Toolkits.Clarify.Logistics;
+using FChoice.Toolkits.Clarify.Quality;
+using FChoice.Toolkits.Clarify.Sales;
 using FChoice.Toolkits.Clarify.Support;
 using FubuCore;
 
@@ -16,18 +21,18 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 
 	public class ClarifySessionProxy : IClarifySession, IClarifySessionProxy
 	{
-		private readonly string _username;
+		private readonly ICurrentSDKUser _user;
 		private readonly IClarifySessionCache _cache;
 
-		public ClarifySessionProxy(string username, IClarifySessionCache cache)
+		public ClarifySessionProxy(ICurrentSDKUser user, IClarifySessionCache cache)
 		{
-			_username = username;
+			_user = user;
 			_cache = cache;
 		}
 
 		private IClarifySession session
 		{
-			get { return _cache.GetSession(_username); }
+			get { return _cache.GetSession(_user.Username); }
 		}
 
 		public Guid Id { get { return session.Id; } }
@@ -43,19 +48,76 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 			return session.CreateDataSet();
 		}
 
+		public ContractsToolkit CreateContractsToolkit()
+		{
+			var toolkit = session.CreateContractsToolkit();
+			if (_user.ImpersonatingUsername.IsNotEmpty())
+				toolkit.ImpersonatorUsername = _user.ImpersonatingUsername;
+
+			return toolkit;
+		}
+
+		public DepotRepairToolkit CreateDepotRepairToolkit()
+		{
+			var toolkit = session.CreateDepotRepairToolkit();
+			if (_user.ImpersonatingUsername.IsNotEmpty())
+				toolkit.ImpersonatorUsername = _user.ImpersonatingUsername;
+
+			return toolkit;
+		}
+
+		public SalesToolkit CreateSalesToolkit()
+		{
+			var toolkit = session.CreateSalesToolkit();
+			if (_user.ImpersonatingUsername.IsNotEmpty())
+				toolkit.ImpersonatorUsername = _user.ImpersonatingUsername;
+
+			return toolkit;
+		}
+
 		public SupportToolkit CreateSupportToolkit()
 		{
-			return session.CreateSupportToolkit();
+			var toolkit = session.CreateSupportToolkit();
+			if (_user.ImpersonatingUsername.IsNotEmpty())
+				toolkit.ImpersonatorUsername = _user.ImpersonatingUsername;
+
+			return toolkit;
 		}
 
 		public FieldOpsToolkit CreateFieldOpsToolkit()
 		{
-			return session.CreateFieldOpsToolkit();
+			var toolkit = session.CreateFieldOpsToolkit();
+			if (_user.ImpersonatingUsername.IsNotEmpty())
+				toolkit.ImpersonatorUsername = _user.ImpersonatingUsername;
+
+			return toolkit;
 		}
 
 		public InterfacesToolkit CreateInterfacesToolkit()
 		{
-			return session.CreateInterfacesToolkit();
+			var toolkit = session.CreateInterfacesToolkit();
+			if (_user.ImpersonatingUsername.IsNotEmpty())
+				toolkit.ImpersonatorUsername = _user.ImpersonatingUsername;
+
+			return toolkit;
+		}
+
+		public LogisticsToolkit CreateLogisticsToolkit()
+		{
+			var toolkit = session.CreateLogisticsToolkit();
+			if (_user.ImpersonatingUsername.IsNotEmpty())
+				toolkit.ImpersonatorUsername = _user.ImpersonatingUsername;
+
+			return toolkit;
+		}
+
+		public QualityToolkit CreateQualityToolkit()
+		{
+			var toolkit = session.CreateQualityToolkit();
+			if (_user.ImpersonatingUsername.IsNotEmpty())
+				toolkit.ImpersonatorUsername = _user.ImpersonatingUsername;
+
+			return toolkit;
 		}
 
 		public SqlHelper CreateSqlHelper(string sql)

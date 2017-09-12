@@ -2,8 +2,13 @@ using System;
 using System.Collections.Generic;
 using FChoice.Common.Data;
 using FChoice.Foundation.Clarify;
+using FChoice.Toolkits.Clarify.Contracts;
+using FChoice.Toolkits.Clarify.DepotRepair;
 using FChoice.Toolkits.Clarify.FieldOps;
 using FChoice.Toolkits.Clarify.Interfaces;
+using FChoice.Toolkits.Clarify.Logistics;
+using FChoice.Toolkits.Clarify.Quality;
+using FChoice.Toolkits.Clarify.Sales;
 using FChoice.Toolkits.Clarify.Support;
 
 namespace Dovetail.SDK.Bootstrap.Clarify
@@ -20,9 +25,17 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		int SessionUserID { get; }
 		string SessionEmployeeSiteID { get; }
 		ClarifyDataSet CreateDataSet();
-		SupportToolkit CreateSupportToolkit();
+
+		ContractsToolkit CreateContractsToolkit();
+		DepotRepairToolkit CreateDepotRepairToolkit();
 		FieldOpsToolkit CreateFieldOpsToolkit();
 		InterfacesToolkit CreateInterfacesToolkit();
+		LogisticsToolkit CreateLogisticsToolkit();
+		QualityToolkit CreateQualityToolkit();
+		SalesToolkit CreateSalesToolkit();
+		SupportToolkit CreateSupportToolkit();
+
+
 		SqlHelper CreateSqlHelper(string sql);
 		string[] Permissions { get; }
 		IEnumerable<string> DataRestriction { get; }
@@ -86,6 +99,21 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 			return clarifyDataSet;
 		}
 
+		public ContractsToolkit CreateContractsToolkit()
+		{
+			return new ContractsToolkit(ClarifySession);
+		}
+
+		public DepotRepairToolkit CreateDepotRepairToolkit()
+		{
+			return new DepotRepairToolkit(ClarifySession);
+		}
+
+		public SalesToolkit CreateSalesToolkit()
+		{
+			return new SalesToolkit(ClarifySession);
+		}
+
 		public SupportToolkit CreateSupportToolkit()
 		{
 			return new SupportToolkit(ClarifySession);
@@ -99,6 +127,16 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		public InterfacesToolkit CreateInterfacesToolkit()
 		{
 			return new InterfacesToolkit(ClarifySession);
+		}
+
+		public LogisticsToolkit CreateLogisticsToolkit()
+		{
+			return new LogisticsToolkit(ClarifySession);
+		}
+
+		public QualityToolkit CreateQualityToolkit()
+		{
+			return new QualityToolkit(ClarifySession);
 		}
 
 		public SqlHelper CreateSqlHelper(string sql)
