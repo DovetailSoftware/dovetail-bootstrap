@@ -123,7 +123,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 				var success = _agentSessionCacheByUsername.TryGetValue(username, out session);
 				if (success)
 				{
-					if (_clarifyApplication.IsSessionValid(session.Id))
+					if (_clarifyApplication.IsSessionValid(session.Id) && session.As<IClarifySessionProxy>().Session.SessionData != null)
 					{
 						_logger.LogDebug("Found valid session in cache.");
 						return session;
