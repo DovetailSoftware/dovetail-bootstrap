@@ -1,4 +1,5 @@
-﻿using System.Linq;
+using System.Collections.Generic;
+using System.Linq;
 using Dovetail.SDK.Bootstrap.Clarify.Extensions;
 using Dovetail.SDK.Bootstrap.Extensions;
 using Dovetail.SDK.Bootstrap.History.Configuration;
@@ -18,7 +19,9 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
 		public int ObjId { get; set; }
 		public string Title { get; set; }
 		public string Path { get; set; }
+		public IDictionary<string, object> Properties { get; set; }
 	}
+
 	public class SeekerAttachmentPolicy : ActEntryTemplatePolicyExpression
 	{
 		private readonly IAttachmentHistoryItemUpdater _attachmentHistoryItemUpdater;
@@ -26,10 +29,10 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
 		private readonly ISchemaCache _schemaCache;
 		private readonly HistorySettings _settings;
 
-		public SeekerAttachmentPolicy(IAttachmentHistoryItemUpdater attachmentHistoryItemUpdater, 
-			IHistoryOutputParser historyOutputParser, 
-			ILogger logger, 
-			ISchemaCache schemaCache, 
+		public SeekerAttachmentPolicy(IAttachmentHistoryItemUpdater attachmentHistoryItemUpdater,
+			IHistoryOutputParser historyOutputParser,
+			ILogger logger,
+			ISchemaCache schemaCache,
 			HistorySettings settings)
 			: base(historyOutputParser)
 		{
@@ -52,11 +55,11 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
 			//When the workflow object itself has a relation to doc_inst.
 			//Attempt to match the attachment navigating from the act entry to the workflow object and from there down to the doc_path
 			//we look for the attachment whose doc_path.path matches the act_entry_addln_info details.
-			
+
 			var objectInfo = WorkflowObjectInfo.GetObjectInfo(workflowObject.Type);
 			var table = _schemaCache.Tables[objectInfo.ObjectName];
-			if (_settings.UseDovetailSDKCompatibileAttachmentFinder == false 
-				&& table.Relationships.Cast<ISchemaRelation>().Any(r => r.TargetTable.Name == "doc_inst"))
+			if (_settings.UseDovetailSDKCompatibileAttachmentFinder == false
+			    && table.Relationships.Cast<ISchemaRelation>().Any(r => r.TargetTable.Name == "doc_inst"))
 			{
 				//use the work object info to get the object's relation to actentry
 				//unfortunately the object info doesn't have the relation from the workflow object to doc_inst.
@@ -78,7 +81,8 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
 
 						if (docInst == null)
 						{
-							_logger.LogDebug("Could not find an attachment whose additional info matches one of the attachment paths. The history item will contain the plain additional info.");
+							_logger.LogDebug(
+								"Could not find an attachment whose additional info matches one of the attachment paths. The history item will contain the plain additional info.");
 							return;
 						}
 
@@ -89,8 +93,10 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
 						{
 							ObjId = docInst.DatabaseIdentifier(),
 							Title = docInst.AsString("title"),
-							Path = docInst.RelatedRows("attach_info2doc_path")[0].AsString("path")
+							Path = docInst.RelatedRows("attach_info2doc_path")[0].AsString("path"),
+							Properties = new Dictionary<string, object>()
 						};
+
 						_attachmentHistoryItemUpdater.Update(docInstDetail, item);
 						item.Internal = string.Empty;
 					});
@@ -107,7 +113,13 @@ namespace Dovetail.SDK.Bootstrap.History.TemplatePolicies
 					//cancel the htmlizer as we are emitting HTML
 					template.HTMLizer = i => { };
 
-					var docInstDetail = new DocInstDetail { ObjId = row.DatabaseIdentifier(), Title = row.AsString("title").HtmlEncode() };
+					var docInstDetail = new DocInstDetail
+					{
+						ObjId = row.DatabaseIdentifier(),
+						Title = row.AsString("title").HtmlEncode(),
+						Properties = new Dictionary<string, object>()
+					};
+
 					_attachmentHistoryItemUpdater.Update(docInstDetail, item);
 					item.Internal = string.Empty;
 				});
