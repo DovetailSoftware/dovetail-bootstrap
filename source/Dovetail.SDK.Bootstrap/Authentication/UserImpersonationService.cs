@@ -100,7 +100,7 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 
 			//create activity entry for impersonatedUserLogin completion
 
-			var result = CreateActEntry(impersonatingUserLogin, impersonatedUsername, 94003, "Revert impersonation of " + impersonatedUsername);
+			var result = CreateActEntry(impersonatingUserLogin, 94003, "Revert impersonation of " + impersonatedUsername);
 
 			cancelImpersonationFor(impersonatingUserLogin);
 
@@ -147,13 +147,13 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 			_logger.LogDebug("Setting up user {0} as an impersonator of user {1}.".ToFormat(userLoginBeingImpersonated, impersonatingUserLogin));
 
 			//create act entry for impersonatedUserLogin creation
-			result = CreateActEntry(impersonatingUserLogin, userLoginBeingImpersonated, 94002, "Impersonate " + userLoginBeingImpersonated);
+			result = CreateActEntry(impersonatingUserLogin, 94002, "Impersonate " + userLoginBeingImpersonated);
 
 			createImpersonationFor(impersonatingUserLogin, userLoginBeingImpersonated);
 			return result;
 		}
 
-		private int CreateActEntry(string impersonatingUserLogin, string impersonatedUserLogin, int actCode, string message)
+		private int CreateActEntry(string impersonatingUserLogin, int actCode, string message)
 		{
 			var dataset = _applicationSession.CreateDataSet();
 
@@ -168,12 +168,14 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 
 			var actEntryGeneric = dataset.CreateGeneric("act_entry");
 			var actEntry = actEntryGeneric.AddNew();
+
 			actEntry["act_code"] = actCode;
 			actEntry["entry_time"] = FCGeneric.NOW_DATE;
 			actEntry["addnl_info"] = message;
-			actEntry["proxy"] = impersonatedUserLogin;
+
 			actEntry.RelateByID(userGeneric.Rows[0].DatabaseIdentifier(), "act_entry2user");
 			actEntry.RelateByID(_listCache.GetGbstElmRankObjID("Activity Name", actCode), "entry_name2gbst_elm");
+
 			actEntry.Update();
 
 			return actEntry.DatabaseIdentifier();
