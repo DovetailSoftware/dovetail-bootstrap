@@ -132,7 +132,6 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 				actEntryGeneric.Query();
 
 				var entry = actEntryGeneric.DataRows().First();
-				entry.AsString("proxy").ShouldEqual("hank");
 				entry.AsString("addnl_info").ShouldContain("Revert impersonation of hank");
 				var annieUserId = _container.GetInstance<IClarifySessionCache>().GetSession("annie").SessionUserID;
 				entry.AsInt("act_entry2user").ShouldEqual(annieUserId);
@@ -188,7 +187,6 @@ namespace Dovetail.SDK.ModelMap.Integration.Session
 				actEntryGeneric.Query();
 
 				var entry = actEntryGeneric.DataRows().First();
-				entry.AsString("proxy").ShouldEqual("hank");
 				entry.AsString("addnl_info").ShouldContain("Impersonate hank");
 				var annieUserId = _container.GetInstance<IClarifySessionCache>().GetSession("annie").SessionUserID;
 				entry.AsInt("act_entry2user").ShouldEqual(annieUserId);
