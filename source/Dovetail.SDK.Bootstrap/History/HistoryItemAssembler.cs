@@ -39,7 +39,7 @@ namespace Dovetail.SDK.Bootstrap.History
 
 		public IEnumerable<HistoryItem> Assemble(ClarifyGeneric actEntryGeneric, IDictionary<int, ActEntryTemplate> templatesByCode, HistoryRequest historyRequest)
 		{
-			actEntryGeneric.DataFields.AddRange("act_code", "entry_time", "addnl_info");
+			actEntryGeneric.DataFields.AddRange("act_code", "entry_time", "addnl_info", "proxy");
 
 			if (!historyRequest.ShowAllActivities)
 			{
@@ -80,6 +80,7 @@ namespace Dovetail.SDK.Bootstrap.History
 					Template = findTemplateByActCode(code, templatesByCode),
 					When = actEntryRecord.AsDateTime("entry_time"),
 					Who = _employeeAssembler.Assemble(actEntryRecord, _contactAssembler),
+					ImpersonatedBy = _employeeAssembler.Assemble(actEntryRecord),
 					AdditionalInfo = actEntryRecord.AsString("addnl_info"),
 					ActEntryRecord = actEntryRecord
 				};
@@ -218,6 +219,7 @@ namespace Dovetail.SDK.Bootstrap.History
 				Type = actEntry.Type,
 				Title = actEntry.Template.DisplayName,
 				Who = actEntry.Who,
+				ImpersonatedBy = actEntry.ImpersonatedBy,
 				When = actEntry.When,
 				Detail = actEntry.AdditionalInfo
 			};

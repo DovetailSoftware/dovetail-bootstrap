@@ -63,6 +63,8 @@ namespace Dovetail.SDK.Bootstrap.History
 		/// </summary>
 		public HistoryItemEmployee Who { get; set; }
 
+		public HistoryItemEmployee ImpersonatedBy { get; set; }
+
 		public IDictionary<string, object> Data { get { return _data.ToDictionary(); } }
 
 		public bool Has(string key)

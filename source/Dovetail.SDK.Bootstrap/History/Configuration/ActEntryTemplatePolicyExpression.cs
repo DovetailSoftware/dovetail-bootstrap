@@ -64,6 +64,7 @@ Has Editor: {2}
 		public ClarifyDataRow ActEntryRecord { get; set; }
 		public ActEntryTemplate Template { get; set; }
 		public HistoryItemEmployee Who { get; set; }
+		public HistoryItemEmployee ImpersonatedBy { get; set; }
 		public DateTime When { get; set; }
 		public string AdditionalInfo { get; set; }
 	}
