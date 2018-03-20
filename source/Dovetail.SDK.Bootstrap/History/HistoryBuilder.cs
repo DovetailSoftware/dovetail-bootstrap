@@ -63,6 +63,7 @@ namespace Dovetail.SDK.Bootstrap.History
 
 			var actEntryGeneric = workflowGeneric.Traverse(activityRelation.Name);
 			actEntryGeneric.AppendSort("entry_time", false);
+			actEntryGeneric.AppendSort("objid", false);
 
 			if (request.Since.HasValue)
 			{
