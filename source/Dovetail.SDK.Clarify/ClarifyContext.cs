@@ -75,6 +75,9 @@ namespace Dovetail.SDK.Clarify
             var settings = new StringBuilder();
             foreach (var key in configuration.AllKeys)
             {
+	            if (key.ToLower().Contains("connectionstring"))
+		            continue;
+
                 settings.AppendLine(string.Format("{0}={1}", key, configuration[key]));
             }
 
