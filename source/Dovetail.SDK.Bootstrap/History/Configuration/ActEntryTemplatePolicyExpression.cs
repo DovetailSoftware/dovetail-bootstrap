@@ -34,6 +34,7 @@ namespace Dovetail.SDK.Bootstrap.History.Configuration
 
 		public int Code { get; set; }
 		public bool IsVerbose { get; set; }
+		public bool IsCancelled { get; set; }
 		public StringToken DisplayName { get; set; }
 		public Action<ClarifyDataRow, HistoryItem, ActEntryTemplate> ActivityDTOUpdater;
 		public Action<HistoryItem> ActivityDTOEditor { get; set; }
@@ -72,7 +73,7 @@ Has Editor: {2}
 	public interface IAfterActEntryCode
 	{
 		/// <summary>
-		/// Define the display name of the act entry 
+		/// Define the display name of the act entry
 		/// </summary>
 		IAfterDisplayName DisplayName(StringToken token);
 
@@ -100,8 +101,8 @@ Has Editor: {2}
 		IAfterHtmlizer HtmlizeWith(Action<HistoryItem> htmlizer);
 
 		/// <summary>
-		/// Define an action which will modify the history item generated with the given data record. 
-		/// The row given is the act_entry row if now related record is retrieved. When a related record is configured it will be the resulting row related to the act entry.  
+		/// Define an action which will modify the history item generated with the given data record.
+		/// The row given is the act_entry row if now related record is retrieved. When a related record is configured it will be the resulting row related to the act entry.
 		/// </summary>
 		/// <param name="mapper">Action which will pull fields off the row related to the act entry and use them to modify the history item.</param>
 		void UpdateActivityDTOWith(Action<ClarifyDataRow, HistoryItem> mapper);
@@ -116,14 +117,14 @@ Has Editor: {2}
 	public interface IAfterHtmlizer
 	{
 		/// <summary>
-		/// Have the history builder retrieve a record related to the act entry 
+		/// Have the history builder retrieve a record related to the act entry
 		/// </summary>
 		/// <param name="relationName">This will be the Clarify schema name of the relation traversing from the act_entry table to the another of your choosing.</param>
 		IHasRelatedRow GetRelatedRecord(string relationName);
 
 		/// <summary>
-		/// Define an action which will modify the history item generated with the given data record. 
-		/// The row given is the act_entry row if now related record is retrieved. When a related record is configured it will be the resulting row related to the act entry.  
+		/// Define an action which will modify the history item generated with the given data record.
+		/// The row given is the act_entry row if now related record is retrieved. When a related record is configured it will be the resulting row related to the act entry.
 		/// </summary>
 		/// <param name="mapper">Action which will pull fields off the row related to the act entry and use them to modify the history item.</param>
 		void UpdateActivityDTOWith(Action<ClarifyDataRow, HistoryItem> mapper);
@@ -176,7 +177,7 @@ Has Editor: {2}
 		}
 
 		/// <summary>
-		/// Start the definition of act entry template for a given act_code. If a template for this act_code is already present it will replace it. 
+		/// Start the definition of act entry template for a given act_code. If a template for this act_code is already present it will replace it.
 		/// Each act_code cooresponds to a type of event in the clarify system.
 		/// </summary>
 		/// <param name="code">The act_code of the activity entry you wish to include. </param>
@@ -198,7 +199,7 @@ Has Editor: {2}
 		{
 			addCurrentActEntryTemplate();
 
-			//find existing template if it exists. 
+			//find existing template if it exists.
 			if (ActEntryTemplatesByCode.ContainsKey(code))
 			{
 				_currentActEntryTemplate = ActEntryTemplatesByCode[code];
@@ -226,7 +227,7 @@ Has Editor: {2}
 		}
 
 		/// <summary>
-		/// This activity code should simply use the default policy. 
+		/// This activity code should simply use the default policy.
 		/// The main reason this is here is to make explicty when policies are defining act codes that should always be part of the history yet have no fancy special handling.
 		/// </summary>
 		public void UseDefaultPolicy()
@@ -235,11 +236,7 @@ Has Editor: {2}
 
 		public void Remove()
 		{
-			if (ActEntryTemplatesByCode.ContainsKey(_currentActEntryTemplate.Code))
-			{
-				ActEntryTemplatesByCode.Remove(_currentActEntryTemplate.Code);
-			}
-			_currentActEntryTemplate = null;
+			_currentActEntryTemplate.IsCancelled = true;
 		}
 
 		public IHasRelatedRow GetRelatedRecord(string relationName)

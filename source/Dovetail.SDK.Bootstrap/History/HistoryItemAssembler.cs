@@ -85,7 +85,7 @@ namespace Dovetail.SDK.Bootstrap.History
 					ActEntryRecord = actEntryRecord
 				};
 
-			}).ToList();
+			}).Where(_ => !_.Template.IsCancelled).ToList();
 
 			return actEntryDTOS
                 .Select(dto => createActivityDTOFromMapper(dto, templateRelatedGenerics))
