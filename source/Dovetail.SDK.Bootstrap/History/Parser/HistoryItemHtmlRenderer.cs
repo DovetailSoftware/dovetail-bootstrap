@@ -135,7 +135,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 
 			output.AppendLine(@"<div id=""collapse{0}"" class=""accordion-body collapse""><div class=""accordion-inner"">".ToFormat(id));
 			renderMarkdownItems(message.Items, output);
-			output.AppendLine(@"</div></div></div></div>");
+			output.AppendLine(@"</div></div></div></div></div>");
 		}
 
 		private static void renderItem(IItem item, StringBuilder output)
