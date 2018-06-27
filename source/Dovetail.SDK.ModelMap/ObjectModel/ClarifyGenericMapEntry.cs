@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Dovetail.SDK.ModelMap.Transforms;
 using FChoice.Foundation.Clarify;
 
@@ -35,8 +36,9 @@ namespace Dovetail.SDK.ModelMap.ObjectModel
         public ClarifyGeneric ClarifyGeneric { get; set; }
         public ModelInformation Model { get; set; }
         public SubRootInformation NewRoot { get; set; }
+		public Func<ClarifyDataRow, bool> Condition { get; set; }
 
-        public bool IsNewRoot()
+		public bool IsNewRoot()
         {
             return NewRoot != null;
         }

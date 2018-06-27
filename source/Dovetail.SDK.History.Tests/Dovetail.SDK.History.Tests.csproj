@@ -1,0 +1,140 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C605C752-7C71-47EC-BA88-EE3273994706}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Dovetail.SDK.History.Tests</RootNamespace>
+    <AssemblyName>Dovetail.SDK.History.Tests</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="adodb">
+      <HintPath>..\packages\Dovetail.SDK\lib\net40\adodb.dll</HintPath>
+    </Reference>
+    <Reference Include="FChoice.Common">
+      <HintPath>..\packages\Dovetail.SDK\lib\net40\FChoice.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="FChoice.Foundation.Clarify.Compatibility">
+      <HintPath>..\packages\Dovetail.SDK\lib\net40\FChoice.Foundation.Clarify.Compatibility.dll</HintPath>
+    </Reference>
+    <Reference Include="FChoice.Foundation.Clarify.Compatibility.Toolkits">
+      <HintPath>..\packages\Dovetail.SDK\lib\net40\FChoice.Foundation.Clarify.Compatibility.Toolkits.dll</HintPath>
+    </Reference>
+    <Reference Include="FChoice.Toolkits.Clarify">
+      <HintPath>..\packages\Dovetail.SDK\lib\net40\FChoice.Toolkits.Clarify.dll</HintPath>
+    </Reference>
+    <Reference Include="fcSDK">
+      <HintPath>..\packages\Dovetail.SDK\lib\net40\fcSDK.dll</HintPath>
+    </Reference>
+    <Reference Include="FubuCore">
+      <HintPath>..\packages\FubuCore\lib\FubuCore.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\packages\log4net\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\..\agent\source\packages\Newtonsoft.Json\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.mocks">
+      <HintPath>..\packages\NUnit\lib\nunit.mocks.dll</HintPath>
+    </Reference>
+    <Reference Include="Oracle.ManagedDataAccess">
+      <HintPath>..\packages\odp.net.managed\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
+    </Reference>
+    <Reference Include="pnunit.framework">
+      <HintPath>..\packages\NUnit\lib\pnunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Rhino.Mocks">
+      <HintPath>..\packages\RhinoMocks\lib\net\Rhino.Mocks.dll</HintPath>
+    </Reference>
+    <Reference Include="StructureMap">
+      <HintPath>..\packages\structuremap\lib\net40\StructureMap.dll</HintPath>
+    </Reference>
+    <Reference Include="StructureMap.Net4">
+      <HintPath>..\packages\structuremap\lib\net40\StructureMap.Net4.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Serialization\HistoryMapParsingScenario.cs" />
+    <Compile Include="NulloLogger.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Serialization\adds_the_defaults.cs" />
+    <Compile Include="Serialization\ObjectExtensions.cs" />
+    <Compile Include="Serialization\partial_scenario.cs" />
+    <Compile Include="Serialization\simple_scenario.cs" />
+    <Compile Include="Serialization\TestContainer.cs" />
+    <Compile Include="SpecificationExtensions.cs" />
+    <Compile Include="VerifyInstructions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Dovetail.SDK.Bootstrap\Dovetail.SDK.Bootstrap.csproj">
+      <Project>{9947e369-aff9-4911-ab0a-99b918a8f3cf}</Project>
+      <Name>Dovetail.SDK.Bootstrap</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Dovetail.SDK.History\Dovetail.SDK.History.csproj">
+      <Project>{2dce5fe5-38be-4c24-bb70-f23b37576f13}</Project>
+      <Name>Dovetail.SDK.History</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Dovetail.SDK.ModelMap\Dovetail.SDK.ModelMap.csproj">
+      <Project>{a6e31218-5c11-4656-9a53-0815d9f10e61}</Project>
+      <Name>Dovetail.SDK.ModelMap</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Serialization\simple.history.config">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <EmbeddedResource Include="Serialization\defaults.history.config">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Serialization\attachments.partial.config">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Serialization\with-partial.history.config">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
