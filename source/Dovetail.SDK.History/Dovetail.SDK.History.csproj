@@ -53,6 +53,10 @@
     <Reference Include="FubuCore">
       <HintPath>..\packages\FubuCore\lib\FubuCore.dll</HintPath>
     </Reference>
+    <Reference Include="FubuLocalization, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\FubuLocalization\lib\FubuLocalization.dll</HintPath>
+    </Reference>
     <Reference Include="StructureMap, Version=3.1.5.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\structuremap\lib\net40\StructureMap.dll</HintPath>
@@ -74,18 +78,23 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="EmailParser.cs" />
     <Compile Include="HistoryBuilder.cs" />
+    <Compile Include="HistoryItemObjectRenderer.cs" />
     <Compile Include="HistoryMapCache.cs" />
     <Compile Include="HistoryMapRegistry.cs" />
     <Compile Include="HistoryModelMapVisitor.cs" />
     <Compile Include="HistoryRegistry.cs" />
     <Compile Include="HistoryRequest.cs" />
+    <Compile Include="IEmailParser.cs" />
     <Compile Include="IHistoryBuilder.cs" />
+    <Compile Include="IHistoryItemObjectRenderer.cs" />
     <Compile Include="IHistoryMapCache.cs" />
     <Compile Include="IHistoryMapEntryBuilder.cs" />
     <Compile Include="IHistoryMapRegistry.cs" />
     <Compile Include="Instructions\BeginWhen.cs" />
     <Compile Include="Instructions\EndWhen.cs" />
+    <Compile Include="ParseEmailTransform.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Instructions\BeginActEntry.cs" />
     <Compile Include="Instructions\EndActEntry.cs" />

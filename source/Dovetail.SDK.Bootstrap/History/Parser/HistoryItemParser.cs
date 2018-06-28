@@ -8,6 +8,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 	public interface IHistoryItemParser
 	{
 		EmailLog ParseEmailLog(string input);
+		EmailLog ParseEmailLogForJson(string input);
 		IEnumerable<IItem> ParseContent(string input);
 	}
 
@@ -20,6 +21,24 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 		{
 			_historyParser = historyParser;
 			_logger = logger;
+		}
+
+		public EmailLog ParseEmailLogForJson(string input)
+		{
+			try
+			{
+				_historyParser.DisableDateFormatting = true;
+				return _historyParser.LogEmail.Parse(input);
+			}
+			catch (Exception e)
+			{
+				_logger.LogWarn("Could not parse email log. Contents:\n\n{0}".ToFormat(input), e);
+				return fakeEmailLog(input);
+			}
+			finally
+			{
+				_historyParser.DisableDateFormatting = false;
+			}
 		}
 
 		public IEnumerable<IItem> ParseContent(string input)

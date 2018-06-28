@@ -55,8 +55,9 @@
       <HintPath>..\packages\log4net\lib\net40-full\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\..\agent\source\packages\Newtonsoft.Json\lib\net40\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit\lib\nunit.framework.dll</HintPath>
@@ -93,6 +94,7 @@
     <Compile Include="Serialization\adds_the_defaults.cs" />
     <Compile Include="Serialization\ObjectExtensions.cs" />
     <Compile Include="Serialization\partial_scenario.cs" />
+    <Compile Include="Serialization\email_scenario.cs" />
     <Compile Include="Serialization\simple_scenario.cs" />
     <Compile Include="Serialization\TestContainer.cs" />
     <Compile Include="SpecificationExtensions.cs" />
@@ -126,6 +128,9 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Serialization\with-partial.history.config">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Serialization\emails.history.config">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>

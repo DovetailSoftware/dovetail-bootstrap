@@ -283,6 +283,8 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			}
 		}
 
+		public bool DisableDateFormatting { get; set; }
+
 		public Parser<string> IsoDate
 		{
 			get
@@ -290,7 +292,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 				return
 					from _start in Parse.String(BEGIN_ISODATE_HEADER).Token()
 					from date in UntilEndOfLine.Many().Token().Text()
-					select @"<span class=""time-format"">{0}</span>".ToFormat(date);
+					select DisableDateFormatting ? date : @"<span class=""time-format"">{0}</span>".ToFormat(date);
 			}
 		}
 
