@@ -78,20 +78,29 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="ActEntryGatherer.cs" />
+    <Compile Include="CaseHistoryAssemblyPolicy.cs" />
     <Compile Include="EmailParser.cs" />
     <Compile Include="HistoryBuilder.cs" />
     <Compile Include="HistoryItemObjectRenderer.cs" />
     <Compile Include="HistoryMapCache.cs" />
     <Compile Include="HistoryMapRegistry.cs" />
     <Compile Include="HistoryModelMapVisitor.cs" />
+    <Compile Include="HistoryProvider.cs" />
     <Compile Include="HistoryRegistry.cs" />
     <Compile Include="HistoryRequest.cs" />
+    <Compile Include="HistoryResult.cs" />
+    <Compile Include="HistorySettings.cs" />
+    <Compile Include="IDefaultHistoryAssembler.cs" />
     <Compile Include="IEmailParser.cs" />
+    <Compile Include="IHistoryAssemblyPolicy.cs" />
     <Compile Include="IHistoryBuilder.cs" />
     <Compile Include="IHistoryItemObjectRenderer.cs" />
     <Compile Include="IHistoryMapCache.cs" />
     <Compile Include="IHistoryMapEntryBuilder.cs" />
     <Compile Include="IHistoryMapRegistry.cs" />
+    <Compile Include="IHistoryModelMapVisitor.cs" />
+    <Compile Include="IHistoryProvider.cs" />
     <Compile Include="Instructions\BeginWhen.cs" />
     <Compile Include="Instructions\EndWhen.cs" />
     <Compile Include="ParseEmailTransform.cs" />

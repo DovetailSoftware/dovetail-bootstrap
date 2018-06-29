@@ -14,7 +14,7 @@ using FubuCore;
 
 namespace Dovetail.SDK.History
 {
-	public class HistoryModelMapVisitor : IModelMapVisitor
+	public class HistoryModelMapVisitor : IHistoryModelMapVisitor
 	{
 		private readonly IMappingTransformRegistry _registry;
 		private readonly IServiceLocator _services;

@@ -25,8 +25,8 @@ namespace Dovetail.SDK.History.Tests.Serialization
 		{
 			theScenario.WhatDoIHave();
 			var container = TestContainer.getContainer();
-			var builder = container.With(theScenario.Cache).GetInstance<HistoryBuilder>();
-			var data = builder.GetAll(new HistoryRequest
+			var provider = container.With(theScenario.Cache).GetInstance<HistoryProvider>();
+			var data = provider.HistoryFor(new HistoryRequest
 			{
 				ShowAllActivities = false,
 				WorkflowObject = new WorkflowObject
@@ -34,10 +34,11 @@ namespace Dovetail.SDK.History.Tests.Serialization
 					Id = "1",
 					Type = "case",
 					IsChild = false,
-				}
+				},
+				HistoryItemLimit = 5
 			});
 
-			Debug.WriteLine(data.Select(_ => _.ToValues()).ToJSON());
+			Debug.WriteLine(data.Items.Length);
 		}
 
 		[TearDown]

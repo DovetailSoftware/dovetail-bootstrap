@@ -35,45 +35,30 @@ namespace Dovetail.SDK.History
 
 		public ModelData[] GetAll(HistoryRequest request)
 		{
+			return GetAll(request, generic => { });
+		}
+
+		public ModelData[] GetAll(HistoryRequest request, Action<ClarifyGeneric> configureActEntryGeneric)
+		{
 			var map = _models.Find(request.WorkflowObject);
 			var rootGenericMap = _entries.BuildFromModelMap(request, map);
 
-			return assemble(rootGenericMap, null).Models;
+			configureActEntryGeneric(rootGenericMap.ClarifyGeneric);
+
+			return assemble(rootGenericMap).Models;
 		}
 
-		private PaginationResult assemble(ClarifyGenericMapEntry rootGenericMap, IPaginationRequest paginationRequest)
+		private PaginationResult assemble(ClarifyGenericMapEntry rootGenericMap)
 		{
 			var result = new PaginationResult();
 
 			var rootClarifyGeneric = rootGenericMap.ClarifyGeneric;
-
-			//setup SDK generic for PaginationRequest if necessary
-			if (paginationRequest != null)
-			{
-				result.CurrentPage = paginationRequest.CurrentPage;
-				result.PageSize = paginationRequest.PageSize;
-
-				rootClarifyGeneric.MaximumRows = 1; //hack! what if query has only one result?
-				rootClarifyGeneric.MaximumRowsExceeded += (sender, args) =>
-				{
-					args.RowsToReturn = paginationRequest.CurrentPage * paginationRequest.PageSize;
-					result.TotalRecordCount = args.TotalPossibleRows;
-				};
-			}
 
 			rootClarifyGeneric.DataSet.Query(rootClarifyGeneric);
 
 			traverseGenericsPopulatingSubRootMaps(rootGenericMap);
 
 			var records = rootGenericMap.ClarifyGeneric.DataRows();
-
-			//take the results and constrain them to the requested page 
-			if (paginationRequest != null)
-			{
-				var startRow = (paginationRequest.CurrentPage - 1) * paginationRequest.PageSize;
-				records = records.Skip(startRow).Take(paginationRequest.PageSize);
-			}
-
 			result.Models = createDtosForMap(rootGenericMap, records);
 
 			return result;
