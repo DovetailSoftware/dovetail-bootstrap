@@ -117,6 +117,7 @@
     <Compile Include="Serialization\HistoryMapParser.cs" />
     <Compile Include="Serialization\IHistoryMapParser.cs" />
     <Compile Include="Serialization\ParseActEntry.cs" />
+    <Compile Include="Serialization\ParseCancellationPolicy.cs" />
     <Compile Include="Serialization\ParseWhen.cs" />
     <Compile Include="WorkflowObject.cs" />
   </ItemGroup>
