@@ -6,6 +6,8 @@ namespace Dovetail.SDK.ModelMap.Transforms
 {
 	public class ModelDataPath
 	{
+		public static readonly string This = "$this";
+
 		private readonly string[] _parts;
 
 		public ModelDataPath(string[] parts)
@@ -15,6 +17,9 @@ namespace Dovetail.SDK.ModelMap.Transforms
 
 		public object Get(ModelData data)
 		{
+			if (_parts.Length == 1 && _parts[0] == This)
+				return data;
+
 			var target = data;
 			for (var i = 0; i < _parts.Length; ++i)
 			{

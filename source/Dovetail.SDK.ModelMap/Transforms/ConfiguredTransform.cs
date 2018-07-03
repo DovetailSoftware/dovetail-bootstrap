@@ -21,7 +21,9 @@ namespace Dovetail.SDK.ModelMap.Transforms
 			_services = services;
 		}
 
-		public void Execute(ModelData data, IServiceLocator services)
+		public IMappingTransform Transform { get { return _transform; } }
+
+		public object Execute(ModelData data, IServiceLocator services)
 		{
 			_expander.PushContext(new VariableExpanderContext(data, new Dictionary<string, object>()));
 			
@@ -38,6 +40,8 @@ namespace Dovetail.SDK.ModelMap.Transforms
 
 				if (value != null)
 					_path.Set(data, value);
+
+				return value;
 			}
 			finally
 			{

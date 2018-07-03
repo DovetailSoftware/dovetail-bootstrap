@@ -430,6 +430,31 @@ namespace Dovetail.SDK.History
 			});
 		}
 
+		public void Visit(BeginCancellationPolicy instruction)
+		{
+			executeInstruction(() =>
+			{
+				var name = instruction.Name.Resolve(_services).ToString();
+				if (!_registry.HasPolicy(name))
+				{
+					throw new ModelMapException("Invalid policy: \"{0}\"".ToFormat(instruction.Name));
+				}
+
+				_transform = (IMappingTransform)FastYetSimpleTypeActivator.CreateInstance(_registry.FindPolicy(name));
+			});
+		}
+
+		public void Visit(EndCancellationPolicy instruction)
+		{
+			executeInstruction(() =>
+			{
+				var path = ModelDataPath.Parse(ModelDataPath.This);
+				var currentGeneric = _genericStack.Peek();
+
+				currentGeneric.AddTransform(new ConfiguredTransform(path, _transform, new ITransformArgument[0], _expander, _services));
+			});
+		}
+
 		private void executeInstruction(Action action)
 		{
 			if (_ignoreInstructions) return;

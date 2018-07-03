@@ -17,6 +17,16 @@ namespace Dovetail.SDK.ModelMap.Integration.Transforms
 		}
 
 		[Test]
+		public void gets_the_full_value()
+		{
+			var data = new ModelData();
+			data["child"] = new ModelData();
+			data.Child("child")["foo"] = "bar";
+
+			ModelDataPath.Parse(ModelDataPath.This).Get(data).ShouldEqual(data);
+		}
+
+		[Test]
 		public void sets_the_value()
 		{
 			var data = new ModelData();

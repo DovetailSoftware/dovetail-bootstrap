@@ -107,7 +107,13 @@ namespace Dovetail.SDK.History
 
 				genericMap.Tags.Each(_ => row.AddTag(_));
 
-				rows.Add(row);
+				var cancel = genericMap
+					.Transforms
+					.Where(_ => _.Transform is ICancellationPolicy)
+					.Any(_ => (bool) _.Execute(row, _services));
+
+				if (!cancel)
+					rows.Add(row);
 			}
 
 			return rows.ToArray();
@@ -121,7 +127,7 @@ namespace Dovetail.SDK.History
 
 			populateDTOWithRelatedDTOs(genericMap, record, dto);
 
-			foreach (var transform in genericMap.Transforms)
+			foreach (var transform in genericMap.Transforms.Where(_ => !_.GetType().CanBeCastTo<ICancellationPolicy>()))
 			{
 				transform.Execute(dto, _services);
 			}
