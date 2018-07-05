@@ -1,7 +1,6 @@
-﻿using System.Diagnostics;
-using System.Linq;
-using Dovetail.SDK.History.Instructions;
-using Dovetail.SDK.ModelMap.Instructions;
+﻿using System;
+using System.Diagnostics;
+using Dovetail.SDK.ModelMap.Transforms;
 using NUnit.Framework;
 
 namespace Dovetail.SDK.History.Tests.Serialization
@@ -17,6 +16,7 @@ namespace Dovetail.SDK.History.Tests.Serialization
 			theScenario = HistoryMapParsingScenario.Create(_ =>
 			{
 				_.UseFile("emails.history.config");
+				_.UseFile("subcase.history.config");
 			});
 		}
 
@@ -25,26 +25,46 @@ namespace Dovetail.SDK.History.Tests.Serialization
 		{
 			theScenario.WhatDoIHave();
 			var container = TestContainer.getContainer();
-			var provider = container.With(theScenario.Cache).GetInstance<HistoryProvider>();
+			var settings = container.GetInstance<HistorySettings>();
+			settings.MergeCaseHistoryChildSubcases = true;
+			var provider = container.With(theScenario.Cache).With(settings).GetInstance<HistoryProvider>();
 			var data = provider.HistoryFor(new HistoryRequest
 			{
-				ShowAllActivities = false,
+				ShowAllActivities = true,
 				WorkflowObject = new WorkflowObject
 				{
-					Id = "1",
+					Id = "53",
 					Type = "case",
 					IsChild = false,
 				},
-				HistoryItemLimit = 5
+				Since = DateTime.Parse("2018-06-27 14:16:45"),
+				HistoryItemLimit = 3
 			});
 
-			Debug.WriteLine(data.Items.Length);
+			foreach (var item in data.Items)
+			{
+				Debug.WriteLine(item.Get<int>("id"));
+			}
+			
 		}
 
 		[TearDown]
 		public void TearDown()
 		{
 			theScenario.CleanUp();
+		}
+	}
+
+	public class RelatedToEmailLog : CancellationPolicy
+	{
+		public override bool ShouldCancel(TransformContext context)
+		{
+			var data = context.Model;
+			var details = data.Child("details");
+			if (details == null)
+				return false;
+
+			return details["relatedEmailLogId"] != null;
 		}
 	}
 }

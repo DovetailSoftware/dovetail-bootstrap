@@ -75,6 +75,7 @@ namespace Dovetail.SDK.History
 				var maps = mapFiles
 					//.Where(_ => !_overrides.ShouldParse(_) && !_replacements.ShouldParse(_))
 					.Select(_ => _parser.Parse(_))
+					.OrderBy(_ => _.Name)
 					.ToArray();
 
 				var conflicts = maps.GroupBy(_ => _.Name).Where(_ => _.Count() > 1).ToArray();

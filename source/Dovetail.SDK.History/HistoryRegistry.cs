@@ -12,8 +12,18 @@ namespace Dovetail.SDK.History
 			{
 				_.TheCallingAssembly();
 				_.WithDefaultConventions();
+			});
+
+			Scan(_ =>
+			{
+				_.TheCallingAssembly();
+
+				_.ExcludeType<DefaultHistoryAssembler>();
+				_.ExcludeType<DefaultActEntryResolutionPolicy>();
 
 				_.AddAllTypesOf<IElementVisitor>();
+				_.AddAllTypesOf<IHistoryAssemblyPolicy>();
+				_.AddAllTypesOf<IActEntryResolutionPolicy>();
 			});
 		}
 	}

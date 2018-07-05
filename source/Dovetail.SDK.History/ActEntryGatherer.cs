@@ -121,11 +121,19 @@ namespace Dovetail.SDK.History
 
 		public void Visit(BeginActEntry instruction)
 		{
-			if (_showAll == instruction.IsVerbose)
+			if (_showAll || !instruction.IsVerbose)
 				_activityCodes.Add(instruction.Code);
 		}
 
 		public void Visit(EndActEntry instruction)
+		{
+		}
+
+		public void Visit(BeginCancellationPolicy instruction)
+		{
+		}
+
+		public void Visit(EndCancellationPolicy instruction)
 		{
 		}
 	}

@@ -40,8 +40,13 @@ namespace Dovetail.SDK.History
 
 		public ModelData[] GetAll(HistoryRequest request, Action<ClarifyGeneric> configureActEntryGeneric)
 		{
+			return GetAll(request, configureActEntryGeneric, generic => { });
+		}
+
+		public ModelData[] GetAll(HistoryRequest request, Action<ClarifyGeneric> configureActEntryGeneric, Action<ClarifyGeneric> configureWorkflowGeneric)
+		{
 			var map = _models.Find(request.WorkflowObject);
-			var rootGenericMap = _entries.BuildFromModelMap(request, map);
+			var rootGenericMap = _entries.BuildFromModelMap(request, map, configureWorkflowGeneric);
 
 			configureActEntryGeneric(rootGenericMap.ClarifyGeneric);
 
@@ -109,7 +114,7 @@ namespace Dovetail.SDK.History
 
 				var cancel = genericMap
 					.Transforms
-					.Where(_ => _.Transform is ICancellationPolicy)
+					.OfType<ConfiguredCancellationPolicy>()
 					.Any(_ => (bool) _.Execute(row, _services));
 
 				if (!cancel)
@@ -127,7 +132,7 @@ namespace Dovetail.SDK.History
 
 			populateDTOWithRelatedDTOs(genericMap, record, dto);
 
-			foreach (var transform in genericMap.Transforms.Where(_ => !_.Transform.GetType().CanBeCastTo<ICancellationPolicy>()))
+			foreach (var transform in genericMap.Transforms.Where(_ => (_ is ConfiguredCancellationPolicy)))
 			{
 				transform.Execute(dto, _services);
 			}

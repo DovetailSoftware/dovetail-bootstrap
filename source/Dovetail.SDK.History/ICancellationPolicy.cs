@@ -2,7 +2,13 @@
 
 namespace Dovetail.SDK.History
 {
-	public interface ICancellationPolicy : IMappingTransform
+	public abstract class CancellationPolicy : IMappingTransform
 	{
+		public object Execute(TransformContext context)
+		{
+			return ShouldCancel(context);
+		}
+
+		public abstract bool ShouldCancel(TransformContext context);
 	}
 }

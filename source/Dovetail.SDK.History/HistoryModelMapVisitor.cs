@@ -437,7 +437,13 @@ namespace Dovetail.SDK.History
 				var name = instruction.Name.Resolve(_services).ToString();
 				if (!_registry.HasPolicy(name))
 				{
-					throw new ModelMapException("Invalid policy: \"{0}\"".ToFormat(instruction.Name));
+					throw new ModelMapException("Could not find cancellation policy: \"{0}\"".ToFormat(name));
+				}
+
+				var type = _registry.FindPolicy(name);
+				if (!type.CanBeCastTo<CancellationPolicy>())
+				{
+					throw new ModelMapException("\"{0}\" does not inherit from CancellationPolicy".ToFormat(name));
 				}
 
 				_transform = (IMappingTransform)FastYetSimpleTypeActivator.CreateInstance(_registry.FindPolicy(name));
@@ -449,9 +455,11 @@ namespace Dovetail.SDK.History
 			executeInstruction(() =>
 			{
 				var path = ModelDataPath.Parse(ModelDataPath.This);
-				var currentGeneric = _genericStack.Peek();
-
-				currentGeneric.AddTransform(new ConfiguredTransform(path, _transform, new ITransformArgument[0], _expander, _services));
+				// BeginActEntry starts a mapped property so we have to skip
+				var currentGeneric = _genericStack.Skip(1).First();
+				var actCode = _configurations.Last().Code;
+				
+				currentGeneric.AddTransform(new ConfiguredCancellationPolicy(actCode, path, _transform, new ITransformArgument[0], _expander, _services));
 			});
 		}
 

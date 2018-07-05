@@ -71,7 +71,7 @@ namespace Dovetail.SDK.History.Tests.Serialization
 			var settings = new HistoryMapSettings { Directory = _tempPath };
 			Cache = new HistoryMapCache(parser, settings);
 
-			return Cache.Maps().Single();
+			return Cache.Maps().First();
 		}
 
 		public static IElementVisitor[] Visitors()

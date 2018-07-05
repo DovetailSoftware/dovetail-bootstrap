@@ -22,6 +22,11 @@ namespace Dovetail.SDK.History
 
 		public ClarifyGenericMapEntry BuildFromModelMap(HistoryRequest request, ModelMap.ModelMap modelMap)
 		{
+			return BuildFromModelMap(request, modelMap, _ => { });
+		}
+
+		public ClarifyGenericMapEntry BuildFromModelMap(HistoryRequest request, ModelMap.ModelMap modelMap, Action<ClarifyGeneric> configureWorkflowGeneric)
+		{
 			var session = _container.GetInstance<IClarifySession>();
 			var schemaCache = _container.GetInstance<ISchemaCache>();
 			var clarifyDataSet = session.CreateDataSet();
@@ -33,14 +38,20 @@ namespace Dovetail.SDK.History
 				workflowGeneric.DataFields.Add(workflowObjectInfo.IDFieldName);
 			}
 
-			if (workflowObjectInfo.IDFieldName.IsEmpty() || workflowObjectInfo.IDFieldName == "objid")
+			if (request.WorkflowObject.Id.IsNotEmpty())
 			{
-				workflowGeneric.Filter(f => f.Equals("objid", Convert.ToInt32(request.WorkflowObject.Id)));
+				if (workflowObjectInfo.IDFieldName.IsEmpty() || workflowObjectInfo.IDFieldName == "objid")
+				{
+					workflowGeneric.Filter(f => f.Equals("objid", Convert.ToInt32(request.WorkflowObject.Id)));
+				}
+				else
+				{
+					workflowGeneric.Filter(f => f.Equals(workflowObjectInfo.IDFieldName, request.WorkflowObject.Id));
+
+				}
 			}
-			else
-			{
-				workflowGeneric.Filter(f => f.Equals(workflowObjectInfo.IDFieldName, request.WorkflowObject.Id));
-			}
+
+			configureWorkflowGeneric(workflowGeneric);
 
 			var inverseActivityRelation = workflowObjectInfo.ActivityRelation;
 			var activityRelation = schemaCache.GetRelation("act_entry", inverseActivityRelation).InverseRelation;

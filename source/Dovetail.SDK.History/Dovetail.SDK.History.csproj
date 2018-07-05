@@ -80,7 +80,9 @@
     </Compile>
     <Compile Include="ActEntryGatherer.cs" />
     <Compile Include="CaseHistoryAssemblyPolicy.cs" />
+    <Compile Include="ConfiguredCancellationPolicy.cs" />
     <Compile Include="DefaultActEntryResolutionPolicy.cs" />
+    <Compile Include="DefaultHistoryAssembler.cs" />
     <Compile Include="EmailParser.cs" />
     <Compile Include="HistoryBuilder.cs" />
     <Compile Include="HistoryItemObjectRenderer.cs" />

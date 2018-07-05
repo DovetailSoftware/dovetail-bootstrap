@@ -8,7 +8,7 @@ namespace Dovetail.SDK.History.Serialization
 	{
 		public bool Matches(XElement element, ModelMap.ModelMap map, ParsingContext context)
 		{
-			return element.Name == "addCancellationPolicy";
+			return element.Name == "addCancellationPolicy" && context.IsCurrent<BeginActEntry>();
 		}
 
 		public void Visit(XElement element, ModelMap.ModelMap map, ParsingContext context)

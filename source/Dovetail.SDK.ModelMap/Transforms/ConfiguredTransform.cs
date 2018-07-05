@@ -21,9 +21,7 @@ namespace Dovetail.SDK.ModelMap.Transforms
 			_services = services;
 		}
 
-		public IMappingTransform Transform { get { return _transform; } }
-
-		public object Execute(ModelData data, IServiceLocator services)
+		public virtual object Execute(ModelData data, IServiceLocator services)
 		{
 			_expander.PushContext(new VariableExpanderContext(data, new Dictionary<string, object>()));
 			
