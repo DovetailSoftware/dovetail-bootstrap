@@ -8,11 +8,13 @@ namespace Dovetail.SDK.ModelMap.Serialization.Overrides
 	{
 		private readonly IModelMapParser _inner;
 		private readonly IModelMapDiff _diff;
+		private readonly ModelMapDiffOptions _options;
 
-		public ModelMapOverrideParser(IModelMapParser inner, IModelMapDiff diff)
+		public ModelMapOverrideParser(IModelMapParser inner, IModelMapDiff diff, ModelMapDiffOptions options)
 		{
 			_inner = inner;
 			_diff = diff;
+			_options = options;
 		}
 
 		public bool ShouldParse(string filePath)
@@ -34,7 +36,7 @@ namespace Dovetail.SDK.ModelMap.Serialization.Overrides
 		{
 			var overrides = new ModelMap(map.Name, map.Entity);
 			_inner.Parse(overrides, filePath);
-			_diff.Diff(map, overrides);
+			_diff.Diff(map, overrides, _options);
 		}
 
 		private XDocument openFile(string filePath)

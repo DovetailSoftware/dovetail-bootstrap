@@ -59,7 +59,7 @@ namespace Dovetail.SDK.ModelMap.Integration.Serialization
 			var visitors = Visitors();
 			var elementService = new XElementService(visitors);
 			var parser = new ModelMapParser(services, elementService, logger);
-			var overrides = new ModelMapOverrideParser(parser, new ModelMapDiff());
+			var overrides = new ModelMapOverrideParser(parser, new ModelMapDiff(), new ModelMapDiffOptions());
 			var replacements = new ModelMapReplacementParser(parser);
 
 			var settings = new ModelMapSettings { Directory = _tempPath };

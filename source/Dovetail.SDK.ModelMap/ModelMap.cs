@@ -69,6 +69,15 @@ namespace Dovetail.SDK.ModelMap
 
 		public InstructionSet FindProperty(string key, int startIndex)
 		{
+			return FindInstructionSet(key, startIndex, _ =>
+			{
+				var beginProp = _ as BeginProperty;
+				return beginProp != null && beginProp.Key.Resolve(null).ToString().EqualsIgnoreCase(key);
+			}, _ => _ is EndProperty);
+		}
+
+		public InstructionSet FindInstructionSet(string key, int startIndex, Func<IModelMapInstruction, bool> findStart, Func<IModelMapInstruction, bool> findEnd)
+		{
 			var instructions = new List<IModelMapInstruction>();
 			int count = 0;
 			int start = 0;
@@ -77,8 +86,7 @@ namespace Dovetail.SDK.ModelMap
 			for (var i = 0; i < _instructions.Count; ++i)
 			{
 				var instruction = _instructions[i];
-				var beginProp = instruction as BeginProperty;
-				if (beginProp != null && beginProp.Key.Resolve(null).ToString().EqualsIgnoreCase(key) && i > startIndex)
+				if (findStart(instruction) && i > startIndex)
 				{
 					start = i;
 					collecting = true;
@@ -88,12 +96,11 @@ namespace Dovetail.SDK.ModelMap
 				{
 					instructions.Add(instruction);
 
-					var endProp = instruction as EndProperty;
-					if (endProp != null)
+					if (findEnd(instruction))
 					{
 						--count;
 					}
-					else if (beginProp != null)
+					else if (start == i)
 					{
 						++count;
 					}
@@ -111,86 +118,20 @@ namespace Dovetail.SDK.ModelMap
 
 		public InstructionSet FindMappedProperty(string key, int startIndex)
 		{
-			var instructions = new List<IModelMapInstruction>();
-			int count = 0;
-			int start = 0;
-			int end = 0;
-			var collecting = false;
-			for (var i = 0; i < _instructions.Count; ++i)
+			return FindInstructionSet(key, startIndex, _ =>
 			{
-				var instruction = _instructions[i];
-				var beginProp = instruction as BeginMappedProperty;
-				if (beginProp != null && beginProp.Key.Resolve(null).ToString().EqualsIgnoreCase(key) && i > startIndex)
-				{
-					start = i;
-					collecting = true;
-				}
-
-				if (collecting)
-				{
-					instructions.Add(instruction);
-
-					var endProp = instruction as EndMappedProperty;
-					if (endProp != null)
-					{
-						--count;
-					}
-					else if (beginProp != null)
-					{
-						++count;
-					}
-
-					if (count == 0)
-					{
-						end = i;
-						break;
-					}
-				}
-			}
-
-			return new InstructionSet(start, instructions, end);
+				var beginProp = _ as BeginMappedProperty;
+				return beginProp != null && beginProp.Key.Resolve(null).ToString().EqualsIgnoreCase(key);
+			}, _ => _ is EndMappedProperty);
 		}
 
 		public InstructionSet FindMappedCollection(string key, int startIndex)
 		{
-			var instructions = new List<IModelMapInstruction>();
-			int count = 0;
-			int start = 0;
-			int end = 0;
-			var collecting = false;
-			for (var i = 0; i < _instructions.Count; ++i)
+			return FindInstructionSet(key, startIndex, _ =>
 			{
-				var instruction = _instructions[i];
-				var beginProp = instruction as BeginMappedCollection;
-				if (beginProp != null && beginProp.Key.Resolve(null).ToString().EqualsIgnoreCase(key) && i > startIndex)
-				{
-					start = i;
-					collecting = true;
-				}
-
-				if (collecting)
-				{
-					instructions.Add(instruction);
-
-					var endProp = instruction as EndMappedCollection;
-					if (endProp != null)
-					{
-						--count;
-					}
-					else if (beginProp != null)
-					{
-						++count;
-					}
-
-					if (count == 0)
-					{
-						end = i;
-						break;
-					}
-				}
-			}
-
-			return new InstructionSet(start, instructions, end);
+				var beginProp = _ as BeginMappedCollection;
+				return beginProp != null && beginProp.Key.Resolve(null).ToString().EqualsIgnoreCase(key);
+			}, _ => _ is EndMappedCollection);
 		}
 
 		public void Remove(InstructionSet set, int offset)

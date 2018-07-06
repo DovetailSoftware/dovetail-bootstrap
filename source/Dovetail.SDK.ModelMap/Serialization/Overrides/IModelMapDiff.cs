@@ -2,6 +2,6 @@
 {
 	public interface IModelMapDiff
 	{
-		void Diff(ModelMap map, ModelMap overrides);
+		void Diff(ModelMap map, ModelMap overrides, ModelMapDiffOptions options);
 	}
 }

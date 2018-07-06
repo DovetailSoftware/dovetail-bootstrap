@@ -13,13 +13,15 @@ namespace Dovetail.SDK.History
 		private Lazy<ModelMap.ModelMap[]> _partials;
 		private bool _visiting;
 		private readonly IHistoryMapParser _parser;
-		private readonly HistoryMapSettings _settings;
+		private readonly HistorySettings _settings;
+		private readonly IHistoryMapOverrideParser _overrides;
 		private static readonly object Lock = new object();
 
-		public HistoryMapCache(IHistoryMapParser parser, HistoryMapSettings settings)
+		public HistoryMapCache(IHistoryMapParser parser, HistorySettings settings, IHistoryMapOverrideParser overrides)
 		{
 			_parser = parser;
 			_settings = settings;
+			_overrides = overrides;
 
 			Clear();
 		}
@@ -73,7 +75,7 @@ namespace Dovetail.SDK.History
 				}).ToArray();
 
 				var maps = mapFiles
-					//.Where(_ => !_overrides.ShouldParse(_) && !_replacements.ShouldParse(_))
+					.Where(_ => !_overrides.ShouldParse(_))// && !_replacements.ShouldParse(_))
 					.Select(_ => _parser.Parse(_))
 					.OrderBy(_ => _.Name)
 					.ToArray();
@@ -83,11 +85,11 @@ namespace Dovetail.SDK.History
 					throw new ModelMapException("Multiple history models found with the same name: " +
 					                            conflicts.Select(_ => _.Key).Join(", "));
 
-				//mapFiles
-				//	.Where(_ => _overrides.ShouldParse(_))
-				//	.Each(_ => maps
-				//		.Where(__ => _overrides.Matches(__, _))
-				//		.Each(__ => _overrides.Parse(__, _)));
+				mapFiles
+					.Where(_ => _overrides.ShouldParse(_))
+					.Each(_ => maps
+						.Where(__ => _overrides.Matches(__, _))
+						.Each(__ => _overrides.Parse(__, _)));
 
 				//mapFiles
 				//	.Where(_ => _replacements.ShouldParse(_))

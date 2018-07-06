@@ -95,6 +95,8 @@
     <Compile Include="Serialization\ObjectExtensions.cs" />
     <Compile Include="Serialization\partial_scenario.cs" />
     <Compile Include="Serialization\email_scenario.cs" />
+    <Compile Include="Serialization\remove_act_entry_scenario.cs" />
+    <Compile Include="Serialization\simple_override_scenario.cs" />
     <Compile Include="Serialization\simple_scenario.cs" />
     <Compile Include="Serialization\TestContainer.cs" />
     <Compile Include="SpecificationExtensions.cs" />
@@ -134,6 +136,12 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Serialization\subcase.history.config">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Serialization\remove-act-entry.history.config">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Serialization\simple-override.history.config">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>

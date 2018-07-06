@@ -1,41 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using Dovetail.SDK.Bootstrap.Configuration;
 using Dovetail.SDK.ModelMap.Instructions;
+using FubuCore;
 
 namespace Dovetail.SDK.ModelMap.Serialization.Overrides
 {
 	public class ModelMapDiff : IModelMapDiff
 	{
-		private static readonly List<Type> Offsets = new List<Type>
+		public void Diff(ModelMap map, ModelMap overrides, ModelMapDiffOptions options)
 		{
-			typeof(BeginRelation),
-			typeof(BeginTable),
-			typeof(BeginView),
-			typeof(BeginAdHocRelation),
-			typeof(BeginMappedProperty),
-			typeof(BeginMappedCollection),
-		};
-
-		private static readonly List<PropertyContext> PropertyContexts = new List<PropertyContext>
-		{
-			new PropertyContext(typeof(BeginProperty), typeof(EndProperty)),
-			new PropertyContext(typeof(BeginMappedProperty), typeof(EndMappedProperty)),
-			new PropertyContext(typeof(BeginMappedCollection), typeof(EndMappedCollection)),
-		};
-
-		public void Diff(ModelMap map, ModelMap overrides)
-		{
-			removeProperties(map, overrides);
-			addProperties(map, overrides);
+			removeProperties(map, overrides, options);
+			addProperties(map, overrides, options);
 		}
 
-		private void removeProperties(ModelMap map, ModelMap overrides)
+		private void removeProperties(ModelMap map, ModelMap overrides, ModelMapDiffOptions options)
 		{
-			executeRemoveInstruction<Instructions.RemoveProperty>(map, overrides, (_, key, index) => _.FindProperty(key, index));
-			executeRemoveInstruction<Instructions.RemoveMappedProperty>(map, overrides, (_, key, index) => _.FindMappedProperty(key, index));
-			executeRemoveInstruction<Instructions.RemoveMappedCollection>(map, overrides, (_, key, index) => _.FindMappedCollection(key, index));
+			options.Removals.Each(_ => executeRemoveInstruction(map, overrides, options, _));
 
 			var prunedInstructions = new List<IModelMapInstruction>();
 			var contexts = new Stack<IModelMapInstruction>();
@@ -62,15 +42,14 @@ namespace Dovetail.SDK.ModelMap.Serialization.Overrides
 			prunedInstructions.Each(map.RemoveInstruction);
 		}
 
-		private void executeRemoveInstruction<TInstruction>(ModelMap map, ModelMap overrides, Func<ModelMap, string, int, InstructionSet> findProperty)
-			where TInstruction : class, IModelMapRemovalInstruction
+		private void executeRemoveInstruction(ModelMap map, ModelMap overrides, ModelMapDiffOptions options, ConfiguredRemoval remove)
 		{
 			var targetIndex = 0;
 			var mapInstructions = map.Instructions.ToList();
 			var sets = new List<InstructionSet>();
 			foreach (var instruction in overrides.Instructions)
 			{
-				if (shouldOffset(instruction))
+				if (shouldOffset(instruction, options))
 				{
 					var i = mapInstructions.IndexOf(instruction);
 					if (i != -1)
@@ -83,11 +62,14 @@ namespace Dovetail.SDK.ModelMap.Serialization.Overrides
 					}
 				}
 
-				var removal = instruction as TInstruction;
-				if (removal != null)
+				if (instruction.GetType().CanBeCastTo(remove.InstructionType))
 				{
-					var set = findProperty(map, removal.Key, targetIndex);
-					sets.Add(set);
+					var removal = instruction as IModelMapRemovalInstruction;
+					if (removal != null)
+					{
+						var set = remove.Find(map, removal.Key, targetIndex);
+						sets.Add(set);
+					}
 				}
 			}
 
@@ -99,7 +81,7 @@ namespace Dovetail.SDK.ModelMap.Serialization.Overrides
 			}
 		}
 
-		private void addProperties(ModelMap map, ModelMap overrides)
+		private void addProperties(ModelMap map, ModelMap overrides, ModelMapDiffOptions options)
 		{
 			var targetIndex = -1;
 			var instructionsToAdd = new List<IModelMapInstruction>();
@@ -107,7 +89,7 @@ namespace Dovetail.SDK.ModelMap.Serialization.Overrides
 			foreach (var instruction in overrides.Instructions.Where(_ => _.GetType() != typeof(Instructions.RemoveProperty)).ToArray())
 			{
 				var mapInstructions = map.Instructions.ToList();
-				if (shouldOffset(instruction))
+				if (shouldOffset(instruction, options))
 				{
 					var i = mapInstructions.IndexOf(instruction);
 					if (i != -1)
@@ -119,7 +101,7 @@ namespace Dovetail.SDK.ModelMap.Serialization.Overrides
 				if (targetIndex == -1)
 					continue;
 
-				var context = PropertyContexts.SingleOrDefault(_ => _.Matches(instruction.GetType()));
+				var context = options.PropertyContexts.SingleOrDefault(_ => _.Matches(instruction.GetType()));
 				if (context != null && mapInstructions.IndexOf(instruction) == -1)
 				{
 					contexts.Push(context.WaitFor());
@@ -140,31 +122,9 @@ namespace Dovetail.SDK.ModelMap.Serialization.Overrides
 			}
 		}
 
-		private static bool shouldOffset(IModelMapInstruction instruction)
+		private static bool shouldOffset(IModelMapInstruction instruction, ModelMapDiffOptions options)
 		{
-			return Offsets.Contains(instruction.GetType());
-		}
-
-		public class PropertyContext
-		{
-			private readonly Type _current;
-			private readonly Type _waitFor;
-
-			public PropertyContext(Type current, Type waitFor)
-			{
-				_current = current;
-				_waitFor = waitFor;
-			}
-
-			public bool Matches(Type current)
-			{
-				return _current == current;
-			}
-
-			public IModelMapInstruction WaitFor()
-			{
-				return (IModelMapInstruction) FastYetSimpleTypeActivator.CreateInstance(_waitFor);
-			}
+			return options.Offsets.Contains(instruction.GetType());
 		}
 	}
 }

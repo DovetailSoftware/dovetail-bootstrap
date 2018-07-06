@@ -8,6 +8,7 @@ using Dovetail.SDK.History.Serialization;
 using Dovetail.SDK.ModelMap;
 using Dovetail.SDK.ModelMap.Instructions;
 using Dovetail.SDK.ModelMap.Serialization;
+using Dovetail.SDK.ModelMap.Serialization.Overrides;
 using FubuCore;
 
 namespace Dovetail.SDK.History.Tests.Serialization
@@ -68,8 +69,9 @@ namespace Dovetail.SDK.History.Tests.Serialization
 			var elementService = new XElementService(visitors);
 
 			var parser = new HistoryMapParser(services, elementService, logger);
-			var settings = new HistoryMapSettings { Directory = _tempPath };
-			Cache = new HistoryMapCache(parser, settings);
+			var overrides = new HistoryMapOverrideParser(parser, new ModelMapDiff(), new HistoryMapDiffOptions());
+			var settings = new HistorySettings { Directory = _tempPath };
+			Cache = new HistoryMapCache(parser, settings, overrides);
 
 			return Cache.Maps().First();
 		}

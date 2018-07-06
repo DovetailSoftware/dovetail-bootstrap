@@ -60,7 +60,7 @@ namespace Dovetail.SDK.History.Serialization
 
 				try
 				{
-					parse(map, doc, report, filePath.EndsWith(".partial.config"));
+					parse(map, doc, report, false);
 				}
 				catch (Exception exc)
 				{
@@ -94,12 +94,12 @@ namespace Dovetail.SDK.History.Serialization
 			
 
 			var map = new ModelMap.ModelMap(name, entity);
-			parse(map, document, report, isPartial);
+			parse(map, document, report, !isPartial);
 
 			return map;
 		}
 
-		private void parse(ModelMap.ModelMap map, XDocument document, ModelMapCompilationReport report, bool isPartial)
+		private void parse(ModelMap.ModelMap map, XDocument document, ModelMapCompilationReport report, bool shouldAddDefaults)
 		{
 			var root = document.Root;
 			var context = new ParsingContext(_services, report);
@@ -107,7 +107,7 @@ namespace Dovetail.SDK.History.Serialization
 			map.AddInstruction(new BeginModelMap(map.Name));
 			context.PushObject(map);
 
-			if (!isPartial)
+			if (shouldAddDefaults)
 				addDefaults(map);
 
 			root
