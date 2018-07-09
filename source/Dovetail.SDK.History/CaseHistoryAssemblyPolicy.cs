@@ -74,7 +74,7 @@ namespace Dovetail.SDK.History
 		private IEnumerable<int> determineActCodes(WorkflowObject workflowObject, bool showAllActivities)
 		{
 			var activityCodes = new List<int>();
-			var gatherer = new ActEntryGatherer(activityCodes, showAllActivities);
+			var gatherer = new ActEntryGatherer(activityCodes, showAllActivities, _settings, workflowObject);
 			var map = _models.Find(workflowObject);
 			map.Accept(gatherer);
 
@@ -83,6 +83,17 @@ namespace Dovetail.SDK.History
 
 		private ActEntryResult resolveEntries(HistoryRequest request, int[] actCodes)
 		{
+			if (!actCodes.Any())
+			{
+				return new ActEntryResult
+				{
+					Count = 0,
+					Subcases = new int[0],
+					CaseEntries = new int[0],
+					SubcaseEntries = new int[0]
+				};
+			}
+
 			var codeArg = actCodes.Select(_ => _.ToString()).Join(",");
 			var entryTimeArg = request.Since.HasValue
 				? " AND entry_time {0} '{1}'".ToFormat(request.ReverseOrder ? ">" : "<", request.Since.ToString())
@@ -98,6 +109,7 @@ namespace Dovetail.SDK.History
 				return new ActEntryResult
 				{
 					Count = 0,
+					Subcases = new int[0],
 					CaseEntries	= new int[0],
 					SubcaseEntries = new int[0]
 				};

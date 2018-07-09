@@ -10,12 +10,14 @@ namespace Dovetail.SDK.History
 		private readonly IEnumerable<IActEntryResolutionPolicy> _policies;
 		private readonly IDefaultActEntryResolutionPolicy _default;
 		private readonly IHistoryMapRegistry _models;
+		private readonly HistorySettings _settings;
 
-		public DefaultHistoryAssembler(IEnumerable<IActEntryResolutionPolicy> policies, IDefaultActEntryResolutionPolicy @default, IHistoryMapRegistry models)
+		public DefaultHistoryAssembler(IEnumerable<IActEntryResolutionPolicy> policies, IDefaultActEntryResolutionPolicy @default, IHistoryMapRegistry models, HistorySettings settings)
 		{
 			_policies = policies;
 			_default = @default;
 			_models = models;
+			_settings = settings;
 		}
 
 		public bool Matches(HistoryRequest request)
@@ -26,7 +28,7 @@ namespace Dovetail.SDK.History
 		public HistoryResult HistoryFor(HistoryRequest request, IHistoryBuilder builder)
 		{
 			var activityCodes = new List<int>();
-			var gatherer = new ActEntryGatherer(activityCodes, request.ShowAllActivities);
+			var gatherer = new ActEntryGatherer(activityCodes, request.ShowAllActivities, _settings, request.WorkflowObject);
 			var map = _models.Find(request.WorkflowObject);
 			map.Accept(gatherer);
 

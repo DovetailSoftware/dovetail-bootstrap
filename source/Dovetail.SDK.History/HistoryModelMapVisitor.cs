@@ -21,29 +21,31 @@ namespace Dovetail.SDK.History
 		private readonly IMappingVariableExpander _expander;
 		private readonly ClarifyGeneric _rootGeneric;
 		private readonly WorkflowObject _workflowObject;
+		private readonly HistorySettings _settings;
 
 		private readonly Stack<ModelInformation> _modelStack = new Stack<ModelInformation>();
 		private readonly Stack<ClarifyGenericMapEntry> _genericStack = new Stack<ClarifyGenericMapEntry>();
 		private readonly IList<ITransformArgument> _arguments = new List<ITransformArgument>();
 		private readonly IList<BeginActEntry> _configurations = new List<BeginActEntry>();
+		private readonly Stack<BeginWhen> _ignores = new Stack<BeginWhen>();
 
 		private FieldMap _currentFieldMap;
 		private PropertyDefinition _propertyDef;
 		private IMappingTransform _transform;
-		private bool _ignoreInstructions;
 
 		public HistoryModelMapVisitor(IMappingTransformRegistry registry, 
 			IServiceLocator services,
 			IMappingVariableExpander expander, 
 			ClarifyGeneric rootGeneric, 
 			ClarifyDataSet dataSet, 
-			WorkflowObject workflowObject)
+			WorkflowObject workflowObject, HistorySettings settings)
 		{
 			_registry = registry;
 			_services = services;
 			_expander = expander;
 			_rootGeneric = rootGeneric;
 			_workflowObject = workflowObject;
+			_settings = settings;
 
 			DataSet = dataSet;
 		}
@@ -105,12 +107,12 @@ namespace Dovetail.SDK.History
 
 		public void Visit(BeginWhen instruction)
 		{
-			_ignoreInstructions = instruction.IsChild != _workflowObject.IsChild;
+			_ignores.Push(instruction);
 		}
 
 		public void Visit(EndWhen instruction)
 		{
-			_ignoreInstructions = false;
+			_ignores.Pop();
 		}
 
 		public void Visit(EndModelMap instruction)
@@ -465,8 +467,21 @@ namespace Dovetail.SDK.History
 
 		private void executeInstruction(Action action)
 		{
-			if (_ignoreInstructions) return;
-			action();
+			var shouldExecute = _ignores.All(instruction =>
+			{
+				if (instruction.IsChild.HasValue)
+				{
+					return instruction.IsChild.Value == _workflowObject.IsChild;
+				}
+
+				if (!instruction.MergeCaseHistory.HasValue)
+					return true;
+
+				return instruction.MergeCaseHistory.Value == _settings.MergeCaseHistoryChildSubcases;
+			});
+
+			if (shouldExecute)
+				action();
 		}
 	}
 }

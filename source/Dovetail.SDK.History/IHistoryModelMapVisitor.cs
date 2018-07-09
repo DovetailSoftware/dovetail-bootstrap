@@ -9,5 +9,7 @@ namespace Dovetail.SDK.History
 		void Visit(EndActEntry instruction);
 		void Visit(BeginCancellationPolicy instruction);
 		void Visit(EndCancellationPolicy instruction);
+		void Visit(BeginWhen instruction);
+		void Visit(EndWhen instruction);
 	}
 }

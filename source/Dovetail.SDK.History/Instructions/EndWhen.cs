@@ -8,7 +8,7 @@ namespace Dovetail.SDK.History.Instructions
 	{
 		public void Accept(IModelMapVisitor visitor)
 		{
-			visitor.As<HistoryModelMapVisitor>().Visit(this);
+			visitor.As<IHistoryModelMapVisitor>().Visit(this);
 		}
 	}
 }

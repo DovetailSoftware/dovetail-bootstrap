@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Dovetail.SDK.History.Instructions;
 using Dovetail.SDK.ModelMap.Instructions;
 
@@ -8,11 +10,16 @@ namespace Dovetail.SDK.History
 	{
 		private readonly IList<int> _activityCodes;
 		private readonly bool _showAll;
+		private readonly HistorySettings _settings;
+		private readonly WorkflowObject _workflowObject;
+		private readonly Stack<BeginWhen> _ignores = new Stack<BeginWhen>();
 
-		public ActEntryGatherer(IList<int> activityCodes, bool showAll)
+		public ActEntryGatherer(IList<int> activityCodes, bool showAll, HistorySettings settings, WorkflowObject workflowObject)
 		{
 			_activityCodes = activityCodes;
 			_showAll = showAll;
+			_settings = settings;
+			_workflowObject = workflowObject;
 		}
 
 		public void Visit(BeginModelMap instruction)
@@ -121,8 +128,10 @@ namespace Dovetail.SDK.History
 
 		public void Visit(BeginActEntry instruction)
 		{
-			if (_showAll || !instruction.IsVerbose)
-				_activityCodes.Add(instruction.Code);
+			if (!_showAll || instruction.IsVerbose)
+				return;
+
+			executeInstruction(() => _activityCodes.Add(instruction.Code));
 		}
 
 		public void Visit(EndActEntry instruction)
@@ -135,6 +144,35 @@ namespace Dovetail.SDK.History
 
 		public void Visit(EndCancellationPolicy instruction)
 		{
+		}
+
+		public void Visit(BeginWhen instruction)
+		{
+			_ignores.Push(instruction);
+		}
+
+		public void Visit(EndWhen instruction)
+		{
+			_ignores.Pop();
+		}
+
+		private void executeInstruction(Action action)
+		{
+			var shouldExecute = _ignores.All(instruction =>
+			{
+				if (instruction.IsChild.HasValue)
+				{
+					return instruction.IsChild.Value == _workflowObject.IsChild;
+				}
+
+				if (!instruction.MergeCaseHistory.HasValue)
+					return true;
+
+				return instruction.MergeCaseHistory.Value == _settings.MergeCaseHistoryChildSubcases;
+			});
+
+			if (shouldExecute)
+				action();
 		}
 	}
 }
