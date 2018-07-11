@@ -28,6 +28,7 @@ namespace Dovetail.SDK.History
 		private readonly IList<ITransformArgument> _arguments = new List<ITransformArgument>();
 		private readonly IList<BeginActEntry> _configurations = new List<BeginActEntry>();
 		private readonly Stack<BeginWhen> _ignores = new Stack<BeginWhen>();
+		private readonly Stack<BeginActEntry> _entries = new Stack<BeginActEntry>();
 
 		private FieldMap _currentFieldMap;
 		private PropertyDefinition _propertyDef;
@@ -125,6 +126,7 @@ namespace Dovetail.SDK.History
 			executeInstruction(() =>
 			{
 				_configurations.Add(instruction);
+				_entries.Push(instruction);
 
 				var begin = new BeginMappedProperty
 				{
@@ -141,6 +143,7 @@ namespace Dovetail.SDK.History
 			executeInstruction(() =>
 			{
 				Visit(new EndMappedProperty());
+				_entries.Pop();
 			});
 		}
 
@@ -405,6 +408,17 @@ namespace Dovetail.SDK.History
 		{
 			executeInstruction(() =>
 			{
+				if (_propertyDef == null && _entries.Any())
+				{
+					var configuredPath = ModelDataPath.Parse(ModelDataPath.This);
+					// BeginActEntry starts a mapped property so we have to skip
+					var configuredGeneric = _genericStack.Skip(1).First();
+
+					configuredGeneric.AddTransform(new ConfiguredTransform(configuredPath, _transform, _arguments.ToArray(), _expander, _services));
+					_arguments.Clear();
+					return;
+				}
+
 				var field = _propertyDef.Key;
 				var path = ModelDataPath.Parse(field);
 				var currentGeneric = _genericStack.Peek();

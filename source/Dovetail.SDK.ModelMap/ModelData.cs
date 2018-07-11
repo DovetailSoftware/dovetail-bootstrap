@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Dovetail.SDK.ModelMap.Transforms;
 using FubuCore;
 
 namespace Dovetail.SDK.ModelMap
@@ -53,7 +54,7 @@ namespace Dovetail.SDK.ModelMap
             foreach (var pair in _values)
             {
                 var child = pair.Value as ModelData;
-                if (child != null)
+                if (child != null && pair.Key != ModelDataPath.This)
                 {
                     values.Add(pair.Key, child.ToValues());
                     continue;

@@ -39,6 +39,9 @@ namespace Dovetail.SDK.ModelMap.Transforms
 
 		public void Set(ModelData data, object value)
 		{
+			if (_parts.Length == 1 && _parts[0] == This)
+				return;
+
 			var target = data;
 			_parts.Take(_parts.Length - 1).Each(_ => target = target.Child(_));
 
