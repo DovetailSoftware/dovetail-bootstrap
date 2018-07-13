@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Dovetail.SDK.History.Conditions;
 using Dovetail.SDK.History.Instructions;
 using Dovetail.SDK.ModelMap.Instructions;
+using FubuCore;
 
 namespace Dovetail.SDK.History
 {
@@ -10,16 +12,16 @@ namespace Dovetail.SDK.History
 	{
 		private readonly IList<int> _activityCodes;
 		private readonly bool _showAll;
-		private readonly HistorySettings _settings;
 		private readonly WorkflowObject _workflowObject;
+		private readonly IServiceLocator _services;
 		private readonly Stack<BeginWhen> _ignores = new Stack<BeginWhen>();
 
-		public ActEntryGatherer(IList<int> activityCodes, bool showAll, HistorySettings settings, WorkflowObject workflowObject)
+		public ActEntryGatherer(IList<int> activityCodes, bool showAll, WorkflowObject workflowObject, IServiceLocator services)
 		{
 			_activityCodes = activityCodes;
 			_showAll = showAll;
-			_settings = settings;
 			_workflowObject = workflowObject;
+			_services = services;
 		}
 
 		public void Visit(BeginModelMap instruction)
@@ -158,20 +160,8 @@ namespace Dovetail.SDK.History
 
 		private void executeInstruction(Action action)
 		{
-			var shouldExecute = _ignores.All(instruction =>
-			{
-				if (instruction.IsChild.HasValue)
-				{
-					return instruction.IsChild.Value == _workflowObject.IsChild;
-				}
-
-				if (!instruction.MergeCaseHistory.HasValue)
-					return true;
-
-				return instruction.MergeCaseHistory.Value == _settings.MergeCaseHistoryChildSubcases;
-			});
-
-			if (shouldExecute)
+			var context = new ActEntryConditionContext(_workflowObject, _services);
+			if (_ignores.All(instruction => instruction.ShouldExecute(context)))
 				action();
 		}
 	}

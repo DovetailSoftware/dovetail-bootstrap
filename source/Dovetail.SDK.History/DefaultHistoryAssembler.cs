@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Dovetail.SDK.Bootstrap.Clarify.Extensions;
 using Dovetail.SDK.ModelMap;
+using FubuCore;
 
 namespace Dovetail.SDK.History
 {
@@ -10,14 +11,14 @@ namespace Dovetail.SDK.History
 		private readonly IEnumerable<IActEntryResolutionPolicy> _policies;
 		private readonly IDefaultActEntryResolutionPolicy _default;
 		private readonly IHistoryMapRegistry _models;
-		private readonly HistorySettings _settings;
+		private readonly IServiceLocator _services;
 
-		public DefaultHistoryAssembler(IEnumerable<IActEntryResolutionPolicy> policies, IDefaultActEntryResolutionPolicy @default, IHistoryMapRegistry models, HistorySettings settings)
+		public DefaultHistoryAssembler(IEnumerable<IActEntryResolutionPolicy> policies, IDefaultActEntryResolutionPolicy @default, IHistoryMapRegistry models, IServiceLocator services)
 		{
 			_policies = policies;
 			_default = @default;
 			_models = models;
-			_settings = settings;
+			_services = services;
 		}
 
 		public bool Matches(HistoryRequest request)
@@ -28,7 +29,7 @@ namespace Dovetail.SDK.History
 		public HistoryResult HistoryFor(HistoryRequest request, IHistoryBuilder builder)
 		{
 			var activityCodes = new List<int>();
-			var gatherer = new ActEntryGatherer(activityCodes, request.ShowAllActivities, _settings, request.WorkflowObject);
+			var gatherer = new ActEntryGatherer(activityCodes, request.ShowAllActivities, request.WorkflowObject, _services);
 			var map = _models.Find(request.WorkflowObject);
 			map.Accept(gatherer);
 

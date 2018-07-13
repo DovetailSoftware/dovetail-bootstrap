@@ -81,6 +81,11 @@
     </Compile>
     <Compile Include="ActEntryGatherer.cs" />
     <Compile Include="CaseHistoryAssemblyPolicy.cs" />
+    <Compile Include="Conditions\ActEntryConditionRegistry.cs" />
+    <Compile Include="Conditions\ActEntryConditionContext.cs" />
+    <Compile Include="Conditions\ConditionAliasAttribute.cs" />
+    <Compile Include="Conditions\IActEntryCondition.cs" />
+    <Compile Include="Conditions\IActEntryConditionRegistry.cs" />
     <Compile Include="ConfiguredCancellationPolicy.cs" />
     <Compile Include="DefaultActEntryResolutionPolicy.cs" />
     <Compile Include="DefaultHistoryAssembler.cs" />

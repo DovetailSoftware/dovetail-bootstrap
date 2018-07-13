@@ -4,6 +4,7 @@ using System.Linq;
 using Dovetail.SDK.Bootstrap.Clarify;
 using Dovetail.SDK.Bootstrap.Clarify.Extensions;
 using Dovetail.SDK.Bootstrap.Configuration;
+using Dovetail.SDK.History.Conditions;
 using Dovetail.SDK.History.Instructions;
 using Dovetail.SDK.ModelMap;
 using Dovetail.SDK.ModelMap.Instructions;
@@ -34,11 +35,11 @@ namespace Dovetail.SDK.History
 		private PropertyDefinition _propertyDef;
 		private IMappingTransform _transform;
 
-		public HistoryModelMapVisitor(IMappingTransformRegistry registry, 
+		public HistoryModelMapVisitor(IMappingTransformRegistry registry,
 			IServiceLocator services,
-			IMappingVariableExpander expander, 
-			ClarifyGeneric rootGeneric, 
-			ClarifyDataSet dataSet, 
+			IMappingVariableExpander expander,
+			ClarifyGeneric rootGeneric,
+			ClarifyDataSet dataSet,
 			WorkflowObject workflowObject, HistorySettings settings)
 		{
 			_registry = registry;
@@ -474,27 +475,15 @@ namespace Dovetail.SDK.History
 				// BeginActEntry starts a mapped property so we have to skip
 				var currentGeneric = _genericStack.Skip(1).First();
 				var actCode = _configurations.Last().Code;
-				
+
 				currentGeneric.AddTransform(new ConfiguredCancellationPolicy(actCode, path, _transform, new ITransformArgument[0], _expander, _services));
 			});
 		}
 
 		private void executeInstruction(Action action)
 		{
-			var shouldExecute = _ignores.All(instruction =>
-			{
-				if (instruction.IsChild.HasValue)
-				{
-					return instruction.IsChild.Value == _workflowObject.IsChild;
-				}
-
-				if (!instruction.MergeCaseHistory.HasValue)
-					return true;
-
-				return instruction.MergeCaseHistory.Value == _settings.MergeCaseHistoryChildSubcases;
-			});
-
-			if (shouldExecute)
+			var context = new ActEntryConditionContext(_workflowObject, _services);
+			if(_ignores.All(instruction => instruction.ShouldExecute(context)))
 				action();
 		}
 	}

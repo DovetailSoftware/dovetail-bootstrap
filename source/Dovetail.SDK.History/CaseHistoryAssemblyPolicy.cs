@@ -12,11 +12,13 @@ namespace Dovetail.SDK.History
 	{
 		private readonly IHistoryMapRegistry _models;
 		private readonly HistorySettings _settings;
+		private readonly IServiceLocator _services;
 
-		public CaseHistoryAssemblyPolicy(IHistoryMapRegistry models, HistorySettings settings)
+		public CaseHistoryAssemblyPolicy(IHistoryMapRegistry models, HistorySettings settings, IServiceLocator services)
 		{
 			_models = models;
 			_settings = settings;
+			_services = services;
 		}
 
 		public bool Matches(HistoryRequest request)
@@ -74,7 +76,7 @@ namespace Dovetail.SDK.History
 		private IEnumerable<int> determineActCodes(WorkflowObject workflowObject, bool showAllActivities)
 		{
 			var activityCodes = new List<int>();
-			var gatherer = new ActEntryGatherer(activityCodes, showAllActivities, _settings, workflowObject);
+			var gatherer = new ActEntryGatherer(activityCodes, showAllActivities, workflowObject, _services);
 			var map = _models.Find(workflowObject);
 			map.Accept(gatherer);
 
