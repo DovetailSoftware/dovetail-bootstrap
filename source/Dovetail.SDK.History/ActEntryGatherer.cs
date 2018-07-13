@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Dovetail.SDK.Bootstrap.Clarify;
 using Dovetail.SDK.History.Conditions;
 using Dovetail.SDK.History.Instructions;
 using Dovetail.SDK.ModelMap.Instructions;
@@ -15,13 +16,17 @@ namespace Dovetail.SDK.History
 		private readonly WorkflowObject _workflowObject;
 		private readonly IServiceLocator _services;
 		private readonly Stack<BeginWhen> _ignores = new Stack<BeginWhen>();
+		private readonly Stack<BeginActEntry> _entries = new Stack<BeginActEntry>();
+		private readonly List<string> _privileges = new List<string>();
+		private readonly ICurrentSDKUser _user;
 
-		public ActEntryGatherer(IList<int> activityCodes, bool showAll, WorkflowObject workflowObject, IServiceLocator services)
+		public ActEntryGatherer(IList<int> activityCodes, bool showAll, WorkflowObject workflowObject, IServiceLocator services, ICurrentSDKUser user)
 		{
 			_activityCodes = activityCodes;
 			_showAll = showAll;
 			_workflowObject = workflowObject;
 			_services = services;
+			_user = user;
 		}
 
 		public void Visit(BeginModelMap instruction)
@@ -130,14 +135,20 @@ namespace Dovetail.SDK.History
 
 		public void Visit(BeginActEntry instruction)
 		{
-			if (!_showAll || instruction.IsVerbose)
-				return;
-
-			executeInstruction(() => _activityCodes.Add(instruction.Code));
+			_entries.Push(instruction);
 		}
 
 		public void Visit(EndActEntry instruction)
 		{
+			var entry = _entries.Pop();
+			if (!_showAll || entry.IsVerbose)
+			{
+				_privileges.Clear();
+				return;
+			}
+
+			executeInstruction(() => _activityCodes.Add(entry.Code));
+			_privileges.Clear();
 		}
 
 		public void Visit(BeginCancellationPolicy instruction)
@@ -158,10 +169,16 @@ namespace Dovetail.SDK.History
 			_ignores.Pop();
 		}
 
+		public void Visit(RequirePrivilege instruction)
+		{
+			_privileges.Add(instruction.Privilege.Resolve(_services).ToString());
+		}
+
 		private void executeInstruction(Action action)
 		{
+			var authorized = _privileges.All(_user.HasPermission);
 			var context = new ActEntryConditionContext(_workflowObject, _services);
-			if (_ignores.All(instruction => instruction.ShouldExecute(context)))
+			if (authorized && _ignores.All(instruction => instruction.ShouldExecute(context)))
 				action();
 		}
 	}

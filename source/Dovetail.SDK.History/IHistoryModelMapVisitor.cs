@@ -11,5 +11,6 @@ namespace Dovetail.SDK.History
 		void Visit(EndCancellationPolicy instruction);
 		void Visit(BeginWhen instruction);
 		void Visit(EndWhen instruction);
+		void Visit(RequirePrivilege instruction);
 	}
 }

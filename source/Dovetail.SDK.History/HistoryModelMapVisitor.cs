@@ -117,6 +117,10 @@ namespace Dovetail.SDK.History
 			_ignores.Pop();
 		}
 
+		public void Visit(RequirePrivilege instruction)
+		{
+		}
+
 		public void Visit(EndModelMap instruction)
 		{
 			RootGenericMap = _genericStack.Peek();
