@@ -18,17 +18,20 @@ namespace Dovetail.SDK.History.Tests.Serialization
 		private readonly string _tempPath;
 		private readonly string[] _files;
 		private readonly Lazy<ModelMap.ModelMap> _filter;
+		private readonly InMemoryServiceLocator _services;
 
-		public HistoryMapParsingScenario(string tempPath, string[] files)
+		public HistoryMapParsingScenario(string tempPath, string[] files, InMemoryServiceLocator services)
 		{
 			_tempPath = tempPath;
 			_files = files;
+			_services = services;
 
 			_filter = new Lazy<ModelMap.ModelMap>(parseMap);
 		}
 
 		public ModelMap.ModelMap Map { get { return _filter.Value; } }
 		public IHistoryMapCache Cache { get; private set; }
+		public InMemoryServiceLocator Services { get { return _services; } }
 
 		public IModelMapInstruction[] Instructions {  get { return Map.Instructions.ToArray(); } }
 
@@ -57,20 +60,19 @@ namespace Dovetail.SDK.History.Tests.Serialization
 		private ModelMap.ModelMap parseMap()
 		{
 			var logger = new NulloLogger();
-			var services = new InMemoryServiceLocator();
 
-			services.Add<ILogger>(logger);
-			services.Add<IObjectBuilder>(new ObjectBuilder());
-			services.Add<IFilterPolicyRegistry>(new FilterPolicyRegistry());
-			services.Add<IXElementSerializer>(new XElementSerializer(new MappingVariableExpander(new MappingVariableRegistry(new List<IMappingVariableSource>()), services)));
-			services.Add<IMappingVariableExpander>(new MappingVariableExpander(new MappingVariableRegistry(new List<IMappingVariableSource>()), services));
+			Services.Add<ILogger>(logger);
+			Services.Add<IObjectBuilder>(new ObjectBuilder());
+			Services.Add<IFilterPolicyRegistry>(new FilterPolicyRegistry());
+			Services.Add<IXElementSerializer>(new XElementSerializer(new MappingVariableExpander(new MappingVariableRegistry(new List<IMappingVariableSource>()), _services)));
+			Services.Add<IMappingVariableExpander>(new MappingVariableExpander(new MappingVariableRegistry(new List<IMappingVariableSource>()), _services));
 
 			var visitors = Visitors();
 			var elementService = new XElementService(visitors);
 
-			var parser = new HistoryMapParser(services, elementService, logger);
+			var parser = new HistoryMapParser(Services, elementService, logger);
 			var overrides = new HistoryMapOverrideParser(parser, new ModelMapDiff(), new HistoryMapDiffOptions());
-			var settings = new HistorySettings { Directory = _tempPath };
+			var settings = Services.GetInstance<HistorySettings>();
 			Cache = new HistoryMapCache(parser, settings, overrides);
 
 			return Cache.Maps().First();
@@ -101,12 +103,16 @@ namespace Dovetail.SDK.History.Tests.Serialization
 		{
 			private List<string> _files;
 			private readonly string _tempPath;
+			private readonly InMemoryServiceLocator _services;
 
 			public ParsingExpression()
 			{
 				_files = new List<string>();
 				_tempPath = Path.GetTempPath().AppendPath(Guid.NewGuid().ToString());
 				Directory.CreateDirectory(_tempPath);
+
+				_services = new InMemoryServiceLocator();
+				_services.Add(new HistorySettings { Directory = _tempPath });
 			}
 
 			public void UseFile(string filePath)
@@ -122,9 +128,16 @@ namespace Dovetail.SDK.History.Tests.Serialization
 				}
 			}
 
+			public InMemoryServiceLocator Services { get {  return _services; } }
+
+			public void UseService<T>(T service)
+			{
+				_services.Add(service);
+			}
+
 			HistoryMapParsingScenario IScenarioBuilder.Create()
 			{
-				return new HistoryMapParsingScenario(_tempPath, _files.ToArray());
+				return new HistoryMapParsingScenario(_tempPath, _files.ToArray(), _services);
 			}
 		}
 	}

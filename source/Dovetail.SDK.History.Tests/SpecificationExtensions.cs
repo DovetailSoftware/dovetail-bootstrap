@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -49,7 +50,7 @@ namespace Dovetail.SDK.History.Tests
 		public static object ShouldBeClose(this DateTime actual, DateTime expected)
 		{
 			actual.Subtract(expected).TotalSeconds.ShouldBeLessThan(1);
-			
+
 			return expected;
 		}
 
@@ -300,6 +301,41 @@ namespace Dovetail.SDK.History.Tests
 
 			var fileContents = File.ReadAllText(filePath);
 			fileContents.ShouldContain(expected);
+		}
+
+		public static void ShouldHaveTheSameElementsAs(this IList actual, IList expected)
+		{
+			try
+			{
+				actual.ShouldNotBeNull();
+				expected.ShouldNotBeNull();
+
+				actual.Count.ShouldEqual(expected.Count);
+
+				for (int i = 0; i < actual.Count; i++)
+				{
+					actual[i].ShouldEqual(expected[i]);
+				}
+			}
+			catch (Exception)
+			{
+				Debug.WriteLine("Actual values were:");
+				actual.Each(x => Debug.WriteLine(x));
+				throw;
+			}
+		}
+
+		public static void ShouldHaveTheSameElementsAs<T>(this IEnumerable<T> actual, params T[] expected)
+		{
+			ShouldHaveTheSameElementsAs(actual, (IEnumerable<T>)expected);
+		}
+
+		public static void ShouldHaveTheSameElementsAs<T>(this IEnumerable<T> actual, IEnumerable<T> expected)
+		{
+			IList actualList = (actual is IList) ? (IList)actual : actual.ToList();
+			IList expectedList = (expected is IList) ? (IList)expected : expected.ToList();
+
+			ShouldHaveTheSameElementsAs(actualList, expectedList);
 		}
 	}
 }

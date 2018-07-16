@@ -141,7 +141,7 @@ namespace Dovetail.SDK.History
 		public void Visit(EndActEntry instruction)
 		{
 			var entry = _entries.Pop();
-			if (!_showAll || entry.IsVerbose)
+			if (entry.IsVerbose && !_showAll)
 			{
 				_privileges.Clear();
 				return;
