@@ -199,6 +199,38 @@ namespace Dovetail.SDK.History.Tests
 			}
 		}
 
+		[TestFixture]
+		public class nested_when
+		{
+			[Test]
+			public void evalutes_the_conditions()
+			{
+				ActEntryGathererScenario.Create(_ =>
+				{
+					_.UseFile("nested.history.config");
+					_.TheWorkflowObjectIs(new WorkflowObject
+					{
+						Type = "case",
+						Id = "1",
+						IsChild = true
+					});
+					_.MergeHistory(true);
+				}).ShouldHaveTheSameElementsAs(100, 200, 300, 101, 202, 303);
+
+				ActEntryGathererScenario.Create(_ =>
+				{
+					_.UseFile("nested.history.config");
+					_.TheWorkflowObjectIs(new WorkflowObject
+					{
+						Type = "case",
+						Id = "1",
+						IsChild = false
+					});
+					_.MergeHistory(true);
+				}).ShouldHaveTheSameElementsAs(400, 500, 401);
+			}
+		}
+
 		private class ActEntryGathererScenario
 		{
 			private readonly WorkflowObject _workflowObject;
