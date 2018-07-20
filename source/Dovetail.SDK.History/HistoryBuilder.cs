@@ -135,7 +135,7 @@ namespace Dovetail.SDK.History
 
 			populateDTOWithRelatedDTOs(genericMap, record, dto);
 
-			foreach (var transform in genericMap.Transforms.Where(_ => !(_ is ConfiguredCancellationPolicy)))
+			foreach (var transform in genericMap.Transforms.Where(_ => !(_ is ConfiguredCancellationPolicy) && _.ShouldExecute(dto)))
 			{
 				transform.Execute(dto, _services);
 			}

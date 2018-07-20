@@ -419,7 +419,9 @@ namespace Dovetail.SDK.History
 					// BeginActEntry starts a mapped property so we have to skip
 					var configuredGeneric = _genericStack.Skip(1).First();
 
-					configuredGeneric.AddTransform(new ConfiguredTransform(configuredPath, _transform, _arguments.ToArray(), _expander, _services));
+					var entry = _entries.Peek();
+					configuredGeneric.AddTransform(new ConfiguredTransform(configuredPath, _transform,
+						_arguments.ToArray(), _expander, _services, _ => _.Get<int>("type") == entry.Code));
 					_arguments.Clear();
 					return;
 				}
