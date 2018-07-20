@@ -112,12 +112,15 @@ namespace Dovetail.SDK.History
 
 				genericMap.Tags.Each(_ => row.AddTag(_));
 
-				var cancel = genericMap
+				var cancellationPolicies = genericMap
 					.Transforms
 					.OfType<ConfiguredCancellationPolicy>()
-					.Any(_ => (bool) _.Execute(row, _services));
+					.ToList();
 
-				if (!cancel)
+				var shouldAdd = !cancellationPolicies.Any() ||
+					(cancellationPolicies.Any() && cancellationPolicies.All(_ => !(bool) _.Execute(row, _services)));
+
+				if (shouldAdd)
 					rows.Add(row);
 			}
 
