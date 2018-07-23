@@ -97,7 +97,6 @@
     <Compile Include="Serialization\nested_partials.cs" />
     <Compile Include="Serialization\ObjectExtensions.cs" />
     <Compile Include="Serialization\partial_scenario.cs" />
-    <Compile Include="Serialization\email_scenario.cs" />
     <Compile Include="Serialization\remove_act_entry_scenario.cs" />
     <Compile Include="Serialization\simple_override_scenario.cs" />
     <Compile Include="Serialization\simple_scenario.cs" />

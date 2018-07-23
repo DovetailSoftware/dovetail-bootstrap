@@ -50,10 +50,10 @@ namespace Dovetail.SDK.History
 
 			configureActEntryGeneric(rootGenericMap.ClarifyGeneric);
 
-			return assemble(rootGenericMap).Models;
+			return assemble(request.WorkflowObject, rootGenericMap).Models;
 		}
 
-		private PaginationResult assemble(ClarifyGenericMapEntry rootGenericMap)
+		private PaginationResult assemble(WorkflowObject workflowObject, ClarifyGenericMapEntry rootGenericMap)
 		{
 			var result = new PaginationResult();
 
@@ -64,7 +64,7 @@ namespace Dovetail.SDK.History
 			traverseGenericsPopulatingSubRootMaps(rootGenericMap);
 
 			var records = rootGenericMap.ClarifyGeneric.DataRows();
-			result.Models = createDtosForMap(rootGenericMap, records);
+			result.Models = createDtosForMap(workflowObject, rootGenericMap, records);
 
 			return result;
 		}
@@ -100,7 +100,7 @@ namespace Dovetail.SDK.History
 			parentGenericMap.ChildGenericMaps.Where(map => !map.IsNewRoot()).Each(traverseGenericsPopulatingSubRootMaps);
 		}
 
-		private ModelData[] createDtosForMap(ClarifyGenericMapEntry genericMap, IEnumerable<ClarifyDataRow> records)
+		private ModelData[] createDtosForMap(WorkflowObject workflowObject, ClarifyGenericMapEntry genericMap, IEnumerable<ClarifyDataRow> records)
 		{
 			var rows = new List<ModelData>();
 
@@ -121,7 +121,10 @@ namespace Dovetail.SDK.History
 					(cancellationPolicies.Any() && cancellationPolicies.All(_ => !(bool) _.Execute(row, _services)));
 
 				if (shouldAdd)
+				{
+					row["isChild"] = workflowObject.IsChild;
 					rows.Add(row);
+				}
 			}
 
 			return rows.ToArray();
