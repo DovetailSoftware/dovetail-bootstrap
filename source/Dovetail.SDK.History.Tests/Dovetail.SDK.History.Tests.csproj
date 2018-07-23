@@ -94,6 +94,7 @@
     <Compile Include="NulloLogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serialization\adds_the_defaults.cs" />
+    <Compile Include="Serialization\nested_partials.cs" />
     <Compile Include="Serialization\ObjectExtensions.cs" />
     <Compile Include="Serialization\partial_scenario.cs" />
     <Compile Include="Serialization\email_scenario.cs" />
@@ -162,6 +163,21 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Serialization\nested.history.config">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Serialization\partials1.partial.config">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Serialization\partials2.partial.config">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Serialization\partials3.partial.config">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Serialization\nested-partial.history.config">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Serialization\partials4.partial.config">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
