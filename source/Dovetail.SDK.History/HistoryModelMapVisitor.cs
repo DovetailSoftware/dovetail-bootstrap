@@ -139,7 +139,7 @@ namespace Dovetail.SDK.History
 					AllowEmpty = true,
 				};
 
-				Visit(begin, _ => _.AsInt("act_code") == instruction.Code);
+				Visit(begin, (entry, row) => _workflowObject.Type.EqualsIgnoreCase(entry.Entity) && row.AsInt("act_code") == instruction.Code);
 			});
 		}
 
@@ -281,7 +281,7 @@ namespace Dovetail.SDK.History
 			});
 		}
 
-		public void Visit(BeginMappedProperty instruction, Func<ClarifyDataRow, bool> condition)
+		public void Visit(BeginMappedProperty instruction, Func<ClarifyGenericMapEntry, ClarifyDataRow, bool> condition)
 		{
 			executeInstruction(() =>
 			{

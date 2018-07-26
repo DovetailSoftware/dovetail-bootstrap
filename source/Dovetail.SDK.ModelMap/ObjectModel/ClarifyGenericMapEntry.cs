@@ -36,7 +36,7 @@ namespace Dovetail.SDK.ModelMap.ObjectModel
         public ClarifyGeneric ClarifyGeneric { get; set; }
         public ModelInformation Model { get; set; }
         public SubRootInformation NewRoot { get; set; }
-		public Func<ClarifyDataRow, bool> Condition { get; set; }
+		public Func<ClarifyGenericMapEntry, ClarifyDataRow, bool> Condition { get; set; }
 
 		public bool IsNewRoot()
         {

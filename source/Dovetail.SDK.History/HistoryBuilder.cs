@@ -167,7 +167,7 @@ namespace Dovetail.SDK.History
 				}
 				else if (parentGenericMap.ClarifyGeneric == childMap.ClarifyGeneric)
 				{
-					if (childMap.Condition == null || childMap.Condition(parentRecord))
+					if (childMap.Condition == null || childMap.Condition(parentGenericMap, parentRecord))
 					{
 						var childModel = new ModelData {Name = childMap.Model.ModelName};
 						populateDTOForGenericRecord(childMap, parentRecord, childModel);

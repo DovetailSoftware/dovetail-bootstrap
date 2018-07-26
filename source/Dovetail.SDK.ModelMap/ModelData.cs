@@ -48,6 +48,11 @@ namespace Dovetail.SDK.ModelMap
             return _values.ContainsKey(key);
         }
 
+	    public void Remove(string key)
+	    {
+		    _values.Remove(key);
+	    }
+
         public IDictionary<string, object> ToValues()
         {
             var values = new Dictionary<string, object>();

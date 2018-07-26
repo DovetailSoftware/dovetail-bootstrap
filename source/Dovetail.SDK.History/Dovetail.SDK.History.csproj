@@ -80,6 +80,7 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ActEntryGatherer.cs" />
+    <Compile Include="AdditionalInfoLexerTransform.cs" />
     <Compile Include="CaseHistoryAssemblyPolicy.cs" />
     <Compile Include="Conditions\ActEntryConditionRegistry.cs" />
     <Compile Include="Conditions\ActEntryConditionContext.cs" />
@@ -130,6 +131,7 @@
     <Compile Include="Serialization\IHistoryMapOverrideParser.cs" />
     <Compile Include="Serialization\IHistoryMapParser.cs" />
     <Compile Include="Serialization\ParseActEntry.cs" />
+    <Compile Include="Serialization\ParseAdditionalInfoLexer.cs" />
     <Compile Include="Serialization\ParseCancellationPolicy.cs" />
     <Compile Include="Serialization\ParseRemoveActEntry.cs" />
     <Compile Include="Serialization\ParseRequirePrivilege.cs" />
