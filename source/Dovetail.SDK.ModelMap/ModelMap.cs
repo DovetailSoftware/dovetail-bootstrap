@@ -69,14 +69,14 @@ namespace Dovetail.SDK.ModelMap
 
 		public InstructionSet FindProperty(string key, int startIndex)
 		{
-			return FindInstructionSet(key, startIndex, _ =>
+			return FindInstructionSet(startIndex, _ =>
 			{
 				var beginProp = _ as BeginProperty;
 				return beginProp != null && beginProp.Key.Resolve(null).ToString().EqualsIgnoreCase(key);
 			}, _ => _ is EndProperty);
 		}
 
-		public InstructionSet FindInstructionSet(string key, int startIndex, Func<IModelMapInstruction, bool> findStart, Func<IModelMapInstruction, bool> findEnd)
+		public InstructionSet FindInstructionSet(int startIndex, Func<IModelMapInstruction, bool> findStart, Func<IModelMapInstruction, bool> findEnd)
 		{
 			var instructions = new List<IModelMapInstruction>();
 			int count = 0;
@@ -118,7 +118,7 @@ namespace Dovetail.SDK.ModelMap
 
 		public InstructionSet FindMappedProperty(string key, int startIndex)
 		{
-			return FindInstructionSet(key, startIndex, _ =>
+			return FindInstructionSet(startIndex, _ =>
 			{
 				var beginProp = _ as BeginMappedProperty;
 				return beginProp != null && beginProp.Key.Resolve(null).ToString().EqualsIgnoreCase(key);
@@ -127,7 +127,7 @@ namespace Dovetail.SDK.ModelMap
 
 		public InstructionSet FindMappedCollection(string key, int startIndex)
 		{
-			return FindInstructionSet(key, startIndex, _ =>
+			return FindInstructionSet(startIndex, _ =>
 			{
 				var beginProp = _ as BeginMappedCollection;
 				return beginProp != null && beginProp.Key.Resolve(null).ToString().EqualsIgnoreCase(key);

@@ -99,6 +99,7 @@
     <Compile Include="Serialization\partial_scenario.cs" />
     <Compile Include="Serialization\remove_act_entry_scenario.cs" />
     <Compile Include="Serialization\simple_override_scenario.cs" />
+    <Compile Include="Serialization\duplicates_scenario.cs" />
     <Compile Include="Serialization\simple_scenario.cs" />
     <Compile Include="Serialization\TestContainer.cs" />
     <Compile Include="SpecificationExtensions.cs" />
@@ -177,6 +178,12 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Serialization\partials4.partial.config">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Serialization\duplicates.history.config">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Serialization\duplicates.partial.config">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>

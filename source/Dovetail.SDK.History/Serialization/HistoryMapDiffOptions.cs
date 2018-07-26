@@ -15,7 +15,7 @@ namespace Dovetail.SDK.History.Serialization
 
 			Remove<RemoveActEntry>((map, key, startIndex) =>
 			{
-				return map.FindInstructionSet(key, startIndex, _ =>
+				return map.FindInstructionSet(startIndex, _ =>
 				{
 					var begin = _ as BeginActEntry;
 					return begin != null && begin.Code.ToString().EqualsIgnoreCase(key);

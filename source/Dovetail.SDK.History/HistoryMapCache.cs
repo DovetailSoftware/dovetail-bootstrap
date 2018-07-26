@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Dovetail.SDK.History.Instructions;
 using Dovetail.SDK.History.Serialization;
 using Dovetail.SDK.ModelMap;
 using FubuCore;
@@ -48,18 +49,50 @@ namespace Dovetail.SDK.History
 				_partials = new Lazy<ModelMap.ModelMap[]>(() => findMaps("*.partial.config"));
 
 				foreach (var map in _partials.Value)
-				{
 					map.As<IExpandableMap>().Expand(this);
-				}
 
 				foreach (var map in _maps.Value)
-				{
 					map.As<IExpandableMap>().Expand(this);
-				}
+
+				foreach (var map in _maps.Value)
+					removeDuplicateActEntries(map);
 			}
 			finally
 			{
 				_visiting = false;
+			}
+		}
+
+		private void removeDuplicateActEntries(ModelMap.ModelMap map)
+		{
+			var locations = new List<Tuple<int, int>>();
+			var instructions = map.Instructions;
+			for (var i = 0; i < instructions.Length; ++i)
+			{
+				var entry = instructions[i] as BeginActEntry;
+				if (entry != null)
+				{
+					locations.Add(new Tuple<int, int>(entry.Code, i));
+				}
+			}
+
+			var visited = new List<int>();
+			foreach (var pair in locations)
+			{
+				if (!visited.Contains(pair.Item1))
+				{
+					visited.Add(pair.Item1);
+					continue;
+				}
+
+				var set = map.FindInstructionSet(pair.Item2 - 1, _ =>
+				{
+					var entry = _ as BeginActEntry;
+					return entry != null && entry.Code == pair.Item1;
+				}, _ => _ is EndActEntry);
+
+				foreach(var instruction in set.Instructions)
+					map.RemoveInstruction(instruction);
 			}
 		}
 

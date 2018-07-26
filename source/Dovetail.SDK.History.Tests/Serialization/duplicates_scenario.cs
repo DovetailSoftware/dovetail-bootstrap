@@ -7,7 +7,7 @@ using NUnit.Framework;
 namespace Dovetail.SDK.History.Tests.Serialization
 {
 	[TestFixture]
-	public class partial_scenario
+	public class duplicates_scenario
 	{
 		private HistoryMapParsingScenario theScenario;
 
@@ -16,8 +16,8 @@ namespace Dovetail.SDK.History.Tests.Serialization
 		{
 			theScenario = HistoryMapParsingScenario.Create(_ =>
 			{
-				_.UseFile("with-partial.history.config");
-				_.UseFile("attachments.partial.config");
+				_.UseFile("duplicates.history.config");
+				_.UseFile("duplicates.partial.config");
 			});
 		}
 
@@ -30,22 +30,15 @@ namespace Dovetail.SDK.History.Tests.Serialization
 
 				_.SkipDefaults();
 
-				_.Is<PushVariableContext>();
 				_.Verify<BeginActEntry>(__ =>
 				{
-					__.Code.ShouldEqual(8900);
-					__.IsVerbose.ShouldBeTrue();
+					__.Code.ShouldEqual(500);
+					__.IsVerbose.ShouldBeFalse();
 				});
 
-				_.Get<BeginRelation>().RelationName.ShouldEqual("act_entry2doc_inst");
-				_.Get<BeginProperty>().Key.ShouldEqual("id");
-				_.Is<EndProperty>();
-				_.Get<BeginProperty>().Key.ShouldEqual("title");
-				_.Is<EndProperty>();
-				_.Is<EndRelation>();
 				_.Is<EndActEntry>();
+				_.Is<PushVariableContext>();
 				_.Is<PopVariableContext>();
-
 				_.Is<EndModelMap>();
 			});
 		}
