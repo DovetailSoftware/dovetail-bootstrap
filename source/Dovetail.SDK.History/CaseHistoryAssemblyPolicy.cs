@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Dovetail.SDK.Bootstrap.Clarify;
 using Dovetail.SDK.Bootstrap.Clarify.Extensions;
 using Dovetail.SDK.ModelMap;
@@ -32,9 +33,10 @@ namespace Dovetail.SDK.History
 
 		public HistoryResult HistoryFor(HistoryRequest request, IHistoryBuilder builder)
 		{
-			var activityCodes = determineActCodes(request.ShowAllActivities);
+			var caseActivityCodes = determineActCodes(new WorkflowObject { Type = "case" }, request.ShowAllActivities);
+			var subcaseActivityCodes = determineActCodes(new WorkflowObject { Type = "subcase" }, request.ShowAllActivities);
 
-			var actEntries = resolveEntries(request, activityCodes.ToArray());
+			var actEntries = resolveEntries(request, caseActivityCodes.ToArray(), subcaseActivityCodes.ToArray());
 			var caseHistoryItems = actEntries.CaseEntries.Any()
 				? builder.GetAll(request, generic => generic.Filter(_ => _.IsIn("objid", actEntries.CaseEntries.ToArray())))
 				: new ModelData[0];
@@ -67,15 +69,6 @@ namespace Dovetail.SDK.History
 			};
 		}
 
-		private int[] determineActCodes(bool showAllActivities)
-		{
-			var actCodes = new List<int>();
-			actCodes.AddRange(determineActCodes(new WorkflowObject {Type = "case"}, showAllActivities));
-			actCodes.AddRange(determineActCodes(new WorkflowObject { Type = "subcase" }, showAllActivities));
-
-			return actCodes.ToArray();
-		}
-
 		private IEnumerable<int> determineActCodes(WorkflowObject workflowObject, bool showAllActivities)
 		{
 			var activityCodes = new List<int>();
@@ -86,8 +79,11 @@ namespace Dovetail.SDK.History
 			return activityCodes;
 		}
 
-		private ActEntryResult resolveEntries(HistoryRequest request, int[] actCodes)
+		private ActEntryResult resolveEntries(HistoryRequest request, int[] caseActCodes, int[] subcaseActCodes)
 		{
+			var actCodes = new List<int>(caseActCodes);
+			actCodes.AddRange(subcaseActCodes);
+
 			if (!actCodes.Any())
 			{
 				return new ActEntryResult
@@ -103,6 +99,7 @@ namespace Dovetail.SDK.History
 			var entryTimeArg = request.Since.HasValue
 				? " AND entry_time {0} '{1}'".ToFormat(request.ReverseOrder ? ">" : "<", request.Since.ToString())
 				: "";
+			var order = request.ReverseOrder ? "ASC" : "DESC";
 
 			var objId = (int)new SqlHelper("SELECT objid FROM table_case WHERE id_number = '{0}'".ToFormat(request.WorkflowObject.Id)).ExecuteScalar();
 			var command = "SELECT COUNT(1) FROM table_act_entry WHERE act_code IN ({0}){1} AND (act_entry2case = {2} OR act_entry2subcase IN (SELECT objid FROM table_subcase WHERE subcase2case = {2}))".ToFormat(codeArg, entryTimeArg, objId);
@@ -133,7 +130,16 @@ namespace Dovetail.SDK.History
 				}
 			}
 
-			command = "SELECT TOP {0} objid, act_entry2case, act_entry2subcase FROM table_act_entry WHERE act_code IN ({1}){2} AND (act_entry2case = {3} OR act_entry2subcase IN (SELECT objid FROM table_subcase WHERE subcase2case = {3})) ORDER BY entry_time DESC, objid DESC".ToFormat(request.HistoryItemLimit, codeArg, entryTimeArg, objId);
+			command = new StringBuilder("SELECT TOP ")
+				.Append(request.HistoryItemLimit)
+				.Append(" objid, act_entry2case, act_entry2subcase FROM table_act_entry WHERE ")
+				.AppendFormat("(act_code IN ({0}) AND act_entry2case = {1})", caseActCodes.Select(_ => _.ToString()).Join(","), objId)
+				.Append(" OR ")
+				.AppendFormat("(act_code IN ({0}) AND act_entry2subcase IN (SELECT objid FROM table_subcase WHERE subcase2case = {1}))", subcaseActCodes.Select(_ => _.ToString()).Join(","), objId)
+				.Append(entryTimeArg)
+				.AppendFormat(" ORDER BY entry_time {0}, objid {0}", order)
+				.ToString();
+
 			helper = new SqlHelper(command);
 
 			var caseIds = new List<int>();
