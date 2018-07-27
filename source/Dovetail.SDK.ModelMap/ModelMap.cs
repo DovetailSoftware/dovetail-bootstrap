@@ -51,6 +51,11 @@ namespace Dovetail.SDK.ModelMap
 			}
 		}
 
+		public void RemoveInstruction(int index)
+		{
+			_instructions.RemoveAt(index);
+		}
+
 		public void RemoveInstruction(IModelMapInstruction instruction)
 		{
 			_instructions.Remove(instruction);

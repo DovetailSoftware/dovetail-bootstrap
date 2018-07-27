@@ -91,8 +91,11 @@ namespace Dovetail.SDK.History
 					return entry != null && entry.Code == pair.Item1;
 				}, _ => _ is EndActEntry);
 
-				foreach(var instruction in set.Instructions)
-					map.RemoveInstruction(instruction);
+				if (set.End > set.Start)
+				{
+					for (var i = set.Start; i <= set.End; i++)
+						map.RemoveInstruction(set.Start);
+				}
 			}
 		}
 
