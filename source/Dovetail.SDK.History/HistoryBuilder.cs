@@ -123,6 +123,7 @@ namespace Dovetail.SDK.History
 				if (shouldAdd)
 				{
 					row["isChild"] = workflowObject.IsChild;
+					row["entity"] = workflowObject.Type;
 					rows.Add(row);
 				}
 			}
