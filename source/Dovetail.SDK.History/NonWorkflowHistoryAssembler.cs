@@ -66,7 +66,14 @@ namespace Dovetail.SDK.History
 				? " AND entry_time {0} '{1}'".ToFormat(request.ReverseOrder ? ">" : "<", request.Since.ToString())
 				: "";
 
-			var focusArg = "focus_type = {0} AND focus_lowid = {1}".ToFormat(options.FocusType, options.FocusId);
+			var findByFocusTypeAndId = "focus_type = {0} AND focus_lowid = {1}".ToFormat(options.FocusType, options.FocusId);
+			var focusArg = findByFocusTypeAndId;
+			var workflowObjectInfo = WorkflowObjectInfo.GetObjectInfo(request.WorkflowObject.Type);
+			if (workflowObjectInfo.UseParticipantActEntryModel)
+			{
+				focusArg = "(({0}) OR objid IN (SELECT participant2act_entry FROM table_participant WHERE {0}))".ToFormat(findByFocusTypeAndId);
+			}
+
 			var command = "SELECT COUNT(1) FROM table_act_entry WHERE act_code IN ({0}){1} AND {2}".ToFormat(codeArg, entryTimeArg, focusArg);
 			var helper = new SqlHelper(command);
 			var count = (int)helper.ExecuteScalar();
