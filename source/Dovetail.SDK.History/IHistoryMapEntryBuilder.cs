@@ -8,5 +8,7 @@ namespace Dovetail.SDK.History
 	{
 		ClarifyGenericMapEntry BuildFromModelMap(HistoryRequest request, ModelMap.ModelMap modelMap);
 		ClarifyGenericMapEntry BuildFromModelMap(HistoryRequest request, ModelMap.ModelMap modelMap, Action<ClarifyGeneric> configureWorkflowGeneric);
+
+		ClarifyGenericMapEntry BuildFromActEntry(HistoryRequest request, ModelMap.ModelMap modelMap, ActEntryOptions options);
 	}
 }

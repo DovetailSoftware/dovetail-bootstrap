@@ -53,6 +53,16 @@ namespace Dovetail.SDK.History
 			return assemble(request.WorkflowObject, rootGenericMap).Models;
 		}
 
+		public ModelData[] GetAll(HistoryRequest request, ActEntryOptions options, Action<ClarifyGeneric> configureActEntryGeneric)
+		{
+			var map = _models.Find(request.WorkflowObject);
+			var rootGenericMap = _entries.BuildFromActEntry(request, map, options);
+
+			configureActEntryGeneric(rootGenericMap.ClarifyGeneric);
+
+			return assemble(request.WorkflowObject, rootGenericMap).Models;
+		}
+
 		private PaginationResult assemble(WorkflowObject workflowObject, ClarifyGenericMapEntry rootGenericMap)
 		{
 			var result = new PaginationResult();

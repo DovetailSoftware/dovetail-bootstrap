@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Dovetail.SDK.ModelMap;
@@ -32,8 +33,11 @@ namespace Dovetail.SDK.History
 			var idArg = "";
 			var workflowObjectInfo = WorkflowObjectInfo.GetObjectInfo(request.WorkflowObject.Type);
 			var inverseActivityRelation = workflowObjectInfo.ActivityRelation;
-			var activityRelation = _schema.GetRelation("act_entry", inverseActivityRelation).Name;
 
+			if (inverseActivityRelation.IsEmpty())
+				throw new InvalidOperationException("Cannot traverse from {0} to act_entry".ToFormat(request.WorkflowObject.Type));
+
+			var activityRelation = _schema.GetRelation("act_entry", inverseActivityRelation).Name;
 			if (workflowObjectInfo.IDFieldName.IsEmpty() || workflowObjectInfo.IDFieldName == "objid")
 			{
 				idArg = "{0} = {1}".ToFormat(activityRelation, request.WorkflowObject.Id);

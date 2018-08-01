@@ -84,5 +84,39 @@ namespace Dovetail.SDK.History
 
 			return generic;
 		}
+
+		public ClarifyGenericMapEntry BuildFromActEntry(HistoryRequest request, ModelMap.ModelMap modelMap, ActEntryOptions options)
+		{
+			var session = _container.GetInstance<IClarifySession>();
+			var clarifyDataSet = session.CreateDataSet();
+
+			var actEntryGeneric = clarifyDataSet.CreateGenericWithFields("act_entry");
+			actEntryGeneric.AppendSort("entry_time", false);
+			actEntryGeneric.AppendSort("objid", false);
+
+			if (request.Since.HasValue)
+			{
+				var filter = new FilterExpression().MoreThan("entry_time", request.Since.Value);
+				actEntryGeneric.Filter.AddFilter(filter);
+			}
+
+			var visitor = _container
+				.With(clarifyDataSet)
+				.With(actEntryGeneric)
+				.With(request.WorkflowObject)
+				.GetInstance<HistoryModelMapVisitor>();
+
+			modelMap.Accept(visitor);
+			var generic = visitor.RootGenericMap;
+			generic.Entity = modelMap.Entity;
+
+			if (!request.ShowAllActivities)
+			{
+				var activeCodes = visitor.ActEntries.Where(t => !t.IsVerbose).Select(d => d.Code).ToArray();
+				actEntryGeneric.Filter(f => f.IsIn("act_code", activeCodes));
+			}
+
+			return generic;
+		}
 	}
 }

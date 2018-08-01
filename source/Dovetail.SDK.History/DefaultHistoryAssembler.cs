@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Dovetail.SDK.Bootstrap.Clarify;
 using Dovetail.SDK.Bootstrap.Clarify.Extensions;
 using Dovetail.SDK.ModelMap;
+using FChoice.Foundation.Clarify;
 using FubuCore;
 
 namespace Dovetail.SDK.History

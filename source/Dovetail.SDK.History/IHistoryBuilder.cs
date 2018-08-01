@@ -9,5 +9,7 @@ namespace Dovetail.SDK.History
 		ModelData[] GetAll(HistoryRequest request);
 		ModelData[] GetAll(HistoryRequest request, Action<ClarifyGeneric> configureActEntryGeneric);
 		ModelData[] GetAll(HistoryRequest request, Action<ClarifyGeneric> configureActEntryGeneric, Action<ClarifyGeneric> configureWorkflowGeneric);
+
+		ModelData[] GetAll(HistoryRequest request, ActEntryOptions options, Action<ClarifyGeneric> configureActEntryGeneric);
 	}
 }

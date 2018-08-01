@@ -8,6 +8,7 @@ namespace Dovetail.SDK.History
 		public HistorySettings()
 		{
 			Directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "History");
+			MergeCaseHistoryChildSubcases = true;
 		}
 
 		public string Directory { get; set; }

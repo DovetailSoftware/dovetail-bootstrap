@@ -80,7 +80,10 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ActEntryGatherer.cs" />
+    <Compile Include="ActEntryMappingRegistry.cs" />
+    <Compile Include="ActEntryOptions.cs" />
     <Compile Include="AdditionalInfoLexerTransform.cs" />
+    <Compile Include="NonWorkflowHistoryAssembler.cs" />
     <Compile Include="CaseHistoryAssemblyPolicy.cs" />
     <Compile Include="Conditions\ActEntryConditionRegistry.cs" />
     <Compile Include="Conditions\ActEntryConditionContext.cs" />
