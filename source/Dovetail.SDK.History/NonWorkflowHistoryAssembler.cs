@@ -63,7 +63,7 @@ namespace Dovetail.SDK.History
 		{
 			var codeArg = actCodes.Select(_ => _.ToString()).Join(",");
 			var entryTimeArg = request.Since.HasValue
-				? " AND entry_time {0} '{1}'".ToFormat(request.ReverseOrder ? ">" : "<", request.Since.ToString())
+				? " AND entry_time {0} '{1}'".ToFormat(request.ReverseOrder ? ">=" : "<=", request.Since.ToString())
 				: "";
 
 			var findByFocusTypeAndId = "focus_type = {0} AND focus_lowid = {1}".ToFormat(options.FocusType, options.FocusId);
@@ -87,7 +87,8 @@ namespace Dovetail.SDK.History
 				};
 			}
 
-			command = "SELECT TOP {0} objid FROM table_act_entry WHERE act_code IN ({1}){2} AND {3} ORDER BY entry_time DESC, objid DESC".ToFormat(request.HistoryItemLimit, codeArg, entryTimeArg, focusArg);
+			var orderDirection = request.ReverseOrder ? "ASC" : "DESC";
+			command = "SELECT TOP {0} objid FROM table_act_entry WHERE act_code IN ({1}){2} AND {3} ORDER BY entry_time {4}, objid {4}".ToFormat(request.HistoryItemLimit, codeArg, entryTimeArg, focusArg, orderDirection);
 			helper = new SqlHelper(command);
 
 			var ids = new List<int>();

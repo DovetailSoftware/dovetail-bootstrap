@@ -97,7 +97,7 @@ namespace Dovetail.SDK.History
 
 			var codeArg = actCodes.Select(_ => _.ToString()).Join(",");
 			var entryTimeArg = request.Since.HasValue
-				? " AND entry_time {0} '{1}'".ToFormat(request.ReverseOrder ? ">" : "<", request.Since.ToString())
+				? " AND entry_time {0} '{1}'".ToFormat(request.ReverseOrder ? ">=" : "<=", request.Since.ToString())
 				: "";
 			var order = request.ReverseOrder ? "ASC" : "DESC";
 
