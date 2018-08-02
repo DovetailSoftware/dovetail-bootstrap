@@ -97,7 +97,7 @@ namespace Dovetail.SDK.History
 
 			var codeArg = actCodes.Select(_ => _.ToString()).Join(",");
 			var entryTimeArg = request.Since.HasValue
-				? " AND entry_time {0} '{1}'".ToFormat(request.ReverseOrder ? ">=" : "<=", request.Since.ToString())
+				? " AND entry_time {0} '{1}'".ToFormat(request.ReverseOrder ? ">=" : "<=", request.Since.Value.ToString("yyyy-MM-dd HH:mm:ss.fff"))
 				: "";
 			var order = request.ReverseOrder ? "ASC" : "DESC";
 
@@ -133,9 +133,9 @@ namespace Dovetail.SDK.History
 			command = new StringBuilder("SELECT TOP ")
 				.Append(request.HistoryItemLimit)
 				.Append(" objid, act_entry2case, act_entry2subcase FROM table_act_entry WHERE ")
-				.AppendFormat("(act_code IN ({0}) AND act_entry2case = {1})", caseActCodes.Select(_ => _.ToString()).Join(","), objId)
+				.AppendFormat("((act_code IN ({0}) AND act_entry2case = {1})", caseActCodes.Select(_ => _.ToString()).Join(","), objId)
 				.Append(" OR ")
-				.AppendFormat("(act_code IN ({0}) AND act_entry2subcase IN (SELECT objid FROM table_subcase WHERE subcase2case = {1}))", subcaseActCodes.Select(_ => _.ToString()).Join(","), objId)
+				.AppendFormat("(act_code IN ({0}) AND act_entry2subcase IN (SELECT objid FROM table_subcase WHERE subcase2case = {1})))", subcaseActCodes.Select(_ => _.ToString()).Join(","), objId)
 				.Append(entryTimeArg)
 				.AppendFormat(" ORDER BY entry_time {0}, objid {0}", order)
 				.ToString();
