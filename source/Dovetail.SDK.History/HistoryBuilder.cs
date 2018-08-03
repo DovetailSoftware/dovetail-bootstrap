@@ -5,8 +5,8 @@ using Dovetail.SDK.Bootstrap.Clarify.Extensions;
 using Dovetail.SDK.Bootstrap.Configuration;
 using Dovetail.SDK.ModelMap;
 using Dovetail.SDK.ModelMap.Clarify;
-using Dovetail.SDK.ModelMap.Legacy;
 using Dovetail.SDK.ModelMap.ObjectModel;
+using Dovetail.SDK.ModelMap.Transforms;
 using FChoice.Foundation.Clarify;
 using FChoice.Foundation.Filters;
 using FChoice.Foundation.Schema;
@@ -22,8 +22,9 @@ namespace Dovetail.SDK.History
 		private readonly IClarifyListCache _lists;
 		private readonly IServiceLocator _services;
 		private readonly IHistoryMapRegistry _models;
+		private readonly IListCache _listCache;
 
-		public HistoryBuilder(ISchemaCache schema, IOutputEncoder encoder, IHistoryMapEntryBuilder entries, IClarifyListCache lists, IServiceLocator services, IHistoryMapRegistry models)
+		public HistoryBuilder(ISchemaCache schema, IOutputEncoder encoder, IHistoryMapEntryBuilder entries, IClarifyListCache lists, IServiceLocator services, IHistoryMapRegistry models, IListCache listCache)
 		{
 			_schema = schema;
 			_encoder = encoder;
@@ -31,6 +32,7 @@ namespace Dovetail.SDK.History
 			_lists = lists;
 			_services = services;
 			_models = models;
+			_listCache = listCache;
 		}
 
 		public ModelData[] GetAll(HistoryRequest request)
@@ -132,6 +134,8 @@ namespace Dovetail.SDK.History
 
 				if (shouldAdd)
 				{
+					var actCode = row.Get<int>("type");
+					row["activityName"] = _listCache.GetLocalizedTitleByRank("Activity Name", actCode);
 					row["isChild"] = workflowObject.IsChild;
 					row["entity"] = workflowObject.Type;
 					rows.Add(row);
