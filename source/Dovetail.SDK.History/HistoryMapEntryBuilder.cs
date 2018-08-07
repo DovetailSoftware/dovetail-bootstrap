@@ -57,14 +57,8 @@ namespace Dovetail.SDK.History
 			var activityRelation = schemaCache.GetRelation("act_entry", inverseActivityRelation).InverseRelation;
 
 			var actEntryGeneric = workflowGeneric.Traverse(activityRelation.Name);
-			actEntryGeneric.AppendSort("entry_time", false);
-			actEntryGeneric.AppendSort("objid", false);
-
-			if (request.Since.HasValue)
-			{
-				var filter = new FilterExpression().MoreThan("entry_time", request.Since.Value);
-				actEntryGeneric.Filter.AddFilter(filter);
-			}
+			actEntryGeneric.AppendSort("entry_time", !request.ReverseOrder);
+			actEntryGeneric.AppendSort("objid", !request.ReverseOrder);
 
 			var visitor = _container
 				.With(clarifyDataSet)

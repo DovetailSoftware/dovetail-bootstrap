@@ -38,7 +38,7 @@ namespace Dovetail.SDK.History
 
 			var actEntries = resolveEntries(request, caseActivityCodes.ToArray(), subcaseActivityCodes.ToArray());
 			var caseHistoryItems = actEntries.CaseEntries.Any()
-				? builder.GetAll(request, generic => generic.Filter(_ => _.IsIn("objid", actEntries.CaseEntries.ToArray())))
+				? builder.GetAll(request, generic => generic.Filter(_ => _.IsIn("objid", actEntries.CaseEntries.ToArray())), workflowGeneric => workflowGeneric.Filter(_ => _.Equals("id_number", request.WorkflowObject.Id)))
 				: new ModelData[0];
 
 			var childRequest = new HistoryRequest
