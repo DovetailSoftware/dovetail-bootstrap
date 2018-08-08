@@ -32,7 +32,7 @@ namespace Dovetail.SDK.History.Tests
 				if (!(instruction is TInstruction))
 				{
 					Debug.WriteLine("({0}) cannot be cast to {1} at index {2}".ToFormat(instruction, typeof(TInstruction).Name, _index));
-					
+
 					var map = new StringBuilder();
 					map.AppendLine("Dumping instruction set:");
 					for (var i = 0; i < _instructions.Length; ++i)
@@ -70,7 +70,7 @@ namespace Dovetail.SDK.History.Tests
 
 			public void SkipDefaults()
 			{
-				Skip(18);
+				Skip(30);
 			}
 
 			public void Skip(int length)

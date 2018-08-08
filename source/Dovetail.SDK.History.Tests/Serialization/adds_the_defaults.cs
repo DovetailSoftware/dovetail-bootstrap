@@ -25,34 +25,47 @@ namespace Dovetail.SDK.History.Tests.Serialization
 			{
 				_.Verify<BeginModelMap>(__ => __.Name.ShouldEqual(WorkflowObject.KeyFor("case")));
 
-					_.Get<BeginProperty>().Key.ShouldEqual("id");
-					_.Is<EndProperty>();
+				_.Get<BeginProperty>().Key.ShouldEqual("id");
+				_.Is<EndProperty>();
 
-					_.Get<BeginProperty>().Key.ShouldEqual("type");
-					_.Is<EndProperty>();
+				_.Get<BeginProperty>().Key.ShouldEqual("type");
+				_.Is<EndProperty>();
 
-					_.Get<BeginProperty>().Key.ShouldEqual("timestamp");
-					_.Is<EndProperty>();
+				_.Get<BeginProperty>().Key.ShouldEqual("timestamp");
+				_.Is<EndProperty>();
 
-					_.Get<BeginMappedProperty>().Key.ShouldEqual("performedBy");
-						_.Get<BeginRelation>().RelationName.ShouldEqual("act_entry2user");
-							_.Get<BeginProperty>().Key.ShouldEqual("username");
-							_.Is<EndProperty>();
-							_.Get<BeginRelation>().RelationName.ShouldEqual("user2employee");
-								_.Get<BeginProperty>().Key.ShouldEqual("firstName");
-								_.Is<EndProperty>();
-								_.Get<BeginProperty>().Key.ShouldEqual("lastName");
-								_.Is<EndProperty>();
-							_.Is<EndRelation>();
-						_.Is<EndRelation>();
-					_.Is<EndMappedProperty>();
+				_.Get<BeginMappedProperty>().Key.ShouldEqual("performedBy");
+				_.Get<BeginRelation>().RelationName.ShouldEqual("act_entry2user");
+				_.Get<BeginProperty>().Key.ShouldEqual("username");
+				_.Is<EndProperty>();
+				_.Get<BeginRelation>().RelationName.ShouldEqual("user2employee");
+				_.Get<BeginProperty>().Key.ShouldEqual("firstName");
+				_.Is<EndProperty>();
+				_.Get<BeginProperty>().Key.ShouldEqual("lastName");
+				_.Is<EndProperty>();
+				_.Is<EndRelation>();
+				_.Is<EndRelation>();
+				_.Is<EndMappedProperty>();
 
-					_.Verify<BeginActEntry>(__ =>
+				_.Get<BeginMappedProperty>().Key.ShouldEqual("impersonatedBy");
+				_.Get<BeginAdHocRelation>().ToTableName.ShouldEqual("empl_user");
+				_.Get<BeginProperty>().Key.ShouldEqual("id");
+				_.Is<EndProperty>();
+				_.Get<BeginProperty>().Key.ShouldEqual("username");
+				_.Is<EndProperty>();
+				_.Get<BeginProperty>().Key.ShouldEqual("firstName");
+				_.Is<EndProperty>();
+				_.Get<BeginProperty>().Key.ShouldEqual("lastName");
+				_.Is<EndProperty>();
+				_.Is<EndRelation>();
+				_.Is<EndMappedProperty>();
+
+				_.Verify<BeginActEntry>(__ =>
 					{
 						__.Code.ShouldEqual(8900);
 						__.IsVerbose.ShouldBeTrue();
 					});
-					_.Is<EndActEntry>();
+				_.Is<EndActEntry>();
 
 				_.Is<EndModelMap>();
 			});

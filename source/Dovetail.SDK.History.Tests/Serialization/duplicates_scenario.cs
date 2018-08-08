@@ -17,38 +17,30 @@ namespace Dovetail.SDK.History.Tests.Serialization
 			theScenario = HistoryMapParsingScenario.Create(_ =>
 			{
 				_.UseFile("duplicates.history.config");
-				//_.UseFile("duplicates.partial.config");
 			});
 		}
 
 		[Test]
 		public void verify_instructions()
 		{
-			theScenario.WhatDoIHave();
 			VerifyInstructions.Assert(theScenario.Instructions, _ =>
 			{
 				_.Verify<BeginModelMap>(__ => __.Name.ShouldEqual(WorkflowObject.KeyFor("case")));
 
 				_.SkipDefaults();
 
-				//_.Verify<BeginActEntry>(__ =>
-				//{
-				//	__.Code.ShouldEqual(200);
-				//	__.IsVerbose.ShouldBeFalse();
-				//});
-				//_.Is<BeginRelation>();
-				//_.Verify<BeginProperty>(__ => __.Key.ShouldEqual("summary"));
-				//_.Is<EndProperty>();
-				//_.Is<EndRelation>();
-				//_.Is<EndActEntry>();
-				//_.Is<PushVariableContext>();
-				//_.Is<PopVariableContext>();
-				//_.Is<EndModelMap>();
 				_.Verify<BeginActEntry>(__ =>
 				{
 					__.Code.ShouldEqual(333068852);
 					__.IsVerbose.ShouldBeFalse();
 				});
+
+				_.Verify<BeginProperty>(__ => __.Key.ShouldEqual(AdditionalInfoLexerTransform.Key));
+				_.Is<EndProperty>();
+				_.Verify<BeginTransform>(__ => __.Name.ShouldEqual("additionalInfoLexer"));
+				_.Verify<AddTransformArgument>(__ => __.Name.ShouldEqual("pattern"));
+				_.Is<EndTransform>();
+				_.Is<EndActEntry>();
 
 				_.Is<EndModelMap>();
 			});

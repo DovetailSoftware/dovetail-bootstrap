@@ -91,7 +91,7 @@ namespace Dovetail.SDK.History.Serialization
 				name = WorkflowObject.KeyFor(objectType.Value);
 				entity = objectType.Value;
 			}
-			
+
 
 			var map = new ModelMap.ModelMap(name, entity);
 			parse(map, document, report, !isPartial);
@@ -144,6 +144,12 @@ namespace Dovetail.SDK.History.Serialization
 			});
 			map.AddInstruction(new EndProperty());
 
+			addPerformedBy(map);
+			addImpersonatedBy(map);
+		}
+
+		private void addPerformedBy(ModelMap.ModelMap map)
+		{
 			map.AddInstruction(new BeginMappedProperty
 			{
 				Key = new DynamicValue("performedBy"),
@@ -159,7 +165,7 @@ namespace Dovetail.SDK.History.Serialization
 				Field = new DynamicValue("login_name")
 			});
 			map.AddInstruction(new EndProperty());
-			
+
 
 			map.AddInstruction(new BeginRelation
 			{
@@ -180,6 +186,55 @@ namespace Dovetail.SDK.History.Serialization
 			});
 			map.AddInstruction(new EndProperty());
 			map.AddInstruction(new EndRelation());
+			map.AddInstruction(new EndRelation());
+
+			map.AddInstruction(new EndMappedProperty());
+		}
+
+		private void addImpersonatedBy(ModelMap.ModelMap map)
+		{
+			map.AddInstruction(new BeginMappedProperty
+			{
+				Key = new DynamicValue("impersonatedBy"),
+			});
+			map.AddInstruction(new BeginAdHocRelation
+			{
+				FromTableField = new DynamicValue("proxy"),
+				ToTableName = new DynamicValue("empl_user"),
+				ToTableFieldName = new DynamicValue("login_name"),
+			});
+
+			map.AddInstruction(new BeginProperty
+			{
+				Key = new DynamicValue("id"),
+				DataType = new DynamicValue("int"),
+				Field = new DynamicValue("employee")
+			});
+			map.AddInstruction(new EndProperty());
+
+			map.AddInstruction(new BeginProperty
+			{
+				Key = new DynamicValue("username"),
+				DataType = new DynamicValue("string"),
+				Field = new DynamicValue("login_name")
+			});
+			map.AddInstruction(new EndProperty());
+
+			map.AddInstruction(new BeginProperty
+			{
+				Key = new DynamicValue("firstName"),
+				DataType = new DynamicValue("string"),
+				Field = new DynamicValue("first_name")
+			});
+			map.AddInstruction(new EndProperty());
+
+			map.AddInstruction(new BeginProperty
+			{
+				Key = new DynamicValue("lastName"),
+				DataType = new DynamicValue("string"),
+				Field = new DynamicValue("last_name")
+			});
+			map.AddInstruction(new EndProperty());
 			map.AddInstruction(new EndRelation());
 
 			map.AddInstruction(new EndMappedProperty());
