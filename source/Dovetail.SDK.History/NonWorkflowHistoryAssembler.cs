@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Dovetail.SDK.Bootstrap.Clarify;
@@ -45,7 +46,6 @@ namespace Dovetail.SDK.History
 			};
 			var actEntries = IdsFor(request, options, activityCodes.ToArray());
 
-
 			var items = actEntries.Ids.Any()
 				? builder.GetAll(request, options, generic => generic.Filter(_ => _.IsIn("objid", actEntries.Ids.ToArray())))
 				: new ModelData[0];
@@ -55,7 +55,8 @@ namespace Dovetail.SDK.History
 				HistoryItemLimit = request.HistoryItemLimit,
 				Since = request.Since,
 				TotalResults = actEntries.Count,
-				Items = items
+				Items = items,
+				NextTimestamp = HistoryResult.DetermineNextTimestamp(request, actEntries)
 			};
 		}
 
@@ -88,9 +89,10 @@ namespace Dovetail.SDK.History
 			}
 
 			var orderDirection = request.ReverseOrder ? "ASC" : "DESC";
-			command = "SELECT TOP {0} objid FROM table_act_entry WHERE act_code IN ({1}){2} AND {3} ORDER BY entry_time {4}, objid {4}".ToFormat(request.HistoryItemLimit, codeArg, entryTimeArg, focusArg, orderDirection);
+			command = "SELECT TOP {0} objid, entry_time FROM table_act_entry WHERE act_code IN ({1}){2} AND {3} ORDER BY entry_time {4}, objid {4}".ToFormat(request.HistoryItemLimit, codeArg, entryTimeArg, focusArg, orderDirection);
 			helper = new SqlHelper(command);
 
+			DateTime? last = null;
 			var ids = new List<int>();
 			using (var reader = helper.ExecuteReader())
 			{
@@ -98,13 +100,16 @@ namespace Dovetail.SDK.History
 				{
 					var objid = reader.GetInt32(0);
 					ids.Add(objid);
+
+					last = reader.GetDateTime(reader.GetOrdinal("entry_time"));
 				}
 			}
 
 			return new ActEntryResolution
 			{
 				Count = count,
-				Ids = ids
+				Ids = ids,
+				LastTimestamp = last
 			};
 		}
 	}

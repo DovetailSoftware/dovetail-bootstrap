@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Dovetail.SDK.History
@@ -12,5 +13,6 @@ namespace Dovetail.SDK.History
 	{
 		public int Count { get; set; }
 		public IEnumerable<int> Ids { get; set; }
+		public DateTime? LastTimestamp { get; set; }
 	}
 }

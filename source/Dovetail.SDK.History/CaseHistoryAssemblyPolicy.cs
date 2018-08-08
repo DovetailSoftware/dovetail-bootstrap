@@ -65,7 +65,10 @@ namespace Dovetail.SDK.History
 				HistoryItemLimit = request.HistoryItemLimit,
 				Since = request.Since,
 				TotalResults = actEntries.Count,
-				Items = combinedItems
+				Items = combinedItems,
+				NextTimestamp = request.HistoryItemLimit > (actEntries.CaseEntries.Length + actEntries.SubcaseEntries.Length)
+					? null
+					: actEntries.LastTimestamp
 			};
 		}
 
@@ -132,7 +135,7 @@ namespace Dovetail.SDK.History
 
 			command = new StringBuilder("SELECT TOP ")
 				.Append(request.HistoryItemLimit)
-				.Append(" objid, act_entry2case, act_entry2subcase FROM table_act_entry WHERE ")
+				.Append(" objid, act_entry2case, act_entry2subcase, entry_time FROM table_act_entry WHERE ")
 				.AppendFormat("((act_code IN ({0}) AND act_entry2case = {1})", caseActCodes.Select(_ => _.ToString()).Join(","), objId)
 				.Append(" OR ")
 				.AppendFormat("(act_code IN ({0}) AND act_entry2subcase IN (SELECT objid FROM table_subcase WHERE subcase2case = {1})))", subcaseActCodes.Select(_ => _.ToString()).Join(","), objId)
@@ -144,6 +147,7 @@ namespace Dovetail.SDK.History
 
 			var caseIds = new List<int>();
 			var subcaseIds = new List<int>();
+			DateTime? lastTimestamp = null;
 			using (var reader = helper.ExecuteReader())
 			{
 				while (reader.Read())
@@ -153,6 +157,8 @@ namespace Dovetail.SDK.History
 						subcaseIds.Add(objid);
 					else
 						caseIds.Add(objid);
+
+					lastTimestamp = reader.GetDateTime(reader.GetOrdinal("entry_time"));
 				}
 			}
 
@@ -161,7 +167,8 @@ namespace Dovetail.SDK.History
 				Count = count,
 				Subcases = ids.ToArray(),
 				CaseEntries = caseIds.ToArray(),
-				SubcaseEntries = subcaseIds.ToArray()
+				SubcaseEntries = subcaseIds.ToArray(),
+				LastTimestamp = lastTimestamp
 			};
 		}
 
@@ -171,6 +178,7 @@ namespace Dovetail.SDK.History
 			public int[] Subcases { get; set; }
 			public int[] CaseEntries { get; set; }
 			public int[] SubcaseEntries { get; set; }
+			public DateTime? LastTimestamp { get; set; }
 		}
 	}
 }

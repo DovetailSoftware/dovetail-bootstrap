@@ -50,7 +50,8 @@ namespace Dovetail.SDK.History
 				HistoryItemLimit = request.HistoryItemLimit,
 				Since = request.Since,
 				TotalResults = actEntries.Count,
-				Items = items
+				Items = items,
+				NextTimestamp = HistoryResult.DetermineNextTimestamp(request, actEntries)
 			};
 		}
 	}
