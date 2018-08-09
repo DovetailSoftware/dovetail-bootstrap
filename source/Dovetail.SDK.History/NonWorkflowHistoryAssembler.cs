@@ -55,7 +55,9 @@ namespace Dovetail.SDK.History
 				HistoryItemLimit = request.HistoryItemLimit,
 				Since = request.Since,
 				TotalResults = actEntries.Count,
-				Items = items,
+				Items = request.ReverseOrder
+					? items.OrderBy(_ => _.Get<DateTime>("timestamp")).ToArray()
+					: items.OrderByDescending(_ => _.Get<DateTime>("timestamp")).ToArray(),
 				NextTimestamp = HistoryResult.DetermineNextTimestamp(request, actEntries)
 			};
 		}
