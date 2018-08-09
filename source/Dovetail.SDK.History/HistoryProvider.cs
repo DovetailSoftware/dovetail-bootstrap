@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -19,7 +20,14 @@ namespace Dovetail.SDK.History
 		public HistoryResult HistoryFor(HistoryRequest request)
 		{
 			var policy = _policies.LastOrDefault(_ => _.Matches(request)) ?? _default;
-			return policy.HistoryFor(request, _builder);
+			var result = policy.HistoryFor(request, _builder);
+			if (result.NextTimestamp.HasValue && result.NextTimestamp.Value.Kind != DateTimeKind.Utc)
+			{
+				var dateTime = result.NextTimestamp.Value;
+				result.NextTimestamp = dateTime.ToUniversalTime();
+			}
+
+			return result;
 		}
 	}
 }
