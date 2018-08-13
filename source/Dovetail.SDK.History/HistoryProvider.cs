@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using Dovetail.SDK.ModelMap;
 
 namespace Dovetail.SDK.History
 {
@@ -20,14 +22,56 @@ namespace Dovetail.SDK.History
 		public HistoryResult HistoryFor(HistoryRequest request)
 		{
 			var policy = _policies.LastOrDefault(_ => _.Matches(request)) ?? _default;
+			var result = determineHistory(request, policy);
+
+			return result;
+		}
+
+		private HistoryResult determineHistory(HistoryRequest request, IHistoryAssemblyPolicy policy)
+		{
 			var result = policy.HistoryFor(request, _builder);
+			if (!result.Items.Any())
+				return result;
+
+			var localTimestamp = result.NextTimestamp;
+			result.NextTimestamp = normalizeNextTimestamp(result);
+
+			var sameTimestamp = result.NextTimestamp.HasValue &&
+			                    result.Items.All(_ => _.Get<DateTime>("timestamp") == result.NextTimestamp.Value);
+
+			if (!sameTimestamp)
+				return result;
+
+
+			var combinedItems = new List<ModelData>();
+			combinedItems.AddRange(result.Items);
+
+			request.Since = localTimestamp.Value;
+			request.FindRepeatingTimestamp = true;
+
+			var repeatingResult = policy.HistoryFor(request, _builder);
+			combinedItems.AddRange(repeatingResult.Items);
+
+			request.FindRepeatingTimestamp = false;
+			request.EntryTimeExclusive = true;
+			request.HistoryItemLimit = 1;
+
+			var nextResult = policy.HistoryFor(request, _builder);
+			result.NextTimestamp = normalizeNextTimestamp(nextResult);
+			result.Items = combinedItems.ToArray();
+
+			return result;
+		}
+
+		private static DateTime? normalizeNextTimestamp(HistoryResult result)
+		{
 			if (result.NextTimestamp.HasValue && result.NextTimestamp.Value.Kind != DateTimeKind.Utc)
 			{
 				var dateTime = result.NextTimestamp.Value;
 				result.NextTimestamp = dateTime.ToUniversalTime();
 			}
 
-			return result;
+			return result.NextTimestamp;
 		}
 	}
 }

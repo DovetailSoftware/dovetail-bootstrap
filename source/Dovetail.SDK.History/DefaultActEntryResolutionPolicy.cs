@@ -26,9 +26,8 @@ namespace Dovetail.SDK.History
 		public ActEntryResolution IdsFor(HistoryRequest request, int[] actCodes)
 		{
 			var codeArg = actCodes.Select(_ => _.ToString()).Join(",");
-			var entryTimeArg = request.Since.HasValue
-				? " AND entry_time {0} '{1}'".ToFormat(request.ReverseOrder ? ">=" : "<=", request.Since.Value.ToString("yyyy-MM-dd HH:mm:ss.fff"))
-				: "";
+			var entryTimeArg = request.EntryTimeArg();
+			var orderDirection = request.SortOrder();
 
 			var idArg = "";
 			var workflowObjectInfo = WorkflowObjectInfo.GetObjectInfo(request.WorkflowObject.Type);
@@ -61,8 +60,7 @@ namespace Dovetail.SDK.History
 				};
 			}
 
-			var orderDirection = request.ReverseOrder ? "ASC" : "DESC";
-			command = "SELECT TOP {0} objid, entry_time FROM table_act_entry WHERE act_code IN ({1}){2} AND {3} ORDER BY entry_time {4}, objid {4}".ToFormat(request.HistoryItemLimit, codeArg, entryTimeArg, idArg, orderDirection);
+			command = "SELECT TOP {0} objid, entry_time FROM table_act_entry WHERE act_code IN ({1}){2} AND {3} ORDER BY entry_time {4}, objid {4}".ToFormat(request.SqlLimit(), codeArg, entryTimeArg, idArg, orderDirection);
 			helper = new SqlHelper(command);
 
 			DateTime? last = null;

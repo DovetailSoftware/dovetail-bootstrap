@@ -99,10 +99,8 @@ namespace Dovetail.SDK.History
 			}
 
 			var codeArg = actCodes.Select(_ => _.ToString()).Join(",");
-			var entryTimeArg = request.Since.HasValue
-				? " AND entry_time {0} '{1}'".ToFormat(request.ReverseOrder ? ">=" : "<=", request.Since.Value.ToString("yyyy-MM-dd HH:mm:ss.fff"))
-				: "";
-			var order = request.ReverseOrder ? "ASC" : "DESC";
+			var entryTimeArg = request.EntryTimeArg();
+			var order = request.SortOrder();
 
 			var objId = (int)new SqlHelper("SELECT objid FROM table_case WHERE id_number = '{0}'".ToFormat(request.WorkflowObject.Id)).ExecuteScalar();
 			var command = "SELECT COUNT(1) FROM table_act_entry WHERE act_code IN ({0}){1} AND (act_entry2case = {2} OR act_entry2subcase IN (SELECT objid FROM table_subcase WHERE subcase2case = {2}))".ToFormat(codeArg, entryTimeArg, objId);
@@ -134,7 +132,7 @@ namespace Dovetail.SDK.History
 			}
 
 			command = new StringBuilder("SELECT TOP ")
-				.Append(request.HistoryItemLimit)
+				.Append(request.SqlLimit())
 				.Append(" objid, act_entry2case, act_entry2subcase, entry_time FROM table_act_entry WHERE ")
 				.AppendFormat("((act_code IN ({0}) AND act_entry2case = {1})", caseActCodes.Select(_ => _.ToString()).Join(","), objId)
 				.Append(" OR ")
