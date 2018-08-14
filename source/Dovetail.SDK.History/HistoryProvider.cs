@@ -50,7 +50,13 @@ namespace Dovetail.SDK.History
 			request.FindRepeatingTimestamp = true;
 
 			var repeatingResult = policy.HistoryFor(request, _builder);
-			combinedItems.AddRange(repeatingResult.Items);
+			foreach (var item in repeatingResult.Items)
+			{
+				if (combinedItems.Any(_ => _.Get<int>("id") == item.Get<int>("id")))
+					continue;
+
+				combinedItems.Add(item);
+			}
 
 			request.FindRepeatingTimestamp = false;
 			request.EntryTimeExclusive = true;

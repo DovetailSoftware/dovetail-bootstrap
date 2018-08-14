@@ -57,8 +57,8 @@ namespace Dovetail.SDK.History
 			items.AddRange(subcaseHistoryItems);
 
 			var combinedItems = request.ReverseOrder
-				? items.OrderBy(_ => _.Get<DateTime>("timestamp")).ToArray()
-				: items.OrderByDescending(_ => _.Get<DateTime>("timestamp")).ToArray();
+				? items.OrderBy(_ => _.Get<DateTime>("timestamp")).ThenBy(_ => _.Get<int>("id")).ToArray()
+				: items.OrderByDescending(_ => _.Get<DateTime>("timestamp")).ThenByDescending(_ => _.Get<int>("id")).ToArray();
 
 			return new HistoryResult
 			{
