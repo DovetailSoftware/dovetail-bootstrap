@@ -34,7 +34,7 @@ namespace Dovetail.SDK.History
 		public HistoryResult HistoryFor(HistoryRequest request, IHistoryBuilder builder)
 		{
 			var caseActivityCodes = determineActCodes(new WorkflowObject { Type = "case" }, request.ShowAllActivities);
-			var subcaseActivityCodes = determineActCodes(new WorkflowObject { Type = "subcase" }, request.ShowAllActivities);
+			var subcaseActivityCodes = determineActCodes(new WorkflowObject { Type = "subcase", IsChild = true }, request.ShowAllActivities);
 
 			var actEntries = resolveEntries(request, caseActivityCodes.ToArray(), subcaseActivityCodes.ToArray());
 			var caseHistoryItems = actEntries.CaseEntries.Any()
