@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using Dovetail.SDK.Bootstrap.Clarify;
 using Dovetail.SDK.History.Conditions;
+using Dovetail.SDK.History.Serialization;
 using Dovetail.SDK.History.Tests.Serialization;
 using FChoice.Foundation.DataObjects;
 using FubuCore;
@@ -246,7 +247,7 @@ namespace Dovetail.SDK.History.Tests
 			{
 				var actCodes = new List<int>();
 				var gatherer = new ActEntryGatherer(actCodes, _showAll,
-					_workflowObject, scenario.Services, scenario.Services.GetInstance<ICurrentSDKUser>());
+					_workflowObject, scenario.Services, scenario.Services.GetInstance<ICurrentSDKUser>(), new HistoryPrivilegePolicyCache(new HistorySettings()));
 
 				scenario.Map.Accept(gatherer);
 

@@ -4,6 +4,7 @@ using System.Linq;
 using Dovetail.SDK.Bootstrap.Clarify;
 using Dovetail.SDK.History.Conditions;
 using Dovetail.SDK.History.Instructions;
+using Dovetail.SDK.History.Serialization;
 using Dovetail.SDK.ModelMap.Instructions;
 using FubuCore;
 
@@ -15,18 +16,20 @@ namespace Dovetail.SDK.History
 		private readonly bool _showAll;
 		private readonly WorkflowObject _workflowObject;
 		private readonly IServiceLocator _services;
+		private readonly IHistoryPrivilegePolicyCache _privilegeCache;
 		private readonly Stack<BeginWhen> _ignores = new Stack<BeginWhen>();
 		private readonly Stack<BeginActEntry> _entries = new Stack<BeginActEntry>();
 		private readonly List<string> _privileges = new List<string>();
 		private readonly ICurrentSDKUser _user;
 
-		public ActEntryGatherer(IList<int> activityCodes, bool showAll, WorkflowObject workflowObject, IServiceLocator services, ICurrentSDKUser user)
+		public ActEntryGatherer(IList<int> activityCodes, bool showAll, WorkflowObject workflowObject, IServiceLocator services, ICurrentSDKUser user, IHistoryPrivilegePolicyCache privilegeCache)
 		{
 			_activityCodes = activityCodes;
 			_showAll = showAll;
 			_workflowObject = workflowObject;
 			_services = services;
 			_user = user;
+			_privilegeCache = privilegeCache;
 		}
 
 		public void Visit(BeginModelMap instruction)
@@ -136,6 +139,9 @@ namespace Dovetail.SDK.History
 		public void Visit(BeginActEntry instruction)
 		{
 			_entries.Push(instruction);
+
+			var policies = _privilegeCache.Find(_workflowObject.Type, instruction.Code);
+			policies.Each(_ => _privileges.Add(_.Privilege));
 		}
 
 		public void Visit(EndActEntry instruction)

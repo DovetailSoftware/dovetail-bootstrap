@@ -131,14 +131,17 @@
     <Compile Include="Serialization\HistoryMapDiffOptions.cs" />
     <Compile Include="Serialization\HistoryMapOverrideParser.cs" />
     <Compile Include="Serialization\HistoryMapParser.cs" />
+    <Compile Include="Serialization\HistoryPrivilegePolicyCache.cs" />
     <Compile Include="Serialization\IHistoryMapOverrideParser.cs" />
     <Compile Include="Serialization\IHistoryMapParser.cs" />
+    <Compile Include="Serialization\IHistoryPrivilegeCache.cs" />
     <Compile Include="Serialization\ParseActEntry.cs" />
     <Compile Include="Serialization\ParseAdditionalInfoLexer.cs" />
     <Compile Include="Serialization\ParseCancellationPolicy.cs" />
     <Compile Include="Serialization\ParseRemoveActEntry.cs" />
     <Compile Include="Serialization\ParseRequirePrivilege.cs" />
     <Compile Include="Serialization\ParseWhen.cs" />
+    <Compile Include="Serialization\PrivilegePolicy.cs" />
     <Compile Include="WorkflowObject.cs" />
   </ItemGroup>
   <ItemGroup>

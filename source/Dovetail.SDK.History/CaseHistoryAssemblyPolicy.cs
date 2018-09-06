@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Dovetail.SDK.Bootstrap.Clarify;
 using Dovetail.SDK.Bootstrap.Clarify.Extensions;
+using Dovetail.SDK.History.Serialization;
 using Dovetail.SDK.ModelMap;
 using FChoice.Common.Data;
 using FubuCore;
@@ -16,13 +17,15 @@ namespace Dovetail.SDK.History
 		private readonly HistorySettings _settings;
 		private readonly IServiceLocator _services;
 		private readonly ICurrentSDKUser _user;
+		private readonly IHistoryPrivilegePolicyCache _privileges;
 
-		public CaseHistoryAssemblyPolicy(IHistoryMapRegistry models, HistorySettings settings, IServiceLocator services, ICurrentSDKUser user)
+		public CaseHistoryAssemblyPolicy(IHistoryMapRegistry models, HistorySettings settings, IServiceLocator services, ICurrentSDKUser user, IHistoryPrivilegePolicyCache privileges)
 		{
 			_models = models;
 			_settings = settings;
 			_services = services;
 			_user = user;
+			_privileges = privileges;
 		}
 
 		public bool Matches(HistoryRequest request)
@@ -75,7 +78,7 @@ namespace Dovetail.SDK.History
 		private IEnumerable<int> determineActCodes(WorkflowObject workflowObject, bool showAllActivities)
 		{
 			var activityCodes = new List<int>();
-			var gatherer = new ActEntryGatherer(activityCodes, showAllActivities, workflowObject, _services, _user);
+			var gatherer = new ActEntryGatherer(activityCodes, showAllActivities, workflowObject, _services, _user, _privileges);
 			var map = _models.Find(workflowObject);
 			map.Accept(gatherer);
 

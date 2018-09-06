@@ -1,5 +1,7 @@
-﻿using System.Xml.Linq;
+﻿using System.Collections.Generic;
+using System.Xml.Linq;
 using Dovetail.SDK.History.Instructions;
+using Dovetail.SDK.ModelMap;
 using Dovetail.SDK.ModelMap.Serialization;
 
 namespace Dovetail.SDK.History.Serialization
