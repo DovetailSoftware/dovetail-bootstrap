@@ -15,6 +15,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		public DovetailDatabaseSettings()
 		{
 			ApplicationUsername = "sa";
+			SessionCleanupInMilliseconds = 300000; // 5 minutes
 		}
 
 		public string Type { get; set; }
@@ -22,6 +23,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		public double SessionTimeoutInMinutes { get; set; }
 		public string ApplicationUsername { get; set; }
 		public bool IsImpersonationEnabled{ get; set; }
+		public int SessionCleanupInMilliseconds { get; set; }
 	}
 
 	public interface IClarifyApplicationFactory
@@ -36,8 +38,8 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		private readonly IEnumerable<IWorkflowObjectMetadata> _metadatas;
 		private static readonly object SyncRoot = new object();
 
-		public ClarifyApplicationFactory(DovetailDatabaseSettings dovetailDatabaseSettings, 
-			IEnumerable<IWorkflowObjectMetadata> metadatas, 
+		public ClarifyApplicationFactory(DovetailDatabaseSettings dovetailDatabaseSettings,
+			IEnumerable<IWorkflowObjectMetadata> metadatas,
 			ILogger logger)
 		{
 			_dovetailDatabaseSettings = dovetailDatabaseSettings;

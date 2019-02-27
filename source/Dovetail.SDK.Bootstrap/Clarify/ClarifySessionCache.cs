@@ -1,20 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Dovetail.SDK.Bootstrap.Authentication;
 using FChoice.Foundation.Clarify;
 using FubuCore;
 
 namespace Dovetail.SDK.Bootstrap.Clarify
 {
-	public interface IClarifySessionCache
-	{
-		IClarifySession GetApplicationSession(bool isConfigured = true);
-		IClarifySession GetSession(string username);
-		bool EjectSession(string username, bool isObserved = true);
-		IDictionary<string, IClarifySession> SessionsByUsername { get; }
-		void RefreshSession(string username);
-	}
-
 	public class ClarifySessionCache : IClarifySessionCache
 	{
 		private static readonly Dictionary<string, IClarifySession> _agentSessionCacheByUsername;
@@ -56,6 +48,39 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		public void RefreshSession(string username)
 		{
 			getSession(username).RefreshContext();
+		}
+
+		public int NumberOfActiveSessions
+		{
+			get
+			{
+				lock (_agentSessionCacheByUsername)
+				{
+					return _agentSessionCacheByUsername.Values.Count(_ => _clarifyApplication.IsSessionValid(_.Id));
+				}
+			}
+		}
+
+		public void CleanUpInvalidSessions()
+		{
+			_logger.LogInfo("Performing session cleanup");
+
+			IEnumerable<IClarifySession> invalidSessions;
+			lock (_agentSessionCacheByUsername)
+			{
+				invalidSessions = SessionsByUsername
+					.Values
+					.Where(_ => !_clarifyApplication.IsSessionValid(_.Id))
+					.ToList();
+			}
+
+			foreach (var session in invalidSessions)
+			{
+				_logger.LogDebug("Ejecting inactive session {0} for user {1}.".ToFormat(session.Id, session.UserName));
+				EjectSession(session.UserName);
+			}
+
+			_logger.LogInfo("{0} sessions cleaned up", invalidSessions.Count());
 		}
 
 		public void addSessionToCache(string username, IClarifySession session)

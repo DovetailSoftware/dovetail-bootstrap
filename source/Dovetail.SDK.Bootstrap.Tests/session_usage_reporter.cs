@@ -40,23 +40,6 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		}
 	}
 
-	public class get_active_session_count : session_usage_reporter_context
-	{
-		[Test]
-		public void should_return_count_of_valid_sessions()
-		{
-			_cut.GetActiveSessionCount().ShouldEqual(2);
-		}
-
-		[Test]
-		public void inactive_sessions_should_be_ejected()
-		{
-			_cut.GetActiveSessionCount();
-
-			MockFor<IClarifySessionCache>().AssertWasCalled(a => a.EjectSession("annie"));
-		}
-	}
-
 	public class session_usage_reporter : session_usage_reporter_context
 	{
 		[Test]
@@ -66,14 +49,6 @@ namespace Dovetail.SDK.Bootstrap.Tests
 
 			_result.Sessions.Count().ShouldEqual(2);
 			_result.InvalidSessions.Count().ShouldEqual(1);
-		}
-
-		[Test]
-		public void inactive_sessions_should_be_ejected()
-		{
-			_result = _cut.GetUsage();
-
-			MockFor<IClarifySessionCache>().AssertWasCalled(a=>a.EjectSession("annie"));
 		}
 	}
 }

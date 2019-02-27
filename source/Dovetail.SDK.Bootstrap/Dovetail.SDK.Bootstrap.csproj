@@ -108,6 +108,8 @@
     <Compile Include="Clarify\ClarifySessionProxy.cs" />
     <Compile Include="Clarify\ClarifySessionUsage.cs" />
     <Compile Include="Clarify\ClarifySessionUsageReporter.cs" />
+    <Compile Include="Clarify\CleanUpInvalidSessions.cs" />
+    <Compile Include="Clarify\IClarifySessionCache.cs" />
     <Compile Include="Clarify\IWorkflowObjectMetadata.cs" />
     <Compile Include="Clarify\UserLocalTimezoneClarifySessionConfigurator.cs" />
     <Compile Include="Configuration\ApplicationClarifySessionFactory.cs" />
@@ -147,6 +149,11 @@
     <Compile Include="History\Parser\ParagraphAggregator.cs" />
     <Compile Include="History\Parser\ParagraphEndLocator.cs" />
     <Compile Include="History\TemplatePolicies\SeekerAttachmentPolicy.cs" />
+    <Compile Include="Http\HttpApplicationStorage.cs" />
+    <Compile Include="Http\IHttpApplicationStorage.cs" />
+    <Compile Include="Http\IHttpIntervalService.cs" />
+    <Compile Include="Http\IHttpTimerManager.cs" />
+    <Compile Include="Http\ThreadHttpApplicationStorage.cs" />
     <Compile Include="UrlLinkifier.cs" />
     <Compile Include="History\TemplatePolicies\DefaultActEntryTemplatePolicyRegistry.cs" />
     <Compile Include="History\Configuration\HistorySettings.cs" />

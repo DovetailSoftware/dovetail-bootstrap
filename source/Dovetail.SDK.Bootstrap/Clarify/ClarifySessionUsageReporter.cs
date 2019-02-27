@@ -37,7 +37,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 			{
 				var session = sessionsByUserDictionary[username];
 				var sessionUser = new ClarifySessionUser { SessionId = session.Id, Username = session.UserName };
-				if (IsSessionValid(session))
+				if (_clarifyApplication.IsSessionValid(session.Id))
 					validSessions.Add(sessionUser);
 				else
 				{
@@ -52,20 +52,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 
 		public int GetActiveSessionCount()
 		{
-			var sessionsByUsername = _clarifySessionCache.SessionsByUsername;
-			
-			return sessionsByUsername.Values.Count(IsSessionValid);
-		}
-
-		private bool IsSessionValid(IClarifySession session)
-		{
-			var isSessionValid = _clarifyApplication.IsSessionValid(session.Id);
-			if(!isSessionValid)
-			{
-				_logger.LogDebug("Ejecting inactive session {0} for user {1}.".ToFormat(session.Id, session.UserName));
-				_clarifySessionCache.EjectSession(session.UserName, true);
-			}
-			return isSessionValid;
+			return _clarifySessionCache.NumberOfActiveSessions;
 		}
 	}
 }

@@ -3,6 +3,7 @@ using Dovetail.SDK.Bootstrap.Clarify;
 using Dovetail.SDK.Bootstrap.History.AssemblerPolicies;
 using Dovetail.SDK.Bootstrap.History.Configuration;
 using Dovetail.SDK.Bootstrap.History.TemplatePolicies;
+using Dovetail.SDK.Bootstrap.Http;
 using FChoice.Foundation.Clarify;
 using FChoice.Foundation.Schema;
 using FubuLocalization;
@@ -33,6 +34,7 @@ namespace Dovetail.SDK.Bootstrap.Configuration
 			});
 
 			//IncludeRegistry<AppSettingProviderRegistry>();
+			ForSingletonOf<IHttpTimerManager>().Use<HttpTimerManager>();
 
 			ForSingletonOf<IClarifyApplicationFactory>().Use<ClarifyApplicationFactory>();
 			ForSingletonOf<IClarifyApplication>().Use(ctx => ctx.GetInstance<IClarifyApplicationFactory>().Create());

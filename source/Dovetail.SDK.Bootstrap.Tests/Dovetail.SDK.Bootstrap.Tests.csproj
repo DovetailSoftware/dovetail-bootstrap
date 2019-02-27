@@ -114,12 +114,16 @@
       <Link>Context.cs</Link>
     </Compile>
     <Compile Include="Authentication\current_sdk_user.cs" />
+    <Compile Include="Clarify\NulloLogger.cs" />
+    <Compile Include="Clarify\ObjectMother.cs" />
+    <Compile Include="Clarify\when_hundreds_of_sessions_are_inactive_and_someone_logs_in.cs" />
     <Compile Include="clarify_application_factory.cs" />
     <Compile Include="Configuration\fast_type_activator.cs" />
     <Compile Include="history_original_message_config.cs" />
     <Compile Include="history_output_parser.cs" />
     <Compile Include="history_item_parser.cs" />
     <Compile Include="history_parsers.cs" />
+    <Compile Include="Http\HttpTimerManagerTester.cs" />
     <Compile Include="linkifier.cs" />
     <Compile Include="paragraph_aggregator.cs" />
     <Compile Include="paragraph_end_locator.cs" />
