@@ -1,35 +1,24 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    albacore (2.6.6)
-      map (~> 6.5)
-      nokogiri (~> 1.5)
-      rake (~> 10)
-      semver2 (~> 3.4)
     bottles (2.1.0.584)
     fubudocs (0.9.9.297)
     fuburake (0.9.5.37)
       bottles (>= 1.1)
       fubudocs (>= 0.5)
       ripple-cli (~> 2.0)
-    map (6.6.0)
-    mini_portile2 (2.1.0)
-    nokogiri (1.7.1-x86-mingw32)
-      mini_portile2 (~> 2.1.0)
     rake (10.5.0)
     ripple-cli (2.3.4.151)
     rubyzip (0.9.9)
-    semver2 (3.4.2)
 
 PLATFORMS
   x86-mingw32
 
 DEPENDENCIES
-  albacore
   fuburake (~> 0.5)
   rake (~> 10.0)
   ripple-cli
   rubyzip (= 0.9.9)
 
 BUNDLED WITH
-   1.14.6
+   1.16.2

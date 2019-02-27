@@ -1,6 +1,5 @@
 require 'bundler'
 require "rubygems/package"
-require 'albacore'
 
 require 'fuburake'
 
