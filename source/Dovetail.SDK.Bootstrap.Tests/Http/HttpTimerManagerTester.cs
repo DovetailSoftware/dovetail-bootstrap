@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Web.SessionState;
 using Dovetail.SDK.Bootstrap.Http;
+using Dovetail.SDK.Bootstrap.Tests.Clarify;
 using FubuCore;
 using NUnit.Framework;
 
@@ -30,7 +31,7 @@ namespace Dovetail.SDK.Bootstrap.Tests.Http
 			services.Add(service);
 
 			var storage = new ThreadHttpApplicationStorage();
-			var manager = new HttpTimerManager(services, storage);
+			var manager = new HttpTimerManager(services, storage, new NulloLogger());
 
 			manager.Start<LambdaHttpService>();
 			autoEvent.WaitOne(1000);
