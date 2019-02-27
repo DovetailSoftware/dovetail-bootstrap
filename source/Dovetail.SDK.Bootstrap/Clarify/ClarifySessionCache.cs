@@ -63,7 +63,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 
 		public void CleanUpInvalidSessions()
 		{
-			_logger.LogInfo("Performing session cleanup");
+			_logger.LogDebug("Performing session cleanup");
 
 			IEnumerable<IClarifySession> invalidSessions;
 			lock (_agentSessionCacheByUsername)
@@ -80,7 +80,15 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 				EjectSession(session.UserName);
 			}
 
-			_logger.LogInfo("{0} sessions cleaned up", invalidSessions.Count());
+			var count = invalidSessions.Count();
+			if (count != 0)
+			{
+				_logger.LogInfo("{0} sessions cleaned up", count);
+			}
+			else
+			{
+				_logger.LogDebug("No sessions to clean up");
+			}
 		}
 
 		public void addSessionToCache(string username, IClarifySession session)
