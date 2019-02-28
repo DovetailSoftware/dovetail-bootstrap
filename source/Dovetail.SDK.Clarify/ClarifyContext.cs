@@ -1,8 +1,10 @@
-﻿using System.Collections.Specialized;
+﻿using System;
+using System.Collections.Specialized;
 using System.Configuration;
 using System.Linq;
 using System.Text;
 using FChoice.Common.Data;
+using FChoice.Common.State;
 using FChoice.Foundation;
 using FChoice.Foundation.Clarify;
 using FChoice.Foundation.DataObjects;
@@ -83,7 +85,11 @@ namespace Dovetail.SDK.Clarify
 
             _logger.LogDebug("Initializing Clarify with settings: {0}", settings.ToString());
 
-            return ClarifyApplication.Initialize(configuration);
+            var application = ClarifyApplication.Initialize(configuration);
+
+            setSessionDefaultTimeout(_settings);
+
+            return application;
         }
 
         private static NameValueCollection GetDovetailSdkConfiguration(DovetailDatabaseSettings settings, DovetailCRMSettings crmSettings)
@@ -113,7 +119,16 @@ namespace Dovetail.SDK.Clarify
             return Merge(source, ConfigurationManager.AppSettings);
         }
 
-        public static NameValueCollection Merge(NameValueCollection target, NameValueCollection source)
+        private void setSessionDefaultTimeout(DovetailDatabaseSettings dovetailDatabaseSettings)
+        {
+	        var stateTimeoutTimespan = TimeSpan.FromMinutes(dovetailDatabaseSettings.SessionTimeoutInMinutes);
+
+	        _logger.LogDebug("Setting session time out to be {0} minutes long.", stateTimeoutTimespan);
+
+	        StateManager.StateTimeout = stateTimeoutTimespan;
+        }
+
+		public static NameValueCollection Merge(NameValueCollection target, NameValueCollection source)
         {
             var result = new NameValueCollection(target);
 

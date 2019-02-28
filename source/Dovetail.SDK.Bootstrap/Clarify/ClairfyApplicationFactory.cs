@@ -22,7 +22,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		public string ConnectionString { get; set; }
 		public double SessionTimeoutInMinutes { get; set; }
 		public string ApplicationUsername { get; set; }
-		public bool IsImpersonationEnabled{ get; set; }
+		public bool IsImpersonationEnabled { get; set; }
 		public int SessionCleanupInMilliseconds { get; set; }
 	}
 
