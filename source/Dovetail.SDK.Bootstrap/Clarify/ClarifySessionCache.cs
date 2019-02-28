@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Dovetail.SDK.Bootstrap.Authentication;
+using FChoice.Common.State;
 using FChoice.Foundation.Clarify;
 using FubuCore;
 
@@ -153,14 +154,25 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 
 			using (_logger.Push("Get session for {0}.".ToFormat(username)))
 			{
-				var success = _agentSessionCacheByUsername.TryGetValue(username, out session);
-				if (success)
+				var shouldEject = false;
+				lock (_agentSessionCacheByUsername)
 				{
-					if (_clarifyApplication.IsSessionValid(session.Id) && session.As<IClarifySessionProxy>().Session.SessionData != null)
+					var success = _agentSessionCacheByUsername.TryGetValue(username, out session);
+					if (success)
 					{
-						_logger.LogDebug("Found valid session in cache.");
-						return session;
+						if (_clarifyApplication.IsSessionValid(session.Id) && session.As<IClarifySessionProxy>().Session.SessionData != null)
+						{
+							_logger.LogDebug("Found valid session in cache.");
+							StateManager.ResetTimeout(session.Id);
+							return session;
+						}
+
+						shouldEject = true;
 					}
+				}
+
+				if (shouldEject)
+				{
 					_logger.LogDebug("Ejecting invalid session.");
 					EjectSession(username, isObserved);
 				}

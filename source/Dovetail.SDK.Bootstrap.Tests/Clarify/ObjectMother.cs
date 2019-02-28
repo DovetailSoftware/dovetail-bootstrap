@@ -44,7 +44,7 @@ namespace Dovetail.SDK.Bootstrap.Tests.Clarify
 
 			var siteResult = interfacesToolkit.CreateSite(siteSetup);
 			var employees = new List<string>();
-			for (var i = 0; i <= count; i++)
+			for (var i = 0; i < count; i++)
 			{
 				var login = "test{0}".ToFormat(Guid.NewGuid().ToString("N").Substring(0, 10));
 				var email = "{0}@test.dovetailsoftware.com".ToFormat(login);
