@@ -156,6 +156,7 @@ namespace Dovetail.SDK.Bootstrap.Tests.Clarify
 			for (var i = 0; i < 1500; i++)
 			{
 				Parallel.Invoke(
+					() => theCache.CleanUpInvalidSessions(),
 					() => theCache.GetSession(theEmployee).As<ClarifySessionWrapper>().ClarifySession.SessionData.ShouldNotBeNull(),
 					() => theCache.CleanUpInvalidSessions(),
 					() => useSession(),
@@ -165,7 +166,7 @@ namespace Dovetail.SDK.Bootstrap.Tests.Clarify
 
 				theApplication.InvalidateSession(theSessionId);
 
-				Thread.Sleep(10);
+				Thread.Sleep(100);
 			}
 
 			var sessions = theCache.SessionsByUsername.Values;

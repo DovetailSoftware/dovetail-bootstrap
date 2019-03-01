@@ -11,6 +11,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 	public class ClarifySessionCache : IClarifySessionCache
 	{
 		private static readonly Dictionary<string, IClarifySession> _agentSessionCacheByUsername;
+		private static readonly object SyncRoot = new object();
 
 		private readonly IClarifyApplication _clarifyApplication;
 		private readonly ILogger _logger;
@@ -55,7 +56,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		{
 			get
 			{
-				lock (_agentSessionCacheByUsername)
+				lock (SyncRoot)
 				{
 					return _agentSessionCacheByUsername.Values.Count(_ => _clarifyApplication.IsSessionValid(_.Id));
 				}
@@ -66,29 +67,28 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		{
 			_logger.LogDebug("Performing session cleanup");
 
-			IEnumerable<IClarifySession> invalidSessions;
-			lock (_agentSessionCacheByUsername)
+			lock (SyncRoot)
 			{
-				invalidSessions = SessionsByUsername
+				var invalidSessions = SessionsByUsername
 					.Values
 					.Where(_ => !_clarifyApplication.IsSessionValid(_.Id))
 					.ToList();
-			}
 
-			foreach (var session in invalidSessions)
-			{
-				_logger.LogDebug("Ejecting inactive session {0} for user {1}.".ToFormat(session.Id, session.UserName));
-				EjectSession(session.UserName);
-			}
+				foreach (var session in invalidSessions)
+				{
+					_logger.LogDebug("Ejecting inactive session {0} for user {1}.".ToFormat(session.Id, session.UserName));
+					EjectSession(session.UserName);
+				}
 
-			var count = invalidSessions.Count();
-			if (count != 0)
-			{
-				_logger.LogInfo("{0} sessions cleaned up", count);
-			}
-			else
-			{
-				_logger.LogDebug("No sessions to clean up");
+				var count = invalidSessions.Count();
+				if (count != 0)
+				{
+					_logger.LogInfo("{0} sessions cleaned up", count);
+				}
+				else
+				{
+					_logger.LogDebug("No sessions to clean up");
+				}
 			}
 		}
 
@@ -106,37 +106,30 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		{
 			using (_logger.Push("Ejecting session for {0}.".ToFormat(username)))
 			{
-				if (!_agentSessionCacheByUsername.ContainsKey(username))
-				{
-					_logger.LogDebug("No session was found for the user.");
-					return false;
-				}
-
-				IClarifySession session;
-				lock (_agentSessionCacheByUsername)
+				lock (SyncRoot)
 				{
 					if (!_agentSessionCacheByUsername.ContainsKey(username))
 					{
-						_logger.LogDebug("Session was there when we started but someone else ejected it.");
+						_logger.LogDebug("No session was found for the user.");
 						return false;
 					}
 
-					session = _agentSessionCacheByUsername[username];
+					var session = _agentSessionCacheByUsername[username];
 					_agentSessionCacheByUsername.Remove(username);
 
 					_logger.LogDebug("{0} sessions are now in the cache.", _agentSessionCacheByUsername.Count);
+
+					if (session == null) return true;
+
+					if (isObserved)
+					{
+						_logger.LogDebug("Expiring session {0}.", session.Id);
+						_sessionEndObserver().SessionExpired(session);
+					}
+
+					_logger.LogDebug("Closing session {0}.", session.Id);
+					session.Close();
 				}
-
-				if (session == null) return true;
-
-				if (isObserved)
-				{
-					_logger.LogDebug("Expiring session {0}.", session.Id);
-					_sessionEndObserver().SessionExpired(session);
-				}
-
-				_logger.LogDebug("Closing session {0}.", session.Id);
-				session.Close();
 			}
 
 			return true;
@@ -151,14 +144,11 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		private IClarifySession getSession(string username, bool isConfigured = true, bool isObserved = true)
 		{
 			IClarifySession session;
-
 			using (_logger.Push("Get session for {0}.".ToFormat(username)))
 			{
-				var shouldEject = false;
-				lock (_agentSessionCacheByUsername)
+				lock (SyncRoot)
 				{
-					var success = _agentSessionCacheByUsername.TryGetValue(username, out session);
-					if (success)
+					if (_agentSessionCacheByUsername.TryGetValue(username, out session))
 					{
 						if (_clarifyApplication.IsSessionValid(session.Id) && session.As<IClarifySessionProxy>().Session.SessionData != null)
 						{
@@ -167,19 +157,10 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 							return session;
 						}
 
-						shouldEject = true;
+						_logger.LogDebug("Ejecting invalid session.");
+						EjectSession(username, isObserved);
 					}
-				}
 
-				if (shouldEject)
-				{
-					_logger.LogDebug("Ejecting invalid session.");
-					EjectSession(username, isObserved);
-				}
-
-				ClarifySession clarifySession;
-				lock (_agentSessionCacheByUsername)
-				{
 					if (_agentSessionCacheByUsername.ContainsKey(username))
 					{
 						_logger.LogDebug("Found session (within the lock). Assuming it is valid because it must be very recent.");
@@ -189,19 +170,19 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 					//session = CreateSession(username, isConfigured, isObserved);
 					_logger.LogDebug("Creating missing session.");
 
-					clarifySession = _clarifyApplication.CreateSession(username, ClarifyLoginType.User);
-				    clarifySession.SetNullStringsToEmpty = true;
+					var clarifySession = _clarifyApplication.CreateSession(username, ClarifyLoginType.User);
+					clarifySession.SetNullStringsToEmpty = true;
 
-                    session = wrapSession(clarifySession);
+					session = wrapSession(clarifySession);
 
 					_logger.LogInfo("Created session {0}.".ToFormat(clarifySession.SessionID));
 
 					_agentSessionCacheByUsername.Add(username, session);
 
 					_logger.LogDebug("{0} sessions are now in the cache.", _agentSessionCacheByUsername.Count);
-				}
 
-				visitSession(clarifySession, isConfigured, isObserved);
+					visitSession(clarifySession, isConfigured, isObserved);
+				}
 			}
 
 			return session;
