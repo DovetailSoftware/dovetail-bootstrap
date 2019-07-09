@@ -75,6 +75,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApplicationUsernameStartupPolicy.cs" />
+    <Compile Include="Bootstrapper.cs" />
     <Compile Include="ClarifyContext.cs" />
     <Compile Include="ClarifyDataRowExtensions.cs" />
     <Compile Include="ClarifyGenericExtensions.cs" />
@@ -85,12 +87,14 @@
     <Compile Include="Configuration\DovetailAppSettingsSource.cs" />
     <Compile Include="Configuration\StructureMapServiceLocator.cs" />
     <Compile Include="DovetailDatabaseSettings.cs" />
+    <Compile Include="IBootstrapper.cs" />
     <Compile Include="IClarifyContext.cs" />
     <Compile Include="IClarifySession.cs" />
     <Compile Include="IClarifySessionListener.cs" />
     <Compile Include="IClarifySessionManager.cs" />
     <Compile Include="IClarifySessionWrapper.cs" />
     <Compile Include="ILogger.cs" />
+    <Compile Include="IStartupPolicy.cs" />
     <Compile Include="Log4NetLogger.cs" />
     <Compile Include="NulloLogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

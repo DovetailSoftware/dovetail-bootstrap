@@ -31,6 +31,7 @@ namespace Dovetail.SDK.Bootstrap.Configuration
 				s.AssemblyContainingType<IClarifySessionCache>();
 				s.WithDefaultConventions();
 				s.AddAllTypesOf<IHistoryAssemblerPolicy>();
+				s.AddAllTypesOf<IStartupPolicy>();
 			});
 
 			//IncludeRegistry<AppSettingProviderRegistry>();

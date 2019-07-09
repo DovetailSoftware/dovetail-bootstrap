@@ -15,6 +15,8 @@ namespace Dovetail.SDK.Clarify
 {
     public class ClarifyRegistry : Registry
     {
+	    public static bool BypassSdkTypes;
+
         public ClarifyRegistry()
         {
             For<ILogger>()
@@ -28,14 +30,19 @@ namespace Dovetail.SDK.Clarify
                 _.WithDefaultConventions();
 
                 _.AddAllTypesOf<IClarifySessionListener>();
-                _.Convention<SettingsScanner>();
+                _.AddAllTypesOf<IStartupPolicy>();
+				_.Convention<SettingsScanner>();
             });
 
             For<IClarifyContext>().Singleton().Use<ClarifyContext>();
-            For<ITimeZone>().Use(_ => _.GetInstance<IClarifyContext>().ServerTimeZone);
-            For<ILocaleCache>().Singleton().Use(_ => _.GetInstance<IClarifyContext>().LocaleCache);
-            For<ISchemaCache>().Singleton().Use(_ => _.GetInstance<IClarifyContext>().SchemaCache);
             For<IClarifySession>().Use(_ => _.GetInstance<IClarifyContext>().CreateSession());
+
+            if (!BypassSdkTypes)
+            {
+	            For<ITimeZone>().Use(_ => _.GetInstance<IClarifyContext>().ServerTimeZone);
+	            For<ILocaleCache>().Singleton().Use(_ => _.GetInstance<IClarifyContext>().LocaleCache);
+	            For<ISchemaCache>().Singleton().Use(_ => _.GetInstance<IClarifyContext>().SchemaCache);
+            }
 
             For<ITypeDescriptorCache>().Use<TypeDescriptorCache>();
             For<IBindingLogger>().Use<NulloBindingLogger>();
