@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Dovetail.SDK.Bootstrap.Clarify.Extensions;
+using Dovetail.SDK.Bootstrap.Clarify.Metadata;
 using Dovetail.SDK.Bootstrap.Configuration;
 using Dovetail.SDK.ModelMap.Clarify;
 using Dovetail.SDK.ModelMap.Instructions;
@@ -22,8 +23,9 @@ namespace Dovetail.SDK.ModelMap
 		private readonly IMapEntryBuilder _entries;
 		private readonly IClarifyListCache _lists;
 		private readonly IServiceLocator _services;
+		private readonly ISchemaMetadataCache _metadata;
 
-		public ModelBuilder(IModelMapRegistry models, ISchemaCache schema, IOutputEncoder encoder, IMapEntryBuilder entries, IClarifyListCache lists, IServiceLocator services)
+		public ModelBuilder(IModelMapRegistry models, ISchemaCache schema, IOutputEncoder encoder, IMapEntryBuilder entries, IClarifyListCache lists, IServiceLocator services, ISchemaMetadataCache metadata)
 		{
 			_models = models;
 			_schema = schema;
@@ -31,6 +33,7 @@ namespace Dovetail.SDK.ModelMap
 			_entries = entries;
 			_lists = lists;
 			_services = services;
+			_metadata = metadata;
 
 			FieldSortMapOverrides = new FieldSortMap[0];
 		}
@@ -182,7 +185,7 @@ namespace Dovetail.SDK.ModelMap
 
 			var records = rootGenericMap.ClarifyGeneric.DataRows();
 
-			//take the results and constrain them to the requested page 
+			//take the results and constrain them to the requested page
 			if (paginationRequest != null)
 			{
 				var startRow = (paginationRequest.CurrentPage - 1) * paginationRequest.PageSize;
@@ -372,6 +375,7 @@ namespace Dovetail.SDK.ModelMap
 
 		private void populateDataWithFieldValues(FieldMap[] fieldMaps, ClarifyDataRow record, ModelData model)
 		{
+			var tableMetadata = _metadata.MetadataFor(record.Table.TableName);
 			foreach (var fieldMap in fieldMaps)
 			{
 				if (fieldMap.Key.IsEmpty())
@@ -379,6 +383,10 @@ namespace Dovetail.SDK.ModelMap
 
 				try
 				{
+					var fieldMetadata = fieldMap.FieldNames.Length == 1
+						? tableMetadata.MetadataFor(fieldMap.FieldNames[0])
+						: new FieldSchemaMetadata();
+
 					var propertyValue = GetFieldValueForRecord(fieldMap, record);
 
 					if (propertyValue is string && fieldMap.ShouldEncode)
@@ -394,8 +402,15 @@ namespace Dovetail.SDK.ModelMap
 					if (fieldMap.PropertyType == typeof(DateTime))
 					{
 						var dateTime = Convert.ToDateTime(propertyValue);
-						var utcDateTime = new DateTime(dateTime.Ticks, DateTimeKind.Utc);
-						propertyValue = utcDateTime;
+						if (fieldMetadata.IsDateOnlyField())
+						{
+							propertyValue = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, 0, 0, 0, DateTimeKind.Utc);
+						}
+						else
+						{
+							var utcDateTime = new DateTime(dateTime.Ticks, DateTimeKind.Utc);
+							propertyValue = utcDateTime;
+						}
 					}
 
 					model[fieldMap.Key] = propertyValue;

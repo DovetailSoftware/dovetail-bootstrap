@@ -7,7 +7,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify.Metadata
 		public string Name { get; set; }
 		public string DataType { get; set; }
 
-		public bool IsDateField()
+		public bool IsDateOnlyField()
 		{
 			return "date".EqualsIgnoreCase(DataType);
 		}

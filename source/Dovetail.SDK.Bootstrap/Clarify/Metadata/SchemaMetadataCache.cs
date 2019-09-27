@@ -42,6 +42,13 @@ namespace Dovetail.SDK.Bootstrap.Clarify.Metadata
 
 		private List<TableSchemaMetadata> parseMetadata()
 		{
+			if (!File.Exists(_settings.Path))
+			{
+				_logger.LogInfo("Schema Metadata file does not exist: " + _settings.Path);
+				return new List<TableSchemaMetadata>();
+			}
+
+			_logger.LogInfo("Loading schema metadata file: " + _settings.Path);
 			using (var reader = new StreamReader(_settings.Path))
 			{
 				var doc = XDocument.Load(reader);
