@@ -34,7 +34,7 @@ namespace Dovetail.SDK.Bootstrap.Tests.Clarify.Metadata
 			// Other fields shouldn't exist but will also never be null
 			table.MetadataFor("test").ShouldNotBeNull();
 			var field = table.MetadataFor("creation_time");
-			field.IsDateField().ShouldBeTrue();
+			field.IsDateOnlyField().ShouldBeTrue();
 		}
 	}
 }
