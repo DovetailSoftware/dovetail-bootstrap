@@ -114,6 +114,7 @@
       <Link>Context.cs</Link>
     </Compile>
     <Compile Include="Authentication\current_sdk_user.cs" />
+    <Compile Include="Clarify\Metadata\SchemaMetadataCacheTester.cs" />
     <Compile Include="Clarify\NulloLogger.cs" />
     <Compile Include="Clarify\ObjectMother.cs" />
     <Compile Include="Clarify\when_hundreds_of_sessions_are_inactive_and_someone_logs_in.cs" />
@@ -139,6 +140,9 @@
     <None Include="..\Dovetail.SDK.ModelMap.Integration\App.config">
       <Link>App.config</Link>
     </None>
+    <Content Include="Clarify\Metadata\schema.metadata.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="ripple.dependencies.config">
       <SubType>Designer</SubType>
     </None>
