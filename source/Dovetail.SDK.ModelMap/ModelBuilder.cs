@@ -375,7 +375,11 @@ namespace Dovetail.SDK.ModelMap
 
 		private void populateDataWithFieldValues(FieldMap[] fieldMaps, ClarifyDataRow record, ModelData model)
 		{
-			var tableMetadata = _metadata.MetadataFor(record.Table.TableName);
+			var tableName = record.Table.TableName;
+			if (tableName.Contains(":"))
+				tableName = tableName.Split(new[] {":"}, StringSplitOptions.RemoveEmptyEntries).Last();
+
+			var tableMetadata = _metadata.MetadataFor(tableName);
 			foreach (var fieldMap in fieldMaps)
 			{
 				if (fieldMap.Key.IsEmpty())

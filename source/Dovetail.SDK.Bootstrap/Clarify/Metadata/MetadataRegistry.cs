@@ -12,6 +12,8 @@ namespace Dovetail.SDK.Bootstrap.Clarify.Metadata
 				_.TheCallingAssembly();
 				_.AddAllTypesOf<IXElementVisitor>();
 			});
+
+			ForSingletonOf<ISchemaMetadataCache>().Use<SchemaMetadataCache>();
 		}
 	}
 }
