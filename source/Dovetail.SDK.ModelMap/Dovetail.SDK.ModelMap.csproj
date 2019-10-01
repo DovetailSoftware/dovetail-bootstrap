@@ -157,6 +157,7 @@
     <Compile Include="ModelInspectorVisitor.cs" />
     <Compile Include="ModelMapManager.cs" />
     <Compile Include="ModelMapProperty.cs" />
+    <Compile Include="ModelQueryService.cs" />
     <Compile Include="Serialization\Filters\IsInPolicy.cs" />
     <Compile Include="Serialization\Overrides\ConfiguredRemoval.cs" />
     <Compile Include="Serialization\Overrides\ModelMapDiffOptions.cs" />

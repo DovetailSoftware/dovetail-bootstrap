@@ -120,6 +120,7 @@
     <Compile Include="Clarify\Metadata\IXElementSerializer.cs" />
     <Compile Include="Clarify\Metadata\IXElementService.cs" />
     <Compile Include="Clarify\Metadata\IXElementVisitor.cs" />
+    <Compile Include="Clarify\Metadata\MetadataExtensions.cs" />
     <Compile Include="Clarify\Metadata\MetadataRegistry.cs" />
     <Compile Include="Clarify\Metadata\ParseFields.cs" />
     <Compile Include="Clarify\Metadata\ParseTables.cs" />

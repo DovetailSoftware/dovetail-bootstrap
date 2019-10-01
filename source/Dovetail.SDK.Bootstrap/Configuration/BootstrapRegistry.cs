@@ -1,5 +1,6 @@
 using Dovetail.SDK.Bootstrap.Authentication;
 using Dovetail.SDK.Bootstrap.Clarify;
+using Dovetail.SDK.Bootstrap.Clarify.Metadata;
 using Dovetail.SDK.Bootstrap.History.AssemblerPolicies;
 using Dovetail.SDK.Bootstrap.History.Configuration;
 using Dovetail.SDK.Bootstrap.History.TemplatePolicies;
@@ -70,6 +71,8 @@ namespace Dovetail.SDK.Bootstrap.Configuration
 			For<IHistoryOriginalMessageConfiguration>().Singleton().Use<HistoryOriginalMessageConfiguration>();
 
 			this.ActEntryTemplatePolicies<DefaultActEntryTemplatePolicyRegistry>();
+
+			IncludeRegistry<MetadataRegistry>();
 		}
 	}
 }
