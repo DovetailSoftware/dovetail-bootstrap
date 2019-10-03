@@ -176,6 +176,7 @@
     <Compile Include="Http\ThreadHttpApplicationStorage.cs" />
     <Compile Include="IBootstrapper.cs" />
     <Compile Include="IStartupPolicy.cs" />
+    <Compile Include="TimeZoneConversionsStartupPolicy.cs" />
     <Compile Include="UrlLinkifier.cs" />
     <Compile Include="History\TemplatePolicies\DefaultActEntryTemplatePolicyRegistry.cs" />
     <Compile Include="History\Configuration\HistorySettings.cs" />

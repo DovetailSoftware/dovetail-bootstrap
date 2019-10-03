@@ -11,6 +11,11 @@ namespace Dovetail.SDK.Bootstrap.Clarify.Metadata
 
 		public string Name { get; set; }
 
+		public IEnumerable<FieldSchemaMetadata> Fields
+		{
+			get { return _fields; }
+		}
+
 		public void AddField(FieldSchemaMetadata field)
 		{
 			_fields.Add(field);

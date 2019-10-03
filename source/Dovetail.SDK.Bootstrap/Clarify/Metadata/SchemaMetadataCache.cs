@@ -24,6 +24,11 @@ namespace Dovetail.SDK.Bootstrap.Clarify.Metadata
 			_metadata = new Lazy<List<TableSchemaMetadata>>(parseMetadata);
 		}
 
+		public IEnumerable<TableSchemaMetadata> Tables
+		{
+			get { return _metadata.Value; }
+		}
+
 		public TableSchemaMetadata MetadataFor(string tableName)
 		{
 			var table = _metadata.Value.SingleOrDefault(_ => _.Name.EqualsIgnoreCase(tableName));
