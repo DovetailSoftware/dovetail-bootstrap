@@ -93,7 +93,7 @@ To run the integration tests:
 
 ### Optional - Schema update
 
-The authentication token feature for bootstrap APIs require a schema change. Yes we have automation for that! If you have [Dovetail Schema Editor](http://www.dovetailsoftware.com/dovetail-schema-editor) installed all you have to do is:
+The authentication token feature for bootstrap APIs requires a schema change. Yes we have automation for that! If you have [Dovetail Schema Editor](http://www.dovetailsoftware.com/dovetail-schema-editor) installed all you have to do is:
 
 ```rake setup:apply_schemascripts```
 
