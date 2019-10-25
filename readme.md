@@ -9,7 +9,7 @@ Features
 ### Database operations
 
 * Easily pull data out of your Clarify database and into view models using Model Maps.
-* Simplify calling Dovetail SDK APIs and ad hoc data access while making it easy to manager your session usage using IClarifySessionCache.
+* Simplify calling Dovetail SDK APIs and ad-hoc data access while making it easy to manage your session usage using IClarifySessionCache.
 
 ### Authentication
 
