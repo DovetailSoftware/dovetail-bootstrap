@@ -109,7 +109,7 @@ Double click on the 2010 Visual Studio solution: _/source/Bootstrap.sln_
 
 ### Launch!
 
-Make sure Web is your startup project. If it is. The Web project will be bold in your Solution Explorer.
+Make sure Web is your startup project. If it is, the Web project will be bold in your Solution Explorer.
 
 Hit Ctrl+F5 to build and launch the site.
 
