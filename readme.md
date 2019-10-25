@@ -99,7 +99,7 @@ The authentication token feature for bootstrap APIs requires a schema change. Ye
 
 The cool thing about this automation is any schemascript files present in the schema directory will get applied. Have fun.
 
-If you want to do this with Amdoc's ddcomp tool... You should really try Schema Editor :heart: [Contact Us](mailto::support@dovetailsoftware.com)
+If you want to do this with Amdoc's ddcomp tool... you should really try Schema Editor :heart: [Contact Us](mailto::support@dovetailsoftware.com)
 
 ## Take it for a spin
 
