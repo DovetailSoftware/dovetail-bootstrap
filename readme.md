@@ -34,7 +34,7 @@ This example web application can:
 
 ### Windows Service 
 
-We also include a [simple Windows service](https://github.com/DovetailSoftware/dovetail-bootstrap/tree/master/source/Service) example using Dovetail SDK and [Topself](http://topshelf-project.com/) which polls a Clarify database for open case information.
+We also include a [simple Windows service](https://github.com/DovetailSoftware/dovetail-bootstrap/tree/master/source/Service) example using Dovetail SDK and [Topshelf](http://topshelf-project.com/) which polls a Clarify database for open case information.
 
 ![Bootstrap-Service](http://cl.ly/JQOJ/Image%202012-09-13%20at%202.08.52%20PM.png)
 
