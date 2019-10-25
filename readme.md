@@ -47,7 +47,7 @@ Bootstrap build process downloads dependent components from the Internet, so Int
 
 ### Dovetail SDK 
 
-Bootstrap requires [.Net 4.0 Full](http://www.microsoft.com/download/en/details.aspx?id=17718) is dependant on the Dovetail SDK [nuget package](http://nuget.org) bundled with the Dovetail SDK starting with [version 3.2](http://support.dovetailsoftware.com/selfservice/products/show/Dovetail%20SDK) released January 19th 2012. We recommend that you use Visual Studio 2010 SP1 with IIS Express installed.
+Bootstrap requires [.Net 4.0 Full](http://www.microsoft.com/download/en/details.aspx?id=17718) and is dependant on the Dovetail SDK [nuget package](http://nuget.org) bundled with the Dovetail SDK starting with [version 3.2](http://support.dovetailsoftware.com/selfservice/products/show/Dovetail%20SDK) released January 19th 2012. We recommend that you use Visual Studio 2010 SP1 with IIS Express installed.
 
 > To download the latest version of Dovetail SDK sign onto [Dovetail's Support Center](http://support.dovetailsoftware.com/selfservice/resources) and click on [My Products](
 http://support.dovetailsoftware.com/selfservice/products/owned). If you are entitled to Dovetail SDK you will see it in your list of products. If you do not have access to Dovetail SDK or wish to become a Dovetail customer please [contact us](mailto:support@dovetailsoftware.com)
