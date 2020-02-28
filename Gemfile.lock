@@ -7,16 +7,17 @@ GEM
       bottles (>= 1.1)
       fubudocs (>= 0.5)
       ripple-cli (~> 2.0)
-    rake (10.5.0)
+    rake (12.3.3)
     ripple-cli (2.3.4.151)
     rubyzip (0.9.9)
 
 PLATFORMS
+  ruby
   x86-mingw32
 
 DEPENDENCIES
   fuburake (~> 0.5)
-  rake (~> 10.0)
+  rake (~> 12.3)
   ripple-cli
   rubyzip (= 0.9.9)
 
