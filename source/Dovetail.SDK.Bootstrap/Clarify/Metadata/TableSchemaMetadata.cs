@@ -7,6 +7,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify.Metadata
 {
 	public class TableSchemaMetadata : SchemaMetadata
 	{
+		private readonly object _lock = new object();
 		private readonly IList<FieldSchemaMetadata> _fields = new List<FieldSchemaMetadata>();
 
 		public string Name { get; set; }
@@ -23,11 +24,15 @@ namespace Dovetail.SDK.Bootstrap.Clarify.Metadata
 
 		public FieldSchemaMetadata MetadataFor(string fieldName)
 		{
-			var field = _fields.SingleOrDefault(_ => _.Name.EqualsIgnoreCase(fieldName));
-			if (field == null)
+			FieldSchemaMetadata field;
+			lock (_lock)
 			{
-				field = new FieldSchemaMetadata { Name = fieldName };
-				_fields.Add(field);
+				field = _fields.SingleOrDefault(_ => _.Name.EqualsIgnoreCase(fieldName));
+				if (field == null)
+				{
+					field = new FieldSchemaMetadata { Name = fieldName };
+					_fields.Add(field);
+				}
 			}
 
 			return field;

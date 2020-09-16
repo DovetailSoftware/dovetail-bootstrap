@@ -14,6 +14,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify.Metadata
 		private readonly IXElementService _elements;
 		private readonly IServiceLocator _services;
 		private readonly Lazy<List<TableSchemaMetadata>> _metadata;
+		private readonly object _lock;
 
 		public SchemaMetadataCache(SchemaMetadataSettings settings, ILogger logger, IXElementService elements, IServiceLocator services)
 		{
@@ -22,6 +23,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify.Metadata
 			_elements = elements;
 			_services = services;
 			_metadata = new Lazy<List<TableSchemaMetadata>>(parseMetadata);
+			_lock = new object();
 		}
 
 		public IEnumerable<TableSchemaMetadata> Tables
@@ -31,15 +33,19 @@ namespace Dovetail.SDK.Bootstrap.Clarify.Metadata
 
 		public TableSchemaMetadata MetadataFor(string tableName)
 		{
-			var table = _metadata.Value.SingleOrDefault(_ => _.Name.EqualsIgnoreCase(tableName));
-			if (table == null)
+			TableSchemaMetadata table;
+			lock (_lock)
 			{
-				table = new TableSchemaMetadata
+				table = _metadata.Value.SingleOrDefault(_ => _.Name.EqualsIgnoreCase(tableName));
+				if (table == null)
 				{
-					Name = tableName
-				};
+					table = new TableSchemaMetadata
+					{
+						Name = tableName
+					};
 
-				_metadata.Value.Add(table);
+					_metadata.Value.Add(table);
+				}
 			}
 
 			return table;
