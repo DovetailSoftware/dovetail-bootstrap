@@ -1,7 +1,7 @@
 Dovetail Bootstrap
 ==================
 
-This project aims to make your life easier while you write [Dovetail SDK](http://www.dovetailsoftware.com/dovetail-sdk) based applications. Included in this project are two example applications:
+This project aims to make your life easier while you write [Dovetail SDK](https://clarify.dovetailsoftware.com/developer-tools/sdk/) based applications. Included in this project are two example applications:
 
 Features
 --------
@@ -20,7 +20,7 @@ Examples
 --------
 
 ### Web Applications
-Our premier example is a [web application](https://github.com/DovetailSoftware/dovetail-bootstrap/tree/master/source/Web) using Dovetail SDK and [FubuMVC](http://mvc.fubu-project.org/). This web application is a good starting point for whatever information or user experiences you wish to expose for your Dovetail/Clarify applications.
+Our premier example is a [web application](https://github.com/DovetailSoftware/dovetail-bootstrap/tree/master/source/Web) using Dovetail SDK and [FubuMVC](https://fubumvc.github.io/). This web application is a good starting point for whatever information or user experiences you wish to expose for your Dovetail/Clarify applications.
 
 ![Bootstrap-Web](http://f.cl.ly/items/1g2w0M272r1W240O061V/Image%202012-09-13%20at%202.02.46%20PM.png)
 
@@ -34,7 +34,7 @@ This example web application can:
 
 ### Windows Service 
 
-We also include a [simple Windows service](https://github.com/DovetailSoftware/dovetail-bootstrap/tree/master/source/Service) example using Dovetail SDK and [Topself](http://topshelf-project.com/) which polls a Clarify database for open case information.
+We also include a [simple Windows service](https://github.com/DovetailSoftware/dovetail-bootstrap/tree/master/source/Service) example using Dovetail SDK and [Topshelf](http://topshelf-project.com/) which polls a Clarify database for open case information.
 
 ![Bootstrap-Service](http://cl.ly/JQOJ/Image%202012-09-13%20at%202.08.52%20PM.png)
 
