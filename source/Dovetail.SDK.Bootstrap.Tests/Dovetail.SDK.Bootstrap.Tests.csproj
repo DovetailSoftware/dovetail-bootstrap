@@ -117,6 +117,7 @@
     <Compile Include="Clarify\Metadata\SchemaMetadataCacheTester.cs" />
     <Compile Include="Clarify\NulloLogger.cs" />
     <Compile Include="Clarify\ObjectMother.cs" />
+    <Compile Include="Clarify\SameUserLogsInMoreThanOnce.cs" />
     <Compile Include="Clarify\when_hundreds_of_sessions_are_inactive_and_someone_logs_in.cs" />
     <Compile Include="clarify_application_factory.cs" />
     <Compile Include="Configuration\fast_type_activator.cs" />
