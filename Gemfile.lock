@@ -1,5 +1,5 @@
 GEM
-  remote: https://rubygems.org/
+  remote: http://rubygems.org/
   specs:
     bottles (2.1.0.584)
     fubudocs (0.9.9.297)
