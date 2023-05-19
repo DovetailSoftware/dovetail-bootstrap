@@ -77,7 +77,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 				foreach (var session in invalidSessions)
 				{
 					_logger.LogDebug("Ejecting inactive session {0} for user {1}.".ToFormat(session.Id, session.UserName));
-					EjectSession(session.UserName);
+					EjectSession(session.UserName.ToLowerInvariant());
 				}
 
 				var count = invalidSessions.Count();
@@ -104,9 +104,9 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 
 		public bool EjectSession(string username, bool isObserved = true)
 		{
-			using (_logger.Push("Ejecting session for {0}.".ToFormat(username)))
+			lock (SyncRoot)
 			{
-				lock (SyncRoot)
+				using (_logger.Push("Ejecting session for {0}.".ToFormat(username)))
 				{
 					if (!_agentSessionCacheByUsername.ContainsKey(username))
 					{
@@ -144,11 +144,14 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		private IClarifySession getSession(string username, bool isConfigured = true, bool isObserved = true)
 		{
 			IClarifySession session;
-			using (_logger.Push("Get session for {0}.".ToFormat(username)))
+
+			var userName = username.ToLowerInvariant();	// Always use lowercase user name
+
+			lock (SyncRoot)
 			{
-				lock (SyncRoot)
+				using (_logger.Push("Get session for {0}.".ToFormat(username)))
 				{
-					if (_agentSessionCacheByUsername.TryGetValue(username, out session))
+					if (_agentSessionCacheByUsername.TryGetValue(userName, out session))
 					{
 						if (_clarifyApplication.IsSessionValid(session.Id) && session.As<IClarifySessionProxy>().Session.SessionData != null)
 						{
@@ -158,26 +161,25 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 						}
 
 						_logger.LogDebug("Ejecting invalid session.");
-						EjectSession(username, isObserved);
+						EjectSession(userName, isObserved);
 					}
 
-					if (_agentSessionCacheByUsername.ContainsKey(username))
+					if (_agentSessionCacheByUsername.ContainsKey(userName))
 					{
 						_logger.LogDebug("Found session (within the lock). Assuming it is valid because it must be very recent.");
-						return _agentSessionCacheByUsername[username];
+						return _agentSessionCacheByUsername[userName];
 					}
 
-					//session = CreateSession(username, isConfigured, isObserved);
 					_logger.LogDebug("Creating missing session.");
 
-					var clarifySession = _clarifyApplication.CreateSession(username, ClarifyLoginType.User);
+					var clarifySession = _clarifyApplication.CreateSession(userName, ClarifyLoginType.User);
 					clarifySession.SetNullStringsToEmpty = true;
 
 					session = wrapSession(clarifySession);
 
-					_logger.LogInfo("Created session {0}.".ToFormat(clarifySession.SessionID));
+					_logger.LogInfo("Created session {0} for user {1}.".ToFormat(clarifySession.SessionID, userName));
 
-					_agentSessionCacheByUsername.Add(username, session);
+					addSessionToCache(userName, session);
 
 					_logger.LogDebug("{0} sessions are now in the cache.", _agentSessionCacheByUsername.Count);
 

@@ -29,7 +29,7 @@ namespace Dovetail.SDK.Bootstrap.Authentication
 		{
 			var user = _currentSdkUser.Username;
 			_impersonationService.StopImpersonating(user);
-			_sessionCache.EjectSession(user);
+			_sessionCache.EjectSession(user.ToLowerInvariant());
 
 			_currentSdkUser.SignOut();
 			_formsAuthentication.SignOut();
