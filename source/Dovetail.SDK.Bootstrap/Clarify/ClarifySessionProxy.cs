@@ -36,7 +36,7 @@ namespace Dovetail.SDK.Bootstrap.Clarify
 		}
 
 		public Guid Id { get { return session.Id; } }
-		public string UserName { get { return session.UserName; } }
+		public string UserName { get { return _user.Username; } }
 		public int SessionEmployeeID { get { return session.SessionEmployeeID; } }
 		public int SessionUserID { get { return session.SessionUserID; } }
 		public string SessionEmployeeSiteID { get { return session.SessionEmployeeSiteID; } }
