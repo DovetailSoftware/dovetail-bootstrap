@@ -28,6 +28,20 @@ DATABASE_CONNECTION = "Data Source=localhost;Initial Catalog=mobilecl125;User Id
 
 SCHEMAEDITOR_PATH = "#{Rake::Win32::normalize(ENV['PROGRAMFILES'])}/Dovetail Software/SchemaEditor/SchemaEditor.exe"
 
+PACKAGEDIR = File.absolute_path("source/packages")
+NUGETEXEDIR = File.absolute_path(".nuget")
+
+#Oracle nuget must be pulled separately, before ripple runs, because ripple uses outdated version of nuget.core.dll
+# DON'T INCLUDE THIS IN ripple.config FILE:
+#    <Dependency Name="Oracle.ManagedDataAccess" Version="19.14.0" Mode="Fixed" />
+Rake.application['compile'].prerequisites.unshift "getOracleNuget"
+
+getOracleNuget = Rake::Task.define_task 'getOracleNuget' do
+  puts "Unpack Oracle.ManagedDataAccess nuget package"
+  FileUtils.mkdir_p(PACKAGEDIR)
+  sh "#{NUGETEXEDIR}/NuGet.exe install Oracle.ManagedDataAccess -OutputDirectory #{PACKAGEDIR} -Version 19.14.0 -Verbosity normal -ConfigFile #{NUGETEXEDIR}/NuGet.Config"
+end
+
 # #desc "Copy archives to test folder in order to run unit tests"
 # output :test_assemblies => [:compile] do |out|
 # 	out.from "#{File.dirname(__FILE__)}"

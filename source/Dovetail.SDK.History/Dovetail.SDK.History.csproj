@@ -31,23 +31,22 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FChoice.Common, Version=3.5.1.42, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="FChoice.Common">
       <HintPath>..\packages\Dovetail.SDK\lib\net40\FChoice.Common.dll</HintPath>
     </Reference>
-    <Reference Include="FChoice.Foundation.Clarify.Compatibility, Version=3.5.1.42, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+    <Reference Include="FChoice.Foundation.Clarify.Compatibility">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Dovetail.SDK\lib\net40\FChoice.Foundation.Clarify.Compatibility.dll</HintPath>
     </Reference>
-    <Reference Include="FChoice.Foundation.Clarify.Compatibility.Toolkits, Version=3.5.1.42, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+    <Reference Include="FChoice.Foundation.Clarify.Compatibility.Toolkits">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Dovetail.SDK\lib\net40\FChoice.Foundation.Clarify.Compatibility.Toolkits.dll</HintPath>
     </Reference>
-    <Reference Include="FChoice.Toolkits.Clarify, Version=3.5.1.42, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+    <Reference Include="FChoice.Toolkits.Clarify">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Dovetail.SDK\lib\net40\FChoice.Toolkits.Clarify.dll</HintPath>
     </Reference>
-    <Reference Include="fcSDK, Version=3.5.1.42, Culture=neutral, PublicKeyToken=48c955ba8dfd90d8, processorArchitecture=MSIL">
+    <Reference Include="fcSDK">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Dovetail.SDK\lib\net40\fcSDK.dll</HintPath>
     </Reference>
