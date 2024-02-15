@@ -59,6 +59,13 @@ namespace Dovetail.SDK.Clarify
             return new ClarifySessionAdapter(session, manager);
         }
 
+        public IClarifySession CreateSession(string userName, ClarifyLoginType loginType)
+        {
+            var session = _clarifyApplication.CreateSession(userName, loginType);
+            var manager = _container.GetInstance<IClarifySessionManager>();
+            return new ClarifySessionAdapter(session, manager);
+        }
+
         private ClarifyApplication InitializeClarifyApplication()
         {
             lock (SyncRoot)
@@ -77,8 +84,8 @@ namespace Dovetail.SDK.Clarify
             var settings = new StringBuilder();
             foreach (var key in configuration.AllKeys)
             {
-	            if (key.ToLower().Contains("connectionstring"))
-		            continue;
+                if (key.ToLower().Contains("connectionstring"))
+                    continue;
 
                 settings.AppendLine(string.Format("{0}={1}", key, configuration[key]));
             }
