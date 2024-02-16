@@ -73,20 +73,19 @@ namespace Dovetail.SDK.Clarify
             {
                 return FCApplication.IsInitialized
                            ? ClarifyApplication.Instance
-                           : initializeClarify();
+                           : InitializeClarify();
             }
         }
 
-        private ClarifyApplication initializeClarify()
+        private ClarifyApplication InitializeClarify()
         {
             var configuration = GetDovetailSdkConfiguration(_settings, _crmSettings);
             DbProviderFactory.Provider = DbProviderFactory.CreateProvider(_settings.Type);
 
             var settings = new StringBuilder();
-            var configString = "";
             foreach (var key in configuration.AllKeys)
             {
-                configString += $"{key} = {(key.Contains("connectionstring") ? Regex.Replace(configuration[key], "(.*)((password|pwd)=)([^;]+)(.*)", "$1$2*********$5", RegexOptions.Compiled | RegexOptions.IgnoreCase) : configuration[key])}";
+                var configString = $"{key} = {(key.Contains("connectionstring") ? Regex.Replace(configuration[key], "(.*)((password|pwd)=)([^;]+)(.*)", "$1$2*********$5", RegexOptions.Compiled | RegexOptions.IgnoreCase) : configuration[key])}";
                 settings.AppendLine($"{key}={configString}");
             }
 
@@ -94,7 +93,7 @@ namespace Dovetail.SDK.Clarify
 
             var application = ClarifyApplication.Initialize(configuration);
 
-            setSessionDefaultTimeout(_settings);
+            SetSessionDefaultTimeout(_settings);
 
             return application;
         }
@@ -126,16 +125,16 @@ namespace Dovetail.SDK.Clarify
             return Merge(source, ConfigurationManager.AppSettings);
         }
 
-        private void setSessionDefaultTimeout(DovetailDatabaseSettings dovetailDatabaseSettings)
+        private void SetSessionDefaultTimeout(DovetailDatabaseSettings dovetailDatabaseSettings)
         {
-	        var stateTimeoutTimespan = TimeSpan.FromMinutes(dovetailDatabaseSettings.SessionTimeoutInMinutes);
+            var stateTimeoutTimespan = TimeSpan.FromMinutes(dovetailDatabaseSettings.SessionTimeoutInMinutes);
 
-	        _logger.LogDebug("Setting session time out to be {0} minutes long.", stateTimeoutTimespan);
+            _logger.LogDebug("Setting session time out to be {0} minutes long.", stateTimeoutTimespan);
 
-	        StateManager.StateTimeout = stateTimeoutTimespan;
+            StateManager.StateTimeout = stateTimeoutTimespan;
         }
 
-		public static NameValueCollection Merge(NameValueCollection target, NameValueCollection source)
+        public static NameValueCollection Merge(NameValueCollection target, NameValueCollection source)
         {
             var result = new NameValueCollection(target);
 
