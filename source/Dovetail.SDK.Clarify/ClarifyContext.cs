@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using FChoice.Common.Data;
 using FChoice.Common.State;
 using FChoice.Foundation;
@@ -82,15 +83,14 @@ namespace Dovetail.SDK.Clarify
             DbProviderFactory.Provider = DbProviderFactory.CreateProvider(_settings.Type);
 
             var settings = new StringBuilder();
+            var configString = "";
             foreach (var key in configuration.AllKeys)
             {
-                if (key.ToLower().Contains("connectionstring"))
-                    continue;
-
-                settings.AppendLine(string.Format("{0}={1}", key, configuration[key]));
+                configString += $"{key} = {(key.Contains("connectionstring") ? Regex.Replace(configuration[key], "(.*)((password|pwd)=)([^;]+)(.*)", "$1$2*********$5", RegexOptions.Compiled | RegexOptions.IgnoreCase) : configuration[key])}";
+                settings.AppendLine($"{key}={configString}");
             }
 
-            _logger.LogDebug("Initializing Clarify with settings: {0}", settings.ToString());
+            _logger.LogDebug("Initializing Clarify with settings:\n{0}", settings.ToString());
 
             var application = ClarifyApplication.Initialize(configuration);
 
