@@ -34,7 +34,7 @@ This example web application can:
 
 ### Windows Service 
 
-We also include a [simple Windows service](https://github.com/DovetailSoftware/dovetail-bootstrap/tree/master/source/Service) example using Dovetail SDK and [Topshelf](http://topshelf-project.com/) which polls a Clarify database for open case information.
+We also include a [simple Windows service](https://github.com/DovetailSoftware/dovetail-bootstrap/tree/master/source/Service) example using Dovetail SDK and [Topshelf](https://github.com/Topshelf/Topshelf) which polls a Clarify database for open case information.
 
 ![Bootstrap-Service](http://cl.ly/JQOJ/Image%202012-09-13%20at%202.08.52%20PM.png)
 
@@ -47,7 +47,7 @@ Bootstrap build process downloads dependent components from the Internet, so Int
 
 ### Dovetail SDK 
 
-Bootstrap requires [.Net 4.0 Full](http://www.microsoft.com/download/en/details.aspx?id=17718) is dependant on the Dovetail SDK [nuget package](http://nuget.org) bundled with the Dovetail SDK starting with [version 3.2](http://support.dovetailsoftware.com/selfservice/products/show/Dovetail%20SDK) released January 19th 2012. We recommend that you use Visual Studio 2010 SP1 with IIS Express installed.
+Bootstrap requires [.Net 4.7.2](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net472) is dependant on the Dovetail SDK [nuget package](http://nuget.org) bundled with the Dovetail SDK starting with [version 3.2](http://support.dovetailsoftware.com/selfservice/products/show/Dovetail%20SDK) released January 19th 2012. We recommend that you use Visual Studio 2019 or newer with IIS Express installed.
 
 > To download the latest version of Dovetail SDK sign onto [Dovetail's Support Center](http://support.dovetailsoftware.com/selfservice/resources) and click on [My Products](
 http://support.dovetailsoftware.com/selfservice/products/owned). If you are entitled to Dovetail SDK you will see it in your list of products. If you do not have access to Dovetail SDK or wish to become a Dovetail customer please [contact us](mailto:support@dovetailsoftware.com)
@@ -93,7 +93,7 @@ To run the integration tests:
 
 ### Optional - Schema update
 
-The authentication token feature for bootstrap APIs require a schema change. Yes we have automation for that! If you have [Dovetail Schema Editor](http://www.dovetailsoftware.com/dovetail-schema-editor) installed all you have to do is:
+The authentication token feature for bootstrap APIs require a schema change. Yes we have automation for that! If you have [Dovetail Schema Editor](https://support.dovetailsoftware.com/selfservice/products/show/SchemaEditor) installed all you have to do is:
 
 ```rake setup:apply_schemascripts```
 
