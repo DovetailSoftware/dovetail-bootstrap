@@ -5,14 +5,79 @@ require 'fuburake'
 
 @options = {:source => 'source', :results => 'results'}
 
+class FubuRake::MSBuildRunner
+   def self.compile(attributes)
+      compileTarget = attributes.fetch(:compilemode, 'debug')
+      solutionFile = attributes[:solutionfile]
+
+      attributes[:projFile] = solutionFile
+      attributes[:properties] = ["Configuration=#{compileTarget}"]
+      buildTarget = attributes.fetch(:buildTarget, 'rebuild')
+      attributes[:extraSwitches] = ["maxcpucount", "v:m", "t:#{buildTarget}"] | attributes.fetch(:extraSwitches, [])
+
+      self.runProjFile(attributes)
+   end
+   def self.runProjFile(attributes)
+      compileTarget = attributes.fetch(:compilemode, 'debug')
+      projFile = attributes[:solutionfile]
+
+      msbuildFile = "\"#{getMsbuildToolsPath()}\""
+
+      properties = attributes.fetch(:properties, [])
+
+      switchesValue = ""
+      properties.each do |prop|
+         switchesValue += "/property:#{prop} "
+      end
+
+      extraSwitches = attributes.fetch(:extraSwitches, [])
+      extraSwitches.each do |switch|
+         switchesValue += "/#{switch} "
+      end
+
+      targets = attributes.fetch(:targets, [])
+      targetsValue = "";
+      targets.each do |target|
+         targetsValue += "/t:#{target} "
+      end
+
+      sh "#{msbuildFile} #{projFile} #{targetsValue} #{switchesValue}"
+   end
+   def self.getMsbuildToolsPath()
+      # BuildTools is where TeamCity has MSBuild installed
+      # Community is where most developers will have MSBuild installed, however some have Professional edition of Visual Studio.
+      location = [
+         #MSBuild version 17.7.2
+         "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe",
+         "C:\\Program Files\\Microsoft Visual Studio\\2022\\BuildTools\\MSBuild\\Current\\Bin\\MSBuild.exe",
+         "C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\MSBuild\\Current\\Bin\\MSBuild.exe",
+         "C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise\\MSBuild\\Current\\Bin\\MSBuild.exe",
+         #Microsoft (R) Build Engine version 16.11.2
+         "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe",
+         "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\MSBuild\\Current\\Bin\\MSBuild.exe",
+         "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Professional\\MSBuild\\Current\\Bin\\MSBuild.exe",
+         "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\MSBuild\\Current\\Bin\\MSBuild.exe"
+      ].find { |path| File.exists?(path) }
+
+      if(location == nil)
+         raise "Couldn't find MSBuild!"
+      end
+
+      puts "Found MSBuild at #{location}"
+      return location;
+   end
+end
+
 solution = FubuRake::Solution.new do |sln|
+   current_year = Time.now.year
+
 	sln.compile = {
 		:solutionfile => 'source/Bootstrap.sln'
 	}
 
 	sln.assembly_info = {
 		:product_name => "Dovetail Bootstrap",
-		:copyright => 'Copyright Dovetail Software 2013',
+		:copyright => 'Copyright Dovetail Software 2013-#{current_year}',
 		:output_file => 'source/CommonAssemblyInfo.cs',
 		:description => 'Collection of common infrastrucure used by applications based on Dovetail SDK: Session Management, Workflow Object History'
 	}
@@ -27,6 +92,20 @@ DATABASE_TYPE = "mssql"
 DATABASE_CONNECTION = "Data Source=localhost;Initial Catalog=mobilecl125;User Id=sa;Password=sa"
 
 SCHEMAEDITOR_PATH = "#{Rake::Win32::normalize(ENV['PROGRAMFILES'])}/Dovetail Software/SchemaEditor/SchemaEditor.exe"
+
+PACKAGEDIR = File.absolute_path("source/packages")
+NUGETEXEDIR = File.absolute_path(".nuget")
+
+#Oracle nuget must be pulled separately, before ripple runs, because ripple uses outdated version of nuget.core.dll
+# DON'T INCLUDE THIS IN ripple.config FILE:
+#    <Dependency Name="Oracle.ManagedDataAccess" Version="19.14.0" Mode="Fixed" />
+Rake.application['compile'].prerequisites.unshift "getOracleNuget"
+
+getOracleNuget = Rake::Task.define_task 'getOracleNuget' do
+  puts "Unpack Oracle.ManagedDataAccess nuget package"
+  FileUtils.mkdir_p(PACKAGEDIR)
+  sh "#{NUGETEXEDIR}/NuGet.exe install Oracle.ManagedDataAccess -OutputDirectory #{PACKAGEDIR} -Version 19.14.0 -Verbosity normal -ConfigFile #{NUGETEXEDIR}/NuGet.Config"
+end
 
 # #desc "Copy archives to test folder in order to run unit tests"
 # output :test_assemblies => [:compile] do |out|

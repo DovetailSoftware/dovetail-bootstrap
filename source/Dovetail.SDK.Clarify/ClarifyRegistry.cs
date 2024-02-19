@@ -15,7 +15,7 @@ namespace Dovetail.SDK.Clarify
 {
     public class ClarifyRegistry : Registry
     {
-	    public static bool BypassSdkTypes;
+        public static bool BypassSdkTypes;
 
         public ClarifyRegistry()
         {
@@ -31,17 +31,16 @@ namespace Dovetail.SDK.Clarify
 
                 _.AddAllTypesOf<IClarifySessionListener>();
                 _.AddAllTypesOf<IStartupPolicy>();
-				_.Convention<SettingsScanner>();
+                _.Convention<SettingsScanner>();
             });
 
             For<IClarifyContext>().Singleton().Use<ClarifyContext>();
-            For<IClarifySession>().Use(_ => _.GetInstance<IClarifyContext>().CreateSession());
 
             if (!BypassSdkTypes)
             {
-	            For<ITimeZone>().Use(_ => _.GetInstance<IClarifyContext>().ServerTimeZone);
-	            For<ILocaleCache>().Singleton().Use(_ => _.GetInstance<IClarifyContext>().LocaleCache);
-	            For<ISchemaCache>().Singleton().Use(_ => _.GetInstance<IClarifyContext>().SchemaCache);
+                For<ITimeZone>().Use(_ => _.GetInstance<IClarifyContext>().ServerTimeZone);
+                For<ILocaleCache>().Singleton().Use(_ => _.GetInstance<IClarifyContext>().LocaleCache);
+                For<ISchemaCache>().Singleton().Use(_ => _.GetInstance<IClarifyContext>().SchemaCache);
             }
 
             For<ITypeDescriptorCache>().Use<TypeDescriptorCache>();

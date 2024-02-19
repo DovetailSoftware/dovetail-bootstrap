@@ -12,5 +12,6 @@ namespace Dovetail.SDK.Clarify
         ITimeZone ServerTimeZone { get; }
 
         IClarifySession CreateSession();
+		  IClarifySession CreateSession(string userName, ClarifyLoginType loginType);
     }
 }

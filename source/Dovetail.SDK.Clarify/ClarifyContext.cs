@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using FChoice.Common.Data;
 using FChoice.Common.State;
 using FChoice.Foundation;
@@ -59,17 +60,24 @@ namespace Dovetail.SDK.Clarify
             return new ClarifySessionAdapter(session, manager);
         }
 
+        public IClarifySession CreateSession(string userName, ClarifyLoginType loginType)
+        {
+            var session = _clarifyApplication.CreateSession(userName, loginType);
+            var manager = _container.GetInstance<IClarifySessionManager>();
+            return new ClarifySessionAdapter(session, manager);
+        }
+
         private ClarifyApplication InitializeClarifyApplication()
         {
             lock (SyncRoot)
             {
                 return FCApplication.IsInitialized
                            ? ClarifyApplication.Instance
-                           : initializeClarify();
+                           : InitializeClarify();
             }
         }
 
-        private ClarifyApplication initializeClarify()
+        private ClarifyApplication InitializeClarify()
         {
             var configuration = GetDovetailSdkConfiguration(_settings, _crmSettings);
             DbProviderFactory.Provider = DbProviderFactory.CreateProvider(_settings.Type);
@@ -77,17 +85,15 @@ namespace Dovetail.SDK.Clarify
             var settings = new StringBuilder();
             foreach (var key in configuration.AllKeys)
             {
-	            if (key.ToLower().Contains("connectionstring"))
-		            continue;
-
-                settings.AppendLine(string.Format("{0}={1}", key, configuration[key]));
+                var configString = $"{key} = {(key.Contains("connectionstring") ? Regex.Replace(configuration[key], "(.*)((password|pwd)=)([^;]+)(.*)", "$1$2*********$5", RegexOptions.Compiled | RegexOptions.IgnoreCase) : configuration[key])}";
+                settings.AppendLine($"{key}={configString}");
             }
 
-            _logger.LogDebug("Initializing Clarify with settings: {0}", settings.ToString());
+            _logger.LogDebug("Initializing Clarify with settings:\n{0}", settings.ToString());
 
             var application = ClarifyApplication.Initialize(configuration);
 
-            setSessionDefaultTimeout(_settings);
+            SetSessionDefaultTimeout(_settings);
 
             return application;
         }
@@ -119,16 +125,16 @@ namespace Dovetail.SDK.Clarify
             return Merge(source, ConfigurationManager.AppSettings);
         }
 
-        private void setSessionDefaultTimeout(DovetailDatabaseSettings dovetailDatabaseSettings)
+        private void SetSessionDefaultTimeout(DovetailDatabaseSettings dovetailDatabaseSettings)
         {
-	        var stateTimeoutTimespan = TimeSpan.FromMinutes(dovetailDatabaseSettings.SessionTimeoutInMinutes);
+            var stateTimeoutTimespan = TimeSpan.FromMinutes(dovetailDatabaseSettings.SessionTimeoutInMinutes);
 
-	        _logger.LogDebug("Setting session time out to be {0} minutes long.", stateTimeoutTimespan);
+            _logger.LogDebug("Setting session time out to be {0} minutes long.", stateTimeoutTimespan);
 
-	        StateManager.StateTimeout = stateTimeoutTimespan;
+            StateManager.StateTimeout = stateTimeoutTimespan;
         }
 
-		public static NameValueCollection Merge(NameValueCollection target, NameValueCollection source)
+        public static NameValueCollection Merge(NameValueCollection target, NameValueCollection source)
         {
             var result = new NameValueCollection(target);
 
