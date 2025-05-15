@@ -84,6 +84,7 @@
     <Compile Include="ClarifySessionAdapter.cs" />
     <Compile Include="ClarifySessionListener.cs" />
     <Compile Include="ClarifySessionManager.cs" />
+    <Compile Include="ConfigurationProtectorService.cs" />
     <Compile Include="Configuration\DovetailAppSettingsSource.cs" />
     <Compile Include="Configuration\StructureMapServiceLocator.cs" />
     <Compile Include="DovetailDatabaseSettings.cs" />
