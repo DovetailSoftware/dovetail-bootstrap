@@ -8,6 +8,7 @@ namespace Dovetail.SDK.Clarify
 	{
 		private static readonly Logger Log = LogManager.GetLogger(typeof(ConfigurationProtectorService));
 		private static string _entropy = null;
+		private static readonly object LockObject = new object();
 
 		public static void DataProtectionEntropySource(IClarifySession clarifySession, string entropySource)
 		{
@@ -15,16 +16,19 @@ namespace Dovetail.SDK.Clarify
 
 			_entropy = clarifySession?.AsClarifySession().ConfigItems[entropySource]?.StringValue;
 
-			if (string.IsNullOrEmpty(_entropy) && clarifySession != null)
+			lock (LockObject)
 			{
-				Log.LogDebug($"ConfigurationProtectorService has not found entropy string in session cache. Searching the table_config_itm...");
+				if (string.IsNullOrEmpty(_entropy) && clarifySession != null)
+				{
+					Log.LogDebug($"ConfigurationProtectorService has not found entropy string in session cache. Searching the table_config_itm...");
 
-				var dataSet = clarifySession.CreateDataSet();
-				var generic = dataSet.CreateGenericWithFields("config_itm", "str_value");
-				generic.Filter(f => f.Equals("name", entropySource));
-				generic.Query();
+					var dataSet = clarifySession.CreateDataSet();
+					var generic = dataSet.CreateGenericWithFields("config_itm", "str_value");
+					generic.Filter(f => f.Equals("name", entropySource));
+					generic.Query();
 
-				_entropy = generic.Rows.Count > 0 ? generic.Rows[0].AsString("str_value") : null;
+					_entropy = generic.Rows.Count > 0 ? generic.Rows[0].AsString("str_value") : null;
+				}
 			}
 
 			Log.LogDebug($"ConfigurationProtectorService has {(string.IsNullOrEmpty(_entropy) ? "not " : "")}found entropy string.");
