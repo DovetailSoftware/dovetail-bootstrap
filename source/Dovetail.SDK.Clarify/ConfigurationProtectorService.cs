@@ -10,6 +10,8 @@ namespace Dovetail.SDK.Clarify
 		private static readonly Logger Log = LogManager.GetLogger(typeof(ConfigurationProtectorService));
 		private static string _entropy = null;
 		private static readonly object LockObject = new object();
+		private const string IsLookingMessageString = "ConfigurationProtectorService is looking for '{0}' configuration item.";
+		private const string SearchResultMessageString = "ConfigurationProtectorService has {0}found entropy string.";
 
 		private static string RetrieveEntropy(ClarifyDataSet dataSet, string entropySource)
 		{
@@ -26,7 +28,7 @@ namespace Dovetail.SDK.Clarify
 		{
 			lock (LockObject)
 			{
-				Log.LogDebug($"ConfigurationProtectorService is looking for '{entropySource}' configuration item.");
+				Log.LogDebug(IsLookingMessageString.ToFormat(entropySource));
 
 				_entropy = clarifySession?.AsClarifySession().ConfigItems[entropySource]?.StringValue;
 
@@ -37,7 +39,7 @@ namespace Dovetail.SDK.Clarify
 					_entropy = RetrieveEntropy(dataSet, entropySource);
 				}
 
-				Log.LogDebug($"ConfigurationProtectorService has {(string.IsNullOrEmpty(_entropy) ? "not " : "")}found entropy string.");
+				Log.LogDebug(SearchResultMessageString.ToFormat((string.IsNullOrEmpty(_entropy) ? "not " : "")));
 			}
 		}
 
@@ -45,7 +47,7 @@ namespace Dovetail.SDK.Clarify
 		{
 			lock (LockObject)
 			{
-				Log.LogDebug($"ConfigurationProtectorService is looking for '{entropySource}' configuration item.");
+				Log.LogDebug(IsLookingMessageString.ToFormat(entropySource));
 
 				_entropy = clarifySession?.ConfigItems[entropySource]?.StringValue;
 
@@ -56,7 +58,7 @@ namespace Dovetail.SDK.Clarify
 					_entropy = RetrieveEntropy(dataSet, entropySource);
 				}
 
-				Log.LogDebug($"ConfigurationProtectorService has {(string.IsNullOrEmpty(_entropy) ? "not " : "")}found entropy string.");
+				Log.LogDebug(SearchResultMessageString.ToFormat((string.IsNullOrEmpty(_entropy) ? "not " : "")));
 			}
 		}
 
