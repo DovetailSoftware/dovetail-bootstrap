@@ -64,6 +64,21 @@ namespace Dovetail.SDK.Bootstrap.Tests
 			original.Items.Count().ShouldEqual(2);
 		}
 
+		[Test, Timeout(10000)]
+		public void email_log_with_a_large_body_and_few_colons_is_parsed_in_linear_time()
+		{
+			// Each line that is not a header used to be scanned up to the next ':' in the whole email,
+			// so a large email with few colons took minutes to parse and timed out the history request.
+			var line = String.Join(" ", Enumerable.Repeat("typing more log notes on the show case screen.", 20).ToArray());
+			var body = String.Join("\n\n", Enumerable.Repeat(line, 1000).ToArray());
+			var input = HistoryParsers.BEGIN_EMAIL_LOG_HEADER + "From: jpope\nTo: support\n" + HistoryParsers.END_EMAIL_LOG_HEADER + "\n" + body;
+
+			var emailLog = _cut.ParseEmailLog(input);
+
+			emailLog.Header.Headers.Count().ShouldEqual(2);
+			emailLog.Items.OfType<Line>().Count(l => l.Text.Trim() == line).ShouldEqual(1000);
+		}
+
 		[Test]
 		public void email_that_cannot_be_parsed_returns_fake_emaillog()
 		{

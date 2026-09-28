@@ -124,6 +124,7 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			select text;
 
 		public static readonly Parser<char> UntilEndOfLine = Parse.CharExcept(c => c == '\r' || c == '\n', "start of line ending");
+		public static readonly Parser<char> HeaderTitleChar = Parse.CharExcept(c => c == ':' || c == '\r' || c == '\n', "header title separator or line ending");
 		public static readonly Parser<IEnumerable<char>> WhiteSpace = Parse.WhiteSpace.Many().Or(Parse.String("&#160;"));
 
 		public static readonly Parser<string> BlockQuoteLine =
@@ -258,7 +259,10 @@ namespace Dovetail.SDK.Bootstrap.History.Parser
 			get
 			{
 				return from _1 in WhiteSpace
-					from title in Parse.CharExcept(':').Many().Text().Token()
+					from _leading in Parse.WhiteSpace.Many()
+					// A header title never spans lines. Stopping at the line ending keeps a line that is not a header
+					// from scanning ahead to the next ':' in the document, which made large emails parse in quadratic time.
+					from title in HeaderTitleChar.Many().Text()
 					where _settings.GetLogEmailHeaderTokens().Any(h =>
 					{
 						var key = h.ToString();
