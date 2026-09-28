@@ -123,6 +123,40 @@ namespace Dovetail.SDK.Bootstrap.Tests
 		}
 
 		[Test]
+		public void email_header_title_does_not_span_lines()
+		{
+			const string input = "From\r\n: a gal\r\nan item";
+
+			var item = _cut.EmailItem.Parse(input);
+
+			(item as EmailHeader).ShouldBeNull();
+			item.ToString().ShouldEqual("From");
+		}
+
+		[Test]
+		public void line_without_a_colon_is_an_item_when_followed_by_a_header()
+		{
+			const string input = "an item\r\nFrom: a gal";
+
+			var items = _cut.EmailItem.Many().End().Parse(input).ToArray();
+
+			items[0].ToString().ShouldEqual("an item");
+			((EmailHeader) items[1]).Headers.First().Title.ShouldEqual("From");
+		}
+
+		[Test]
+		public void email_header_title_may_follow_a_non_breaking_space()
+		{
+			const string input = "&#160; From: a gal";
+
+			var item = _cut.EmailItem.Parse(input);
+
+			var emailHeaderItem = ((EmailHeader) item).Headers.First();
+			emailHeaderItem.Title.ShouldEqual("From");
+			emailHeaderItem.Text.ShouldEqual("a gal");
+		}
+
+		[Test]
 		public void quoted_content_is_rolled_into_a_block_quote_item()
 		{
 			const string input = "line1\n&gt; quote line1\n&gt; quote line2\n&gt; quote line3";
